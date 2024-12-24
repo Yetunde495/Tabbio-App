@@ -24,7 +24,7 @@ const ResumeBuilder: React.FC = () => {
   const [logoutModal, setLogoutModal] = useState(false);
   const [open, setOpen] = useState(true);
 
-  const [tab, setTab] = useState("resume");
+  const [tab, _setTab] = useState("resume");
   const handleSignout = async () => {
     signOut();
     navigate("/");

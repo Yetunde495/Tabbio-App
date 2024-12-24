@@ -101,7 +101,7 @@ const ResumePDF = ({ resumeData }: {resumeData:any}) => {
         {resumeData?.experience && (
           <View style={styles.section}>
             <Text style={styles.header}>Experience</Text>
-            {resumeData?.experience.map((item, index) => (
+            {resumeData?.experience.map((item:any, index:number) => (
               <View key={index}>
                 <Text style={styles.text}>{item?.company}</Text>
                 <Text style={styles.text}>
@@ -117,7 +117,7 @@ const ResumePDF = ({ resumeData }: {resumeData:any}) => {
         {resumeData?.education && (
           <View style={styles.section}>
             <Text style={styles.header}>Education</Text>
-            {resumeData?.education.map((item, index) => (
+            {resumeData?.education.map((item:any, index:number) => (
               <View key={index}>
                 <Text style={styles.text}>{item?.school}</Text>
                 <Text style={styles.text}>
@@ -132,7 +132,7 @@ const ResumePDF = ({ resumeData }: {resumeData:any}) => {
         {resumeData?.skills && (
           <View style={styles.section}>
             <Text style={styles.header}>Skills</Text>
-            {resumeData?.skills.map((skill, index) => (
+            {resumeData?.skills.map((skill:any, index:number) => (
               <Text key={index} style={styles.listItem}>
                 • {skill}
               </Text>
@@ -144,7 +144,7 @@ const ResumePDF = ({ resumeData }: {resumeData:any}) => {
         {resumeData?.languages && (
           <View style={styles.section}>
             <Text style={styles.header}>Languages</Text>
-            {resumeData?.languages.map((lang, index) => (
+            {resumeData?.languages.map((lang:any, index:number) => (
               <Text key={index} style={styles.listItem}>
                 • {lang}
               </Text>

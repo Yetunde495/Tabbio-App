@@ -2,11 +2,11 @@ import { useState } from "react";
 import Modal from "../../components/modal";
 import { FormProvider, useForm } from "react-hook-form";
 import { AutoInput } from "../../components/form/customInput";
-import Button from "../../components/button";
 import { Textarea } from "../../components/form";
 import { toast } from "react-toastify";
 import { BsX } from "react-icons/bs";
 import { truncateFilename } from "../../lib/utils/formatters";
+import Button from "../../components/Button";
 
 const ContactForm: React.FC<{ show: boolean; setShow: () => void }> = ({
   show,
