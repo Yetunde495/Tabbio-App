@@ -30,12 +30,12 @@ export default function Button({
     rounded,
     size,
   }: ButtonProps) {
-    let className ="flex group disabled:hover:scale-100 disabled:opacity-50 items-center gap-3 bg-gradient-to-r hover:bg-gradient-to-l hover:scale-105 duration-300 ease-in-out from-[#2563EB] to-[#9333EA] justify-center text-white border-none hover:opacity-95"
+    let className ="flex group disabled:hover:scale-100 max-sm:text-sm disabled:opacity-50 items-center gap-3 bg-gradient-to-r hover:bg-gradient-to-l hover:scale-105 duration-300 ease-in-out from-[#2563EB] to-[#9333EA] justify-center text-white border-none hover:opacity-95"
 
     let btnCls = `${className} ${
       rounded ? "rounded-full" : "rounded-lg"
     } ${size === "lg" ? "py-3 px-10" : "md:py-3 py-2 px-6"}  font-medium `;
-    btnCls = width ? btnCls + " w-" + width : btnCls;
+    btnCls = width ? btnCls + width : btnCls;
     btnCls = height ? btnCls + " h-" + height : btnCls;
   
     return (

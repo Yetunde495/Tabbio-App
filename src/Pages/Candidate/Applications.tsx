@@ -138,16 +138,16 @@ const Applications: React.FC = () => {
             <div className="flex gap-4 max-md:gap-2 items-center max-lg:w-full">
               <button
                 onClick={() => setExtension(true)}
-                className="flex gap-2 max-md:flex-col max-md:gap-1 max-md:px-4.5  max-xs:px-2 items-center  justify-center px-6 py-2 rounded-md hover:scale-95 duration-150 text-white bg-gradient-to-br from-[#374151] to-[#1F2937]"
+                className="flex gap-2 max-md:flex-col max-md:gap-1 max-md:px-4.5 max-xs:w-[200px]   items-center  justify-center px-6 py-2 rounded-md hover:scale-95 duration-150 text-white bg-gradient-to-br from-[#374151] to-[#1F2937]"
               >
                 <span className="md:bg-white/10 md:p-1 text-sm md:rounded-md max-xs:hidden">
                   <LuPuzzle />
                 </span>
-                Get Chrome Extension
+                <span className="max-xs:hidden">Get</span> Chrome Extension
               </button>
               <button
                 onClick={() => setCreateModal(true)}
-                className="flex max-md:flex-col max-md:gap-1 max-md:py-2 max-md:px-4.5 gap-2 items-center justify-center px-6 py-2.5 rounded-md hover:scale-95 duration-150 text-white bg-primary"
+                className="flex max-md:flex-col max-md:gap-1 max-md:py-2 max-md:px-4.5 gap-2  max-xs:px-2 max-xs:w-[150px] items-center justify-center px-6 py-2.5 rounded-md hover:scale-95 duration-150 text-white bg-primary"
               >
                 <FaPlus className="max-md:text-sm max-xs:hidden" /> New
                 Application

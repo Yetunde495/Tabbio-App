@@ -1,11 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import './index.css'
+import '../src/css/dependencies.css';
+import '../src/css/components.css';
 import { AppProvider } from './context/AppContext.tsx';
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
-import './css/components.css'
+import 'react-datepicker/dist/react-datepicker.css';
+import "react-phone-number-input/style.css";
 import App from './App.tsx';
 
 const queryClient = new QueryClient();

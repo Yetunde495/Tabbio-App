@@ -1,6 +1,8 @@
 import { FaInstagram, FaXTwitter } from "react-icons/fa6";
 import Logo from "../assets/brand/logo-1.svg";
 import { LuLinkedin } from "react-icons/lu";
+import { Link } from "react-router-dom";
+
 
 const Footer: React.FC = () => {
   return (
@@ -17,19 +19,19 @@ const Footer: React.FC = () => {
             <div className="relative mb-2.5">
               <ul className="flex items-center space-x-2.5">
               <li>
-                <a href="#" target="_blank" className="text-slate-800 hover:scale-105 ease-in-out duration-100">
+                <Link to="" target="_blank" className="text-slate-800 hover:scale-105 ease-in-out duration-100">
                 <FaXTwitter size={20} />
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" target="_blank" className="text-slate-800 hover:scale-105 ease-in-out duration-100">
+                <Link to="" target="_blank" className="text-slate-800 hover:scale-105 ease-in-out duration-100">
                 <LuLinkedin size={20} />
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" target="_blank" className="text-slate-800 hover:scale-105 ease-in-out duration-100">
+                <Link to="" target="_blank" className="text-slate-800 hover:scale-105 ease-in-out duration-100">
                 <FaInstagram size={20} />
-                </a>
+                </Link>
               </li>
               </ul>
             </div>
@@ -39,39 +41,39 @@ const Footer: React.FC = () => {
             <h3 className="font-bold mb-2 text-black">For Jobseekers</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-slate-500">
+                <Link to="" className="text-slate-500">
                   Smart Resume
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-slate-500">
+                <Link to="" className="text-slate-500">
                   Application Kit
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-slate-500">
+                <Link to="" className="text-slate-500">
                   Resume Builder
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-slate-500">
+                <Link to="" className="text-slate-500">
                   Cover Letter
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-slate-500">
+                <Link to="" className="text-slate-500">
                   Company Insights
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-slate-500">
+                <Link to="" className="text-slate-500">
                   Interview Tips
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-slate-500">
+                <Link to="" className="text-slate-500">
                   Linkedin Extension
-                </a>
+                </Link>
               </li>
 
               {/* Add more links */}
@@ -83,34 +85,34 @@ const Footer: React.FC = () => {
             <h3 className="font-bold mb-2 text-black">For Employers</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-slate-500">
+                <Link to="" className="text-slate-500">
                   Sharelist
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-slate-500">
+                <Link to="" className="text-slate-500">
                   Match to JD
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-slate-500">
+                <Link to="" className="text-slate-500">
                   Talent Hub
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-slate-500">
+                <Link to="" className="text-slate-500">
                   Applicant Builder
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-slate-500">
+                <Link to="" className="text-slate-500">
                   Branded Applicant
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-slate-500">
+                <Link to="" className="text-slate-500">
                   Evaluation Forms
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -120,24 +122,24 @@ const Footer: React.FC = () => {
             <h3 className="font-bold mb-2 text-black">Company</h3>
             <ul className="space-y-2">
               <li>
-                <a href="/about-us" className="text-slate-500 hover:text-blue-500">
+                <Link to="/about-us" className="text-slate-500 hover:text-blue-500">
                   About
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/faq" className="text-slate-500">
+                <Link to="/faq" className="text-slate-500">
                   Blog
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/careers" className="text-slate-500 hover:text-blue-500">
+                <Link to="/careers" className="text-slate-500 hover:text-blue-500">
                   Careers
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-slate-500">
+                <Link to="" className="text-slate-500">
                   Contact
-                </a>
+                </Link>
               </li>
               {/* Add more links */}
             </ul>
@@ -147,24 +149,24 @@ const Footer: React.FC = () => {
             <h3 className="font-bold mb-2 text-black">Resources</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-slate-500">
+                <Link to="" className="text-slate-500">
                   Help Center
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/faq" className="text-slate-500">
+                <Link to="/faq" className="text-slate-500">
                   API Documentation
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-slate-500">
+                <Link to="" className="text-slate-500">
                   Pricing
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/affiliate" className="text-slate-500 hover:text-blue-500">
+                <Link to="/affiliate" className="text-slate-500 hover:text-blue-500">
                   Affiliate Program
-                </a>
+                </Link>
               </li>
               {/* Add more links */}
             </ul>
@@ -177,19 +179,19 @@ const Footer: React.FC = () => {
           <p>© 2024 Tabbio. All Rights Reserved</p>
           <ul className="flex items-center gap-3 flex-wrap">
             <li>
-              <a href="#" className="text-slate-500 text-[15px]">
+              <Link to="" className="text-slate-500 text-[15px]">
                 Privacy Policy
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#" className="text-slate-500 text-[15px]">
+              <Link to="" className="text-slate-500 text-[15px]">
                 Terms of Service
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#" className="text-slate-500 text-[15px]">
+              <Link to="" className="text-slate-500 text-[15px]">
                 Security
-              </a>
+              </Link>
             </li>
           </ul>
         </div>

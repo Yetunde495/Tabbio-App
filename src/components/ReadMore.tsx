@@ -86,7 +86,7 @@ export const ReadMore: React.FC<Props> = ({ text }) => {
 
   return (
     <div className="mb-5 min-h-[150px] h-auto py-2  rounded-xl w-full">
-      <div className="whitespace-pre-wrap break-words text-[16px] leading-normal text-zinc-600 font-normal">
+      <div className="whitespace-pre-wrap break-words text-[16px] max-sm:text-sm sm:leading-normal text-zinc-600 font-normal">
         {isExpanded
           ? text
           : `${slicedText}`}

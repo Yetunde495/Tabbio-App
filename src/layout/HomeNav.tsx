@@ -15,7 +15,7 @@ type Position = {
 };
 
 export default function Navbar() {
-  const [navbar, setNavbar] = useState(false);
+  const [navbar] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { pathname } = location;
@@ -60,50 +60,12 @@ export default function Navbar() {
         <div className="relative mx-auto w-full max-w-screen-2xl 2xl:px-[10rem] 2xl:max-w-full p-2">
           <div className=" gap-4 px-2 mx-auto lg:max-w-7xl 2xl:max-w-full items-center justify-between border-stroke flex md:px-8">
             <div className="text-slate-900 dark:text-white">
-              <div className="flex items-center justify-between py-3 md:block">
-                <a href="/">
-                  <img src={Logo} className="md:w-30 w-20" />
-                </a>
+              <div className="py-3 block">
+                <Link to="/" className="max-sm:block max-sm:w-[65px]">
+                  <img src={Logo} className="md:w-30" />
+                </Link>
 
-                <div className="hidden">
-                  {/* <ThemeToggleButton /> */}
-                  <button
-                    className="p-2 text-gray-700 rounded-md outline-none focus:border-gray-400 focus:border"
-                    onClick={() => {
-                      setNavbar(!navbar);
-                    }}
-                  >
-                    {navbar ? (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-6 h-6 dark:text-white"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-6 h-6 dark:text-white"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M4 6h16M4 12h16M4 18h16"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                </div>
+                
               </div>
             </div>
 
@@ -160,7 +122,7 @@ export default function Navbar() {
                 <StaggeredDropDown
                   buttonIcon={<IoMdArrowDropdown />}
                   buttonText={
-                    <span className="bg-gradient-to-r from-[#2563EB]  text-transparent bg-clip-text to-[#9333EA] inline-block font-medium">
+                    <span className="bg-gradient-to-r from-[#2563EB] max-sm:text-xs  text-transparent bg-clip-text to-[#9333EA] inline-block font-medium">
                       {pathname.includes("company")
                         ? "Company"
                         : "Professionals"}
@@ -189,10 +151,10 @@ export default function Navbar() {
                 className={`flex-1 justify-self-center pb-3 mt-3 md:block md:pb-0 md:mt-0 `}
               >
                 <ul className="items-center justify-center flex space-x-6 space-y-0">
-                  <li className="max-md:hidden">
+                  <li >
                     <Link to="/signin">Sign in</Link>
                   </li>
-                  <li>
+                  <li className="max-md:hidden">
                     <Button onClick={() => navigate("/signup")}>
                       Get Started
                     </Button>

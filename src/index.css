@@ -25,6 +25,15 @@ body {
   background-color: transparent!important;
 }
 
+.react-datepicker__time-container {
+  width: 185px !important;
+}
+.react-datepicker__time-container
+  .react-datepicker__time
+  .react-datepicker__time-box {
+  width: 185px !important;
+}
+
 @keyframes react-loading-skeleton {
   100% {
       transform: translateX(100%);

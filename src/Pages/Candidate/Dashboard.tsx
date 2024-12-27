@@ -26,8 +26,8 @@ import CandidateProfile from "../PageComponents/CandidateProfile";
 import ResumeAnalytics from "./ResumeAnalytics";
 import { UpgradeCandidateSubscription } from "../PageComponents/UpgradeSubscriptionModal";
 import { FcReddit } from "react-icons/fc";
-import { mockResumeData } from "../../data/mockData";
-import { ProfileSummary } from "./SmartResumeComponents";
+import { mockProfileData } from "../../data/mockData";
+import { Certifications, Education, Internships, ProfessionalReference, ProfileSummary, VolunteerExperience, WorkExperience } from "./SmartResumeComponents";
 
 const SmartResumeSettings: React.FC = () => {
   const { user, updateUser } = useApp();
@@ -339,7 +339,7 @@ const Dashboard: React.FC = () => {
   const { user } = useApp();
   const navigate = useNavigate();
   const [active, _setActive] = useState(true);
-  const [candidateData] = useState<any | null>(mockResumeData);
+  const [candidateData] = useState<any | null>(mockProfileData);
   const [showDrawer, setShowDrawer] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [upgradeModal, setUpgradeModal] = useState(false);
@@ -347,7 +347,7 @@ const Dashboard: React.FC = () => {
   return (
     <DefaultLayout>
       <section className="">
-        <div className="bg-zinc-50/90 py-2.5 px-4.5 text-sm flex flex-wrap lg:items-center justify-between gap-3">
+        <div className="bg-zinc-50/90 py-2.5 px-4.5 text-sm flex flex-wrap sm:gap-2 lg:items-center justify-between gap-3">
           <div className="flex items-center gap-4 max-sm:justify-between">
             <div className="flex items-center gap-1">
               <FaCircle size={10} className="text-green-500 max-lg:hidden" />
@@ -361,7 +361,7 @@ const Dashboard: React.FC = () => {
             </div>
             <button
               onClick={() => setShowAnalytics(true)}
-              className="flex items-center gap-1 hover:scale-x-105 duration-100"
+              className="flex max-sm:hidden items-center gap-1 hover:scale-x-105 duration-100"
             >
               <BsEye className="max-lg:hidden" />
               <span className="max-md:hidden">
@@ -371,11 +371,23 @@ const Dashboard: React.FC = () => {
             </button>
           </div>
 
-          <div className="flex items-center  gap-4">
-            <div className="lg:flex hidden items-center gap-1 text-zinc-300 hover:scale-x-105 duration-100">
-              <LuClock className="" />
+          <button
+              onClick={() => setShowAnalytics(true)}
+              className="flex sm:hidden items-center gap-1 hover:scale-x-105 duration-100"
+            >
+              <BsEye className="" />
+              <span className="">
+                {user?.plan || "10 profile views"}
+              </span>
+              <AiOutlineBarChart className="text-primary text-lg hidden" />
+            </button>
+
+          <div className="flex items-center  gap-4 max-sm:w-full max-sm:justify-between">
+            <div className="lg:flex hidden max-sm:flex items-center gap-1 text-zinc-400 hover:scale-x-105 duration-100">
+              <LuClock className="max-sm:hidden" />
               <span>{user?.plan || "Updated 1d ago"}</span>
             </div>
+           
             <div className="flex items-center gap-1">
               <FaCircle size={10} className="text-green-500 max-md:hidden" />
               <span className="max-md:hidden">
@@ -385,7 +397,7 @@ const Dashboard: React.FC = () => {
                 onClick={() => setShareModal(true)}
                 className="py-1 px-1.5 md:ml-1 max-md:pl-0 flex items-center gap-1 hover:scale-x-105 "
               >
-                <MdShare /> <span className="max-md:hidden">Share</span>
+                <MdShare /> <span className="">Share</span>
               </button>
             </div>
             <button
@@ -396,6 +408,8 @@ const Dashboard: React.FC = () => {
               <LuExternalLink size={14} className="" />
             </button>
           </div>
+
+          
         </div>
         <div className="px-2 py-4 md:pl-8 md:pr-2">
           <div className="xl:hidden flex justify-end items-center">
@@ -409,8 +423,14 @@ const Dashboard: React.FC = () => {
           {active ? (
             <div className="w-full flex xl:flex-row flex-col gap-5">
               <div className="">
-              <section className="bg-white px-6 py-5 w-full h-full">
+              <section className="bg-white flex flex-col space-y-10 px-6 py-5 w-full h-full">
                 <ProfileSummary resumeData={candidateData} />
+                <WorkExperience profileData={candidateData} />
+                <VolunteerExperience profileData={candidateData} />
+                <Internships profileData={candidateData} />
+                <Education profileData={candidateData} />
+                <Certifications profileData={candidateData} />
+                <ProfessionalReference profileData={candidateData} />
                 </section>
                 <CandidateProfile />
               </div>

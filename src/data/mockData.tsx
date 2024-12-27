@@ -296,3 +296,150 @@ export const interviewTipsData = [
     ],
   },
 ];
+
+export const mockProfileData = {
+  name: "John Doe",
+  role: "Software Developer",
+  resume_id: "",
+  professional_summary: `Results-driven Senior Software Engineer with 8+ years of experience in full-stack development and technical leadership. Specialized in building scalable distributed systems and microservices architectures. Proven track record of improving application performance, mentoring junior developers, and delivering high-impact solutions that drive business growth.
+  
+Skilled in creating dynamic, user-friendly applications and collaborating within agile teams.
+     `,
+  photo_url:
+    "https://images.pexels.com/photos/3778603/pexels-photo-3778603.jpeg?auto=compress&cs=tinysrgb&w=600",
+  location: "San Francisco, CA",
+  email: "johndoe@example.com",
+  phone_number: "+1 (555) 123-4567",
+  website_url: "https://johndoeportfolio.com",
+  linkedin_url: "https://linkedin.com/in/johndoe",
+  skills: [
+    "JavaScript",
+    "React",
+    "Node.js",
+    "Express",
+    "MongoDB",
+    "HTML",
+    "CSS",
+    "TypeScript",
+    "Git",
+    "Agile Methodologies",
+  ],
+  hobbies: ["Hiking", "Photography", "Cooking"],
+  languages: ["English", "Spanish"],
+  work_experience: [
+    {
+      id: 1,
+      position: "Frontend Developer",
+      company: "Tech Solutions Inc.",
+      description:
+        "Developed responsive web applications using React and JavaScript. Collaborated with designers to create seamless UI experiences.",
+      key_achievments: [
+        "Led development of microservices architecture serving 1M+ users",
+        "Improved application performance by 30% through code refactoring",
+        "Mentored junior developers in best practices and coding standards",
+      ],
+      start_year: "2023",
+      end_year: "2024",
+      skills: ['System Architecture', 'Cloud Infrastructure', 'Agile/Scrum', 'Performance Optimization', 'API Design']
+    },
+    {
+      id: 2,
+      position: "Backend Developer",
+      company: "Innovatech Corp.",
+      start_year: "2019",
+      end_year: "2022",
+      description:
+        "Built and maintained REST APIs using Node.js and Express. Improved application performance and data handling.",
+      key_achievments: [
+        "Optimized database queries, reducing response time by 50%",
+        "Implemented CI/CD pipelines for automated testing and deployment",
+        "Collaborated with cross-functional teams to deliver project milestones",
+        "Collaborated with cross-functional teams to deliver project milestones",
+      ],
+      skills: ['System Architecture', 'Cloud Infrastructure', 'Agile/Scrum', 'Performance Optimization', 'API Design']
+
+    },
+  ],
+  suggested_skills: [ 'JavaScript', 'React', 'Node.js', 'Express', 'MongoDB', 'HTML', 'CSS', 'TypeScript', 'Git', 'Agile Methodologies' ],
+  internships: [
+    {
+      id: 1,
+      position: "Software Engineering Intern",
+      company: "StartupX",
+      description:
+        "Developed responsive web applications using React and JavaScript. Collaborated with designers to create seamless UI experiences.",
+      key_achievments: [
+        "Led development of microservices architecture serving 1M+ users",
+        "Improved application performance by 30% through code refactoring",
+        "Mentored junior developers in best practices and coding standards",
+      ],
+      skills: ["JavaScript", "React", "Node.js", "Express", "MongoDB"],
+      start_year: "2023",
+      end_year: "2024",
+    },
+    
+  ],
+  volunteer_experience: [
+    {
+      id: 1,
+      position: "Tech Mentor",
+      company: "Tech Solutions Inc.",
+      description:
+        "Mentoring underprivileged students in web development and programming fundamentals.",
+      key_achievments: [
+        "Led development of microservices architecture serving 1M+ users",
+        "Improved application performance by 30% through code refactoring",
+        "Mentored junior developers in best practices and coding standards",
+      ],
+      skills: ["JavaScript", "React", "Node.js", "Express", "MongoDB"],
+      start_year: "2023",
+      end_year: "2024",
+    },
+    
+  ],
+  education: [
+    {
+      id: 1,
+      degree: "Bachelor of Science in Computer Science",
+      school: "University of California, Berkeley",
+      description: 'Graduated with Honors, GPA: 3.8/4.0',
+      start_year: "2023",
+      end_year: "2024",
+      active: false,
+    },
+  ],
+  certifications: [
+    {
+      id: 1,
+      title: "AWS Certified Solutions Architecture",
+      platform: "Amazon Web Services",
+      date: "Jan, 2023",
+    },
+    {
+      id: 2,
+      title: "Professional Scrum Master I",
+      platform: "Scrum.org",
+      date: "2023",
+    },
+  ],
+  professional_reference: [
+    {
+      id: 1,
+      name: "Michael Chen",
+      role: "Senior Technical Lead",
+      company: "Innovatech Corp.",
+      email: "michaelchen@mail.com",
+      phone: "+123673539",
+      relationship: "Project Lead (2016-2019)"
+    },
+    {
+      id: 2,
+      name: "Sarah Smith",
+      role: "Software Developer",
+      company: "Tech Solutions Inc.",
+      email: "sarahsmith@mail.co",
+      phone: "+23491929334",
+      relationship: "Team Lead (2020-2023)"
+    },
+  ],
+};
