@@ -41,4 +41,39 @@ const Dropdown: React.FC<DropdownProps> = ({ buttonContent, children, buttonText
   );
 };
 
+export const Dropdown2: React.FC<DropdownProps> = ({ buttonContent, children, buttonText }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div ref={dropdownRef} className="relative">
+      <div onClick={() => setIsOpen(!isOpen)}>
+      {buttonContent || <button
+        className="border border-gray-500 p-2 rounded-md"
+        
+      >
+        {buttonText}
+      </button>}
+      </div>
+     
+      {isOpen && (
+        <div onClick={() => setIsOpen(false)} className="w-full absolute z-999 mt-2 max-h-[17rem] pb-2 overflow-y-auto rounded-xl border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+         {children}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default Dropdown;

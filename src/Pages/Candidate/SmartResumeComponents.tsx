@@ -4,9 +4,21 @@ import Modal from "../../components/modal";
 import { LuPencil } from "react-icons/lu";
 import { HiOutlineSparkles } from "react-icons/hi";
 import { Pill } from "../../components/Pills";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { BsPlus, BsPlusLg, BsTrash } from "react-icons/bs";
-import { FaCircle, FaStarOfLife } from "react-icons/fa6";
+import { IoIosArrowDown, IoIosArrowUp, IoLogoLinkedin } from "react-icons/io";
+import {
+  BsPatchCheck,
+  BsPlus,
+  BsPlusLg,
+  BsTrash,
+  BsXCircleFill,
+} from "react-icons/bs";
+import {
+  FaCheck,
+  FaCircle,
+  FaImage,
+  FaRegFile,
+  FaStarOfLife,
+} from "react-icons/fa6";
 import { FormGroup } from "../../components/form";
 import DatePicker from "react-datepicker";
 import { FcCalendar } from "react-icons/fc";
@@ -14,6 +26,15 @@ import { TbMenuOrder } from "react-icons/tb";
 import Delete from "../../components/modal/Delete";
 import PhoneInput from "react-phone-number-input";
 import { FaRegUserCircle } from "react-icons/fa";
+import { FiUpload } from "react-icons/fi";
+import { FileUpload } from "../General/ResumeUpload";
+import { Dropdown2 } from "../../components/Dropdown";
+import { HiMiniLink } from "react-icons/hi2";
+import { BiImageAdd } from "react-icons/bi";
+import Avatar from "../../components/Avatar2";
+import getUserInitials from "../../lib/utils/getUserInitials";
+import { MdOutlineMailOutline, MdOutlinePhone } from "react-icons/md";
+import TabbioIcon from "../../assets/svg/t-icon.svg";
 
 const ItemList = ({ items }: any) => {
   const [showAll, setShowAll] = useState(false);
@@ -44,6 +65,372 @@ const ItemList = ({ items }: any) => {
           <span>{!showAll ? <IoIosArrowDown /> : <IoIosArrowUp />}</span>
         </button>
       )}
+    </div>
+  );
+};
+
+export const BasicDetails: React.FC<{ profileData: any }> = ({
+  profileData,
+}) => {
+  const [showModal, setShowModal] = useState(false);
+  const [formView, setFormView] = useState(false);
+  const [infoModal, setInfoModal] = useState(false);
+  const [basicDetails, setBasicDetails] = useState({
+    email: profileData?.email,
+    role: profileData?.role,
+    phone_number: profileData?.phone_number,
+    linkedin_url: profileData?.linkedin_url,
+    location: profileData?.location,
+    location_type: profileData?.location_type,
+    relocation: profileData?.relocation
+  });
+  const toggleLocationType = (type: string) => {
+    const d = basicDetails?.location_type.includes(type)
+      ? basicDetails?.location_type.filter((item: string) => item !== type)
+      : [...basicDetails?.location_type, type];
+
+    setBasicDetails((data: any) => ({
+      ...data,
+      location_type: d,
+    }));
+  };
+  return (
+    <div>
+      <div className="flex md:flex-row flex-col gap-x-6 items-center gap-y-6 mb-8">
+        <div>
+          <Avatar
+            src={profileData?.photo_url || ""}
+            size="xl"
+            initials={getUserInitials(profileData?.name, "")}
+          />
+        </div>
+        <div>
+          <div className="my-2">
+            <h1
+              className={`font-semibold text-xl sm:text-2xl md:text-3xl mb-1 flex gap-4 items-center`}
+            >
+              {profileData?.name}{" "}
+              <BsPatchCheck size={16} className="text-primary mt-0.5" />
+            </h1>
+            {profileData?.config?.role && (
+              <h6 className={`text-base text-zinc-600 uppercase`}>
+                {profileData?.role}
+              </h6>
+            )}
+            <div className="flex gap-2 items-center mt-2">
+              {profileData?.config?.location && (
+                <span className={`text-sm text-zinc-600`}>
+                  {profileData?.location}
+                </span>
+              )}
+              <span
+                onClick={() => setShowModal(true)}
+                className="text-primary font-semibold cursor-pointer hover:scale-100"
+              >
+                Contact Details
+              </span>
+            </div>
+          </div>
+        </div>
+        <span className="ml-auto">
+          {" "}
+          <button
+            onClick={() => {
+              setInfoModal(true);
+            }}
+            className="hover:bg-slate-100/50 rounded-full p-2"
+          >
+            <LuPencil size={18} />
+          </button>
+        </span>
+      </div>
+      <Modal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        title={profileData?.name}
+        size="max-w-[500px] w-full"
+      >
+        {formView ? (
+          <div>
+            <div className="no-scrollbar max-h-[65vh] max-sm:max-h-[70vh] overflow-y-auto pr-2">
+              <div className="mb-6 w-full">
+                <label
+                  htmlFor="email"
+                  className="text-sm font-medium text-gray-700 flex items-center gap-1"
+                >
+                  Email{" "}
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  pattern="/^\S+@\S+$/i"
+                  value={basicDetails?.email}
+                  onChange={(e) =>
+                    setBasicDetails((data: any) => ({
+                      ...data,
+                      email: e.target.value,
+                    }))
+                  }
+                  placeholder="Enter your email address"
+                  className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+              </div>
+              <div className="mb-6">
+                <label
+                  htmlFor="phone"
+                  className="text-sm font-medium text-gray-700 mb-[0.4rem] flex items-center gap-1"
+                >
+                  Phone Number{" "}
+                </label>
+                <PhoneInput
+                  international
+                  defaultCountry="US"
+                  placeholder="Enter phone number"
+                  value={basicDetails?.phone_number}
+                  onChange={(val) => {
+                    setBasicDetails((data: any) => ({
+                      ...data,
+                      phone_number: val,
+                    }));
+                  }}
+                />
+              </div>
+
+              <div className="w-full mb-5">
+                <label
+                  className="mb-[0.7rem] block text-sm font-normal text-zinc-800 dark:text-white"
+                  htmlFor="description"
+                >
+                  Linkedin URL
+                </label>
+                <div className="relative rounded-lg border border-stroke">
+                  <input
+                    type="text"
+                    className={`w-full py-3 pl-4.5 pr-4.5 text-zinc-800 font-normal border-none rounded-lg focus:border-primary/50 focus-visible:outline-none custom-scrollbar dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary`}
+                    name="linkedin-url"
+                    value={basicDetails.linkedin_url}
+                    onChange={(e) => {
+                      setBasicDetails((data: any) => ({
+                        ...data,
+                        phone_number: e.target.value,
+                      }));
+                    }}
+                    onKeyDown={(e) => {
+                      if (
+                        (e.key === "Backspace" || e.key === "Delete") &&
+                        basicDetails.linkedin_url === "https://linkedin.com/in/"
+                      ) {
+                        e.preventDefault();
+                      }
+                    }}
+                    placeholder="Enter your linkedin url"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="w-full border-t flex bg-white mt-3 pt-4 justify-between items-center border-stroke">
+              <button
+                onClick={() => {
+                  setFormView(false);
+                }}
+                className="text-zinc-600 hover:scale-105 font-medium py-1.5 px-4"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => console.log(basicDetails)}
+                className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <div className="mb-4 -mt-4 w-full flex justify-between text-zinc-950 items-center gap-3">
+              <p>Contact Details</p>
+              <button
+                onClick={() => {
+                  setFormView(true);
+                }}
+                className="hover:bg-slate-100/50 rounded-full p-2"
+              >
+                <LuPencil size={18} />
+              </button>
+            </div>
+            <div className="no-scrollbar max-h-[65vh] max-sm:max-h-[70vh] overflow-y-auto pr-2">
+              <div className="mb-5 w-full flex gap-2.5 items-start">
+                <span>
+                  <MdOutlineMailOutline className="mt-1.5" />
+                </span>
+                <div>
+                  <p>Email</p>
+                  <span className="text-primary text-sm">
+                    {profileData?.email}
+                  </span>
+                </div>
+              </div>
+              <div className="mb-5 w-full flex gap-2.5 items-start">
+                <span>
+                  <MdOutlinePhone className="mt-1.5" />
+                </span>
+                <div>
+                  <p>Phone Number</p>
+                  <span className="text-primary text-sm">
+                    {profileData?.phone_number}
+                  </span>
+                </div>
+              </div>
+              <div className="mb-5 w-full flex gap-2.5 items-start">
+                <span>
+                  <img src={TabbioIcon} className="mt-1.5" />
+                </span>
+                <div>
+                  <p>Tabbio Link</p>
+                  <span className="text-primary text-sm">
+                    {profileData?.tabbio_link}
+                  </span>
+                </div>
+              </div>
+              <div className="mb-5 w-full flex gap-2.5 items-start">
+                <span>
+                  <IoLogoLinkedin className="mt-1.5" />
+                </span>
+                <div>
+                  <p>Linkedin</p>
+                  <span className="text-primary text-sm">
+                    {profileData?.linkedin_url}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </Modal>
+      <Modal
+        show={infoModal}
+        onHide={() => setInfoModal(false)}
+        title={profileData?.name}
+        size="max-w-[600px] w-full"
+      >
+        <div>
+          <div className="no-scrollbar max-h-[65vh] max-sm:max-h-[70vh] overflow-y-auto pr-2">
+            <div className="mb-6">
+              <label
+                htmlFor="role"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Role
+              </label>
+              <input
+                type="text"
+                id="role"
+                value={basicDetails?.role}
+                onChange={(e) =>
+                  setBasicDetails((data: any) => ({
+                    ...data,
+                    role: e.target.value,
+                  }))
+                }
+                placeholder="Ex: Project Manager"
+                className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              />
+            </div>
+            <div className="mb-6">
+              <label
+                htmlFor="location"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Location
+              </label>
+              <input
+                type="text"
+                id="location"
+                value={basicDetails?.location}
+                onChange={(e) =>
+                  setBasicDetails((data: any) => ({
+                    ...data,
+                    location: e.target.value,
+                  }))
+                }
+                placeholder="Enter your location"
+                className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              />
+            </div>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Location Type
+              </label>
+              <div className="flex gap-4">
+                {["On-Site", "Hybrid", "Remote"].map((type) => (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => toggleLocationType(type)}
+                    className={`px-4 py-1.5 rounded-full flex gap-2 font-normal items-center border border-stroke focus:outline-none  transition 
+              ${
+                basicDetails?.location_type.includes(type)
+                  ? "bg-primary text-white"
+                  : "bg-white text-zinc-700"
+              }`}
+                  >
+                    {basicDetails?.location_type.includes(type) ? (
+                      <FaCheck />
+                    ) : (
+                      <BsPlusLg />
+                    )}{" "}
+                    {type}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="mb-6">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Relocation
+        </label>
+        <div className="flex flex-col gap-3 pl-1">
+          {[
+            { label: "Open to Relocate", value: "Open to Relocate" },
+            { label: "Not Open to Relocate", value: "Not Open to Relocate" },
+          ].map((option) => (
+            <label key={option.value} className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="relocation"
+                value={option.value}
+                checked={basicDetails?.relocation === option.value}
+                onChange={(e) => {
+                  setBasicDetails((data: any) => ({
+                    ...data,
+                    relocation: e.target.value,
+                  }))
+                }}
+                className="text-blue-500 focus:ring-blue-500"
+              />
+              {option.label}
+            </label>
+          ))}
+        </div>
+      </div>
+          </div>
+          <div className="w-full border-t flex bg-white mt-3 pt-4 justify-between items-center border-stroke">
+            <button
+              onClick={() => {
+                setFormView(false);
+              }}
+              className="text-zinc-600 hover:scale-105 font-medium py-1.5 px-4"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => console.log(basicDetails)}
+              className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
@@ -392,9 +779,7 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
   return (
     <div className="relative">
       <div className="flex w-full justify-between items-center mb-2">
-        <h6 className="text-lg md:text-xl font-medium text-zinc-800">
-          Work Experience
-        </h6>
+        <h6 className="text-lg font-medium text-zinc-800">Work Experience</h6>
         <button
           onClick={() => {
             setNewExperienceModal(true);
@@ -1076,6 +1461,786 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
   );
 };
 
+export const CareerHighlight: React.FC<{ profileData: any }> = ({
+  profileData,
+}) => {
+  const [newExperienceModal, setNewExperienceModal] = useState(false);
+  const [selectedCareer, setSelectedCareer] = useState<any>(null);
+  const [showAll, setShowAll] = useState(false);
+  const [editModal, setEditModal] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [skills, setSkills] = useState<string[]>([]);
+  const [newSkill, setNewSkill] = useState("");
+  const [careerData, setCareerData] = useState({
+    title: "",
+    description: "",
+    thumbnail: "",
+    link: "",
+    skills: [],
+  });
+  const [showUpload, setShowUpload] = useState(false);
+  const [showLinkForm, setShowLinkForm] = useState(false);
+  const [showMediaForm, setShowMediaForm] = useState(false);
+
+  const addSkill = () => {
+    if (newSkill && !skills.includes(newSkill)) {
+      setSkills([...skills, newSkill]);
+      setNewSkill("");
+    }
+  };
+
+  const removeSkill = (skill: string) => {
+    setSkills(skills.filter((s) => s !== skill));
+  };
+
+
+  return (
+    <div className="relative">
+      <div className="flex w-full justify-between items-center mb-2">
+        <h6 className="text-lg font-medium text-zinc-800">Career Highlights</h6>
+        <button
+          onClick={() => {
+            setNewExperienceModal(true);
+          }}
+          className="hover:bg-slate-100/50 rounded-full p-2"
+        >
+          <BsPlusLg size={18} />
+        </button>
+      </div>
+      <div className="grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-3">
+        {profileData?.career_highlights &&
+          (showAll
+            ? profileData.career_highlights
+            : profileData.career_highlights.slice(0, 3)
+          ).map((item: any, index: number) => (
+            <div
+              key={index}
+              className="border border-stroke hover:shadow-md cursor-pointer rounded-lg shadow-sm bg-white p-3"
+              onClick={() => {
+                setSkills(item?.skills);
+                setSelectedCareer(item);
+              }}
+            >
+              {!item?.thumbnail && (
+                <div className="w-full text-primary bg-[#EFF6FFCC] h-40 flex justify-center items-center">
+                  <FaImage size={40} />
+                </div>
+              )}
+              <div className="flex justify-between items-start mb-3 pt-2">
+                <div>
+                  <h6 className="text-base font-medium text-zinc-800 mb-0">
+                    {item?.title}
+                  </h6>
+                </div>
+                <div className="flex items-center">
+                  <button
+                    onClick={() => {
+                      setDeleteModal(true);
+                    }}
+                    className="hover:bg-danger/10 hover:text-danger text-zinc-500 rounded-full h-8 w-8 flex items-center justify-center"
+                  >
+                    <BsTrash size={14} />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditModal(true);
+                    }}
+                    className="hover:bg-primary/10 hover:text-primary rounded-full text-zinc-500 h-8 w-8 flex items-center justify-center"
+                  >
+                    <LuPencil size={14} />
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <p className="font-normal text-sm text-zinc-500 pb-4">
+                  {item?.description}
+                </p>
+              </div>
+            </div>
+          ))}
+      </div>
+
+      <div className="py-5 w-full flex justify-center items-center">
+        {profileData?.career_highlights.length > 3 && (
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="text-primary flex gap-1.5 items-center py-3 text-lg"
+          >
+            {showAll ? "See Less" : "Show More"}
+            <span>{!showAll ? <IoIosArrowDown /> : <IoIosArrowUp />}</span>
+          </button>
+        )}
+      </div>
+
+      <Modal
+        show={newExperienceModal}
+        onHide={() => {
+          setShowUpload(false);
+          setNewExperienceModal(false);
+        }}
+        title="Career Highlight"
+        size="max-w-[700px] w-full"
+      >
+        <div>
+          <div className="no-scrollbar h-[65vh] max-sm:h-[70vh] overflow-y-auto pr-2">
+            <div className="mb-6">
+              <label
+                htmlFor="title"
+                className="text-sm font-medium text-gray-700 flex items-center gap-1"
+              >
+                Title{" "}
+                <span>
+                  <FaStarOfLife className="text-danger" size={8} />
+                </span>
+              </label>
+              <input
+                type="text"
+                id="title"
+                value={careerData?.title}
+                onChange={(e) =>
+                  setCareerData((data: any) => ({
+                    ...data,
+                    title: e.target.value,
+                  }))
+                }
+                placeholder="Ex: Project Manager"
+                className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              />
+            </div>
+            <div className="w-full mb-5">
+              <label
+                className="mb-[0.7rem] block text-sm font-normal text-zinc-800 dark:text-white"
+                htmlFor="description"
+              >
+                Description
+              </label>
+              <div className="relative rounded-lg border border-stroke">
+                <textarea
+                  className={`
+                     w-full 
+                     py-3 pl-4.5 pr-4.5 text-zinc-800 font-normal border-none rounded-lg
+                     focus:border-primary/50 focus-visible:outline-none custom-scrollbar
+                     dark:border-strokedark dark:bg-meta-4
+                     dark:text-white dark:focus:border-primary `}
+                  name={`Description`}
+                  placeholder="Enter a short description"
+                  value={careerData?.description}
+                  onChange={(e) =>
+                    setCareerData((data: any) => ({
+                      ...data,
+                      description: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="mb-4 bg-[#EFF6FF80] px-3 py-4 rounded-lg">
+            <div className="mb-6">
+                  <label
+                    htmlFor="competencies"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    <p className="text-lg font-semibold mb-1">Skills</p>{" "}
+                    <p className="text-sm font-normal">
+                      Show your top skills - add up to 5 skills
+                    </p>
+                  </label>
+                  <div className="flex flex-wrap gap-2 mt-4 border-b pb-1.5 border-neutral-200">
+                    {skills.map((skill) => (
+                      <span
+                        key={skill}
+                        className="flex items-center text-sm px-3 py-1 rounded-full"
+                      >
+                        {skill}
+                        <button
+                          type="button"
+                          onClick={() => removeSkill(skill)}
+                          className="ml-2 text-lg px-1.5 py-[1px] rounded-md hover:bg-red-600/10 text-zinc-600 hover:text-red-700"
+                        >
+                          &times;
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  <div className="mt-4 mb-5 flex">
+                    <input
+                      type="text"
+                      value={newSkill}
+                      onChange={(e) => setNewSkill(e.target.value)}
+                      placeholder="Add a new skill"
+                      className="flex-1 rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={addSkill}
+                      className="ml-2 px-4 py-2 bg-indigo-500 text-white text-sm rounded-md hover:bg-indigo-600"
+                    >
+                      Add
+                    </button>
+                  </div>
+                  <div className="bg-white rounded-lg py-4 px-3 border border-stroke">
+                    <p className="text-sm text-zinc-500 mb-2">
+                      Suggested skills based on your title
+                    </p>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      {profileData?.suggested_skills
+                        ?.filter((skill: string) => !skills.includes(skill))
+                        .map((skill: string) => (
+                          <span
+                            key={skill}
+                            className="flex items-center text-sm px-3 py-1 border border-stroke rounded-full"
+                          >
+                            {skill}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSkills([...skills, skill]);
+                              }}
+                              className="ml-2 text-lg px-1 py-[1px] rounded-md hover:bg-primary/10 text-zinc-600 hover:text-primary"
+                            >
+                              <BsPlus />
+                            </button>
+                          </span>
+                        ))}
+                    </div>
+                  </div>
+              </div>
+              <div className="relative mb-6 max-w-[280px]">
+                <Dropdown2
+                  buttonContent={
+                    <span className="flex cursor-pointer max-w-[160px] text-[15px] text-primary border border-primary rounded-full w-auto py-1.5 px-4 items-center gap-2">
+                      <BsPlus size={22} /> Add Media
+                    </span>
+                  }
+                >
+                  <div
+                    onClick={() => {
+                      setShowMediaForm(false);
+                      setShowLinkForm(true);
+                    }}
+                    className="flex gap-1.5 items-start px-3 text-sm py-1.5 mt-1.5 cursor-pointer hover:bg-primary/5 hover:text-primary"
+                  >
+                    <span>
+                      <HiMiniLink className="mt-1" />{" "}
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium text-black">
+                        Add a Link
+                      </p>
+                      <p className="text-xs font-normal text-zinc-500">
+                        Attach a link to a video, website or articles.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    onClick={() => {
+                      setShowLinkForm(false);
+                      setShowMediaForm(true);
+                    }}
+                    className="flex gap-1.5 items-start px-3 text-sm py-1.5 cursor-pointer hover:bg-primary/5 hover:text-primary"
+                  >
+                    <span>
+                      <BiImageAdd className="mt-1" />{" "}
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium text-black">
+                        Add Media
+                      </p>
+                      <p className="text-xs font-normal text-zinc-500">
+                        Upload pictures, presentations, or documents
+                      </p>
+                    </div>
+                  </div>
+                </Dropdown2>
+              </div>
+
+              {showMediaForm && (
+                <div className="md:px-2 relative flex gap-3 items-start mb-6">
+                  <FileUpload>
+                    <p className="font-bold text-neutral-700 text-center text-lg pt-4">
+                      Drag & drop your file here
+                    </p>
+
+                    <p className="text-neutral-500 text-center text-base">
+                      or click to browse your files
+                    </p>
+
+                    <div className="flex gap-5 text-sm text-neutral-500 items-center justify-center w-full mt-3">
+                      <p className="flex items-center gap-1">
+                        <span>
+                          <FaRegFile />
+                        </span>
+                        PNG, JPG, JPEG, MP4, MP3
+                      </p>
+
+                      <span>
+                        <FaCircle size={4} className="rounded-full" />
+                      </span>
+                      <p className="flex items-center gap-1">
+                        <span>
+                          <FiUpload />
+                        </span>
+                        Max size 10MB
+                      </p>
+                    </div>
+                  </FileUpload>
+                  <span
+                    onClick={() => setShowMediaForm(false)}
+                    className="w-6 text-zinc-400 cursor-pointer h-6 flex justify-center items-center rounded-full text-lg"
+                  >
+                    <BsXCircleFill size={22} />
+                  </span>
+                </div>
+              )}
+              {showLinkForm && (
+                <div className="md:px-2 relative w-full flex gap-3 items-start mb-6">
+                  <div className="w-[80%]">
+                    <div className="mb-6">
+                      <label
+                        htmlFor="link"
+                        className="text-sm font-medium text-gray-700 flex items-center gap-1"
+                      >
+                        Link <span></span>
+                      </label>
+                      <input
+                        type="text"
+                        id="link"
+                        value={careerData?.link}
+                        onChange={(e) =>
+                          setCareerData((data: any) => ({
+                            ...data,
+                            link: e.target.value,
+                          }))
+                        }
+                        placeholder="Paste your link here"
+                        className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      />
+                    </div>
+                  </div>
+                  <span
+                    onClick={() => setShowLinkForm(false)}
+                    className="w-6 text-zinc-400 cursor-pointer h-6 flex justify-center items-center rounded-full text-lg"
+                  >
+                    <BsXCircleFill size={22} />
+                  </span>
+                </div>
+              )}
+              <div>
+                <p className="font-semibold text-black mb-2 px-2">Thumbnail</p>
+                {!showUpload ? (
+                  <div className="flex gap-3 items-start md:px-2">
+                    <div className="w-[240px] border border-stroke rounded-xl text-primary bg-[#EFF6FFCC] h-40 flex justify-center items-center">
+                      <FaImage size={40} />
+                    </div>
+                    <span
+                      onClick={() => setShowUpload(true)}
+                      className="w-6 bg-white cursor-pointer h-6 flex justify-center items-center rounded-full text-lg text-black"
+                    >
+                      <LuPencil />
+                    </span>
+                  </div>
+                ) : (
+                  <div className="md:px-2 relative flex gap-3 items-start">
+                    <FileUpload>
+                      <p className="font-bold text-neutral-700 text-center text-lg pt-4">
+                        Drag & drop your image here
+                      </p>
+
+                      <p className="text-neutral-500 text-center text-base">
+                        or click to browse your files
+                      </p>
+
+                      <div className="flex gap-5 text-sm text-neutral-500 items-center justify-center w-full mt-3">
+                        <p className="flex items-center gap-1">
+                          <span>
+                            <FaRegFile />
+                          </span>
+                          PNG, JPG, JPEG
+                        </p>
+
+                        <span>
+                          <FaCircle size={4} className="rounded-full" />
+                        </span>
+                        <p className="flex items-center gap-1">
+                          <span>
+                            <FiUpload />
+                          </span>
+                          Max size 5MB
+                        </p>
+                      </div>
+                    </FileUpload>
+                    <span
+                      onClick={() => setShowUpload(false)}
+                      className="w-6 text-zinc-400 cursor-pointer h-6 flex justify-center items-center rounded-full text-lg"
+                    >
+                      <BsXCircleFill size={22} />
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="w-full border-t flex bg-white mt-3 pt-4 justify-between items-center border-stroke">
+              <button
+                onClick={() => {
+                  setNewExperienceModal(false);
+                }}
+                className="text-zinc-600 hover:scale-105 font-medium py-1.5 px-4"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => console.log(careerData)}
+                className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </Modal>
+      <Modal
+        show={editModal}
+        onHide={() => {
+          setEditModal(false);
+        }}
+        title="Edit Career Highlight"
+        size="max-w-[700px] w-full"
+      >
+        <div>
+          <div className="no-scrollbar h-[65vh] max-sm:h-[70vh] overflow-y-auto pr-2">
+            <div className="mb-6">
+              <label
+                htmlFor="title"
+                className="text-sm font-medium text-gray-700 flex items-center gap-1"
+              >
+                Title{" "}
+                <span>
+                  <FaStarOfLife className="text-danger" size={8} />
+                </span>
+              </label>
+              <input
+                type="text"
+                id="title"
+                value={selectedCareer?.title}
+                onChange={(e) =>
+                  setSelectedCareer((data: any) => ({
+                    ...data,
+                    title: e.target.value,
+                  }))
+                }
+                placeholder="Ex: Project Manager"
+                className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              />
+            </div>
+
+            <div className="w-full mb-5">
+              <label
+                className="mb-[0.7rem] block text-sm font-normal text-zinc-800 dark:text-white"
+                htmlFor="description"
+              >
+                Description
+              </label>
+              <div className="relative rounded-lg border border-stroke">
+                <textarea
+                  className={`
+                     w-full 
+                     py-3 pl-4.5 pr-4.5 text-zinc-800 font-normal border-none rounded-lg
+                     focus:border-primary/50 focus-visible:outline-none custom-scrollbar
+                     dark:border-strokedark dark:bg-meta-4
+                     dark:text-white dark:focus:border-primary `}
+                  name={`Description`}
+                  placeholder="Enter a short description"
+                  value={selectedCareer?.description}
+                  onChange={(e) =>
+                    setSelectedCareer((data: any) => ({
+                      ...data,
+                      description: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+            <div className="mb-4 bg-[#EFF6FF80] px-3 py-4 rounded-lg">
+            <div className="mb-6">
+              <label
+                htmlFor="skills"
+                className="block text-sm font-medium text-gray-700"
+              >
+                <p className="text-lg font-semibold mb-1">Skills</p>{" "}
+                <p className="text-sm font-normal">
+                  Show your top skills - add up to 5 skills 
+                </p>
+              </label>
+
+              <div className="flex flex-wrap gap-2 mt-4 border-b pb-1.5 border-neutral-200">
+                {skills?.map((skill) => (
+                   <span
+                   key={skill}
+                   className="flex items-center text-sm px-3 py-1 rounded-full"
+                 >
+                   {skill}
+                   <button
+                     type="button"
+                     onClick={() => removeSkill(skill)}
+                     className="ml-2 text-lg px-1.5 py-[1px] rounded-md hover:bg-red-600/10 text-zinc-600 hover:text-red-700"
+                   >
+                     &times;
+                   </button>
+                 </span>
+                ))}
+              </div>
+              <div className="mt-4 mb-5 flex">
+                <input
+                  type="text"
+                  value={newSkill}
+                  onChange={(e) => setNewSkill(e.target.value)}
+                  placeholder="Add a new skill"
+                  className="flex-1 rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={addSkill}
+                  className="ml-2 px-4 py-2 bg-indigo-500 text-white text-sm rounded-md hover:bg-indigo-600"
+                >
+                  Add
+                </button>
+              </div>
+              <div className="bg-white rounded-lg py-4 px-3 border border-stroke">
+                <p className="text-sm text-zinc-500 mb-2">
+                  Suggested skills based on your title
+                </p>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  {profileData?.suggested_skills
+                    ?.filter((skill: string) => !skills.includes(skill))
+                    .map((skill: string) => (
+                      <span
+                        key={skill}
+                        className="flex items-center text-sm px-3 py-1 border border-stroke rounded-full"
+                      >
+                        {skill}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSkills([...skills, skill]);
+                          }}
+                          className="ml-2 text-lg px-1 py-[1px] rounded-md hover:bg-primary/10 text-zinc-600 hover:text-primary"
+                        >
+                          <BsPlus />
+                        </button>
+                      </span>
+                    ))}
+                </div>
+              </div>
+            </div>
+            <div className="relative mb-6 max-w-[280px]">
+                <Dropdown2
+                  buttonContent={
+                    <span className="flex cursor-pointer max-w-[160px] text-[15px] text-primary border border-primary rounded-full w-auto py-1.5 px-4 items-center gap-2">
+                      <BsPlus size={22} /> Add Media
+                    </span>
+                  }
+                >
+                  <div
+                    onClick={() => {
+                      setShowMediaForm(false);
+                      setShowLinkForm(true);
+                    }}
+                    className="flex gap-1.5 items-start px-3 text-sm py-1.5 mt-1.5 cursor-pointer hover:bg-primary/5 hover:text-primary"
+                  >
+                    <span>
+                      <HiMiniLink className="mt-1" />{" "}
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium text-black">
+                        Add a Link
+                      </p>
+                      <p className="text-xs font-normal text-zinc-500">
+                        Attach a link to a video, website or articles.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    onClick={() => {
+                      setShowLinkForm(false);
+                      setShowMediaForm(true);
+                    }}
+                    className="flex gap-1.5 items-start px-3 text-sm py-1.5 cursor-pointer hover:bg-primary/5 hover:text-primary"
+                  >
+                    <span>
+                      <BiImageAdd className="mt-1" />{" "}
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium text-black">
+                        Add Media
+                      </p>
+                      <p className="text-xs font-normal text-zinc-500">
+                        Upload pictures, presentations, or documents
+                      </p>
+                    </div>
+                  </div>
+                </Dropdown2>
+              </div>
+
+              {showMediaForm && (
+                <div className="md:px-2 relative flex gap-3 items-start mb-6">
+                  <FileUpload>
+                    <p className="font-bold text-neutral-700 text-center text-lg pt-4">
+                      Drag & drop your file here
+                    </p>
+
+                    <p className="text-neutral-500 text-center text-base">
+                      or click to browse your files
+                    </p>
+
+                    <div className="flex gap-5 text-sm text-neutral-500 items-center justify-center w-full mt-3">
+                      <p className="flex items-center gap-1">
+                        <span>
+                          <FaRegFile />
+                        </span>
+                        PNG, JPG, JPEG, MP4, MP3
+                      </p>
+
+                      <span>
+                        <FaCircle size={4} className="rounded-full" />
+                      </span>
+                      <p className="flex items-center gap-1">
+                        <span>
+                          <FiUpload />
+                        </span>
+                        Max size 10MB
+                      </p>
+                    </div>
+                  </FileUpload>
+                  <span
+                    onClick={() => setShowMediaForm(false)}
+                    className="w-6 text-zinc-400 cursor-pointer h-6 flex justify-center items-center rounded-full text-lg"
+                  >
+                    <BsXCircleFill size={22} />
+                  </span>
+                </div>
+              )}
+              {showLinkForm && (
+                <div className="md:px-2 relative w-full flex gap-3 items-start mb-6">
+                  <div className="w-[80%]">
+                    <div className="mb-6">
+                      <label
+                        htmlFor="link"
+                        className="text-sm font-medium text-gray-700 flex items-center gap-1"
+                      >
+                        Link <span></span>
+                      </label>
+                      <input
+                        type="text"
+                        id="link"
+                        value={careerData?.link}
+                        onChange={(e) =>
+                          setCareerData((data: any) => ({
+                            ...data,
+                            link: e.target.value,
+                          }))
+                        }
+                        placeholder="Paste your link here"
+                        className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      />
+                    </div>
+                  </div>
+                  <span
+                    onClick={() => setShowLinkForm(false)}
+                    className="w-6 text-zinc-400 cursor-pointer h-6 flex justify-center items-center rounded-full text-lg"
+                  >
+                    <BsXCircleFill size={22} />
+                  </span>
+                </div>
+              )}
+              <div>
+                <p className="font-semibold text-black mb-2 px-2">Thumbnail</p>
+                {!showUpload ? (
+                  <div className="flex gap-3 items-start md:px-2">
+                    <div className="w-[240px] border border-stroke rounded-xl text-primary bg-[#EFF6FFCC] h-40 flex justify-center items-center">
+                      <FaImage size={40} />
+                    </div>
+                    <span
+                      onClick={() => setShowUpload(true)}
+                      className="w-6 bg-white cursor-pointer h-6 flex justify-center items-center rounded-full text-lg text-black"
+                    >
+                      <LuPencil />
+                    </span>
+                  </div>
+                ) : (
+                  <div className="md:px-2 relative flex gap-3 items-start">
+                    <FileUpload>
+                      <p className="font-bold text-neutral-700 text-center text-lg pt-4">
+                        Drag & drop your image here
+                      </p>
+
+                      <p className="text-neutral-500 text-center text-base">
+                        or click to browse your files
+                      </p>
+
+                      <div className="flex gap-5 text-sm text-neutral-500 items-center justify-center w-full mt-3">
+                        <p className="flex items-center gap-1">
+                          <span>
+                            <FaRegFile />
+                          </span>
+                          PNG, JPG, JPEG
+                        </p>
+
+                        <span>
+                          <FaCircle size={4} className="rounded-full" />
+                        </span>
+                        <p className="flex items-center gap-1">
+                          <span>
+                            <FiUpload />
+                          </span>
+                          Max size 5MB
+                        </p>
+                      </div>
+                    </FileUpload>
+                    <span
+                      onClick={() => setShowUpload(false)}
+                      className="w-6 text-zinc-400 cursor-pointer h-6 flex justify-center items-center rounded-full text-lg"
+                    >
+                      <BsXCircleFill size={22} />
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="w-full border-t flex bg-white mt-3 pt-4 justify-between items-center border-stroke">
+            <button
+              onClick={() => {
+                setEditModal(false);
+              }}
+              className="text-zinc-600 hover:scale-105 font-medium py-1.5 px-4"
+            >
+              Close
+            </button>
+            <button className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium">
+              Update
+            </button>
+          </div>
+        </div>
+      </Modal>
+      <Delete
+        show={deleteModal}
+        onHide={() => {
+          setDeleteModal(false);
+        }}
+        title={`Delete ${selectedCareer?.title} ?`}
+        desc={`Are you sure you want to delete this item from your career highlights? This action is irreversible`}
+        onProceed={() => {}}
+      ></Delete>
+    </div>
+  );
+};
+
 export const VolunteerExperience: React.FC<{ profileData: any }> = ({
   profileData,
 }) => {
@@ -1160,7 +2325,7 @@ export const VolunteerExperience: React.FC<{ profileData: any }> = ({
   return (
     <div className="relative">
       <div className="flex w-full justify-between items-center mb-2">
-        <h6 className="text-lg md:text-xl font-medium text-zinc-800">
+        <h6 className="text-lg font-medium text-zinc-800">
           Volunteer Experience
         </h6>
         <button
@@ -1927,9 +3092,7 @@ export const Internships: React.FC<{ profileData: any }> = ({
   return (
     <div className="relative">
       <div className="flex w-full justify-between items-center mb-2">
-        <h6 className="text-lg md:text-xl font-medium text-zinc-800">
-          Internships
-        </h6>
+        <h6 className="text-lg font-medium text-zinc-800">Internships</h6>
         <button
           onClick={() => {
             setNewExperienceModal(true);
@@ -2628,9 +3791,7 @@ export const Education: React.FC<{ profileData: any }> = ({ profileData }) => {
   return (
     <div className="relative">
       <div className="flex w-full justify-between items-center mb-2">
-        <h6 className="text-lg md:text-xl font-medium text-zinc-800">
-          Education
-        </h6>
+        <h6 className="text-lg font-medium text-zinc-800">Education</h6>
         <button
           onClick={() => {
             setNewItemModal(true);
@@ -3042,7 +4203,7 @@ export const Certifications: React.FC<{ profileData: any }> = ({
   return (
     <div className="relative">
       <div className="flex w-full justify-between items-center mb-2">
-        <h6 className="text-lg md:text-xl font-medium text-zinc-800">
+        <h6 className="text-lg font-medium text-zinc-800">
           Certifications and Trainings
         </h6>
         <button
@@ -3326,7 +4487,7 @@ export const ProfessionalReference: React.FC<{ profileData: any }> = ({
   return (
     <div className="relative">
       <div className="flex w-full justify-between items-center mb-2">
-        <h6 className="text-lg md:text-xl font-medium text-zinc-800">
+        <h6 className="text-lg font-medium text-zinc-800">
           Professional Reference
         </h6>
         <button
@@ -3487,7 +4648,6 @@ export const ProfessionalReference: React.FC<{ profileData: any }> = ({
                   className="text-sm font-medium text-gray-700 flex items-center gap-1"
                 >
                   Email{" "}
-                 
                 </label>
                 <input
                   type="email"
@@ -3510,7 +4670,6 @@ export const ProfessionalReference: React.FC<{ profileData: any }> = ({
                   className="text-sm font-medium text-gray-700 mb-[0.4rem] flex items-center gap-1"
                 >
                   Phone Number{" "}
-                 
                 </label>
                 <PhoneInput
                   international
@@ -3661,7 +4820,6 @@ export const ProfessionalReference: React.FC<{ profileData: any }> = ({
                   className="text-sm font-medium text-gray-700 flex items-center gap-1"
                 >
                   Email{" "}
-                 
                 </label>
                 <input
                   type="email"
@@ -3679,12 +4837,11 @@ export const ProfessionalReference: React.FC<{ profileData: any }> = ({
                 />
               </div>
               <div className="mb-6">
-              <label
+                <label
                   htmlFor="phone"
                   className="text-sm font-medium text-gray-700 mb-[0.4rem] flex items-center gap-1"
                 >
                   Phone Number{" "}
-                 
                 </label>
                 <PhoneInput
                   international
@@ -3750,6 +4907,367 @@ export const ProfessionalReference: React.FC<{ profileData: any }> = ({
         }}
         title={`Delete ${selectedItem?.name} ?`}
         desc={`Are you sure you want to delete this item from your professional references data? This action is irreversible`}
+        onProceed={() => {}}
+      ></Delete>
+    </div>
+  );
+};
+
+export const Memberships: React.FC<{ profileData: any }> = ({
+  profileData,
+}) => {
+  const [newItemModal, setNewItemModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [editModal, setEditModal] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [membershipData, setMembershipData] = useState({
+    title: "",
+    role: "",
+    start_year: new Date(),
+    end_year: new Date(),
+    active: false,
+  });
+
+  return (
+    <div className="relative">
+      <div className="flex w-full justify-between items-center mb-2">
+        <h6 className="text-lg font-medium text-zinc-800">
+          Membership & Affiliation
+        </h6>
+        <button
+          onClick={() => {
+            setNewItemModal(true);
+          }}
+          className="hover:bg-slate-100/50 rounded-full p-2"
+        >
+          <BsPlusLg size={18} />
+        </button>
+      </div>
+      <div className="flex 2xl:flex-row flex-col w-full gap-4">
+        {profileData?.memberships?.map((item: any, index: number) => (
+          <div
+            key={index}
+            onClick={() => {
+              setSelectedItem(item);
+            }}
+            className="border border-stroke h-full rounded-lg shadow-sm bg-white p-3"
+          >
+            <div className="flex w-full items-start gap-4">
+              <span className="text-zinc-500 text-lg mt-2">
+                {" "}
+                <FaRegUserCircle size={18} />
+              </span>
+              <div className="flex w-full justify-between items-start mb-3">
+                <div>
+                  <h6 className="md:text-lg text-base break-words font-medium text-zinc-800 mb-0">
+                    {item?.title}
+                  </h6>
+                  <p className=" text-primary max-md:text-sm mb-2">
+                    {item?.role}
+                  </p>
+                </div>
+                <div className="flex items-center">
+                  <button
+                    onClick={() => {
+                      setDeleteModal(true);
+                    }}
+                    className="hover:bg-danger/10 hover:text-danger text-zinc-500 rounded-full h-8 w-8 flex items-center justify-center"
+                  >
+                    <BsTrash size={14} />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditModal(true);
+                    }}
+                    className="hover:bg-primary/10 hover:text-primary rounded-full text-zinc-500 h-8 w-8 flex items-center justify-center"
+                  >
+                    <LuPencil size={14} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <Modal
+        show={newItemModal}
+        onHide={() => setNewItemModal(false)}
+        title="Membership & Affiliations"
+        size="max-w-[700px] w-full"
+      >
+        <div>
+          <div className="no-scrollbar h-[65vh] max-sm:h-[70vh] overflow-y-auto pr-2">
+            <div className="mb-6">
+              <label
+                htmlFor="title"
+                className="text-sm font-medium text-gray-700 flex items-center gap-1"
+              >
+                Title{" "}
+                <span>
+                  <FaStarOfLife className="text-danger" size={8} />
+                </span>
+              </label>
+              <input
+                type="text"
+                id="title"
+                value={membershipData?.title}
+                onChange={(e) =>
+                  setMembershipData((data: any) => ({
+                    ...data,
+                    title: e.target.value,
+                  }))
+                }
+                placeholder="Ex: Web Development"
+                className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              />
+            </div>
+            <div className="mb-6">
+              <label
+                htmlFor="role"
+                className="text-sm font-medium text-gray-700 flex items-center gap-1"
+              >
+                Role{" "}
+                <span>
+                  <FaStarOfLife className="text-danger" size={8} />
+                </span>
+              </label>
+              <input
+                type="text"
+                id="role"
+                value={membershipData?.role}
+                onChange={(e) =>
+                  setMembershipData((data: any) => ({
+                    ...data,
+                    role: e.target.value,
+                  }))
+                }
+                placeholder="Role: (Ex: Senior Member)"
+                className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              />
+            </div>
+            <FormGroup>
+              <div>
+                <p className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                  Start date{" "}
+                  <span>
+                    <FaStarOfLife className="text-danger" size={8} />
+                  </span>
+                </p>
+                <DatePicker
+                  selected={membershipData.start_year}
+                  onChange={(date) =>
+                    setMembershipData((s: any) => ({
+                      ...s,
+                      start_year: date,
+                    }))
+                  }
+                  showYearPicker
+                  icon={<FcCalendar />}
+                  showIcon
+                  toggleCalendarOnIconClick
+                  showPopperArrow={false}
+                  dateFormat="yyyy"
+                />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-700">End Date</p>
+                <DatePicker
+                  selected={membershipData.end_year}
+                  onChange={(date) =>
+                    setMembershipData((s: any) => ({
+                      ...s,
+                      end_year: date,
+                    }))
+                  }
+                  showYearPicker
+                  icon={<FcCalendar />}
+                  showIcon
+                  toggleCalendarOnIconClick
+                  showPopperArrow={false}
+                  dateFormat="yyyy"
+                />
+              </div>
+            </FormGroup>
+            <div className="gap-2 flex items-center text-sm font-medium text-gray-700 mb-7.5 w-full pl-1">
+              <input
+                type="checkbox"
+                id="active"
+                name="active"
+                checked={membershipData?.active}
+                onChange={(e) =>
+                  setMembershipData((data: any) => ({
+                    ...data,
+                    active: e.target.checked,
+                  }))
+                }
+                className="text-sm rounded-sm border-stroke focus:border-stroke focus:ring-primary/40"
+              />
+              <label htmlFor="active" className="dark:text-slate-100 text-sm">
+                I am currently active in this field
+              </label>
+            </div>
+          </div>
+          <div className="w-full border-t flex bg-white mt-3 pt-4 justify-between items-center border-stroke">
+            <button
+              onClick={() => {
+                setNewItemModal(false);
+              }}
+              className="text-zinc-600 hover:scale-105 font-medium py-1.5 px-4"
+            >
+              Close
+            </button>
+            <button
+              onClick={() => console.log(membershipData)}
+              className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </Modal>
+      <Modal
+        show={editModal}
+        onHide={() => {
+          setEditModal(false);
+        }}
+        title="Edit Membership & Affiliation"
+        size="max-w-[700px] w-full"
+      >
+        <div>
+          <div className="no-scrollbar h-[65vh] max-sm:h-[70vh] overflow-y-auto pr-2">
+            <div className="mb-6">
+              <label
+                htmlFor="title"
+                className="text-sm font-medium text-gray-700 flex items-center gap-1"
+              >
+                Title{" "}
+                <span>
+                  <FaStarOfLife className="text-danger" size={8} />
+                </span>
+              </label>
+              <input
+                type="text"
+                id="title"
+                value={selectedItem?.title}
+                onChange={(e) =>
+                  setSelectedItem((data: any) => ({
+                    ...data,
+                    title: e.target.value,
+                  }))
+                }
+                placeholder="Ex: Web Development"
+                className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              />
+            </div>
+            <div className="mb-6">
+              <label
+                htmlFor="role"
+                className="text-sm font-medium text-gray-700 flex items-center gap-1"
+              >
+                Role{" "}
+                <span>
+                  <FaStarOfLife className="text-danger" size={8} />
+                </span>
+              </label>
+              <input
+                type="text"
+                id="role"
+                value={selectedItem?.role}
+                onChange={(e) =>
+                  setSelectedItem((data: any) => ({
+                    ...data,
+                    role: e.target.value,
+                  }))
+                }
+                placeholder="Ex: Senior Member"
+                className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              />
+            </div>
+            <FormGroup>
+              <div>
+                <p className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                  Start date{" "}
+                  <span>
+                    <FaStarOfLife className="text-danger" size={8} />
+                  </span>
+                </p>
+                <DatePicker
+                  selected={selectedItem?.start_year}
+                  onChange={(date) =>
+                    setSelectedItem((s: any) => ({
+                      ...s,
+                      start_year: date,
+                    }))
+                  }
+                  showYearPicker
+                  icon={<FcCalendar />}
+                  showIcon
+                  toggleCalendarOnIconClick
+                  showPopperArrow={false}
+                  dateFormat="yyyy"
+                />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-700">End Date</p>
+                <DatePicker
+                  selected={selectedItem?.end_year}
+                  onChange={(date) =>
+                    setSelectedItem((s: any) => ({
+                      ...s,
+                      end_year: date,
+                    }))
+                  }
+                  showYearPicker
+                  icon={<FcCalendar />}
+                  showIcon
+                  toggleCalendarOnIconClick
+                  showPopperArrow={false}
+                  dateFormat="yyyy"
+                />
+              </div>
+            </FormGroup>
+            <div className="gap-2 flex items-center text-sm font-medium text-gray-700 mb-7.5 w-full pl-1">
+              <input
+                type="checkbox"
+                id="active"
+                name="active"
+                checked={selectedItem?.active}
+                onChange={(e) =>
+                  setSelectedItem((data: any) => ({
+                    ...data,
+                    active: e.target.checked,
+                  }))
+                }
+                className="text-sm rounded-sm border-stroke focus:border-stroke focus:ring-primary/40"
+              />
+              <label htmlFor="active" className="dark:text-slate-100 text-sm">
+                I am currently active in this field
+              </label>
+            </div>
+          </div>
+          <div className="w-full border-t flex bg-white mt-3 pt-4 justify-between items-center border-stroke">
+            <button
+              onClick={() => {
+                setEditModal(false);
+              }}
+              className="text-zinc-600 hover:scale-105 font-medium py-1.5 px-4"
+            >
+              Close
+            </button>
+            <button className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium">
+              Update
+            </button>
+          </div>
+        </div>
+      </Modal>
+      <Delete
+        show={deleteModal}
+        onHide={() => {
+          setDeleteModal(false);
+        }}
+        title={`Delete ${selectedItem?.title} ?`}
+        desc={`Are you sure you want to delete this item from your membership data? This action is irreversible`}
         onProceed={() => {}}
       ></Delete>
     </div>

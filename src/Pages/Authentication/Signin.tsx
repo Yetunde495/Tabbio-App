@@ -123,7 +123,7 @@ const Signin: React.FC = () => {
               </span>
               <hr className="border-t-2  w-[30%] border-zinc-300" />
             </div>
-            <div className="flex w-full items-center justify-center gap-5">
+            <div className="flex w-full max-sm:gap-3 max-sm:px-1.5 items-center justify-center gap-5">
               <button
                 className="bg-transparent flex items-center justify-center gap-3 rounded-full hover:border-primary border border-slate-300 w-[200px] py-2 px-8"
                 onClick={() => {}}

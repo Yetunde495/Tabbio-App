@@ -19,13 +19,21 @@ import { CgFileDocument } from "react-icons/cg";
 import useColorMode from "../../hooks/useColorMode";
 import { FiTarget } from "react-icons/fi";
 import { BiBrain } from "react-icons/bi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoFlashOutline } from "react-icons/io5";
 import { Ratings } from "../../components/Rating";
 
 const CompanyLandingpage: React.FC = () => {
   const [colorMode, setColorMode] = useColorMode();
   const [hasEntered, setHasEntered] = useState(false);
+
+  useEffect(() => {
+    if (!hasEntered) {
+      if (typeof setColorMode === "function" && colorMode === "dark") {
+        setColorMode("light");
+      }
+    }
+  }, [hasEntered]);
   return (
     <Layout>
       <motion.section
@@ -35,7 +43,7 @@ const CompanyLandingpage: React.FC = () => {
             setColorMode("light");
           }
         }}
-        className="p-8 md:py-22 text grid grid-cols-1 gap-12 xl:max-w-7xl 2xl:max-w-full 2xl:px-[12rem] w-full mx-auto"
+        className="p-8 max-sm:px-4 md:py-22 text grid grid-cols-1 gap-12 xl:max-w-7xl 2xl:max-w-full 2xl:px-[12rem] w-full mx-auto"
       >
         <div className="text-center text-lg text-zinc-500">
           <p className="text-red-600 bg-red-100/50 inline-flex rounded-full items-center px-4 py-2 mb-6 text-sm gap-2">
@@ -99,7 +107,7 @@ const CompanyLandingpage: React.FC = () => {
         <div className="">
           <section className="overflow-hidden flex flex-col justify-center items-center relative">
             <motion.div
-              className="pb-[64px] relative flex justify-center items-center py-[10rem] px-8 lg:px-[4rem] 2xl:px-[12rem]"
+              className="pb-[64px] max-sm:px-4 relative flex justify-center items-center py-[10rem] px-8 lg:px-[4rem] 2xl:px-[12rem]"
               initial={{ y: 100, width: "90%" }}
               whileInView={{
                 y: -20,
@@ -182,7 +190,7 @@ const CompanyLandingpage: React.FC = () => {
             </motion.div>
 
             <motion.div
-              className="pb-[64px] mt-[80px] relative flex flex-col justify-center items-center rounded-[18px] bg-[#111827] py-[5rem] px-8 lg:px-[4rem] 2xl:px-[12rem]"
+              className="pb-[64px] max-sm:px-4 mt-[80px] relative flex flex-col justify-center items-center rounded-[18px] bg-[#111827] py-[5rem] px-8 lg:px-[4rem] 2xl:px-[12rem]"
               initial={{ y: 100, width: "80%" }}
               whileInView={{
                 y: -30,
@@ -288,7 +296,7 @@ const CompanyLandingpage: React.FC = () => {
             </motion.div>
 
             <motion.div
-              className="pb-[64px] relative flex justify-center items-center py-[10rem] px-8 lg:px-[4rem] 2xl:px-[12rem]"
+              className="pb-[64px] max-sm:px-4 relative flex justify-center items-center py-[10rem] px-8 lg:px-[4rem] 2xl:px-[12rem]"
               initial={{ y: 100, width: "90%" }}
               whileInView={{
                 y: -20,
@@ -376,7 +384,7 @@ const CompanyLandingpage: React.FC = () => {
         </div>
       </section>
 
-      <section className="py-[9%] px-8 lg:px-[4rem] 2xl:px-[12rem] bg-gradient-to-b from-[#F9fafb] to-white">
+      <section className="py-[9%] px-8 max-sm:px-4 lg:px-[4rem] 2xl:px-[12rem] bg-gradient-to-b from-[#F9fafb] to-white">
         <div>
           <div className="overflow-hidden flex flex-col">
             <motion.div

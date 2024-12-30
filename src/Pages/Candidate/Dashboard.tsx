@@ -5,31 +5,60 @@ import { useState } from "react";
 import Modal from "../../components/modal";
 import { Switch } from "../../components/form/Switch";
 import { CiEdit } from "react-icons/ci";
-import { BsCopy, BsEye, BsTwitterX, BsWhatsapp } from "react-icons/bs";
+import {
+  BsCopy,
+  BsDatabaseGear,
+  BsEye,
+  BsTwitterX,
+  BsWhatsapp,
+} from "react-icons/bs";
 import {
   MdInsertLink,
   MdKeyboardDoubleArrowLeft,
-  MdOutlineShield,
+  // MdOutlineShield,
   MdShare,
 } from "react-icons/md";
 import Drawer from "../../components/Drawer";
 import Button from "../../components/Button";
-import { FaCircle, FaFacebookF, FaLinkedinIn } from "react-icons/fa6";
+import {
+  FaCircle,
+  FaFacebookF,
+  FaLinkedinIn,
+  FaRegCalendar,
+} from "react-icons/fa6";
 import { AiOutlineBarChart } from "react-icons/ai";
-import { LuClock, LuExternalLink } from "react-icons/lu";
+import {
+  LuBriefcase,
+  LuClock,
+  LuContact,
+  LuExternalLink,
+  LuPencil,
+} from "react-icons/lu";
 import { CgFileDocument } from "react-icons/cg";
 import { Link, useNavigate } from "react-router-dom";
 import { FiExternalLink } from "react-icons/fi";
 import { SlSettings } from "react-icons/sl";
 import { TbCopy, TbWorld } from "react-icons/tb";
-import CandidateProfile from "../PageComponents/CandidateProfile";
 import ResumeAnalytics from "./ResumeAnalytics";
 import { UpgradeCandidateSubscription } from "../PageComponents/UpgradeSubscriptionModal";
 import { FcReddit } from "react-icons/fc";
 import { mockProfileData } from "../../data/mockData";
-import { Certifications, Education, Internships, ProfessionalReference, ProfileSummary, VolunteerExperience, WorkExperience } from "./SmartResumeComponents";
+import {
+  BasicDetails,
+  CareerHighlight,
+  Certifications,
+  Education,
+  Internships,
+  Memberships,
+  ProfessionalReference,
+  ProfileSummary,
+  VolunteerExperience,
+  WorkExperience,
+} from "./SmartResumeComponents";
 
-const SmartResumeSettings: React.FC = () => {
+const SmartResumeSettings: React.FC<{ profileData: any }> = ({
+  profileData,
+}) => {
   const { user, updateUser } = useApp();
   const [editLink, setEditLink] = useState(false);
   const prefix = "tabbio.link/";
@@ -37,6 +66,7 @@ const SmartResumeSettings: React.FC = () => {
     user?.resume_link || "tabbio.link/"
   );
   const [linkModal, setLinkModal] = useState(false);
+  const [contactPrivacyModal, setContactPrivacyModal] = useState(false);
   const [status, setStatus] = useState(true);
 
   return (
@@ -142,32 +172,24 @@ const SmartResumeSettings: React.FC = () => {
       </div>
 
       <div className="p-3">
-        <div className="flex items-center gap-1.5 mb-3">
-          <MdOutlineShield /> Privacy Controls
-        </div>
-        <div className="flex items-center gap-2 py-4 px-1 mb-5 shadow-md rounded-lg">
-          <TbWorld className="text-primary" size={16} />
+        <div className="flex items-center gap-2 border-t border-zinc-100 py-4 px-3 mb-5 shadow rounded-lg">
+          <LuBriefcase className="text-primary" size={16} />
           <div className="flex flex-col">
-            <span className="text-sm">Open to</span>
+            <span className="text-sm font-semibold">Open to</span>
             <span className="text-xs">
               Let recruiters know your availability
             </span>
           </div>
           <div className="ml-auto">
-            <Switch
-              value={status}
-              checked={user?.resume_link_active}
-              onChange={(value) => {
-                setStatus(value);
-              }}
-              size="sm"
-            />
+            <button className="text-zinc-500">
+              <LuPencil />
+            </button>
           </div>
-        </div>{" "}
-        <div className="flex items-center gap-2 py-4 px-1 mb-5 shadow-md rounded-lg">
-          <TbWorld className="text-primary" size={16} />
+        </div>
+        <div className="flex items-center border-t border-zinc-100 gap-2 py-4 px-3 mb-5 shadow rounded-lg">
+          <FaRegCalendar className="text-primary" size={16} />
           <div className="flex flex-col">
-            <span className="text-sm">Last Update Status</span>
+            <span className="text-sm font-semibold">Last Update Status</span>
             <span className="text-xs">
               Let recruiters know your update time
             </span>
@@ -182,39 +204,161 @@ const SmartResumeSettings: React.FC = () => {
               size="sm"
             />
           </div>
-        </div>{" "}
-        <div className="flex items-center gap-2 py-4 px-1 mb-5 shadow-md rounded-lg">
-          <TbWorld className="text-primary" size={16} />
+        </div>
+        <div className="flex items-center gap-2 border-t border-zinc-100 py-4 px-3 mb-5 shadow rounded-lg">
+          <LuContact className="text-primary" size={16} />
           <div className="flex flex-col">
             <span className="text-sm">Contact Privacy</span>
             <span className="text-xs">Showing all contact details</span>
           </div>
           <div className="ml-auto">
-            <Switch
-              value={status}
-              checked={user?.resume_link_active}
-              onChange={(value) => {
-                setStatus(value);
-              }}
-              size="sm"
-            />
+            <button
+              onClick={() => setContactPrivacyModal(true)}
+              className="text-zinc-500"
+            >
+              <LuPencil />
+            </button>
           </div>
         </div>
-        <div className="flex items-center gap-2 py-4 px-1 mb-5 shadow-md rounded-lg">
-          <TbWorld className="text-primary" size={16} />
-          <div className="flex flex-col">
-            <span className="text-sm">Education Dates</span>
-            <span className="text-xs">Showing graduation years</span>
+      </div>
+
+      <div className="p-3">
+        <div className="flex items-center text-lg gap-1.5 mb-3">
+          <BsDatabaseGear className="text-primary" /> Controls
+        </div>
+
+        <div className="flex flex-col gap-4 border-t border-zinc-100 py-4 px-3 mb-5 shadow rounded-lg">
+          <div className="flex text-sm items-center gap-3 justify-between">
+            <p>Profile Summary</p>
+            <div className="ml-auto flex items-center gap-1">
+              <span>
+                {profileData?.config?.professional_summary ? "+" : "-"}
+              </span>
+              <Switch
+                value={status}
+                checked={profileData?.config?.professional_summary}
+                onChange={(value) => {
+                  setStatus(value);
+                }}
+                size="sm"
+              />
+            </div>
           </div>
-          <div className="ml-auto">
-            <Switch
-              value={status}
-              checked={user?.resume_link_active}
-              onChange={(value) => {
-                setStatus(value);
-              }}
-              size="sm"
-            />
+          <div className="flex text-sm items-center gap-3 justify-between">
+            <p>Career Highlights</p>
+            <div className="ml-auto flex items-center gap-1">
+              <span>{profileData?.config?.career_highlights ? "+" : "-"}</span>
+              <Switch
+                value={status}
+                checked={profileData?.config?.career_highlights}
+                onChange={(value) => {
+                  setStatus(value);
+                }}
+                size="sm"
+              />
+            </div>
+          </div>
+          <div className="flex text-sm items-center gap-3 justify-between">
+            <p>Work Experience</p>
+            <div className="ml-auto flex items-center gap-1">
+              <span>{profileData?.config?.work_experience ? "+" : "-"}</span>
+              <Switch
+                value={status}
+                checked={profileData?.config?.work_experience}
+                onChange={(value) => {
+                  setStatus(value);
+                }}
+                size="sm"
+              />
+            </div>
+          </div>
+          <div className="flex text-sm items-center gap-3 justify-between">
+            <p>Volunteer Experience</p>
+            <div className="ml-auto flex items-center gap-1">
+              <span>
+                {profileData?.config?.volunteer_experience ? "+" : "-"}
+              </span>
+              <Switch
+                value={status}
+                checked={profileData?.config?.volunteer_experience}
+                onChange={(value) => {
+                  setStatus(value);
+                }}
+                size="sm"
+              />
+            </div>
+          </div>
+          <div className="flex text-sm items-center gap-3 justify-between">
+            <p>Internships</p>
+            <div className="ml-auto flex items-center gap-1">
+              <span>{profileData?.config?.internships ? "+" : "-"}</span>
+              <Switch
+                value={status}
+                checked={profileData?.config?.internships}
+                onChange={(value) => {
+                  setStatus(value);
+                }}
+                size="sm"
+              />
+            </div>
+          </div>
+          <div className="flex text-sm items-center gap-3 justify-between">
+            <p>Education</p>
+            <div className="ml-auto flex items-center gap-1">
+              <span>{profileData?.config?.certifications ? "+" : "-"}</span>
+              <Switch
+                value={status}
+                checked={profileData?.config?.education}
+                onChange={(value) => {
+                  setStatus(value);
+                }}
+                size="sm"
+              />
+            </div>
+          </div>
+          <div className="flex text-sm items-center gap-3 justify-between">
+            <p>Certifications and Trainings</p>
+            <div className="ml-auto flex items-center gap-1">
+              <span>{profileData?.config?.certifications ? "+" : "-"}</span>
+              <Switch
+                value={status}
+                checked={profileData?.config?.certifications}
+                onChange={(value) => {
+                  setStatus(value);
+                }}
+                size="sm"
+              />
+            </div>
+          </div>
+          <div className="flex text-sm items-center gap-3 justify-between">
+            <p>Membership & Affiliation</p>
+            <div className="ml-auto flex items-center gap-1">
+              <span>{profileData?.config?.memberships ? "+" : "-"}</span>
+              <Switch
+                value={status}
+                checked={profileData?.config?.memberships}
+                onChange={(value) => {
+                  setStatus(value);
+                }}
+                size="sm"
+              />
+            </div>
+          </div>
+          <div className="flex text-sm items-center gap-3 justify-between">
+            <p>Professional Reference</p>
+            <div className="ml-auto flex items-center gap-1">
+              <span>
+                {profileData?.config?.professional_reference ? "+" : "-"}
+              </span>
+              <Switch
+                value={status}
+                checked={profileData?.config?.professional_reference}
+                onChange={(value) => {
+                  setStatus(value);
+                }}
+                size="sm"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -248,6 +392,69 @@ const SmartResumeSettings: React.FC = () => {
           </Button>
         </div>
       </Modal>
+      <Modal
+        show={contactPrivacyModal}
+        onHide={() => {
+          setContactPrivacyModal(false);
+        }}
+        size="w-full max-w-[300px]"
+        title="Contact Privacy"
+      >
+        <div className="space-y-4 flex-col w-full flex">
+          <div className="flex text-sm items-center gap-3 justify-between">
+            <p>Email</p>
+            <div className="ml-auto">
+              <Switch
+                value={status}
+                checked={profileData?.config?.email}
+                onChange={(value) => {
+                  setStatus(value);
+                }}
+                size="sm"
+              />
+            </div>
+          </div>
+          <div className="flex text-sm items-center gap-3 justify-between">
+            <p>Phone</p>
+            <div className="ml-auto">
+              <Switch
+                value={status}
+                checked={profileData?.config?.phone_number}
+                onChange={(value) => {
+                  setStatus(value);
+                }}
+                size="sm"
+              />
+            </div>
+          </div>
+          <div className="flex text-sm items-center gap-3 justify-between">
+            <p>Location</p>
+            <div className="ml-auto">
+              <Switch
+                value={status}
+                checked={profileData?.config?.location}
+                onChange={(value) => {
+                  setStatus(value);
+                }}
+                size="sm"
+              />
+            </div>
+          </div>
+          <div className="flex text-sm items-center gap-3 justify-between">
+            <p>Links</p>
+            <div className="ml-auto">
+              <Switch
+                value={status}
+                checked={profileData?.config?.links}
+                onChange={(value) => {
+                  setStatus(value);
+                }}
+                size="sm"
+              />
+            </div>
+          </div>
+        </div>
+      </Modal>
     </section>
   );
 };
@@ -270,7 +477,7 @@ const ShareCV: React.FC = () => {
   return (
     <div className="bg-white pb-6">
       <div className="flex items-center gap-4 mb-7">
-      <a
+        <a
           href={`https://www.linkedin.com/shareArticle?mini=true&url=${url}`}
           target="_blank"
           rel="noopener noreferrer"
@@ -306,7 +513,7 @@ const ShareCV: React.FC = () => {
         >
           <BsWhatsapp size={22} />
         </a>
-       
+
         <a
           href={`https://www.reddit.com/submit?url=${url}&title=${title}`}
           target="_blank"
@@ -326,9 +533,9 @@ const ShareCV: React.FC = () => {
         />
         <button
           className="text-zinc-900 hover:scale-105 px-4 py-1.5 font-medium ml-2"
-          onClick={handleCopy} 
+          onClick={handleCopy}
         >
-         {buttonText}
+          {buttonText}
         </button>
       </div>
     </div>
@@ -372,22 +579,20 @@ const Dashboard: React.FC = () => {
           </div>
 
           <button
-              onClick={() => setShowAnalytics(true)}
-              className="flex sm:hidden items-center gap-1 hover:scale-x-105 duration-100"
-            >
-              <BsEye className="" />
-              <span className="">
-                {user?.plan || "10 profile views"}
-              </span>
-              <AiOutlineBarChart className="text-primary text-lg hidden" />
-            </button>
+            onClick={() => setShowAnalytics(true)}
+            className="flex sm:hidden items-center gap-1 hover:scale-x-105 duration-100"
+          >
+            <BsEye className="" />
+            <span className="">{user?.plan || "10 profile views"}</span>
+            <AiOutlineBarChart className="text-primary text-lg hidden" />
+          </button>
 
           <div className="flex items-center  gap-4 max-sm:w-full max-sm:justify-between">
             <div className="lg:flex hidden max-sm:flex items-center gap-1 text-zinc-400 hover:scale-x-105 duration-100">
               <LuClock className="max-sm:hidden" />
               <span>{user?.plan || "Updated 1d ago"}</span>
             </div>
-           
+
             <div className="flex items-center gap-1">
               <FaCircle size={10} className="text-green-500 max-md:hidden" />
               <span className="max-md:hidden">
@@ -408,8 +613,6 @@ const Dashboard: React.FC = () => {
               <LuExternalLink size={14} className="" />
             </button>
           </div>
-
-          
         </div>
         <div className="px-2 py-4 md:pl-8 md:pr-2">
           <div className="xl:hidden flex justify-end items-center">
@@ -423,19 +626,27 @@ const Dashboard: React.FC = () => {
           {active ? (
             <div className="w-full flex xl:flex-row flex-col gap-5">
               <div className="">
-              <section className="bg-white flex flex-col space-y-10 px-6 py-5 w-full h-full">
-                <ProfileSummary resumeData={candidateData} />
-                <WorkExperience profileData={candidateData} />
-                <VolunteerExperience profileData={candidateData} />
-                <Internships profileData={candidateData} />
-                <Education profileData={candidateData} />
-                <Certifications profileData={candidateData} />
-                <ProfessionalReference profileData={candidateData} />
+                <section className="bg-white flex flex-col space-y-10 px-6 max-sm:px-2.5 py-5 w-full h-full">
+                  <BasicDetails profileData={candidateData} />
+                  <ProfileSummary resumeData={candidateData} />
+                  <CareerHighlight profileData={candidateData} />
+                  <WorkExperience profileData={candidateData} />
+                  <VolunteerExperience profileData={candidateData} />
+                  <Internships profileData={candidateData} />
+                  <Education profileData={candidateData} />
+                  {candidateData?.config?.certifications && (
+                    <Certifications profileData={candidateData} />
+                  )}
+
+                  {candidateData?.config?.memberships && (
+                    <Memberships profileData={candidateData} />
+                  )}
+
+                  <ProfessionalReference profileData={candidateData} />
                 </section>
-                <CandidateProfile />
               </div>
               <div className="max-xl:hidden">
-                <SmartResumeSettings />
+                <SmartResumeSettings profileData={candidateData} />
               </div>
             </div>
           ) : (
@@ -477,7 +688,7 @@ const Dashboard: React.FC = () => {
             onClose={() => setShowDrawer(false)}
           >
             <div className="mt-10 pb-10">
-              <SmartResumeSettings />
+              <SmartResumeSettings profileData={candidateData} />
             </div>
           </Drawer>
         )}

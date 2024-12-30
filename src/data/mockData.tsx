@@ -298,8 +298,25 @@ export const interviewTipsData = [
 ];
 
 export const mockProfileData = {
+  config: {
+    location: true,
+    role:true,
+    work_experience: true,
+    professional_summary: true,
+    email: true,
+    phone_number: true,
+    skills: true,
+    links:true,
+    volunteer_experience: true,
+    career_highlights:true,
+    internships: true,
+    education: true,
+    memberships: false,
+    professional_reference: true,
+    certifications: true
+  },
   name: "John Doe",
-  role: "Software Developer",
+  role: "Senior HR Expert | CIPD, MBA, HRBP",
   resume_id: "",
   professional_summary: `Results-driven Senior Software Engineer with 8+ years of experience in full-stack development and technical leadership. Specialized in building scalable distributed systems and microservices architectures. Proven track record of improving application performance, mentoring junior developers, and delivering high-impact solutions that drive business growth.
   
@@ -312,6 +329,9 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
   phone_number: "+1 (555) 123-4567",
   website_url: "https://johndoeportfolio.com",
   linkedin_url: "https://linkedin.com/in/johndoe",
+  tabbio_link: "https://tabbio.com/tp/john-doe",
+  location_type: ["Hybrid", 'Remote', 'On-Site'],
+  relocation: 'Open to Relocate',
   skills: [
     "JavaScript",
     "React",
@@ -340,7 +360,13 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       ],
       start_year: "2023",
       end_year: "2024",
-      skills: ['System Architecture', 'Cloud Infrastructure', 'Agile/Scrum', 'Performance Optimization', 'API Design']
+      skills: [
+        "System Architecture",
+        "Cloud Infrastructure",
+        "Agile/Scrum",
+        "Performance Optimization",
+        "API Design",
+      ],
     },
     {
       id: 2,
@@ -356,11 +382,27 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
         "Collaborated with cross-functional teams to deliver project milestones",
         "Collaborated with cross-functional teams to deliver project milestones",
       ],
-      skills: ['System Architecture', 'Cloud Infrastructure', 'Agile/Scrum', 'Performance Optimization', 'API Design']
-
+      skills: [
+        "System Architecture",
+        "Cloud Infrastructure",
+        "Agile/Scrum",
+        "Performance Optimization",
+        "API Design",
+      ],
     },
   ],
-  suggested_skills: [ 'JavaScript', 'React', 'Node.js', 'Express', 'MongoDB', 'HTML', 'CSS', 'TypeScript', 'Git', 'Agile Methodologies' ],
+  suggested_skills: [
+    "JavaScript",
+    "React",
+    "Node.js",
+    "Express",
+    "MongoDB",
+    "HTML",
+    "CSS",
+    "TypeScript",
+    "Git",
+    "Agile Methodologies",
+  ],
   internships: [
     {
       id: 1,
@@ -377,7 +419,6 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       start_year: "2023",
       end_year: "2024",
     },
-    
   ],
   volunteer_experience: [
     {
@@ -395,14 +436,43 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       start_year: "2023",
       end_year: "2024",
     },
-    
+  ],
+  career_highlights: [
+    {
+      id: 1,
+      title: "Technical Leadership",
+      description: "Collaborated with cross-functional teams to deliver project milestones",
+      thumbnail: "",
+      skills: ['Team Management', 'Leadership']
+    },
+    {
+      id: 2,
+      title: "Performance Optimization",
+      description: "Optimized database queries, reducing response time by 50%",
+      thumbnail: "",
+      skills: []
+    },
+    {
+      id: 3,
+      title: "Team Development",
+      description: "Mentored 5+ Junior developers, leading to their promotion to mid-level roles",
+      thumbnail: "",
+      skills: []
+    },
+    {
+      id: 4,
+      title: "Lorem Ipsum Dolor sit",
+      description: "Mentored 5+ Junior developers, leading to their promotion to mid-level roles dolor sit amet",
+      thumbnail: "",
+      skills: []
+    },
   ],
   education: [
     {
       id: 1,
       degree: "Bachelor of Science in Computer Science",
       school: "University of California, Berkeley",
-      description: 'Graduated with Honors, GPA: 3.8/4.0',
+      description: "Graduated with Honors, GPA: 3.8/4.0",
       start_year: "2023",
       end_year: "2024",
       active: false,
@@ -422,6 +492,24 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       date: "2023",
     },
   ],
+  memberships: [
+    {
+      id: 1,
+      title: "Association for Computing lorem ipsum dolor sit amet not knowing",
+      role: "Professional Member",
+      start_year: "2020",
+      end_year: "2021",
+      active: false
+    },
+    {
+      id: 2,
+      title: "IEE Computer Society",
+      role: "Senior Member",
+      start_year: "2022",
+      end_year: "2023",
+      active: true
+    },
+  ],
   professional_reference: [
     {
       id: 1,
@@ -430,7 +518,7 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       company: "Innovatech Corp.",
       email: "michaelchen@mail.com",
       phone: "+123673539",
-      relationship: "Project Lead (2016-2019)"
+      relationship: "Project Lead (2016-2019)",
     },
     {
       id: 2,
@@ -439,7 +527,7 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       company: "Tech Solutions Inc.",
       email: "sarahsmith@mail.co",
       phone: "+23491929334",
-      relationship: "Team Lead (2020-2023)"
+      relationship: "Team Lead (2020-2023)",
     },
   ],
 };
