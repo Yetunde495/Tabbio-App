@@ -443,6 +443,10 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       title: "Technical Leadership",
       description: "Collaborated with cross-functional teams to deliver project milestones",
       thumbnail: "",
+      attachment: {
+        type: 'link',
+        url: 'https://w3schools.com'
+      },
       skills: ['Team Management', 'Leadership']
     },
     {
@@ -450,6 +454,10 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       title: "Performance Optimization",
       description: "Optimized database queries, reducing response time by 50%",
       thumbnail: "",
+      attachment: {
+        type: 'image',
+        url: 'https://images.pexels.com/photos/709143/pexels-photo-709143.jpeg?auto=compress&cs=tinysrgb&w=600'
+      },
       skills: []
     },
     {
@@ -457,6 +465,10 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       title: "Team Development",
       description: "Mentored 5+ Junior developers, leading to their promotion to mid-level roles",
       thumbnail: "",
+      attachment: {
+        type: 'video',
+        url: 'https://videos.pexels.com/video-files/1966695/1966695-sd_640_360_30fps.mp4'
+      },
       skills: []
     },
     {

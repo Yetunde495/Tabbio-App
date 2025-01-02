@@ -17,6 +17,7 @@ interface Accordion2Props {
   title: React.ReactNode;
   children: React.ReactNode;
   defaultOpen?: boolean;
+  border?: boolean;
 }
 const Accordion: React.FC<AccordionProps> = ({ items, initialOpenIndex }) => {
   const [openIndex, setOpenIndex] = useState<number | null>(
@@ -67,12 +68,69 @@ const Accordion: React.FC<AccordionProps> = ({ items, initialOpenIndex }) => {
   );
 };
 
+export const Accordion2: React.FC<Accordion2Props> = ({
+  title,
+  children,
+  defaultOpen,
+  border=true
+}) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen ? true : false);
+
+  const toggleAccordion = () => {
+    setIsOpen(!isOpen);
+  };
+
+  return (
+    <div className="w-full lg:flex lg:gap-4">
+      {/* For large screens, content should always be visible */}
+      <div className="hidden w-full py-4 bg-white shadow-md rounded-xl">
+        <div className="mb-2 xl:border-b border-slate-200 px-4 pb-1.5">
+          {title}
+        </div>
+        <div className="px-4">{children}</div>
+      </div>
+
+      {/* For small screens, accordion behavior */}
+      <div className="w-full  bg-white">
+        <button
+          onClick={toggleAccordion}
+          className="w-full flex justify-between items-center p-4 "
+        >
+          <div className="">{title}</div>
+          <span>
+            {isOpen ? (
+              <IoIosArrowUp className="dark:text-primary mr-4" size={22} />
+            ) : (
+              <IoIosArrowDown className="dark:text-primary mr-4" size={22} />
+            )}
+          </span>
+        </button>
+
+        {/* Accordion content with Framer Motion for animation */}
+        <motion.div
+          initial={{ height: 0 }}
+          animate={{ height: isOpen ? "auto" : 0 }}
+          className={` ${
+            isOpen && border && " border  border-stroke"
+          } overflow-hidden rounded-xl`}
+        >
+          <div className="p-4">
+            <div>{children}</div>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
 export const ContentAccordion: React.FC<Accordion2Props> = ({
   title,
   children,
-  defaultOpen
+  defaultOpen,
 }) => {
-  const [isOpen, setIsOpen] = useState(window.innerWidth <= 768 && defaultOpen ? true : false);
+  const [isOpen, setIsOpen] = useState(
+    window.innerWidth <= 768 && defaultOpen ? true : false
+  );
 
   const toggleAccordion = () => {
     setIsOpen(!isOpen);

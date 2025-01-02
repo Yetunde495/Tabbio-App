@@ -101,7 +101,7 @@ function App() {
                 element={<GeneralPages.LiveResume />}
               />
                <Route
-                path="/:name"
+                path="/tb/:name"
                 element={<GeneralPages.SmartResume />}
               />
             </>

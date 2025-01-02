@@ -528,7 +528,7 @@ const ShareCV: React.FC = () => {
         <input
           type="text"
           readOnly
-          className="flex-1 text-gray-700 rounded-l-lg focus:outline-none bg-white focus-within:ring-0 border-none focus:border-none"
+          className="flex-1 max-sm:w-[75%] text-gray-700 rounded-l-lg focus:outline-none bg-white focus-within:ring-0 border-none focus:border-none"
           value="https://yourpal.ai/hello/542566252"
         />
         <button
