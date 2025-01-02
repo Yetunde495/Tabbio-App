@@ -55,12 +55,14 @@ import {
   VolunteerExperience,
   WorkExperience,
 } from "./SmartResumeComponents";
+import { IoDocumentTextOutline } from "react-icons/io5";
 
 const SmartResumeSettings: React.FC<{ profileData: any }> = ({
   profileData,
 }) => {
   const { user, updateUser } = useApp();
   const [editLink, setEditLink] = useState(false);
+  const navigate = useNavigate()
   const prefix = "tabbio.link/";
   const [inputValue, setInputValue] = useState(
     user?.resume_link || "tabbio.link/"
@@ -169,6 +171,28 @@ const SmartResumeSettings: React.FC<{ profileData: any }> = ({
             </div>
           </div>
         )}
+      </div>
+
+      <div className="p-3">
+        <div className="bg-gradient-to-l from-[#EFF6FF] to-[#DBEAFE] rounded-lg py-4 px-3">
+          <div className="flex items-center gap-2">
+            <div>
+            <IoDocumentTextOutline className="text-primary" size={16} />
+            </div>
+            <div className="">
+              <p className="text-sm">Edit Downloadable CV</p>
+              <p className="text-xs">
+                The ATS-friendly CV recruiters can download from your profile.
+              </p>
+            </div>
+            <div className="ml-auto">
+            <button onClick={() => navigate("edit-cv")} className="text-zinc-500">
+              <LuPencil />
+            </button>
+          </div>
+          </div>
+          
+        </div>
       </div>
 
       <div className="p-3">
@@ -542,7 +566,7 @@ const ShareCV: React.FC = () => {
   );
 };
 
-const Dashboard: React.FC = () => {
+const Profile: React.FC = () => {
   const { user } = useApp();
   const navigate = useNavigate();
   const [active, _setActive] = useState(true);
@@ -554,7 +578,7 @@ const Dashboard: React.FC = () => {
   return (
     <DefaultLayout>
       <section className="">
-        <div className="bg-zinc-50/90 py-2.5 px-4.5 text-sm flex flex-wrap sm:gap-2 lg:items-center justify-between gap-3">
+        <div className="bg-gradient-to-r from-[#F9FAFBCC] to-[#FFFFFF66] border border-[#F3F4F6] py-2.5 px-4.5 text-sm flex flex-wrap sm:gap-2 lg:items-center justify-between gap-3">
           <div className="flex items-center gap-4 max-sm:justify-between">
             <div className="flex items-center gap-1">
               <FaCircle size={10} className="text-green-500 max-lg:hidden" />
@@ -606,10 +630,10 @@ const Dashboard: React.FC = () => {
               </button>
             </div>
             <button
-              onClick={() => navigate("edit")}
-              className="text-primary hover:scalex-x-105 inline-flex items-center gap-1.5"
+              onClick={() => navigate("preview-cv")}
+              className="text-primary hover:scale-x-105 inline-flex items-center gap-1.5"
             >
-              <span className="">Edit Profile CV</span>{" "}
+              <span className="">View Profile</span>{" "}
               <LuExternalLink size={14} className="" />
             </button>
           </div>
@@ -651,13 +675,13 @@ const Dashboard: React.FC = () => {
             </div>
           ) : (
             <div className="">
-              <div className="flex w-full min-h-[85vh] flex-col items-center justify-center pb-10">
+              <div className="flex w-full min-h-[85vh] flex-col items-center justify-center py-20">
                 <div className="bg-white flex flex-col gap-3.5 justify-center items-center rounded-xl py-5 px-4 lg:w-[70%] w-[90%]">
                   <span className="p-2 w-12 h-12 rounded-full flex justify-center items-center text-primary bg-primary/10">
                     <CgFileDocument size={28} />
                   </span>
                   <h2 className="text-xl text-center font-semibold text-black dark:text-white">
-                    Create Your SmartResume
+                    Create Your Profile
                   </h2>
                   <p className="text-neutral-500 mb-3">
                     Upload your existing resume or create a new one
@@ -673,7 +697,7 @@ const Dashboard: React.FC = () => {
                     to={``}
                     className="text-lg text-primary flex items-center gap-2 hover:scale-x-105"
                   >
-                    Create SmartResume from Scratch <FiExternalLink />
+                    Create from Scratch <FiExternalLink />
                   </Link>
                 </div>
               </div>
@@ -721,4 +745,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+export default Profile;

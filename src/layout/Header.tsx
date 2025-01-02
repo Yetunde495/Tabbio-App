@@ -18,7 +18,6 @@ import StaggeredDropDown, {
 import { IoIosArrowDown } from "react-icons/io";
 import logo1 from "../assets/brand/logo-1.svg";
 
-
 type SidebarProps = {
   sidebarOpen: boolean;
   setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -31,7 +30,7 @@ type Position = {
 };
 
 const Header = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
-  const { changeCategory } = useApp();
+  const { category, changeCategory } = useApp();
   const navigate = useNavigate();
   const [tab, setTab] = useState("Candidate");
   const [position, setPosition] = useState<Position>({
@@ -42,21 +41,19 @@ const Header = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const [hover, setHover] = useState(false);
 
   return (
-    <header className="sticky top-0 z-9999 bg-light flex w-full bg-transparent dark:bg-boxdark dark:drop-shadow-none">
-      <div className="flex flex-grow bg-light items-center gap-3 py-3 px-4 md:px-6 2xl:px-11">
+    <header className="sticky top-0 z-9999 bg-[#F2F4F6] flex w-full bg-transparent dark:bg-boxdark dark:drop-shadow-none">
+      <div className="flex flex-grow bg-[#F2F4F6] items-center gap-3 py-3 px-4 md:px-6 2xl:px-11">
         <div>
-        <img
-          src={logo1}
-          alt="Logo"
-          className={` w-[70px] md:w-[80px]
+          <img
+            src={logo1}
+            alt="Logo"
+            className={` w-[70px] md:w-[80px]
               
            lg:hidden`}
-        />
-        
+          />
         </div>
-        
 
-        <div className="max-md:hidden">
+        <div className="hidden">
           <ul
             onMouseLeave={() => {
               setPosition((pv) => ({
@@ -131,21 +128,31 @@ const Header = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             buttonIcon={<IoIosArrowDown />}
             buttonText={
               <span className="flex gap-1 items-center max-sm:text-xs">
-                {tab === "Candidate" ? <TbWorld className="text-primary" /> : <MdBusiness className="text-[#9333EA]" />}
-                {tab === "Candidate" ? "Personal" : "Business"}
+                {category === "Candidate" ? (
+                  <TbWorld className="text-primary" />
+                ) : (
+                  <MdBusiness className="text-[#9333EA]" />
+                )}
+                {category === "Candidate" ? "Personal" : "Business"}
               </span>
             }
           >
             <AnimatedOption
               text="Personal"
               Icon={<TbWorld className="text-primary" />}
-              onClick={() => {}}
+              onClick={() => {
+                changeCategory("Candidate");
+                navigate(`/app/candidate/profile`);
+              }}
             />
 
             <AnimatedOption
               text="Business"
               Icon={<MdBusiness className="text-[#9333EA]" />}
-              onClick={() => {}}
+              onClick={() => {
+                changeCategory("Business");
+                navigate(`/app/company/portal`);
+              }}
             />
           </StaggeredDropDown>
         </div>
@@ -163,30 +170,54 @@ const Header = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             {/* <!-- Notification Menu Area --> */}
             <DropdownNotification />
             {/* <!-- Notification Menu Area --> */}
+
+            <div className="lg:block hidden">
+              {category === "Candidate" ? (
+                <button
+                  onClick={() => {
+                    changeCategory("Business");
+                    navigate(`/app/company/portal`);
+                  }}
+                  className="text-[#9333EA] px-4 text-sm py-2 font-medium rounded-md border border-stroke hover:scale-105 delay-100"
+                >
+                  Switch to Business
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    changeCategory("Candidate");
+                    navigate(`/app/candidate/profile`);
+                  }}
+                  className="text-primary px-4 text-sm py-2 font-medium rounded-md border border-stroke hover:scale-105 delay-100"
+                >
+                  Switch to Personal
+                </button>
+              )}
+            </div>
           </ul>
 
           {/* <!-- User Area --> */}
-          <div className="lg:block hidden"><DropdownUser /></div>
-          
+          <div className="lg:block hidden">
+            <DropdownUser />
+          </div>
+
           {/* <!-- User Area --> */}
 
           <div className="flex items-center gap-2 lg:hidden">
-          {/* <!-- Hamburger Toggle BTN --> */}
-          <button
-            aria-controls="sidebar"
-            onClick={(e) => {
-              e.stopPropagation();
-              setSidebarOpen(!sidebarOpen);
-            }}
-            className="z-99999 block rounded-sm  bg-white p-1 shadow-sm dark:border-strokedark dark:bg-boxdark"
-          >
-            <BsList className="text-primary font-extrabold w-6 h-6" />
-          </button>
-          {/* <!-- Hamburger Toggle BTN --> */}
-          <NavLink to="/app">
-          
-          </NavLink>
-        </div>
+            {/* <!-- Hamburger Toggle BTN --> */}
+            <button
+              aria-controls="sidebar"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSidebarOpen(!sidebarOpen);
+              }}
+              className="z-99999 block rounded-sm  bg-white p-1 shadow-sm dark:border-strokedark dark:bg-boxdark"
+            >
+              <BsList className="text-primary font-extrabold w-6 h-6" />
+            </button>
+            {/* <!-- Hamburger Toggle BTN --> */}
+            <NavLink to="/app"></NavLink>
+          </div>
         </div>
       </div>
     </header>

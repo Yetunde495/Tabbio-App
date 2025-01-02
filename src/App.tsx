@@ -8,6 +8,7 @@ import CandidatePages from "./Pages/Candidate/Index";
 import { Loader } from "./components/Loader";
 
 import AuthPages from "./Pages/Authentication/Index";
+import CompanyPages from "./Pages/Company/Index";
 
 axios.defaults.baseURL = "";
 
@@ -63,25 +64,15 @@ function App() {
       ) : (
         <Router>
           <Routes>
-            <></>
             <>
               <Route path="/" element={<GeneralPages.ProfessionalLanding />} />
               <Route
                 path="/company"
                 element={<GeneralPages.CompanyLanding />}
               />
-               <Route
-                path="/about-us"
-                element={<GeneralPages.AboutUs />}
-              />
-               <Route
-                path="/affiliate"
-                element={<GeneralPages.Affiliate />}
-              />
-               <Route
-                path="/careers"
-                element={<GeneralPages.Careers />}
-              />
+              <Route path="/about-us" element={<GeneralPages.AboutUs />} />
+              <Route path="/affiliate" element={<GeneralPages.Affiliate />} />
+              <Route path="/careers" element={<GeneralPages.Careers />} />
               <Route path="/signin" element={<AuthPages.Signin />} />
               <Route path="/signup" element={<AuthPages.Signup />} />
               <Route
@@ -100,22 +91,23 @@ function App() {
                 path="/live-resume"
                 element={<GeneralPages.LiveResume />}
               />
-               <Route
-                path="/tb/:name"
-                element={<GeneralPages.SmartResume />}
-              />
+              <Route path="/tb/:name" element={<GeneralPages.SmartResume />} />
             </>
 
             {/* Candidate Pages */}
             <>
               <Route path="/app" element={<RouteLayout />}>
                 <Route
-                  path="/app/candidate/smart-resume"
-                  element={<CandidatePages.Dashboard />}
+                  path="/app/candidate/profile"
+                  element={<CandidatePages.Profile />}
                 />
                 <Route
-                  path="/app/candidate/smart-resume/edit"
+                  path="/app/candidate/profile/edit-cv"
                   element={<CandidatePages.EditSmartResume />}
+                />
+                <Route
+                  path="/app/candidate/profile/preview-cv"
+                  element={<CandidatePages.ProfilePreview />}
                 />
                 <Route
                   path="/app/candidate/applications"
@@ -128,6 +120,18 @@ function App() {
               </Route>
             </>
             {/* Candidate Pages */}
+
+            {/* Company Pages */}
+            <>
+              <Route path="/app" element={<RouteLayout />}>
+                <Route
+                  path="/app/company/portal"
+                  element={<CompanyPages.Portal />}
+                />
+              </Route>
+            </>
+
+            {/* Company Pages */}
           </Routes>
         </Router>
       )}

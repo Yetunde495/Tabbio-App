@@ -1,14 +1,16 @@
 import Applications from "./Applications";
 import CreateLiveResume from "./CreateResume";
-import Dashboard from "./Dashboard";
 import EditSmartResume from "./EditSmartresume";
+import ProfilePreview from "./PreviewProfile";
+import Profile from "./Profile";
 
 
 function Index() {}
-Index.Dashboard = Dashboard;
+Index.Profile = Profile;
 Index.Applications  = Applications;
 Index.CreateLiveResume = CreateLiveResume;
 Index.EditSmartResume = EditSmartResume;
+Index.ProfilePreview = ProfilePreview;
 
 
 export default Index;

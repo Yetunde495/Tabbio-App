@@ -91,7 +91,7 @@ const DropdownSupport = () => {
             onClick={() => {
               setTaskView(true);
             }}
-            className="py-2 px-4 hidden items-center gap-2 text-[14px] cursor-pointer border-b border-stroke text-black/90  hover:bg-slate-50 dark:hover:bg-primary/10 dark:text-slate-100"
+            className="py-2 px-4 flex items-center gap-2 text-[14px] cursor-pointer border-b border-stroke text-black/90  hover:bg-slate-50 dark:hover:bg-primary/10 dark:text-slate-100"
           >
             Task
           </li>

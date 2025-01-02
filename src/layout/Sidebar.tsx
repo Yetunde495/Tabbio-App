@@ -16,7 +16,7 @@ import {
   IoIosArrowForward,
   IoIosArrowUp,
 } from "react-icons/io";
-import { LuBriefcase, LuLogOut } from "react-icons/lu";
+import { LuBriefcase, LuLogOut, LuUsers } from "react-icons/lu";
 import icon from "../assets/svg/t-icon.svg";
 import ExtensionModal from "../Pages/PageComponents/ExtensionModal";
 import DropdownUser from "./DropdownUser";
@@ -124,16 +124,16 @@ const Sidebar = ({
                 <NavLink
                   to={
                     category === "Candidate"
-                      ? `/app/candidate/smart-resume`
-                      : ``
+                      ? `/app/candidate/profile`
+                      : `/app/business/portal`
                   }
                   className={`group relative flex items-center gap-1 max-lg:mx-2 font-medium rounded-lg  ${
                     !sidebarOpen ? "px-4 py-2" : "pl-5 py-2"
                   } font-medium duration-300 ease-in-out  ${
                     pathname.includes(
                       category === "Candidate"
-                        ? `/app/candidate/smart-resume`
-                        : `/app/company/dashboard`
+                        ? `/app/candidate/profile`
+                        : `/app/company/portal`
                     )
                       ? ` text-primary
                                  bg-primary/15
@@ -147,9 +147,9 @@ const Sidebar = ({
                       <IoDocumentTextOutline size={20} />{" "}
                     </span>
                   ) : (
-                    <span></span>
+                    <span> <LuUsers size={20} />{" "}</span>
                   )}
-                  SmartResume
+                  {category === "Candidate" ? "Profile" : "Portal"}
                 </NavLink>
               </li>
               {category === "Candidate" && (

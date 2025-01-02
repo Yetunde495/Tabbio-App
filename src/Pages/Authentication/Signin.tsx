@@ -37,7 +37,7 @@ const Signin: React.FC = () => {
         category: 'Candidate'
       });
       // console.log(response.data)
-      navigate("/app/candidate/smart-resume");
+      navigate("/app/candidate/profile");
     } catch (err: any) {
       toast.error(err.message);
     } finally {
