@@ -36,7 +36,7 @@ import getUserInitials from "../../lib/utils/getUserInitials";
 import { MdOutlineMailOutline, MdOutlinePhone } from "react-icons/md";
 import TabbioIcon from "../../assets/svg/t-icon.svg";
 
-const ItemList = ({ items }: any) => {
+export const ItemList = ({ items }: any) => {
   const [showAll, setShowAll] = useState(false);
 
   const toggleShowAll = () => setShowAll(!showAll);
@@ -82,7 +82,7 @@ export const BasicDetails: React.FC<{ profileData: any }> = ({
     linkedin_url: profileData?.linkedin_url,
     location: profileData?.location,
     location_type: profileData?.location_type,
-    relocation: profileData?.relocation
+    relocation: profileData?.relocation,
   });
   const toggleLocationType = (type: string) => {
     const d = basicDetails?.location_type.includes(type)
@@ -132,13 +132,13 @@ export const BasicDetails: React.FC<{ profileData: any }> = ({
             </div>
           </div>
         </div>
-        <span className="ml-auto">
+        <span className="ml-auto max-md:order-first">
           {" "}
           <button
             onClick={() => {
               setInfoModal(true);
             }}
-            className="hover:bg-slate-100/50 rounded-full p-2"
+            className="hover:bg-slate-100/50 rounded-full max-md:py-0 p-2"
           >
             <LuPencil size={18} />
           </button>
@@ -198,7 +198,7 @@ export const BasicDetails: React.FC<{ profileData: any }> = ({
 
               <div className="w-full mb-5">
                 <label
-                  className="mb-[0.7rem] block text-sm font-normal text-zinc-800 dark:text-white"
+                  className="mb-[0.7rem] block text-sm font-normal text-zinc-800"
                   htmlFor="description"
                 >
                   Linkedin URL
@@ -206,7 +206,7 @@ export const BasicDetails: React.FC<{ profileData: any }> = ({
                 <div className="relative rounded-lg border border-stroke">
                   <input
                     type="text"
-                    className={`w-full py-3 pl-4.5 pr-4.5 text-zinc-800 font-normal border-none rounded-lg focus:border-primary/50 focus-visible:outline-none custom-scrollbar dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary`}
+                    className={`w-full py-3 pl-4.5 pr-4.5 text-zinc-800 font-normal border-none rounded-lg focus:border-primary/50 focus-visible:outline-none custom-scrollbar `}
                     name="linkedin-url"
                     value={basicDetails.linkedin_url}
                     onChange={(e) => {
@@ -361,7 +361,7 @@ export const BasicDetails: React.FC<{ profileData: any }> = ({
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Location Type
               </label>
-              <div className="flex gap-4">
+              <div className="flex gap-4 max-sm:flex-wrap">
                 {["On-Site", "Hybrid", "Remote"].map((type) => (
                   <button
                     key={type}
@@ -385,33 +385,36 @@ export const BasicDetails: React.FC<{ profileData: any }> = ({
               </div>
             </div>
             <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Relocation
-        </label>
-        <div className="flex flex-col gap-3 pl-1">
-          {[
-            { label: "Open to Relocate", value: "Open to Relocate" },
-            { label: "Not Open to Relocate", value: "Not Open to Relocate" },
-          ].map((option) => (
-            <label key={option.value} className="flex items-center gap-2">
-              <input
-                type="radio"
-                name="relocation"
-                value={option.value}
-                checked={basicDetails?.relocation === option.value}
-                onChange={(e) => {
-                  setBasicDetails((data: any) => ({
-                    ...data,
-                    relocation: e.target.value,
-                  }))
-                }}
-                className="text-blue-500 focus:ring-blue-500"
-              />
-              {option.label}
-            </label>
-          ))}
-        </div>
-      </div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Relocation
+              </label>
+              <div className="flex flex-col gap-3 pl-1">
+                {[
+                  { label: "Open to Relocate", value: "Open to Relocate" },
+                  {
+                    label: "Not Open to Relocate",
+                    value: "Not Open to Relocate",
+                  },
+                ].map((option) => (
+                  <label key={option.value} className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="relocation"
+                      value={option.value}
+                      checked={basicDetails?.relocation === option.value}
+                      onChange={(e) => {
+                        setBasicDetails((data: any) => ({
+                          ...data,
+                          relocation: e.target.value,
+                        }));
+                      }}
+                      className="text-blue-500 focus:ring-blue-500"
+                    />
+                    {option.label}
+                  </label>
+                ))}
+              </div>
+            </div>
           </div>
           <div className="w-full border-t flex bg-white mt-3 pt-4 justify-between items-center border-stroke">
             <button
@@ -635,7 +638,7 @@ export const ProfileSummary: React.FC<{ resumeData: any }> = ({
                       value={newSkill}
                       onChange={(e) => setNewSkill(e.target.value)}
                       placeholder="Add a new skill"
-                      className="flex-1 rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      className="flex-1 max-sm:w-[75%] rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                     <button
                       type="button"
@@ -1038,7 +1041,7 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
                   value={newAchievment}
                   onChange={(e) => setNewAchievment(e.target.value)}
                   placeholder="Ex: Improved application performance by 30% through code refactoring"
-                  className="flex-1 rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="flex-1 max-sm:w-[75%] rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
                 <button
                   type="button"
@@ -1093,7 +1096,7 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
                   value={newSkill}
                   onChange={(e) => setNewSkill(e.target.value)}
                   placeholder="Add a new skill"
-                  className="flex-1 rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="flex-1 max-sm:w-[75%] rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
                 <button
                   type="button"
@@ -1335,7 +1338,7 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
                   value={newAchievment}
                   onChange={(e) => setNewAchievment(e.target.value)}
                   placeholder="Ex: Improved application performance by 30% through code refactoring"
-                  className="flex-1 rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="flex-1 max-sm:w-[75%] rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
                 <button
                   type="button"
@@ -1390,7 +1393,7 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
                   value={newSkill}
                   onChange={(e) => setNewSkill(e.target.value)}
                   placeholder="Add a new skill"
-                  className="flex-1 rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="flex-1 max-sm:w-[75%] rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
                 <button
                   type="button"
@@ -1467,6 +1470,7 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
   const [newExperienceModal, setNewExperienceModal] = useState(false);
   const [selectedCareer, setSelectedCareer] = useState<any>(null);
   const [showAll, setShowAll] = useState(false);
+  const [detailModal, setDetailModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [skills, setSkills] = useState<string[]>([]);
@@ -1492,7 +1496,6 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
   const removeSkill = (skill: string) => {
     setSkills(skills.filter((s) => s !== skill));
   };
-
 
   return (
     <div className="relative">
@@ -1521,41 +1524,43 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
                 setSelectedCareer(item);
               }}
             >
-              {!item?.thumbnail && (
-                <div className="w-full text-primary bg-[#EFF6FFCC] h-40 flex justify-center items-center">
-                  <FaImage size={40} />
+              <div onClick={() => setDetailModal(true)}>
+                {!item?.thumbnail && (
+                  <div className="w-full text-primary bg-[#EFF6FFCC] h-40 flex justify-center items-center">
+                    <FaImage size={40} />
+                  </div>
+                )}
+                <div className="flex justify-between items-start mb-3 pt-2">
+                  <div>
+                    <h6 className="text-base font-medium text-zinc-800 mb-0">
+                      {item?.title}
+                    </h6>
+                  </div>
+                  <div className="flex items-center">
+                    <button
+                      onClick={() => {
+                        setDeleteModal(true);
+                      }}
+                      className="hover:bg-danger/10 hover:text-danger text-zinc-500 rounded-full h-8 w-8 flex items-center justify-center"
+                    >
+                      <BsTrash size={14} />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setEditModal(true);
+                      }}
+                      className="hover:bg-primary/10 hover:text-primary rounded-full text-zinc-500 h-8 w-8 flex items-center justify-center"
+                    >
+                      <LuPencil size={14} />
+                    </button>
+                  </div>
                 </div>
-              )}
-              <div className="flex justify-between items-start mb-3 pt-2">
-                <div>
-                  <h6 className="text-base font-medium text-zinc-800 mb-0">
-                    {item?.title}
-                  </h6>
-                </div>
-                <div className="flex items-center">
-                  <button
-                    onClick={() => {
-                      setDeleteModal(true);
-                    }}
-                    className="hover:bg-danger/10 hover:text-danger text-zinc-500 rounded-full h-8 w-8 flex items-center justify-center"
-                  >
-                    <BsTrash size={14} />
-                  </button>
-                  <button
-                    onClick={() => {
-                      setEditModal(true);
-                    }}
-                    className="hover:bg-primary/10 hover:text-primary rounded-full text-zinc-500 h-8 w-8 flex items-center justify-center"
-                  >
-                    <LuPencil size={14} />
-                  </button>
-                </div>
-              </div>
 
-              <div>
-                <p className="font-normal text-sm text-zinc-500 pb-4">
-                  {item?.description}
-                </p>
+                <div>
+                  <p className="font-normal text-sm text-zinc-500 pb-4">
+                    {item?.description}
+                  </p>
+                </div>
               </div>
             </div>
           ))}
@@ -1637,76 +1642,76 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
             </div>
 
             <div className="mb-4 bg-[#EFF6FF80] px-3 py-4 rounded-lg">
-            <div className="mb-6">
-                  <label
-                    htmlFor="competencies"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    <p className="text-lg font-semibold mb-1">Skills</p>{" "}
-                    <p className="text-sm font-normal">
-                      Show your top skills - add up to 5 skills
-                    </p>
-                  </label>
-                  <div className="flex flex-wrap gap-2 mt-4 border-b pb-1.5 border-neutral-200">
-                    {skills.map((skill) => (
-                      <span
-                        key={skill}
-                        className="flex items-center text-sm px-3 py-1 rounded-full"
-                      >
-                        {skill}
-                        <button
-                          type="button"
-                          onClick={() => removeSkill(skill)}
-                          className="ml-2 text-lg px-1.5 py-[1px] rounded-md hover:bg-red-600/10 text-zinc-600 hover:text-red-700"
-                        >
-                          &times;
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                  <div className="mt-4 mb-5 flex">
-                    <input
-                      type="text"
-                      value={newSkill}
-                      onChange={(e) => setNewSkill(e.target.value)}
-                      placeholder="Add a new skill"
-                      className="flex-1 rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                    <button
-                      type="button"
-                      onClick={addSkill}
-                      className="ml-2 px-4 py-2 bg-indigo-500 text-white text-sm rounded-md hover:bg-indigo-600"
+              <div className="mb-6">
+                <label
+                  htmlFor="competencies"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  <p className="text-lg font-semibold mb-1">Skills</p>{" "}
+                  <p className="text-sm font-normal">
+                    Show your top skills - add up to 5 skills
+                  </p>
+                </label>
+                <div className="flex flex-wrap gap-2 mt-4 border-b pb-1.5 border-neutral-200">
+                  {skills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="flex items-center text-sm px-3 py-1 rounded-full"
                     >
-                      Add
-                    </button>
-                  </div>
-                  <div className="bg-white rounded-lg py-4 px-3 border border-stroke">
-                    <p className="text-sm text-zinc-500 mb-2">
-                      Suggested skills based on your title
-                    </p>
+                      {skill}
+                      <button
+                        type="button"
+                        onClick={() => removeSkill(skill)}
+                        className="ml-2 text-lg px-1.5 py-[1px] rounded-md hover:bg-red-600/10 text-zinc-600 hover:text-red-700"
+                      >
+                        &times;
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-4 mb-5 flex">
+                  <input
+                    type="text"
+                    value={newSkill}
+                    onChange={(e) => setNewSkill(e.target.value)}
+                    placeholder="Add a new skill"
+                    className="flex-1 max-sm:w-[75%] rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={addSkill}
+                    className="ml-2 px-4 py-2 bg-indigo-500 text-white text-sm rounded-md hover:bg-indigo-600"
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="bg-white rounded-lg py-4 px-3 border border-stroke">
+                  <p className="text-sm text-zinc-500 mb-2">
+                    Suggested skills based on your title
+                  </p>
 
-                    <div className="flex flex-wrap items-center gap-2">
-                      {profileData?.suggested_skills
-                        ?.filter((skill: string) => !skills.includes(skill))
-                        .map((skill: string) => (
-                          <span
-                            key={skill}
-                            className="flex items-center text-sm px-3 py-1 border border-stroke rounded-full"
+                  <div className="flex flex-wrap items-center gap-2">
+                    {profileData?.suggested_skills
+                      ?.filter((skill: string) => !skills.includes(skill))
+                      .map((skill: string) => (
+                        <span
+                          key={skill}
+                          className="flex items-center text-sm px-3 py-1 border border-stroke rounded-full"
+                        >
+                          {skill}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSkills([...skills, skill]);
+                            }}
+                            className="ml-2 text-lg px-1 py-[1px] rounded-md hover:bg-primary/10 text-zinc-600 hover:text-primary"
                           >
-                            {skill}
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setSkills([...skills, skill]);
-                              }}
-                              className="ml-2 text-lg px-1 py-[1px] rounded-md hover:bg-primary/10 text-zinc-600 hover:text-primary"
-                            >
-                              <BsPlus />
-                            </button>
-                          </span>
-                        ))}
-                    </div>
+                            <BsPlus />
+                          </button>
+                        </span>
+                      ))}
                   </div>
+                </div>
               </div>
               <div className="relative mb-6 max-w-[280px]">
                 <Dropdown2
@@ -1902,6 +1907,7 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
           </div>
         </div>
       </Modal>
+
       <Modal
         show={editModal}
         onHide={() => {
@@ -1965,79 +1971,79 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
               </div>
             </div>
             <div className="mb-4 bg-[#EFF6FF80] px-3 py-4 rounded-lg">
-            <div className="mb-6">
-              <label
-                htmlFor="skills"
-                className="block text-sm font-medium text-gray-700"
-              >
-                <p className="text-lg font-semibold mb-1">Skills</p>{" "}
-                <p className="text-sm font-normal">
-                  Show your top skills - add up to 5 skills 
-                </p>
-              </label>
-
-              <div className="flex flex-wrap gap-2 mt-4 border-b pb-1.5 border-neutral-200">
-                {skills?.map((skill) => (
-                   <span
-                   key={skill}
-                   className="flex items-center text-sm px-3 py-1 rounded-full"
-                 >
-                   {skill}
-                   <button
-                     type="button"
-                     onClick={() => removeSkill(skill)}
-                     className="ml-2 text-lg px-1.5 py-[1px] rounded-md hover:bg-red-600/10 text-zinc-600 hover:text-red-700"
-                   >
-                     &times;
-                   </button>
-                 </span>
-                ))}
-              </div>
-              <div className="mt-4 mb-5 flex">
-                <input
-                  type="text"
-                  value={newSkill}
-                  onChange={(e) => setNewSkill(e.target.value)}
-                  placeholder="Add a new skill"
-                  className="flex-1 rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                />
-                <button
-                  type="button"
-                  onClick={addSkill}
-                  className="ml-2 px-4 py-2 bg-indigo-500 text-white text-sm rounded-md hover:bg-indigo-600"
+              <div className="mb-6">
+                <label
+                  htmlFor="skills"
+                  className="block text-sm font-medium text-gray-700"
                 >
-                  Add
-                </button>
-              </div>
-              <div className="bg-white rounded-lg py-4 px-3 border border-stroke">
-                <p className="text-sm text-zinc-500 mb-2">
-                  Suggested skills based on your title
-                </p>
+                  <p className="text-lg font-semibold mb-1">Skills</p>{" "}
+                  <p className="text-sm font-normal">
+                    Show your top skills - add up to 5 skills
+                  </p>
+                </label>
 
-                <div className="flex flex-wrap items-center gap-2">
-                  {profileData?.suggested_skills
-                    ?.filter((skill: string) => !skills.includes(skill))
-                    .map((skill: string) => (
-                      <span
-                        key={skill}
-                        className="flex items-center text-sm px-3 py-1 border border-stroke rounded-full"
+                <div className="flex flex-wrap gap-2 mt-4 border-b pb-1.5 border-neutral-200">
+                  {skills?.map((skill) => (
+                    <span
+                      key={skill}
+                      className="flex items-center text-sm px-3 py-1 rounded-full"
+                    >
+                      {skill}
+                      <button
+                        type="button"
+                        onClick={() => removeSkill(skill)}
+                        className="ml-2 text-lg px-1.5 py-[1px] rounded-md hover:bg-red-600/10 text-zinc-600 hover:text-red-700"
                       >
-                        {skill}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSkills([...skills, skill]);
-                          }}
-                          className="ml-2 text-lg px-1 py-[1px] rounded-md hover:bg-primary/10 text-zinc-600 hover:text-primary"
+                        &times;
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-4 mb-5 flex">
+                  <input
+                    type="text"
+                    value={newSkill}
+                    onChange={(e) => setNewSkill(e.target.value)}
+                    placeholder="Add a new skill"
+                    className="flex-1 max-sm:w-[75%] rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={addSkill}
+                    className="ml-2 px-4 py-2 bg-indigo-500 text-white text-sm rounded-md hover:bg-indigo-600"
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="bg-white rounded-lg py-4 px-3 border border-stroke">
+                  <p className="text-sm text-zinc-500 mb-2">
+                    Suggested skills based on your title
+                  </p>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    {profileData?.suggested_skills
+                      ?.filter((skill: string) => !skills.includes(skill))
+                      .map((skill: string) => (
+                        <span
+                          key={skill}
+                          className="flex items-center text-sm px-3 py-1 border border-stroke rounded-full"
                         >
-                          <BsPlus />
-                        </button>
-                      </span>
-                    ))}
+                          {skill}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSkills([...skills, skill]);
+                            }}
+                            className="ml-2 text-lg px-1 py-[1px] rounded-md hover:bg-primary/10 text-zinc-600 hover:text-primary"
+                          >
+                            <BsPlus />
+                          </button>
+                        </span>
+                      ))}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="relative mb-6 max-w-[280px]">
+              <div className="relative mb-6 max-w-[280px]">
                 <Dropdown2
                   buttonContent={
                     <span className="flex cursor-pointer max-w-[160px] text-[15px] text-primary border border-primary rounded-full w-auto py-1.5 px-4 items-center gap-2">
@@ -2226,6 +2232,75 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
               Update
             </button>
           </div>
+        </div>
+      </Modal>
+      <Modal
+        show={detailModal}
+        onHide={() => {
+          setDetailModal(false);
+        }}
+        title="Career Highlight"
+        size="max-w-[600px] w-full"
+      >
+        <div>
+          <div className="mb-4 w-full flex justify-between text-zinc-950 items-center gap-3">
+            <p className="font-semibold">{selectedCareer?.title}</p>
+          </div>
+          <div className="py-2 px-3 rounded-lg border border-stroke">
+            <p className="font-normal text-sm text-zinc-500 py-3">
+              {selectedCareer?.description}
+            </p>
+            {selectedCareer?.skills?.length > 0 && (
+              <div className="mt-5">
+                <div className="py-2 border-t border-stroke w-full flex gap-2 items-center flex-wrap">
+                  {selectedCareer?.skills?.map((val: string) => (
+                    <Pill key={val}>{val}</Pill>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {selectedCareer?.attachment && 
+          <div>
+            <div className="mt-6">
+              <p className="text-base font-semibold text-zinc-600 mb-1">Attachment</p>
+              {selectedCareer?.attachment?.type === "link" && (
+                <div>
+                <a
+                href={selectedCareer?.attachment?.url} 
+                target="_blank"
+                rel="noreferrer"
+                
+                >
+               Follow this link to view more details: <span className="text-blue-500 hover:underline">{selectedCareer?.attachment?.url}</span> 
+                </a>
+                </div>
+              )}
+               {selectedCareer?.attachment?.type === "image" && (
+                <div className="h-50 w-full max-w-[280px] pt-3">
+                <img
+                src={selectedCareer?.attachment?.url} 
+                alt="career highlight image"
+                className="object-cover w-full h-full rounded-md"
+                />
+              
+                </div>
+              )}
+               {selectedCareer?.attachment?.type === "video" && (
+                <div className="h-50 w-full max-w-[280px] pt-3">
+                <video
+                src={selectedCareer?.attachment?.url} 
+                className="object-cover w-full h-full rounded-md"
+                controls
+                />
+              
+                </div>
+              )}
+          </div>
+          </div>
+          }
+
         </div>
       </Modal>
       <Delete
@@ -2586,7 +2661,7 @@ export const VolunteerExperience: React.FC<{ profileData: any }> = ({
                   value={newAchievment}
                   onChange={(e) => setNewAchievment(e.target.value)}
                   placeholder="Ex: Improved application performance by 30% through code refactoring"
-                  className="flex-1 rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="flex-1 max-sm:w-[75%] rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
                 <button
                   type="button"
@@ -2641,7 +2716,7 @@ export const VolunteerExperience: React.FC<{ profileData: any }> = ({
                   value={newSkill}
                   onChange={(e) => setNewSkill(e.target.value)}
                   placeholder="Add a new skill"
-                  className="flex-1 rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="flex-1 max-sm:w-[75%] rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
                 <button
                   type="button"
@@ -2883,7 +2958,7 @@ export const VolunteerExperience: React.FC<{ profileData: any }> = ({
                   value={newAchievment}
                   onChange={(e) => setNewAchievment(e.target.value)}
                   placeholder="Ex: Improved application performance by 30% through code refactoring"
-                  className="flex-1 rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="flex-1 max-sm:w-[75%] rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
                 <button
                   type="button"
@@ -2938,7 +3013,7 @@ export const VolunteerExperience: React.FC<{ profileData: any }> = ({
                   value={newSkill}
                   onChange={(e) => setNewSkill(e.target.value)}
                   placeholder="Add a new skill"
-                  className="flex-1 rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="flex-1 max-sm:w-[75%] rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
                 <button
                   type="button"
@@ -3351,7 +3426,7 @@ export const Internships: React.FC<{ profileData: any }> = ({
                   value={newAchievment}
                   onChange={(e) => setNewAchievment(e.target.value)}
                   placeholder="Ex: Improved application performance by 30% through code refactoring"
-                  className="flex-1 rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="flex-1 max-sm:w-[75%] rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
                 <button
                   type="button"
@@ -3406,7 +3481,7 @@ export const Internships: React.FC<{ profileData: any }> = ({
                   value={newSkill}
                   onChange={(e) => setNewSkill(e.target.value)}
                   placeholder="Add a new skill"
-                  className="flex-1 rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="flex-1 max-sm:w-[75%] rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
                 <button
                   type="button"
