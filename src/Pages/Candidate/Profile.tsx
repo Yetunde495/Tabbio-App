@@ -9,6 +9,7 @@ import {
   BsCopy,
   BsDatabaseGear,
   BsEye,
+  BsPlusLg,
   BsTwitterX,
   BsWhatsapp,
 } from "react-icons/bs";
@@ -21,6 +22,7 @@ import {
 import Drawer from "../../components/Drawer";
 import Button from "../../components/Button";
 import {
+  FaCheck,
   FaCircle,
   FaFacebookF,
   FaLinkedinIn,
@@ -56,13 +58,14 @@ import {
   WorkExperience,
 } from "./SmartResumeComponents";
 import { IoDocumentTextOutline } from "react-icons/io5";
+import { truncateString } from "../../lib/utils/formatters";
 
 const SmartResumeSettings: React.FC<{ profileData: any }> = ({
   profileData,
 }) => {
   const { user, updateUser } = useApp();
   const [editLink, setEditLink] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const prefix = "tabbio.link/";
   const [inputValue, setInputValue] = useState(
     user?.resume_link || "tabbio.link/"
@@ -70,6 +73,24 @@ const SmartResumeSettings: React.FC<{ profileData: any }> = ({
   const [linkModal, setLinkModal] = useState(false);
   const [contactPrivacyModal, setContactPrivacyModal] = useState(false);
   const [status, setStatus] = useState(true);
+
+  const [infoModal, setInfoModal] = useState(false);
+  const [basicDetails, setBasicDetails] = useState({
+    linkedin_url: profileData?.linkedin_url,
+    location: profileData?.location,
+    location_type: profileData?.location_type,
+    relocation: profileData?.relocation,
+  });
+  const toggleLocationType = (type: string) => {
+    const d = basicDetails?.location_type.includes(type)
+      ? basicDetails?.location_type.filter((item: string) => item !== type)
+      : [...basicDetails?.location_type, type];
+
+    setBasicDetails((data: any) => ({
+      ...data,
+      location_type: d,
+    }));
+  };
 
   return (
     <section className="bg-white w-full min-w-[319px] h-full">
@@ -177,7 +198,7 @@ const SmartResumeSettings: React.FC<{ profileData: any }> = ({
         <div className="bg-gradient-to-l from-[#EFF6FF] to-[#DBEAFE] rounded-lg py-4 px-3">
           <div className="flex items-center gap-2">
             <div>
-            <IoDocumentTextOutline className="text-primary" size={16} />
+              <IoDocumentTextOutline className="text-primary" size={16} />
             </div>
             <div className="">
               <p className="text-sm">Edit Downloadable CV</p>
@@ -186,12 +207,14 @@ const SmartResumeSettings: React.FC<{ profileData: any }> = ({
               </p>
             </div>
             <div className="ml-auto">
-            <button onClick={() => navigate("edit-cv")} className="text-zinc-500">
-              <LuPencil />
-            </button>
+              <button
+                onClick={() => navigate("edit-cv")}
+                className="text-zinc-500"
+              >
+                <LuPencil />
+              </button>
+            </div>
           </div>
-          </div>
-          
         </div>
       </div>
 
@@ -205,7 +228,10 @@ const SmartResumeSettings: React.FC<{ profileData: any }> = ({
             </span>
           </div>
           <div className="ml-auto">
-            <button className="text-zinc-500">
+            <button
+              onClick={() => setInfoModal(true)}
+              className="text-zinc-500"
+            >
               <LuPencil />
             </button>
           </div>
@@ -479,6 +505,112 @@ const SmartResumeSettings: React.FC<{ profileData: any }> = ({
           </div>
         </div>
       </Modal>
+      <Modal
+        show={infoModal}
+        onHide={() => setInfoModal(false)}
+        title={profileData?.name}
+        size="max-w-[600px] w-full"
+      >
+        <div>
+          <div className="no-scrollbar max-h-[65vh] max-sm:max-h-[70vh] overflow-y-auto pr-2">
+            <div className="mb-6">
+              <label
+                htmlFor="location"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Location
+              </label>
+              <input
+                type="text"
+                id="location"
+                value={basicDetails?.location}
+                onChange={(e) =>
+                  setBasicDetails((data: any) => ({
+                    ...data,
+                    location: e.target.value,
+                  }))
+                }
+                placeholder="Enter your location"
+                className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              />
+            </div>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Location Type
+              </label>
+              <div className="flex gap-4 max-sm:flex-wrap">
+                {["On-Site", "Hybrid", "Remote"].map((type) => (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => toggleLocationType(type)}
+                    className={`px-4 py-1.5 rounded-full flex gap-2 font-normal items-center border border-stroke focus:outline-none  transition 
+              ${
+                basicDetails?.location_type.includes(type)
+                  ? "bg-primary text-white"
+                  : "bg-white text-zinc-700"
+              }`}
+                  >
+                    {basicDetails?.location_type.includes(type) ? (
+                      <FaCheck />
+                    ) : (
+                      <BsPlusLg />
+                    )}{" "}
+                    {type}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Relocation
+              </label>
+              <div className="flex flex-col gap-3 pl-1">
+                {[
+                  { label: "Open to Relocate", value: "Open to Relocate" },
+                  {
+                    label: "Not Open to Relocate",
+                    value: "Not Open to Relocate",
+                  },
+                ].map((option) => (
+                  <label key={option.value} className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="relocation"
+                      value={option.value}
+                      checked={basicDetails?.relocation === option.value}
+                      onChange={(e) => {
+                        setBasicDetails((data: any) => ({
+                          ...data,
+                          relocation: e.target.value,
+                        }));
+                      }}
+                      className="text-blue-500 focus:ring-blue-500"
+                    />
+                    {option.label}
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="w-full border-t flex bg-white mt-3 pt-4 justify-between items-center border-stroke">
+            <button
+              onClick={() => {
+                setInfoModal(false);
+              }}
+              className="text-zinc-600 hover:scale-105 font-medium py-1.5 px-4"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => console.log(basicDetails)}
+              className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </Modal>
     </section>
   );
 };
@@ -612,16 +744,27 @@ const Profile: React.FC = () => {
           </button>
 
           <div className="flex items-center  gap-4 max-sm:w-full max-sm:justify-between">
-            <div className="lg:flex hidden max-sm:flex items-center gap-1 text-zinc-400 hover:scale-x-105 duration-100">
+            <div className="lg:flex hidden max-sm:flex items-center gap-1 text-zinc-400">
               <LuClock className="max-sm:hidden" />
               <span>{user?.plan || "Updated 1d ago"}</span>
             </div>
 
             <div className="flex items-center gap-1">
-              <FaCircle size={10} className="text-green-500 max-md:hidden" />
-              <span className="max-md:hidden">
-                {user?.plan || "tabbio.com/name"}
-              </span>
+              <button onClick={() => navigate("preview-cv")} className="py-1 px-1.5 md:ml-1 max-md:pl-0 flex items-center gap-1 hover:scale-x-105">
+                <FaCircle size={10} className="text-green-500 max-md:hidden" />
+                <span
+                  className="max-md:hidden"
+                >
+                  {user?.plan || "tabbio.com/name"}
+                </span>{" "}
+                <span
+                  className="md:hidden"
+                >
+                  {truncateString(user?.plan || "tabbio.com/ahmed-mohammed", 10)}
+                </span>{" "}
+                <LuExternalLink size={14} className="" />
+              </button>
+
               <button
                 onClick={() => setShareModal(true)}
                 className="py-1 px-1.5 md:ml-1 max-md:pl-0 flex items-center gap-1 hover:scale-x-105 "
@@ -629,13 +772,6 @@ const Profile: React.FC = () => {
                 <MdShare /> <span className="">Share</span>
               </button>
             </div>
-            <button
-              onClick={() => navigate("preview-cv")}
-              className="text-primary hover:scale-x-105 inline-flex items-center gap-1.5"
-            >
-              <span className="">View Profile</span>{" "}
-              <LuExternalLink size={14} className="" />
-            </button>
           </div>
         </div>
         <div className="px-2 py-4 md:pl-8 md:pr-2">
@@ -707,9 +843,10 @@ const Profile: React.FC = () => {
 
         {showDrawer && (
           <Drawer
-            title=""
+            title="Profile Settings"
             isOpen={showDrawer}
             onClose={() => setShowDrawer(false)}
+            props={{ disableCloseOnOutsideClick: true }}
           >
             <div className="mt-10 pb-10">
               <SmartResumeSettings profileData={candidateData} />

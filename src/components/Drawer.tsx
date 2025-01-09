@@ -9,6 +9,7 @@ interface DrawerProps {
   children: ReactNode;
   title: string | ReactNode;
   width?: string;
+  props?: any;
 }
 
 interface Drawer2Props {
@@ -20,7 +21,7 @@ interface Drawer2Props {
   Icon?: IconType | any;
 }
 
-const Drawer = ({ isOpen, onClose, children, width, title }: DrawerProps) => {
+const Drawer = ({ isOpen, onClose, children, width, title, props }: DrawerProps) => {
   const drawerRef = useRef<HTMLDivElement>(null);
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -32,6 +33,7 @@ const Drawer = ({ isOpen, onClose, children, width, title }: DrawerProps) => {
   };
 
   useEffect(() => {
+    if (props?.disableCloseOnOutsideClick) return;
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);

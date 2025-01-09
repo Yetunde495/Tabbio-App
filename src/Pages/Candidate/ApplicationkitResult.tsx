@@ -13,7 +13,7 @@ import {
 import { RiRobot2Line } from "react-icons/ri";
 import { VscWand } from "react-icons/vsc";
 import { BsDownload, BsEye } from "react-icons/bs";
-import LiveResume, { ResumePreview } from "../PageComponents/Resume";
+import { ResumePreview } from "../PageComponents/Resume";
 import { interviewTipsData, mockResumeData } from "../../data/mockData";
 import { MdEdit } from "react-icons/md";
 import { usePDF } from "react-to-pdf";
@@ -479,7 +479,7 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
                 <ResumePDF resumeData={mockResumeData} />
 
   </PDFViewer> */}
-                <LiveResume resumeData={mockResumeData} />
+                <ResumePreview resumeData={mockResumeData} />
               </div>
             </div>
             <div className="fixed right-4 bottom-4">
@@ -947,7 +947,7 @@ export const ResumeResult: React.FC<ApplicationResultProps> = ({
                 <ResumePDF resumeData={mockResumeData} />
 
   </PDFViewer> */}
-                <LiveResume resumeData={mockResumeData} />
+                <ResumePreview resumeData={mockResumeData} />
               </div>
             </div>
             <div className="fixed right-4 bottom-4">

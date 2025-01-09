@@ -11,15 +11,20 @@ import { BsEye, BsSliders2Vertical } from "react-icons/bs";
 import { AiOutlineBarChart } from "react-icons/ai";
 import { useState } from "react";
 import ResumeAnalytics from "./ResumeAnalytics";
-import { LuBriefcase, LuBuilding2, LuClock, LuPuzzle } from "react-icons/lu";
+import {
+  LuBriefcase,
+  LuBuilding2,
+  LuClock,
+  LuExternalLink,
+  LuPuzzle,
+} from "react-icons/lu";
 import { MdCancel, MdShare } from "react-icons/md";
-import { FaRegEdit } from "react-icons/fa";
 import { TbSearch } from "react-icons/tb";
 import { RiAwardLine, RiRobot2Line } from "react-icons/ri";
 import { HiOutlineSparkles } from "react-icons/hi";
 import { mockApplicationData } from "../../data/mockData";
 import { IoDocumentTextOutline, IoLocationOutline } from "react-icons/io5";
-import { formatDateString } from "../../lib/utils/formatters";
+import { formatDateString, truncateString } from "../../lib/utils/formatters";
 import { paginate } from "../../lib/utils";
 import TablePagination from "../../components/table/TablePagination";
 import StaggeredDropDown, {
@@ -33,9 +38,11 @@ import AiMatchModal from "./AiMatch";
 import AdvancedSearchModal from "./AdvancedSearch";
 import CreateApplicationKit from "./CreateApplicationKit";
 import Tabs, { Tab } from "../../components/tabs";
+import { useNavigate } from "react-router-dom";
 
 const Applications: React.FC = () => {
   const { user } = useApp();
+  const navigate = useNavigate();
   const [allApplications, _setAllApplications] =
     useState<any[]>(mockApplicationData);
   const [tab2, setTab2] = useState("All");
@@ -54,8 +61,8 @@ const Applications: React.FC = () => {
   return (
     <DefaultLayout>
       <section>
-        <div className="bg-zinc-50/90 py-2.5 px-4.5 text-sm flex flex-wrap lg:items-center justify-between gap-3">
-          <div className="flex items-center gap-4 max-sm:justify-between">
+      <div className="bg-gradient-to-r from-[#F9FAFBCC] to-[#FFFFFF66] border border-[#F3F4F6] py-2.5 px-4.5 text-sm flex flex-wrap sm:gap-2 lg:items-center justify-between gap-3">
+      <div className="flex items-center gap-4 max-md:justify-between max-md:w-full max-sm:w-auto">
             <div className="flex items-center gap-1">
               <FaCircle size={10} className="text-green-500 max-lg:hidden" />
               <span>{user?.plan || "Free Plan"}</span>
@@ -65,33 +72,57 @@ const Applications: React.FC = () => {
             </div>
             <button
               onClick={() => setShowAnalytics(true)}
-              className="flex items-center gap-1 hover:scale-x-105 duration-100"
+              className="flex max-sm:hidden items-center gap-1 hover:scale-x-105 duration-100"
             >
               <BsEye className="max-lg:hidden" />
-              <span className="max-md:hidden">
+              <span className="max-sm:hidden">
                 {user?.plan || "10 profile views"}
               </span>
               <AiOutlineBarChart className="text-primary text-lg" />
             </button>
           </div>
 
-          <div className="flex items-center  gap-4">
-            <div className="lg:flex hidden items-center gap-1 text-zinc-300 hover:scale-x-105 duration-100">
+          <button
+            onClick={() => setShowAnalytics(true)}
+            className="flex sm:hidden items-center gap-1 hover:scale-x-105 duration-100"
+          >
+            <BsEye className="" />
+            <span className="">{user?.plan || "10 profile views"}</span>
+            <AiOutlineBarChart className="text-primary text-lg hidden" />
+          </button>
+
+          <div className="flex items-center max-sm:justify-between max-sm:w-full  gap-4">
+            <div className="sm:flex hidden items-center gap-1 text-zinc-300 hover:scale-x-105 duration-100">
               <LuClock className="" />
               <span>{user?.plan || "Updated 1d ago"}</span>
             </div>
             <div className="flex items-center gap-1">
-              <FaCircle size={10} className="text-green-500 max-md:hidden" />
-              <span className="max-md:hidden">
-                {user?.plan || "tabbio.com/name"}
-              </span>
+              <button
+                onClick={() => navigate("/app/candidate/profile/preview-cv")}
+                className="py-1 px-1.5 md:ml-1 max-md:pl-0 flex items-center gap-1 hover:scale-x-105"
+              >
+                <FaCircle size={10} className="text-green-500 max-md:hidden" />
+                <span className="max-md:hidden">
+                  {user?.plan || "tabbio.com/name"}
+                </span>{" "}
+                <span className="md:hidden">
+                  {truncateString(
+                    user?.plan || "tabbio.com/ahmed-mohammed",
+                    10
+                  )}
+                </span>{" "}
+                <LuExternalLink size={14} className="" />
+              </button>
               <button className="py-1 px-1.5 md:ml-1 max-md:pl-0 flex items-center gap-1 hover:scale-x-105 ">
-                <MdShare /> <span className="max-md:hidden">Share</span>
+                <MdShare /> <span className="">Share</span>
               </button>
             </div>
-            <button className="text-primary hover:scalex-x-105 inline-flex items-center gap-1.5">
-              <span className="max-md:hidden">Edit Resume</span>{" "}
-              <FaRegEdit size={14} className="" />
+            <button
+              onClick={() => navigate("/app/candidate/profile")}
+              className="text-primary hover:scale-x-105 inline-flex items-center gap-1.5"
+            >
+              <span className="">View Profile</span>{" "}
+              <LuExternalLink size={14} className="" />
             </button>
           </div>
         </div>
@@ -106,8 +137,8 @@ const Applications: React.FC = () => {
             </p>
           </div>
 
-          <div className="w-full flex items-center justify-between gap-4 lg:flex-row flex-col">
-            <div className="bg-white flex items-center rounded-xl border border-stroke justify-between max-lg:w-full px-2 py-2 w-[450px]">
+          <div className="w-full flex  justify-between gap-4 xl:flex-row flex-col">
+            <div className="bg-white flex items-center rounded-xl border border-stroke justify-between max-xl:w-full px-2 py-2 w-[450px]">
               <div className="relative ">
                 <button className="absolute top-1/2 left-0 -translate-y-1/2 pl-3">
                   <TbSearch />
@@ -127,9 +158,12 @@ const Applications: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setAiMatch(true)}
-                  className="flex gap-1 items-center justify-center max-sm:w-[100px] px-3 text-sm py-1 hover:scale-y-105 bg-primary/10 text-primary rounded-lg"
+                  className="flex gap-1 items-center sm:justify-center max-sm:w-[110px] px-3 text-sm py-1 hover:scale-y-105 bg-primary/10 text-primary rounded-lg"
                 >
-                  <RiRobot2Line className="max-sm:text-sm" />
+                  <span>
+                    {" "}
+                    <RiRobot2Line className="max-sm:text-sm" />
+                  </span>
                   AI Match
                   <HiOutlineSparkles className="max-sm:hidden" />
                 </button>
@@ -138,18 +172,18 @@ const Applications: React.FC = () => {
             <div className="flex gap-4 max-md:gap-2 items-center max-lg:w-full">
               <button
                 onClick={() => setExtension(true)}
-                className="flex gap-2 max-md:flex-col max-md:gap-1 max-md:px-4.5 max-xs:w-[200px]   items-center  justify-center px-6 py-2 rounded-md hover:scale-95 duration-150 text-white bg-gradient-to-br from-[#374151] to-[#1F2937]"
+                className="flex gap-2 max-md:flex-col max-md:gap-1 max-md:px-4.5 max-sm:w-[200px]   items-center  justify-center px-6 py-2 rounded-md hover:scale-95 duration-150 text-white bg-gradient-to-br from-[#374151] to-[#1F2937]"
               >
-                <span className="md:bg-white/10 md:p-1 text-sm md:rounded-md max-xs:hidden">
+                <span className="md:bg-white/10 md:p-1 text-sm md:rounded-md max-sm:hidden">
                   <LuPuzzle />
                 </span>
-                <span className="max-xs:hidden">Get</span> Chrome Extension
+                <span className="max-sm:hidden">Get</span> Chrome Extension
               </button>
               <button
                 onClick={() => setCreateModal(true)}
-                className="flex max-md:flex-col max-md:gap-1 max-md:py-2 max-md:px-4.5 gap-2  max-xs:px-2 max-xs:w-[150px] items-center justify-center px-6 py-2.5 rounded-md hover:scale-95 duration-150 text-white bg-primary"
+                className="flex max-md:flex-col max-md:gap-1 max-md:py-2 max-md:px-4.5 gap-2  max-sm:px-2 max-sm:w-[150px] items-center justify-center px-6 py-2.5 rounded-md hover:scale-95 duration-150 text-white bg-primary"
               >
-                <FaPlus className="max-md:text-sm max-xs:hidden" /> New
+                <FaPlus className="max-md:text-sm max-sm:hidden" /> New
                 Application
               </button>
             </div>

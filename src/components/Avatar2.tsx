@@ -49,4 +49,25 @@ const Avatar: React.FC<AvatarProps> = ({ size = 'medium', src, initials, alt }) 
   );
 };
 
+type AvatarGroupProps = {
+  images: Array<any>;
+};
+
+export const AvatarGroup: React.FC<AvatarGroupProps> = ({ images }) => {
+  return (
+    <div>
+      <div className="flex -space-x-2">
+        {images.map((val, index) => (
+          <img
+            key={index}
+            className="inline-block size-9 rounded-full ring-1 ring-white dark:ring-neutral-900"
+            src={val}
+            alt="Avatar"
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export default Avatar;

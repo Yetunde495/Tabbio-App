@@ -60,7 +60,7 @@ const Modal: React.FC<WarningProps> = ({
   }
 
   return ReactDOM.createPortal(
-    <div className="w-screen h-screen z-9999 bg-black bg-opacity-50 fixed top-0 flex md:items-center justify-center text-[#444444] overflow-x-auto">
+    <div className="w-screen h-screen z-99999 bg-black bg-opacity-50 fixed top-0 flex md:items-center justify-center text-[#444444] overflow-x-auto">
       <div
         className={`${size ? size : "md:min-w-[50%] min-w-full"} ${
           props?.roundedMd ? "md:rounded-md" : "md:rounded-2xl"

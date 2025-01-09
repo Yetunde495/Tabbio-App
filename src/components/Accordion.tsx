@@ -29,13 +29,13 @@ const Accordion: React.FC<AccordionProps> = ({ items, initialOpenIndex }) => {
   };
 
   return (
-    <div className="w-full bg-white dark:bg-boxdark-2">
+    <div className="w-full bg-transparent">
       {items.map((item, index) => {
         return (
-          <div key={index} className="mb-4 bg-white dark:bg-boxdark-2">
+          <div key={index} className="mb-3 border-b border-stroke shadow-sm rounded-md">
             <button
               onClick={() => toggleItem(index)}
-              className="w-full py-2 text-left bg-neutral-100 flex justify-between items-center"
+              className="w-full py-3.5 text-left flex justify-between items-center"
             >
               <div className="flex ml-4 gap-2 items-center">
                 {item.showIcon && (
@@ -57,7 +57,7 @@ const Accordion: React.FC<AccordionProps> = ({ items, initialOpenIndex }) => {
               </div>
             </button>
             {openIndex === index && (
-              <div className="py-3 px-4 text-sm bg-neutral-100 dark:bg-boxdark-2 dark:text-slate-50 mb-5 rounded-b-md">
+              <div className="py-3 px-4 text-sm bg-slate-50/60 dark:bg-boxdark-2 dark:text-slate-50 mb-5 rounded-b-md">
                 {item.content}
               </div>
             )}

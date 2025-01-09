@@ -1,18 +1,35 @@
 export const mockResumeData = {
-  name: "John Doe",
-  role: "Software Developer",
-  template: "standard",
+  name: "Ahmed Mohammed",
+  role: "Software Engineer",
+  template: "entry",
+  config: {
+    photo: false,
+    about: true,
+    experience: true,
+    address: true,
+    education: true,
+    skills: true,
+    courses: true,
+    languages: false,
+    projects: true,
+    email: true,
+    website: true,
+    phone: true,
+    linkedin: true,
+    role: true,
+    internships: true,
+  },
   style: {
     primary_color: "#007CFF",
-    secondary_color: "#0077B5",
+    font_family: '',
+    font_size: ''
   },
   professional_summary: `Results-driven Senior Software Engineer with 8+ years of experience in full-stack development and technical leadership. Specialized in building scalable distributed systems and microservices architectures. Proven track record of improving application performance, mentoring junior developers, and delivering high-impact solutions that drive business growth.
   
 Skilled in creating dynamic, user-friendly applications and collaborating within agile teams.
      `,
-  photo_url:
-    "https://images.pexels.com/photos/3778603/pexels-photo-3778603.jpeg?auto=compress&cs=tinysrgb&w=600",
   location: "San Francisco, CA",
+  address: "123 Main St, San Francisco, CA 94111",
   email: "johndoe@example.com",
   phone_number: "+1 (555) 123-4567",
   website_url: "https://johndoeportfolio.com",
@@ -23,14 +40,17 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
     "Node.js",
     "Express",
     "MongoDB",
-    "HTML",
-    "CSS",
     "TypeScript",
     "Git",
     "Agile Methodologies",
   ],
-  hobbies: ["Hiking", "Photography", "Cooking"],
-  languages: ["English", "Spanish"],
+  relevantCourses: [
+    "Data Structures and Algorithms",
+    "Web Application Development",
+    "Database Management Systems",
+    "Software Engineering Principles",
+    "Operating Systems"
+  ],
   experience: [
     {
       id: 1,
@@ -39,6 +59,11 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       description:
         "Developed responsive web applications using React and JavaScript. Collaborated with designers to create seamless UI experiences.",
       duration: "Jan 2021 - Present",
+      key_achievements: [
+        "Led development of microservices architecture serving 1M+ users",
+        "Improved application performance by 30% through code refactoring",
+        "Mentored junior developers in best practices and coding standards",
+      ],
     },
     {
       id: 2,
@@ -47,6 +72,39 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       description:
         "Built and maintained REST APIs using Node.js and Express. Improved application performance and data handling.",
       duration: "Aug 2019 - Dec 2020",
+      key_achievements: [
+        "Led development of microservices architecture serving 1M+ users",
+        "Improved application performance by 30% through code refactoring",
+        "Mentored junior developers in best practices and coding standards",
+      ],
+    },
+  ],
+  internships: [
+    {
+      id: 1,
+      position: "Frontend Developer",
+      company: "Tech Solutions Inc.",
+      description:
+        "Developed responsive web applications using React and JavaScript. Collaborated with designers to create seamless UI experiences.",
+      duration: "Jan 2021 - Present",
+      key_achievements: [
+        "Led development of microservices architecture serving 1M+ users",
+        "Improved application performance by 30% through code refactoring",
+        "Mentored junior developers in best practices and coding standards",
+      ],
+    },
+    {
+      id: 2,
+      position: "Backend Developer",
+      company: "Innovatech Corp.",
+      description:
+        "Built and maintained REST APIs using Node.js and Express. Improved application performance and data handling.",
+      duration: "Aug 2019 - Dec 2020",
+      key_achievements: [
+        "Led development of microservices architecture serving 1M+ users",
+        "Improved application performance by 30% through code refactoring",
+        "Mentored junior developers in best practices and coding standards",
+      ],
     },
   ],
   education: [
@@ -55,9 +113,54 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       degree: "Bachelor of Science in Computer Science",
       school: "University of California, Berkeley",
       duration: "2015 - 2019",
+      year: "2015",
+      info: "Graduated with Honors, GPA: 3.8/4.0",
+    },
+    {
+      id: 2,
+      degree: "PHD in Computer Science",
+      school: "NYU School of Engineering",
+      duration: "2015 - 2019",
+      year: "2020",
+      info: "Graduated with Honors, GPA: 3.8/4.0",
     },
   ],
+  projects: [
+    {
+      name: "Portfolio Website",
+      description: "Developed a personal portfolio website.",
+      technology: "HTML, CSS, JavaScript",
+      github_link: "github.com/johndoe/portfolio"
+    }
+  ],
 };
+
+export const mockEmpty = {
+  name: "",
+  role: "",
+    email: "",
+    phone: "",
+    linkedin: "",
+    address: "",
+    github: "",
+    portfolio: "",
+    template: "basic",
+    style: {
+      primary_color: "#007CFF",
+      font_family: '',
+      font_size: ''
+    },
+  professional_summary: "",
+  areas_of_expertise: [],
+  relevantCourses: [],
+  education: [],
+  experience: [],
+  projects: [],
+  skills: [],
+  extracurricular_activities: [],
+  languages: [],
+}
+
 
 export const analyticsData = [
   {
@@ -311,7 +414,7 @@ export const mockProfileData = {
     career_highlights:true,
     internships: true,
     education: true,
-    memberships: false,
+    memberships: true,
     professional_reference: true,
     certifications: true
   },
@@ -543,3 +646,34 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
     },
   ],
 };
+
+export const faqData = [
+  {
+    "title": "How does the Free plan work?",
+    "content": "The Free plan allows you to use essential features without any cost. You can create resumes, post jobs, and track candidates with basic tools. There are no hidden fees, and you can upgrade to a premium plan anytime."
+  },
+  {
+    "title": "Can I upgrade or downgrade at any time?",
+    "content": "Yes, you can upgrade or downgrade your plan at any time. When you change your plan, the new billing cycle will begin immediately, and your previous subscription will be adjusted accordingly."
+  },
+  {
+    "title": "What payment methods do you accept?",
+    "content": "We accept all major credit and debit cards, including Visa, Mastercard, and American Express. For Enterprise plans, we also support bank transfers upon request."
+  },
+  {
+    "title": "Can I switch between monthly and yearly billing?",
+    "content": "Yes, you can switch between monthly and yearly billing at any time. Yearly billing offers a discount compared to the monthly rate."
+  },
+  {
+    "title": "Is there a limit on the number of team members for the Business plan?",
+    "content": "The Business plan allows multiple team members with an additional cost of $24 per team member per month."
+  },
+  {
+    "title": "How do I contact support for the Enterprise plan?",
+    "content": "For the Enterprise plan, you can contact our sales team directly to discuss custom requirements and pricing."
+  },
+  {
+    "title": "Do you offer a refund if I cancel my subscription?",
+    "content": "We do not offer refunds for partially used billing periods. You can cancel your subscription anytime, and you will continue to have access until the end of the current billing period."
+  }
+]

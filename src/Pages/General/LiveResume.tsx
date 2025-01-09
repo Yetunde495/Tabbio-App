@@ -1,70 +1,14 @@
 import React, { useState } from "react";
-import Resume from "../PageComponents/Resume";
+import { ResumePreview } from "../PageComponents/Resume";
 import { FiLink } from "react-icons/fi";
 import Navbar from "../../layout/HomeNav";
 import Button from "../../components/Button";
 import OnboardCandidate from "../Authentication/OnboardCandidate";
+import { mockResumeData } from "../../data/mockData";
 
 const LiveResume: React.FC = () => {
   const [inputValue, setInputValue] = useState("");
-  const [resumeData, _setResumeData] = useState({
-    name: "John Doe",
-    role: "Software Developer",
-    template: "standard",
-    style: {
-      primary_color: "#007CFF",
-      secondary_color: "#0077B5",
-    },
-    professional_summary:
-      "Experienced software developer with a strong background in front-end and back-end development. Skilled in creating dynamic, user-friendly applications and collaborating within agile teams.",
-    photo_url:
-      "https://images.pexels.com/photos/3778603/pexels-photo-3778603.jpeg?auto=compress&cs=tinysrgb&w=600",
-    location: "San Francisco, CA",
-    email: "johndoe@example.com",
-    phone_number: "+1 (555) 123-4567",
-    website_url: "https://johndoeportfolio.com",
-    linkedin_url: "https://linkedin.com/in/johndoe",
-    skills: [
-      "JavaScript",
-      "React",
-      "Node.js",
-      "Express",
-      "MongoDB",
-      "HTML",
-      "CSS",
-      "TypeScript",
-      "Git",
-      "Agile Methodologies",
-    ],
-    hobbies: ["Hiking", "Photography", "Cooking"],
-    languages: ["English", "Spanish"],
-    experience: [
-      {
-        id: 1,
-        position: "Frontend Developer",
-        company: "Tech Solutions Inc.",
-        description:
-          "Developed responsive web applications using React and JavaScript. Collaborated with designers to create seamless UI experiences.",
-        duration: "Jan 2021 - Present",
-      },
-      {
-        id: 2,
-        position: "Backend Developer",
-        company: "Innovatech Corp.",
-        description:
-          "Built and maintained REST APIs using Node.js and Express. Improved application performance and data handling.",
-        duration: "Aug 2019 - Dec 2020",
-      },
-    ],
-    education: [
-      {
-        id: 1,
-        degree: "Bachelor of Science in Computer Science",
-        school: "University of California, Berkeley",
-        duration: "2015 - 2019",
-      },
-    ],
-  });
+  const [resumeData, _setResumeData] = useState(mockResumeData);
   const [onboardModal, setOnboardModal] = useState(false);
   const [showMobileLink, setShow] = useState(false);
   return (
@@ -132,7 +76,7 @@ const LiveResume: React.FC = () => {
               </div>
             </div>
           )}
-          <Resume resumeData={resumeData} />
+          <ResumePreview resumeData={resumeData} />
         </div>
         <div className="mt-13 lg:block hidden">
           {/* Resume Link */}

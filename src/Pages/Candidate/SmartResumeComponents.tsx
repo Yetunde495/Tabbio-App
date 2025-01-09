@@ -12,13 +12,7 @@ import {
   BsTrash,
   BsXCircleFill,
 } from "react-icons/bs";
-import {
-  FaCheck,
-  FaCircle,
-  FaImage,
-  FaRegFile,
-  FaStarOfLife,
-} from "react-icons/fa6";
+import { FaCircle, FaImage, FaRegFile, FaStarOfLife } from "react-icons/fa6";
 import { FormGroup } from "../../components/form";
 import DatePicker from "react-datepicker";
 import { FcCalendar } from "react-icons/fc";
@@ -31,10 +25,10 @@ import { FileUpload } from "../General/ResumeUpload";
 import { Dropdown2 } from "../../components/Dropdown";
 import { HiMiniLink } from "react-icons/hi2";
 import { BiImageAdd } from "react-icons/bi";
-import Avatar from "../../components/Avatar2";
-import getUserInitials from "../../lib/utils/getUserInitials";
 import { MdOutlineMailOutline, MdOutlinePhone } from "react-icons/md";
 import TabbioIcon from "../../assets/svg/t-icon.svg";
+import Alert from "../../components/Alert";
+import ProfilePicture from "../PageComponents/ProfilePhoto";
 
 export const ItemList = ({ items }: any) => {
   const [showAll, setShowAll] = useState(false);
@@ -80,29 +74,13 @@ export const BasicDetails: React.FC<{ profileData: any }> = ({
     role: profileData?.role,
     phone_number: profileData?.phone_number,
     linkedin_url: profileData?.linkedin_url,
-    location: profileData?.location,
-    location_type: profileData?.location_type,
-    relocation: profileData?.relocation,
+    name: profileData?.name,
   });
-  const toggleLocationType = (type: string) => {
-    const d = basicDetails?.location_type.includes(type)
-      ? basicDetails?.location_type.filter((item: string) => item !== type)
-      : [...basicDetails?.location_type, type];
-
-    setBasicDetails((data: any) => ({
-      ...data,
-      location_type: d,
-    }));
-  };
   return (
     <div>
       <div className="flex md:flex-row flex-col gap-x-6 items-center gap-y-6 mb-8">
         <div>
-          <Avatar
-            src={profileData?.photo_url || ""}
-            size="xl"
-            initials={getUserInitials(profileData?.name, "")}
-          />
+          <ProfilePicture name={profileData?.name} photo={profileData?.photo_url} />
         </div>
         <div>
           <div className="my-2">
@@ -314,7 +292,36 @@ export const BasicDetails: React.FC<{ profileData: any }> = ({
         size="max-w-[600px] w-full"
       >
         <div>
-          <div className="no-scrollbar max-h-[65vh] max-sm:max-h-[70vh] overflow-y-auto pr-2">
+          <div className="no-scrollbar max-h-[65vh] max-sm:max-h-[70vh] overflow-y-auto px-2">
+            <div className="mb-5">
+              <Alert variant="info">
+                <p>
+                  Any changes to your name and role will automatically update on
+                  your Downloadable CV
+                </p>
+              </Alert>
+            </div>
+            <div className="mb-6">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Name
+              </label>
+              <input
+                type="text"
+                id="role"
+                value={basicDetails?.name}
+                onChange={(e) =>
+                  setBasicDetails((data: any) => ({
+                    ...data,
+                    name: e.target.value,
+                  }))
+                }
+                placeholder="Enter your name"
+                className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              />
+            </div>
             <div className="mb-6">
               <label
                 htmlFor="role"
@@ -335,85 +342,6 @@ export const BasicDetails: React.FC<{ profileData: any }> = ({
                 placeholder="Ex: Project Manager"
                 className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
-            </div>
-            <div className="mb-6">
-              <label
-                htmlFor="location"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Location
-              </label>
-              <input
-                type="text"
-                id="location"
-                value={basicDetails?.location}
-                onChange={(e) =>
-                  setBasicDetails((data: any) => ({
-                    ...data,
-                    location: e.target.value,
-                  }))
-                }
-                placeholder="Enter your location"
-                className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              />
-            </div>
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Location Type
-              </label>
-              <div className="flex gap-4 max-sm:flex-wrap">
-                {["On-Site", "Hybrid", "Remote"].map((type) => (
-                  <button
-                    key={type}
-                    type="button"
-                    onClick={() => toggleLocationType(type)}
-                    className={`px-4 py-1.5 rounded-full flex gap-2 font-normal items-center border border-stroke focus:outline-none  transition 
-              ${
-                basicDetails?.location_type.includes(type)
-                  ? "bg-primary text-white"
-                  : "bg-white text-zinc-700"
-              }`}
-                  >
-                    {basicDetails?.location_type.includes(type) ? (
-                      <FaCheck />
-                    ) : (
-                      <BsPlusLg />
-                    )}{" "}
-                    {type}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Relocation
-              </label>
-              <div className="flex flex-col gap-3 pl-1">
-                {[
-                  { label: "Open to Relocate", value: "Open to Relocate" },
-                  {
-                    label: "Not Open to Relocate",
-                    value: "Not Open to Relocate",
-                  },
-                ].map((option) => (
-                  <label key={option.value} className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="relocation"
-                      value={option.value}
-                      checked={basicDetails?.relocation === option.value}
-                      onChange={(e) => {
-                        setBasicDetails((data: any) => ({
-                          ...data,
-                          relocation: e.target.value,
-                        }));
-                      }}
-                      className="text-blue-500 focus:ring-blue-500"
-                    />
-                    {option.label}
-                  </label>
-                ))}
-              </div>
             </div>
           </div>
           <div className="w-full border-t flex bg-white mt-3 pt-4 justify-between items-center border-stroke">
@@ -2261,46 +2189,47 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
             )}
           </div>
 
-          {selectedCareer?.attachment && 
-          <div>
-            <div className="mt-6">
-              <p className="text-base font-semibold text-zinc-600 mb-1">Attachment</p>
-              {selectedCareer?.attachment?.type === "link" && (
-                <div>
-                <a
-                href={selectedCareer?.attachment?.url} 
-                target="_blank"
-                rel="noreferrer"
-                
-                >
-               Follow this link to view more details: <span className="text-blue-500 hover:underline">{selectedCareer?.attachment?.url}</span> 
-                </a>
-                </div>
-              )}
-               {selectedCareer?.attachment?.type === "image" && (
-                <div className="h-50 w-full max-w-[280px] pt-3">
-                <img
-                src={selectedCareer?.attachment?.url} 
-                alt="career highlight image"
-                className="object-cover w-full h-full rounded-md"
-                />
-              
-                </div>
-              )}
-               {selectedCareer?.attachment?.type === "video" && (
-                <div className="h-50 w-full max-w-[280px] pt-3">
-                <video
-                src={selectedCareer?.attachment?.url} 
-                className="object-cover w-full h-full rounded-md"
-                controls
-                />
-              
-                </div>
-              )}
-          </div>
-          </div>
-          }
-
+          {selectedCareer?.attachment && (
+            <div>
+              <div className="mt-6">
+                <p className="text-base font-semibold text-zinc-600 mb-1">
+                  Attachment
+                </p>
+                {selectedCareer?.attachment?.type === "link" && (
+                  <div>
+                    <a
+                      href={selectedCareer?.attachment?.url}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Follow this link to view more details:{" "}
+                      <span className="text-blue-500 hover:underline">
+                        {selectedCareer?.attachment?.url}
+                      </span>
+                    </a>
+                  </div>
+                )}
+                {selectedCareer?.attachment?.type === "image" && (
+                  <div className="h-50 w-full max-w-[280px] pt-3">
+                    <img
+                      src={selectedCareer?.attachment?.url}
+                      alt="career highlight image"
+                      className="object-cover w-full h-full rounded-md"
+                    />
+                  </div>
+                )}
+                {selectedCareer?.attachment?.type === "video" && (
+                  <div className="h-50 w-full max-w-[280px] pt-3">
+                    <video
+                      src={selectedCareer?.attachment?.url}
+                      className="object-cover w-full h-full rounded-md"
+                      controls
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </Modal>
       <Delete
@@ -3887,7 +3816,7 @@ export const Education: React.FC<{ profileData: any }> = ({ profileData }) => {
           >
             <div className="flex justify-between items-start mb-3">
               <div>
-                <h6 className="md:text-lg text-base font-medium text-zinc-800 mb-0">
+                <h6 className="text-base max-sm:text-[15px] font-medium text-zinc-800 mb-0">
                   {item?.degree}
                 </h6>
                 <p className=" text-primary max-md:text-sm">{item?.school}</p>
@@ -4301,7 +4230,7 @@ export const Certifications: React.FC<{ profileData: any }> = ({
           >
             <div className="flex justify-between items-start mb-3">
               <div>
-                <h6 className="md:text-lg text-base font-medium text-zinc-800 mb-0">
+                <h6 className="text-base max-sm:text-[15px] font-medium text-zinc-800 mb-0">
                   {item?.title}
                 </h6>
                 <p className=" text-primary max-md:text-sm">{item?.platform}</p>
@@ -4591,7 +4520,7 @@ export const ProfessionalReference: React.FC<{ profileData: any }> = ({
                 </span>
                 <div className="flex w-full justify-between items-start mb-3">
                   <div>
-                    <h6 className="md:text-lg text-base font-medium text-zinc-800 mb-0">
+                    <h6 className="text-base max-sm:text-[15px] font-medium text-zinc-800 mb-0">
                       {item?.name}
                     </h6>
                     <p className=" text-primary max-md:text-sm mb-2">
@@ -5034,7 +4963,7 @@ export const Memberships: React.FC<{ profileData: any }> = ({
               </span>
               <div className="flex w-full justify-between items-start mb-3">
                 <div>
-                  <h6 className="md:text-lg text-base break-words font-medium text-zinc-800 mb-0">
+                  <h6 className="text-base max-sm:text-[15px] break-words font-medium text-zinc-800 mb-0">
                     {item?.title}
                   </h6>
                   <p className=" text-primary max-md:text-sm mb-2">

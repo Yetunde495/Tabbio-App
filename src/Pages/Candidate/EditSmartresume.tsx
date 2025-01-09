@@ -3,7 +3,7 @@ import DefaultLayout from "../../layout/DefaultLayout";
 import { useState } from "react";
 import { Switch } from "../../components/form/Switch";
 import { MdOutlineColorLens } from "react-icons/md";
-import { mockResumeData } from "../../data/mockData";
+import { mockEmpty, mockResumeData } from "../../data/mockData";
 import { UploadResumePhoto } from "../Authentication/uploadProfilephoto";
 import {
   BasicInfo,
@@ -11,7 +11,6 @@ import {
   CustomTextSection,
   Education,
   Experience,
-  Hobbies,
   Languages,
   ProfessionalSummary,
   Skills,
@@ -23,7 +22,7 @@ import { RiLayoutTopLine } from "react-icons/ri";
 import { AiOutlineLayout } from "react-icons/ai";
 import { TfiLayout } from "react-icons/tfi";
 import { DropdownSelect } from "../../components/form/customDropdown";
-import { FaCheck, FaPlus } from "react-icons/fa6";
+import { FaArrowRightLong, FaCheck, FaCircle, FaPlus, FaRegFile } from "react-icons/fa6";
 import { IoMdColorFilter } from "react-icons/io";
 import { PiSlidersHorizontalBold } from "react-icons/pi";
 import { Select4 } from "../../components/form/Select";
@@ -32,6 +31,21 @@ import { BsPencil } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { LuExternalLink } from "react-icons/lu";
 import { TbWorld } from "react-icons/tb";
+import {
+  AreasOfExpertise,
+  AtsEducation,
+  AtsExperience,
+  AtsInternships,
+  AtsProjects,
+  CareerSummary,
+  ContactInfo,
+  RelevantCourses,
+} from "../PageComponents/ATSApplicantComponents";
+import { FileUpload } from "../General/ResumeUpload";
+import { FiUpload } from "react-icons/fi";
+import { IoDocumentTextOutline } from "react-icons/io5";
+import Modal from "../../components/modal";
+import useOutsideClick from "../../hooks/useOutsideClick";
 
 const fonts = [
   {
@@ -59,43 +73,44 @@ const sizes = [
 ];
 
 const primaryColors = ["#0077B5", "#CC0074", "#FF7D00", "#00C196", "#000000"];
-const secondaryColors = ["#333333", "#CC0074", "#FF7D00", "#00C196", "#000000"];
 
 const EditSmartResume: React.FC = () => {
   const {} = useApp();
   const navigate = useNavigate();
-  //   const [active, setActive] = useState(true);
+  const [newCvModal, setNewCvModal] = useState(false);
   const [active, setActive] = useState<string | null>(null);
   const [resumeData, setResumeData] = useState<any>(mockResumeData);
   const [showPalette, setShowPalette] = useState(false);
-  const [showPalette2, setShowPalette2] = useState(false);
-  const [on, setOn] = useState(false);
+  const paletteRef = useOutsideClick(() => setShowPalette(false));
+
 
   const [config, setConfig] = useState({
     photo: resumeData?.photo ? true : false,
     about: resumeData?.professional_summary ? true : false,
     experience: resumeData?.experience?.length > 0 ? true : false,
     location: resumeData?.location ? true : false,
+    address: resumeData?.address ? true : false,
     education: resumeData?.education?.length > 0 ? true : false,
     skills: resumeData?.skills?.length > 0 ? true : false,
+    courses: resumeData?.relevantCourses?.length > 0 ? true : false,
     languages: resumeData?.languages?.length > 0 ? true : false,
-    hobbies: resumeData?.hobbies?.length > 0 ? true : false,
+    projects: resumeData?.projects?.length > 0 ? true : false,
     email: resumeData?.email ? true : false,
     website: resumeData?.website_url ? true : false,
     phone: resumeData?.phone_url ? true : false,
     linkedin: resumeData?.linkedin_url ? true : false,
     role: resumeData?.role ? true : false,
+    internships: resumeData?.internships?.length > 0 ? true : false,
   });
+  
   const [sectionCount, setSectionCount] = useState(0); // To track the number of sections added
   const [customSections, setCustomSections] = useState<any[]>([]);
   const [sectionType, setSectionType] = useState("");
-  const [sectionPlacement, setSectionPlacement] = useState("");
   // Function to add a new section to resumeData
-  const addCustomSection = (type: string, placement: string) => {
+  const addCustomSection = (type: string) => {
     const newSection = {
       name: `customSection${sectionCount + 1}`,
       type: type, // Store the type
-      placement: placement, // Store the placement
       content: type === "list" ? [""] : "", // Initialize based on type
     };
 
@@ -176,13 +191,14 @@ const EditSmartResume: React.FC = () => {
     <DefaultLayout>
       <section className="w-full">
         <div className="bg-zinc-50/90 lg:px-9 md:px-6 px-2 py-3 mb-6 w-full">
-          <div className="flex flex-wrap gap-3 items-center relative w-full z-99">
+          <div className="flex max-sm:flex-col gap-3 gap-y-1.5 sm:items-center relative w-full z-99">
             <Menu setActive={setActive}>
               <MenuItem
                 setActive={setActive}
                 active={active}
+                position="max-sm:-translate-x-[25%]"
                 item={
-                  <div className="flex space-x-2 items-center">
+                  <div className="flex space-x-[2px] max-sm:text-[11px] sm:space-x-2 items-center">
                     <HiOutlineTemplate />
                     <span>Template</span>
                     <Icons.arrowDown />
@@ -244,8 +260,9 @@ const EditSmartResume: React.FC = () => {
               <MenuItem
                 setActive={setActive}
                 active={active}
+                position="max-sm:-translate-x-[40%]"
                 item={
-                  <div className="flex space-x-2 items-center">
+                  <div className="flex space-x-[2px] max-sm:text-[11px] sm:space-x-2 items-center">
                     <HiOutlineTemplate />
                     <span>Typography</span>
                     <Icons.arrowDown />
@@ -279,10 +296,11 @@ const EditSmartResume: React.FC = () => {
                 <MenuItem
                   setActive={setActive}
                   active={active}
+                  position="max-sm:-translate-x-[62%]"
                   item={
-                    <div className="flex space-x-2 items-center">
+                    <div className="flex space-x-[2px] max-sm:text-[11px] sm:space-x-2 items-center">
                       <MdOutlineColorLens />
-                      <span>Colors</span>
+                      <span>Color</span>
                       <Icons.arrowDown />
                     </div>
                   }
@@ -290,7 +308,6 @@ const EditSmartResume: React.FC = () => {
                 >
                   <div className="flex flex-col space-y-4  text-sm w-[300px]">
                     <div>
-                      <h6>Primary Colors</h6>
                       <div className="flex gap-3 items-center justify-between">
                         {primaryColors?.map((val, index) => (
                           <span
@@ -323,44 +340,13 @@ const EditSmartResume: React.FC = () => {
                         </span>
                       </div>
                     </div>
-                    <div className="">
-                      <h6>Secondary Colors</h6>
-                      <div className="flex gap-3 items-center justify-between">
-                        {secondaryColors?.map((val, index) => (
-                          <span
-                            key={index}
-                            onClick={() => {
-                              setResumeData((d: any) => ({
-                                ...d,
-                                style: {
-                                  ...d.style,
-                                  secondary_color: val,
-                                },
-                              }));
-                            }}
-                            className={`h-9 w-9 rounded-full flex justify-center items-center cursor-pointer`}
-                            style={{ backgroundColor: val }}
-                          >
-                            {resumeData?.style?.secondary_color === val && (
-                              <FaCheck className="text-white" />
-                            )}
-                          </span>
-                        ))}
-
-                        <span
-                          onClick={() => setShowPalette2(!showPalette2)}
-                          className="h-10 w-10 bg-[#808080] text-white text-lg rounded-full flex justify-center items-center cursor-pointer"
-                        >
-                          <IoMdColorFilter />
-                        </span>
-                      </div>
-                    </div>
                   </div>
                 </MenuItem>
                 {showPalette && (
                   <div
-                    className={`absolute z-[9999] bg-white flex h-auto left-[225px] top-[80px] flex-col rounded-lg border border-stroke 
-                      shadow-default dark:border-strokedark `}
+                  className={`absolute z-[9999] bg-white flex h-auto sm:left-[225px] max-sm:-right-[20%] max-sm:top-[120px] top-[80px] flex-col rounded-lg border border-stroke 
+                    shadow-default dark:border-strokedark `}
+                    ref={paletteRef}
                   >
                     <Sketch
                       color={resumeData?.style?.primary_color}
@@ -376,32 +362,14 @@ const EditSmartResume: React.FC = () => {
                     />
                   </div>
                 )}
-                {showPalette2 && (
-                  <div
-                    className={`absolute z-[9999] bg-white flex h-auto left-[225px] top-[150px] flex-col rounded-lg border border-stroke 
-                      shadow-default dark:border-strokedark `}
-                  >
-                    <Sketch
-                      color={resumeData?.style?.secondary_color}
-                      onChange={(color) =>
-                        setResumeData((d: any) => ({
-                          ...d,
-                          style: {
-                            ...d.style,
-                            secondary_color: color.hex,
-                          },
-                        }))
-                      }
-                    />
-                  </div>
-                )}
               </div>
 
               <MenuItem
                 setActive={setActive}
                 active={active}
+                position="max-sm:-translate-x-[90.5%]"
                 item={
-                  <div className="flex space-x-2 items-center">
+                  <div className="flex space-x-[2px] max-sm:text-[11px] sm:space-x-2 items-center">
                     <PiSlidersHorizontalBold />
                     <span>Sections</span>
                     <Icons.arrowDown />
@@ -472,28 +440,6 @@ const EditSmartResume: React.FC = () => {
                             }}
                           />
                         </li>
-                        <li>
-                          <Switch
-                            checked
-                            value={on}
-                            label="Custom 1"
-                            size="sm"
-                            onChange={(val) => {
-                              setOn(val);
-                            }}
-                          />
-                        </li>
-                        <li>
-                          <Switch
-                            checked
-                            value={on}
-                            label="Custom 2"
-                            size="sm"
-                            onChange={(val) => {
-                              setOn(val);
-                            }}
-                          />
-                        </li>
                       </ul>
                     </div>
 
@@ -501,20 +447,9 @@ const EditSmartResume: React.FC = () => {
                       <ul className="space-y-2.5">
                         <li>
                           <Switch
-                            checked={config.photo}
-                            value={config.photo}
-                            label="Picture"
-                            size="sm"
-                            onChange={(val) => {
-                              setConfig((c) => ({ ...c, photo: val }));
-                            }}
-                          />
-                        </li>
-                        <li>
-                          <Switch
                             checked={config.about}
                             value={config.about}
-                            label="About Me"
+                            label="Professional Summary"
                             size="sm"
                             onChange={(val) => {
                               setConfig((c) => ({ ...c, about: val }));
@@ -567,35 +502,12 @@ const EditSmartResume: React.FC = () => {
                         </li>
                         <li>
                           <Switch
-                            checked={config.languages}
-                            value={config.languages}
-                            label="Languages"
+                            checked={config.projects}
+                            value={config.projects}
+                            label="Projects"
                             size="sm"
                             onChange={(val) => {
-                              if (!resumeData?.hobbies) {
-                                setResumeData((rd: any) => ({
-                                  ...rd,
-                                  languages: [""],
-                                }));
-                              }
-                              setConfig((c) => ({ ...c, languages: val }));
-                            }}
-                          />
-                        </li>
-                        <li>
-                          <Switch
-                            checked={config.hobbies}
-                            value={config.hobbies}
-                            label="Hobbies"
-                            size="sm"
-                            onChange={(val) => {
-                              if (!resumeData?.hobbies) {
-                                setResumeData((rd: any) => ({
-                                  ...rd,
-                                  hobbies: [""],
-                                }));
-                              }
-                              setConfig((c) => ({ ...c, hobbies: val }));
+                              setConfig((c) => ({ ...c, projects: val }));
                             }}
                           />
                         </li>
@@ -616,29 +528,11 @@ const EditSmartResume: React.FC = () => {
                         <option value={"text"}>Text Section</option>
                         <option value={"list"}>List Section</option>
                       </Select4>
-                      {resumeData?.template === "basic" ? (
-                        <Select4
-                          value={sectionPlacement}
-                          onChange={(val: string) => setSectionPlacement(val)}
-                        >
-                          <option value={""}>Select Placement...</option>
-                          <option value="top">Top Part</option>
-                          <option value="bottom">Bottom Part</option>
-                        </Select4>
-                      ) : (
-                        <Select4
-                          value={sectionPlacement}
-                          onChange={(val: string) => setSectionPlacement(val)}
-                        >
-                          <option value={""}>Select Placement...</option>
-                          <option value={"top"}>Left Column</option>
-                          <option value={"bottom"}>Right Column</option>
-                        </Select4>
-                      )}
+                    
 
                       <button
                         onClick={() =>
-                          addCustomSection(sectionType, sectionPlacement)
+                          addCustomSection(sectionType)
                         }
                         className="border w-[16%] h-[38px] bg-jobseeker/10 text-sm mt-2 flex justify-center items-center rounded-md border-jobseeker hover:bg-jobseeker hover:text-white"
                       >
@@ -652,11 +546,11 @@ const EditSmartResume: React.FC = () => {
               {/* Color Picker */}
             </Menu>
 
-            <div className="ml-auto flex items-center gap-2">
+            <div className="sm:ml-auto flex items-center gap-2">
               <button className="flex items-center gap-2 hover:scale-105 duration-150 text-zinc-700">
                 <TbWorld />
               </button>
-              <button className="flex items-center gap-2 hover:scale-105 duration-150 text-zinc-700">
+              <button onClick={() => setNewCvModal(true)} className="flex items-center gap-2 max-sm:text-xs p-1 hover:scale-105 duration-150 text-zinc-700">
                 Create New <LuExternalLink />
               </button>
             </div>
@@ -679,85 +573,117 @@ const EditSmartResume: React.FC = () => {
             </button>
           </div>
 
-          <div className="w-full flex 2xl:flex-row flex-col gap-5">
-            <div className="w-full 2xl:max-w-[75%] lg:w-[90%]">
-              {resumeData?.template === "basic" && (
+          <div className="w-full flex 2xl:flex-row flex-col gap-5 overflow-x-auto">
+            <div className="w-full 2xl:max-w-[75%]  lg:w-[90%] min-w-[800px]">
+              {resumeData?.template === "entry" && (
                 <div className="bg-white py-8 px-6 w-full overflow-x-auto custom-scrollbar">
                   <button
                     onClick={() => {
                       console.log(resumeData);
                       console.log(customSections);
                     }}
+                    className="hidden"
                   >
                     Console
                   </button>
-                  <div className="flex w-full justify-between  mb-25">
-                    <div className="flex flex-col mt-10">
+                  <div className="flex flex-col w-full justify-center items-center  mb-8 border-b pb-2 border-stroke">
+                    <input
+                      className={`border-none bg-white focus:bg-zinc-100 focus:outline-none text-center  px-3 font-medium text-[40px] dynamic-input`}
+                      style={{ color: resumeData?.style?.primary_color }}
+                      placeholder="Your Name"
+                      value={resumeData?.name}
+                      onChange={(e) =>
+                        setResumeData((r: any) => ({
+                          ...r,
+                          name: e.target.value,
+                        }))
+                      }
+                    />
+                    {config.role && (
                       <input
-                        className={`border-none bg-white focus:bg-zinc-200  px-3 font-medium text-[40px] dynamic-input`}
-                        style={{ color: resumeData?.style?.primary_color }}
-                        placeholder="Your Name"
-                        value={resumeData?.name}
+                        className={`border-none text-lg bg-white focus:outline-none text-center text-black placeholder:text-black focus:bg-zinc-100 px-4 font-semibold`}
+                        placeholder="Professional Title"
+                        value={resumeData?.role}
                         onChange={(e) =>
                           setResumeData((r: any) => ({
                             ...r,
-                            name: e.target.value,
+                            role: e.target.value,
                           }))
                         }
                       />
-                      {config.role && (
-                        <input
-                          className={`border-none text-lg bg-white text-black mr-2 uppercase placeholder:text-black focus:bg-zinc-200 px-4 font-bold`}
-                          placeholder="YOUR ROLE"
-                          value={resumeData?.role}
-                          onChange={(e) =>
-                            setResumeData((r: any) => ({
-                              ...r,
-                              role: e.target.value,
-                            }))
-                          }
-                        />
-                      )}
-                      <style>
-                        {`
+                    )}
+                    <ContactInfo
+                      resumeData={resumeData}
+                      setResumeData={setResumeData}
+                      config={config}
+                    />
+
+                    <style>
+                      {`
                               .dynamic-input::placeholder {
                                color: ${resumeData?.style?.primary_color}
                               }
                             `}
-                      </style>
-                    </div>
-                    {config.photo && (
-                      <div>
-                        <UploadResumePhoto
-                          user={null}
-                          setUrl={(val) =>
-                            setResumeData((r: any) => ({
-                              ...r,
-                              photo_url: val,
-                            }))
-                          }
-                        />
-                      </div>
-                    )}
+                    </style>
                   </div>
 
                   {config.about && (
-                    <div>
-                      <ProfessionalSummary
+                    <div className="border-b pb-2 border-stroke mb-6">
+                      <CareerSummary
+                        resumeData={resumeData}
+                        setResumeData={setResumeData}
+                      />
+                    </div>
+                  )}
+                  {config?.skills && (
+                    <div className=" border-b border-stroke pt-4 pb-6">
+                      <AreasOfExpertise
+                        resumeData={resumeData}
+                        setResumeData={setResumeData}
+                      />
+                    </div>
+                  )}
+                  {config.education && (
+                    <div className="border-b border-stroke py-6">
+                      <AtsEducation
                         resumeData={resumeData}
                         setResumeData={setResumeData}
                       />
                     </div>
                   )}
 
-                  <div className="mt-3 mb-9 px-5">
-                    <BasicInfo
-                      resumeData={resumeData}
-                      setResumeData={setResumeData}
-                      config={config}
-                    />
-                  </div>
-
+                  {config.courses && (
+                    <div className="border-b border-stroke py-6">
+                      <RelevantCourses
+                        resumeData={resumeData}
+                        setResumeData={setResumeData}
+                      />
+                    </div>
+                  )}
+                   {config.projects && (
+                    <div className="border-b border-stroke py-6">
+                      <AtsProjects
+                        resumeData={resumeData}
+                        setResumeData={setResumeData}
+                      />
+                    </div>
+                  )}
+                  {config.experience && (
+                    <div className="border-b py-9 border-stroke mb-4">
+                      <AtsExperience
+                        resumeData={resumeData}
+                        setResumeData={setResumeData}
+                      />
+                    </div>
+                  )}
+                   {config.internships && (
+                    <div className="border-b py-9 border-stroke mb-4">
+                      <AtsInternships
+                        resumeData={resumeData}
+                        setResumeData={setResumeData}
+                      />
+                    </div>
+                  )}
                   <div className="flex w-full flex-col gap-4">
                     {customSections
                       .filter((section) => section.placement === "top")
@@ -789,48 +715,6 @@ const EditSmartResume: React.FC = () => {
                       ))}
                   </div>
 
-                  {config.experience && (
-                    <div>
-                      <Experience
-                        resumeData={resumeData}
-                        setResumeData={setResumeData}
-                      />
-                    </div>
-                  )}
-
-                  {config.education && (
-                    <div className="mt-7">
-                      <Education
-                        resumeData={resumeData}
-                        setResumeData={setResumeData}
-                      />
-                    </div>
-                  )}
-
-                  {config.skills && (
-                    <div className="mt-7">
-                      <Skills
-                        resumeData={resumeData}
-                        setResumeData={setResumeData}
-                      />
-                    </div>
-                  )}
-                  {config.languages && (
-                    <div className="mt-7">
-                      <Languages
-                        resumeData={resumeData}
-                        setResumeData={setResumeData}
-                      />
-                    </div>
-                  )}
-                  {config.hobbies && (
-                    <div className="mt-7">
-                      <Hobbies
-                        resumeData={resumeData}
-                        setResumeData={setResumeData}
-                      />
-                    </div>
-                  )}
                   {/* Dynamically render custom sections */}
                   <div className="flex w-full flex-col gap-4">
                     {customSections
@@ -990,14 +874,7 @@ const EditSmartResume: React.FC = () => {
                           />
                         </div>
                       )}
-                      {config.hobbies && (
-                        <div className="mt-7">
-                          <Hobbies
-                            resumeData={resumeData}
-                            setResumeData={setResumeData}
-                          />
-                        </div>
-                      )}
+                     
 
                       {/* Dynamically render custom sections */}
                       <div className="flex w-full flex-col gap-4">
@@ -1022,10 +899,10 @@ const EditSmartResume: React.FC = () => {
                 </div>
               )}
             </div>
-            <div className="max-2xl:hidden">
+            <div className="max-2xl:hidden ml-auto">
               <div className="bg-white w-full min-w-[319px] h-full">
                 <div className="bg-zinc-50/90 flex font-medium items-center gap-1.5 py-2 px-3">
-                  <BsPencil size={18} /> Customize Profile
+                  <BsPencil size={18} /> Customize Profile CV
                 </div>
                 <div className="p-3 flex flex-col space-y-3">
                   <button
@@ -1047,6 +924,89 @@ const EditSmartResume: React.FC = () => {
             </div>
           </div>
         </div>
+        {newCvModal && (
+          <Modal
+            show={newCvModal}
+            onHide={() => {
+              setNewCvModal(false);
+            }}
+            title={
+              <div className="flex items-center gap-2">
+                <span className="bg-primary rounded-full text-white w-9 h-9 flex items-center justify-center">
+                  <IoDocumentTextOutline />
+                </span>
+                <div>
+                  <h3 className="font-semibold text-black dark:text-white text-lg mb-0">
+                  Build your Profile CV from Scratch 
+                  </h3>
+                 
+                </div>
+              </div>
+            }
+          >
+            <div className="py-5 h-[65vh] max-sm:h-[75vh] overflow-y-auto no-scrollbar">
+              <div>
+               
+
+                <div
+                  onClick={() => {
+                    setResumeData(mockEmpty)
+                    setNewCvModal(false);
+                  }}
+                  className="px-4 py-5 bg-white border border-[#DBEAFE] cursor-pointer rounded-xl"
+                >
+                  <div className="flex items-center max-sm:items-start w-full gap-2">
+                    <span className="bg-white border border-primary rounded-xl text-primary max-sm:h-8 max-sm:w-8 max-sm:rounded-full w-12 h-12 flex items-center justify-center">
+                      <IoDocumentTextOutline size={24} />
+                    </span>
+                    <div>
+                      <h3 className="font-semibold text-black dark:text-white mb-0">
+                        Start from Scratch
+                      </h3>
+                      <p className="text-zinc-500 text-sm">
+                        Build your resume from scratch
+                      </p>
+                    </div>
+                    <span className="text-primary ml-auto max-md:w-8">
+                      <FaArrowRightLong />
+                    </span>
+                  </div>
+                </div>
+
+                <div className="my-12">
+                  <FileUpload>
+                    <p className="font-bold text-neutral-700 text-center text-lg pt-4">
+                      Drag & drop your resume here
+                    </p>
+
+                    <p className="text-neutral-500 text-center text-base">
+                      or click to browse your files
+                    </p>
+
+                    <div className="flex gap-5 text-sm text-neutral-500 items-center justify-center w-full mt-3">
+                      <p className="flex items-center gap-1">
+                        <span>
+                          <FaRegFile />
+                        </span>
+                        PDF, DOC, DOCX
+                      </p>
+
+                      <span>
+                        <FaCircle size={4} className="rounded-full" />
+                      </span>
+                      <p className="flex items-center gap-1">
+                        <span>
+                          <FiUpload />
+                        </span>
+                        Up to 10MB
+                      </p>
+                    </div>
+                  </FileUpload>
+                </div>
+              </div>
+            </div>
+          </Modal>
+        )}
       </section>
     </DefaultLayout>
   );

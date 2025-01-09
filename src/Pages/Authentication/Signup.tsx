@@ -11,9 +11,10 @@ import { FcGoogle } from "react-icons/fc";
 import { BsLinkedin } from "react-icons/bs";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { TbLoader3 } from "react-icons/tb";
+import { registerUser, sendOtp } from "../../services/authServices";
 
 const Signup: React.FC = () => {
-  const {} = useApp();
+  const {signIn} = useApp();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState<boolean | null>(null);
@@ -22,6 +23,16 @@ const Signup: React.FC = () => {
 
   const methods = useForm<any>();
   const [togglePassword, setTogglePassword] = React.useState(false);
+
+  const sendOTP = async () => {
+    try {
+      const response = await sendOtp();
+      toast.success(response.message);
+      navigate("/email-verify");
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  };
 
   const onSubmit = async (data: any) => {
     if (data.password === data.confirm_password) {
@@ -40,11 +51,16 @@ const Signup: React.FC = () => {
     }
 
     try {
-      setIsLoading(true);
-      console.log(data);
-      navigate("/email-verify");
+      const resp = await registerUser(data);
+      signIn({
+        email: data?.email,
+        token: resp?.token,
+        user_id: resp?.user_id,
+      });
+      toast.success(resp?.message);
+      sendOTP();
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error(err.message || "Request Failed! Try again");
     } finally {
       setIsLoading(false);
     }
@@ -68,7 +84,7 @@ const Signup: React.FC = () => {
                   <div className="grid gap-6">
                     <AutoInput
                       label="First Name"
-                      name="first_name"
+                      name="firstName"
                       placeholder="Enter first name"
                       rules={{
                         required: "First name is required",
@@ -82,7 +98,7 @@ const Signup: React.FC = () => {
 
                     <AutoInput
                       label="Last Name"
-                      name="last_name"
+                      name="lastName"
                       placeholder="Enter last name"
                       rules={{
                         required: "Last name is required",
@@ -119,7 +135,7 @@ const Signup: React.FC = () => {
                     <div className="space-y-2 flex flex-col">
                       <PasswordInput
                         label="Confirm Password"
-                        name="confirm_password"
+                        name="confirmPassword"
                         placeholder="Enter Password"
                         togglePassword={togglePassword}
                         onTogglePassword={setTogglePassword}

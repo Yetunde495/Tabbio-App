@@ -14,6 +14,7 @@ const SlideTab = ({
   activeTab,
   onChange,
   noBg,
+  props,
   landing=true,
   activeColor
 }: {
@@ -24,6 +25,7 @@ const SlideTab = ({
   noBg: boolean;
   setPosition: Dispatch<SetStateAction<Position>>;
   landing?: boolean;
+  props?: any;
   activeColor?: string
 }) => {
   const ref = useRef<null | HTMLLIElement>(null);
@@ -33,7 +35,7 @@ const SlideTab = ({
   "relative z-10 block cursor-pointer hover:text-primary py-2 px-3 text-sm font-medium md:text-base " : 
   "relative z-10 block cursor-pointer group py-2 px-3 text-sm font-medium md:text-base";
   let clsN = landing ? val === activeTab && !noBg ? classNames+' rounded-lg bg-gradient-to-r from-[#3B82F61A] to-[#A855F71A] shadow-lg text-primary' : classNames+' text-zinc-500' :
-  val === activeTab && !noBg ? classNames+` rounded-md bg-white shadow-lg ${activeColor} ` : classNames+' bg-white/50 text-zinc-500'
+  val === activeTab && !noBg ? classNames+` ${props?.rounded ? props?.rounded : 'rounded-md'} bg-primary shadow-lg ${activeColor} ` : classNames+` bg-white/50 text-zinc-500 `
   ;
   
 
@@ -59,13 +61,13 @@ const SlideTab = ({
   );
 };
 
-export const Cursor = ({ position, landing=true }: { position: Position, landing?:boolean }) => {
+export const Cursor = ({ position, landing=true, props }: { position: Position, landing?:boolean, props?:any }) => {
   return (
     <motion.li
       animate={{
         ...position,
       }}
-      className={`absolute z-0 h-10 px-3 rounded-md ${landing ? 'bg-gradient-to-r from-[#3B82F61A] to-[#A855F71A] text-primary shadow-md' : 'bg-white shadow-md text-primary'}  py-2`}
+      className={`absolute z-0 h-10 px-3  ${props?.rounded ? props?.rounded : 'rounded-md'} ${landing ? 'bg-gradient-to-r from-[#3B82F61A] to-[#A855F71A] text-primary shadow-md' : 'bg-white shadow-md text-primary'}  py-2`}
     />
   );
 };

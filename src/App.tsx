@@ -10,7 +10,7 @@ import { Loader } from "./components/Loader";
 import AuthPages from "./Pages/Authentication/Index";
 import CompanyPages from "./Pages/Company/Index";
 
-axios.defaults.baseURL = "";
+axios.defaults.baseURL = import.meta.env.VITE_PUBLIC_TABBIO_API_URL;
 
 function App() {
   const { signOut, loadData } = useApp();
@@ -36,6 +36,7 @@ function App() {
       if (error.response) {
         if (error?.response?.status === 401) {
           signOut();
+          window.location.href = '/signin'
         }
       }
 
@@ -71,6 +72,8 @@ function App() {
                 element={<GeneralPages.CompanyLanding />}
               />
               <Route path="/about-us" element={<GeneralPages.AboutUs />} />
+              <Route path="/contact-us" element={<GeneralPages.ContactUs />} />
+              <Route path="/pricing" element={<GeneralPages.Pricing />} />
               <Route path="/affiliate" element={<GeneralPages.Affiliate />} />
               <Route path="/careers" element={<GeneralPages.Careers />} />
               <Route path="/signin" element={<AuthPages.Signin />} />

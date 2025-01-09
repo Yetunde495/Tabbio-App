@@ -141,15 +141,15 @@ const OnboardCandidate: React.FC<{ show:boolean, onHide: () => void }> = ({ show
       closeButton={isSuccess ? false : true}
     >
       {showSignup && (
-        <div className="lg:min-w-[420px] min-w-[300px]">
+        <div className="lg:min-w-[420px] md:h-[80vh] h-[90vh] no-scrollbar overflow-y-auto min-w-[300px]">
           <div className="mb-10 text-center flex flex-col w-full justify-center  items-center space-y-4">
             <img src={logo} alt="logo-image" />
-            <h1 className="lg:text-[32px] text-center text-zinc-900 mb-6 font-medium sm:text-[30px] text-[25px] dark:text-white leading-[38px]">
+            <h1 className="lg:text-[32px] text-center text-zinc-900 mb-6 font-medium sm:text-[30px] text-[20px] dark:text-white leading-[38px]">
               Create an account
             </h1>
             
           </div>
-          <div className="lg:h-auto h-[48vh] custom-scrollbar overflow-y-auto w-full flex justify-center items-center">
+          <div className="w-full flex justify-center items-center">
             <div className="w-full">
               <FormProvider {...methods}>
                 <form onSubmit={methods.handleSubmit(onSubmit)}>
