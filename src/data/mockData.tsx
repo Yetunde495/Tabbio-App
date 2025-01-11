@@ -1,7 +1,7 @@
 export const mockResumeData = {
   name: "Ahmed Mohammed",
   role: "Software Engineer",
-  template: "entry",
+  template: "professional",
   config: {
     photo: false,
     about: true,
@@ -18,6 +18,7 @@ export const mockResumeData = {
     linkedin: true,
     role: true,
     internships: true,
+    career: true
   },
   style: {
     primary_color: "#007CFF",
@@ -34,7 +35,7 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
   phone_number: "+1 (555) 123-4567",
   website_url: "https://johndoeportfolio.com",
   linkedin_url: "https://linkedin.com/in/johndoe",
-  skills: [
+  areasOfExpertise: [
     "JavaScript",
     "React",
     "Node.js",
@@ -44,6 +45,17 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
     "Git",
     "Agile Methodologies",
   ],
+  skills: [
+    {
+    name: 'technical skills',
+    items: ['Development']
+    },
+    {
+      name: 'soft skills',
+      items: ['Patience', ]
+    },
+    
+],
   relevantCourses: [
     "Data Structures and Algorithms",
     "Web Application Development",
@@ -132,6 +144,27 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       technology: "HTML, CSS, JavaScript",
       github_link: "github.com/johndoe/portfolio"
     }
+  ],
+  careerHighlights: [
+    {
+      id: 1,
+      title: "Technical Leadership",
+      description: "Collaborated with cross-functional teams to deliver project milestones",
+      link: "",
+    },
+    {
+      id: 2,
+      title: "Performance Optimization",
+      description: "Optimized database queries, reducing response time by 50%",
+      link: "https://images.pexels.com/photos/709143/pexels-photo-709143.jpeg?auto=compress&cs=tinysrgb&w=600",
+    },
+    {
+      id: 3,
+      title: "Team Development",
+      description: "Mentored 5+ Junior developers, leading to their promotion to mid-level roles",
+      link: "https://videos.pexels.com/video-files/1966695/1966695-sd_640_360_30fps.mp4",
+    },
+    
   ],
 };
 

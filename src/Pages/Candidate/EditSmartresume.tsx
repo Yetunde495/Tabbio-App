@@ -4,16 +4,9 @@ import { useState } from "react";
 import { Switch } from "../../components/form/Switch";
 import { MdOutlineColorLens } from "react-icons/md";
 import { mockEmpty, mockResumeData } from "../../data/mockData";
-import { UploadResumePhoto } from "../Authentication/uploadProfilephoto";
 import {
-  BasicInfo,
   CustomListSection,
   CustomTextSection,
-  Education,
-  Experience,
-  Languages,
-  ProfessionalSummary,
-  Skills,
 } from "../PageComponents/ApplicantComponents";
 import { Menu, MenuItem } from "../../AnimatedUi/AnimatedNav";
 import { HiOutlineTemplate } from "react-icons/hi";
@@ -22,7 +15,13 @@ import { RiLayoutTopLine } from "react-icons/ri";
 import { AiOutlineLayout } from "react-icons/ai";
 import { TfiLayout } from "react-icons/tfi";
 import { DropdownSelect } from "../../components/form/customDropdown";
-import { FaArrowRightLong, FaCheck, FaCircle, FaPlus, FaRegFile } from "react-icons/fa6";
+import {
+  FaArrowRightLong,
+  FaCheck,
+  FaCircle,
+  FaPlus,
+  FaRegFile,
+} from "react-icons/fa6";
 import { IoMdColorFilter } from "react-icons/io";
 import { PiSlidersHorizontalBold } from "react-icons/pi";
 import { Select4 } from "../../components/form/Select";
@@ -33,10 +32,12 @@ import { LuExternalLink } from "react-icons/lu";
 import { TbWorld } from "react-icons/tb";
 import {
   AreasOfExpertise,
+  AtsCareerHighlight,
   AtsEducation,
   AtsExperience,
   AtsInternships,
   AtsProjects,
+  AtsSkills,
   CareerSummary,
   ContactInfo,
   RelevantCourses,
@@ -82,27 +83,11 @@ const EditSmartResume: React.FC = () => {
   const [resumeData, setResumeData] = useState<any>(mockResumeData);
   const [showPalette, setShowPalette] = useState(false);
   const paletteRef = useOutsideClick(() => setShowPalette(false));
+  const [editingName, setEditingName] = useState(false);
+  const [editingRole, setEditingRole] = useState(false);
 
+  const [config, setConfig] = useState<any>(mockResumeData?.config || null);
 
-  const [config, setConfig] = useState({
-    photo: resumeData?.photo ? true : false,
-    about: resumeData?.professional_summary ? true : false,
-    experience: resumeData?.experience?.length > 0 ? true : false,
-    location: resumeData?.location ? true : false,
-    address: resumeData?.address ? true : false,
-    education: resumeData?.education?.length > 0 ? true : false,
-    skills: resumeData?.skills?.length > 0 ? true : false,
-    courses: resumeData?.relevantCourses?.length > 0 ? true : false,
-    languages: resumeData?.languages?.length > 0 ? true : false,
-    projects: resumeData?.projects?.length > 0 ? true : false,
-    email: resumeData?.email ? true : false,
-    website: resumeData?.website_url ? true : false,
-    phone: resumeData?.phone_url ? true : false,
-    linkedin: resumeData?.linkedin_url ? true : false,
-    role: resumeData?.role ? true : false,
-    internships: resumeData?.internships?.length > 0 ? true : false,
-  });
-  
   const [sectionCount, setSectionCount] = useState(0); // To track the number of sections added
   const [customSections, setCustomSections] = useState<any[]>([]);
   const [sectionType, setSectionType] = useState("");
@@ -344,7 +329,7 @@ const EditSmartResume: React.FC = () => {
                 </MenuItem>
                 {showPalette && (
                   <div
-                  className={`absolute z-[9999] bg-white flex h-auto sm:left-[225px] max-sm:-right-[20%] max-sm:top-[120px] top-[80px] flex-col rounded-lg border border-stroke 
+                    className={`absolute z-[9999] bg-white flex h-auto sm:left-[225px] max-sm:-right-[20%] max-sm:top-[120px] top-[80px] flex-col rounded-lg border border-stroke 
                     shadow-default dark:border-strokedark `}
                     ref={paletteRef}
                   >
@@ -392,7 +377,7 @@ const EditSmartResume: React.FC = () => {
                             label="Location"
                             size="sm"
                             onChange={(val) => {
-                              setConfig((c) => ({ ...c, location: val }));
+                              setConfig((c: any) => ({ ...c, location: val }));
                             }}
                           />
                         </li>
@@ -403,7 +388,7 @@ const EditSmartResume: React.FC = () => {
                             label="Phone Number"
                             size="sm"
                             onChange={(val) => {
-                              setConfig((c) => ({ ...c, phone: val }));
+                              setConfig((c: any) => ({ ...c, phone: val }));
                             }}
                           />
                         </li>
@@ -414,7 +399,7 @@ const EditSmartResume: React.FC = () => {
                             label="Email"
                             size="sm"
                             onChange={(val) => {
-                              setConfig((c) => ({ ...c, email: val }));
+                              setConfig((c: any) => ({ ...c, email: val }));
                             }}
                           />
                         </li>
@@ -425,7 +410,7 @@ const EditSmartResume: React.FC = () => {
                             label="Website"
                             size="sm"
                             onChange={(val) => {
-                              setConfig((c) => ({ ...c, website: val }));
+                              setConfig((c: any) => ({ ...c, website: val }));
                             }}
                           />
                         </li>
@@ -436,7 +421,7 @@ const EditSmartResume: React.FC = () => {
                             label="Linkedin"
                             size="sm"
                             onChange={(val) => {
-                              setConfig((c) => ({ ...c, linkedin: val }));
+                              setConfig((c: any) => ({ ...c, linkedin: val }));
                             }}
                           />
                         </li>
@@ -452,7 +437,7 @@ const EditSmartResume: React.FC = () => {
                             label="Professional Summary"
                             size="sm"
                             onChange={(val) => {
-                              setConfig((c) => ({ ...c, about: val }));
+                              setConfig((c: any) => ({ ...c, about: val }));
                             }}
                           />
                         </li>
@@ -463,7 +448,7 @@ const EditSmartResume: React.FC = () => {
                             label="Role"
                             size="sm"
                             onChange={(val) => {
-                              setConfig((c) => ({ ...c, role: val }));
+                              setConfig((c: any) => ({ ...c, role: val }));
                             }}
                           />
                         </li>
@@ -474,7 +459,10 @@ const EditSmartResume: React.FC = () => {
                             label="Work Experience"
                             size="sm"
                             onChange={(val) => {
-                              setConfig((c) => ({ ...c, experience: val }));
+                              setConfig((c: any) => ({
+                                ...c,
+                                experience: val,
+                              }));
                             }}
                           />
                         </li>
@@ -485,7 +473,7 @@ const EditSmartResume: React.FC = () => {
                             label="Education"
                             size="sm"
                             onChange={(val) => {
-                              setConfig((c) => ({ ...c, education: val }));
+                              setConfig((c: any) => ({ ...c, education: val }));
                             }}
                           />
                         </li>
@@ -496,7 +484,7 @@ const EditSmartResume: React.FC = () => {
                             label="Skills"
                             size="sm"
                             onChange={(val) => {
-                              setConfig((c) => ({ ...c, skills: val }));
+                              setConfig((c: any) => ({ ...c, skills: val }));
                             }}
                           />
                         </li>
@@ -507,7 +495,7 @@ const EditSmartResume: React.FC = () => {
                             label="Projects"
                             size="sm"
                             onChange={(val) => {
-                              setConfig((c) => ({ ...c, projects: val }));
+                              setConfig((c: any) => ({ ...c, projects: val }));
                             }}
                           />
                         </li>
@@ -528,12 +516,9 @@ const EditSmartResume: React.FC = () => {
                         <option value={"text"}>Text Section</option>
                         <option value={"list"}>List Section</option>
                       </Select4>
-                    
 
                       <button
-                        onClick={() =>
-                          addCustomSection(sectionType)
-                        }
+                        onClick={() => addCustomSection(sectionType)}
                         className="border w-[16%] h-[38px] bg-jobseeker/10 text-sm mt-2 flex justify-center items-center rounded-md border-jobseeker hover:bg-jobseeker hover:text-white"
                       >
                         <FaPlus />
@@ -550,7 +535,10 @@ const EditSmartResume: React.FC = () => {
               <button className="flex items-center gap-2 hover:scale-105 duration-150 text-zinc-700">
                 <TbWorld />
               </button>
-              <button onClick={() => setNewCvModal(true)} className="flex items-center gap-2 max-sm:text-xs p-1 hover:scale-105 duration-150 text-zinc-700">
+              <button
+                onClick={() => setNewCvModal(true)}
+                className="flex items-center gap-2 max-sm:text-xs p-1 hover:scale-105 duration-150 text-zinc-700"
+              >
                 Create New <LuExternalLink />
               </button>
             </div>
@@ -566,7 +554,13 @@ const EditSmartResume: React.FC = () => {
               Exit
             </button>
             <button
-              onClick={() => {}}
+              onClick={() => {
+                setResumeData((resumeData: any) => ({
+                  ...resumeData,
+                  template:
+                    resumeData?.template === "entry" ? "professional" : "entry",
+                }));
+              }}
               className="px-4 py-2 md:px-8 flex bg-primary text-white items-center font-medium text-lg rounded-lg mb-3 gap-3"
             >
               Save Changes
@@ -660,7 +654,7 @@ const EditSmartResume: React.FC = () => {
                       />
                     </div>
                   )}
-                   {config.projects && (
+                  {config.projects && (
                     <div className="border-b border-stroke py-6">
                       <AtsProjects
                         resumeData={resumeData}
@@ -676,7 +670,7 @@ const EditSmartResume: React.FC = () => {
                       />
                     </div>
                   )}
-                   {config.internships && (
+                  {config.internships && (
                     <div className="border-b py-9 border-stroke mb-4">
                       <AtsInternships
                         resumeData={resumeData}
@@ -749,49 +743,66 @@ const EditSmartResume: React.FC = () => {
                 </div>
               )}
 
-              {resumeData?.template === "standard" && (
+              {resumeData?.template === "professional" && (
                 <div className="bg-white py-8 px-6 w-full overflow-x-auto">
-                  <div className="flex w-full gap-1  mb-15">
-                    {config.photo && (
-                      <div>
-                        <UploadResumePhoto
-                          user={null}
-                          props={{ size: "w-60 h-60" }}
-                          setUrl={(val) =>
-                            setResumeData((r: any) => ({
-                              ...r,
-                              photo_url: val,
-                            }))
-                          }
-                        />
-                      </div>
-                    )}
-                    <div className="flex flex-col mt-15">
-                      <input
-                        className={`border-none bg-white focus:bg-zinc-200 px-3 font-medium text-[40px] dynamic-input`}
-                        style={{ color: resumeData?.style?.primary_color }}
-                        placeholder="Your Name"
-                        value={resumeData?.name}
-                        onChange={(e) =>
-                          setResumeData((r: any) => ({
-                            ...r,
-                            name: e.target.value,
-                          }))
-                        }
-                      />
-                      {config.role && (
+                  <div className="w-full  mb-15">
+                    <div
+                      style={{
+                        color: resumeData?.style?.primary_color,
+                        borderColor: resumeData?.style?.primary_color,
+                      }}
+                      className="w-full flex divide-x-2 border-b-2 gap-3 items-center mt-15"
+                    >
+                      {editingName ? (
                         <input
-                          className={`border-none text-lg bg-white text-black mr-2 uppercase placeholder:text-black focus:bg-zinc-200 px-4 font-bold`}
-                          placeholder="YOUR ROLE"
-                          value={resumeData?.role}
+                          className={`border-none bg-white focus:bg-zinc-100 focus:outline-none px-3 font-medium text-[40px] dynamic-input`}
+                          style={{ color: resumeData?.style?.primary_color }}
+                          placeholder="Your Name"
+                          value={resumeData?.name}
+                          autoFocus
+                          onBlur={() => setEditingName(false)}
                           onChange={(e) =>
                             setResumeData((r: any) => ({
                               ...r,
-                              role: e.target.value,
+                              name: e.target.value,
                             }))
                           }
                         />
+                      ) : (
+                        <span
+                          onClick={() => setEditingName(true)}
+                          className="text-[40px] cursor-text font-medium uppercase"
+                        >
+                          {resumeData?.name}
+                        </span>
                       )}
+                      {config.role && (
+                        <>
+                          {editingRole ? (
+                            <input
+                              className={`border-none text-lg bg-white focus:outline-none text-black mr-2 uppercase placeholder:text-black focus:bg-zinc-100 px-4 font-medium`}
+                              placeholder="YOUR ROLE"
+                              autoFocus
+                              onBlur={() => setEditingRole(false)}
+                              value={resumeData?.role}
+                              onChange={(e) =>
+                                setResumeData((r: any) => ({
+                                  ...r,
+                                  role: e.target.value,
+                                }))
+                              }
+                            />
+                          ) : (
+                            <span
+                              onClick={() => setEditingRole(true)}
+                              className="text-lg text-black px-2 uppercase cursor-text font-medium"
+                            >
+                              {resumeData?.role}
+                            </span>
+                          )}
+                        </>
+                      )}
+
                       <style>
                         {`
                               .dynamic-input::placeholder {
@@ -800,102 +811,52 @@ const EditSmartResume: React.FC = () => {
                             `}
                       </style>
                     </div>
+                    <ContactInfo
+                      resumeData={resumeData}
+                      setResumeData={setResumeData}
+                      config={config}
+                    />
                   </div>
-
-                  <div className="flex gap-1 w-full">
-                    <div className="max-w-60">
-                      {config.about && (
-                        <div>
-                          <ProfessionalSummary
-                            resumeData={resumeData}
-                            setResumeData={setResumeData}
-                          />
-                        </div>
-                      )}
-                      <div className="mt-3 mb-9 px-5">
-                        <BasicInfo
-                          resumeData={resumeData}
-                          setResumeData={setResumeData}
-                          config={config}
-                        />
-                      </div>
-
-                      <div className="flex w-full flex-col gap-4">
-                        {customSections
-                          .filter((section) => section.placement === "top")
-                          .map((section, index) => (
-                            <div key={index}>
-                              <CustomTextSection
-                                props={{
-                                  key: section.name,
-                                  section: resumeData[section.name],
-                                  updateSectionName: updateSectionName,
-                                  updateSectionContent: updateSectionContent,
-                                }}
-                                handleRemove={() => removeSection(section.name)}
-                              />
-                            </div>
-                          ))}
-                      </div>
+                  {config.about && (
+                    <div className="mb-4">
+                      <CareerSummary
+                        resumeData={resumeData}
+                        setResumeData={setResumeData}
+                      />
                     </div>
-                    <div className="w-full">
-                      {config.experience && (
-                        <div>
-                          <Experience
-                            resumeData={resumeData}
-                            setResumeData={setResumeData}
-                          />
-                        </div>
-                      )}
-
-                      {config.education && (
-                        <div className="mt-7">
-                          <Education
-                            resumeData={resumeData}
-                            setResumeData={setResumeData}
-                          />
-                        </div>
-                      )}
-
-                      {config.skills && (
-                        <div className="mt-7">
-                          <Skills
-                            resumeData={resumeData}
-                            setResumeData={setResumeData}
-                          />
-                        </div>
-                      )}
-
-                      {config.languages && (
-                        <div className="mt-7">
-                          <Languages
-                            resumeData={resumeData}
-                            setResumeData={setResumeData}
-                          />
-                        </div>
-                      )}
-                     
-
-                      {/* Dynamically render custom sections */}
-                      <div className="flex w-full flex-col gap-4">
-                        {customSections
-                          .filter((section) => section.placement === "bottom")
-                          .map((section, index) => (
-                            <div key={index}>
-                              <CustomTextSection
-                                props={{
-                                  key: section.name,
-                                  section: resumeData[section.name],
-                                  updateSectionName: updateSectionName,
-                                  updateSectionContent: updateSectionContent,
-                                }}
-                                handleRemove={() => removeSection(section.name)}
-                              />
-                            </div>
-                          ))}
-                      </div>
+                  )}
+                  {config?.skills && (
+                    <div className="pb-4">
+                      <AtsSkills
+                        resumeData={resumeData}
+                        setResumeData={setResumeData}
+                      />
                     </div>
-                  </div>
+                  )}
+                  {config?.career && (
+                    <div className="pb-4">
+                      <AtsCareerHighlight
+                        resumeData={resumeData}
+                        setResumeData={setResumeData}
+                      />
+                    </div>
+                  )}
+                  {config.experience && (
+                    <div className="py-5  mb-4">
+                      <AtsExperience
+                        resumeData={resumeData}
+                        setResumeData={setResumeData}
+                      />
+                    </div>
+                  )}
+                  {config.education && (
+                    <div className="py-6">
+                      <AtsEducation
+                        resumeData={resumeData}
+                        setResumeData={setResumeData}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -937,20 +898,17 @@ const EditSmartResume: React.FC = () => {
                 </span>
                 <div>
                   <h3 className="font-semibold text-black dark:text-white text-lg mb-0">
-                  Build your Profile CV from Scratch 
+                    Build your Profile CV from Scratch
                   </h3>
-                 
                 </div>
               </div>
             }
           >
             <div className="py-5 h-[65vh] max-sm:h-[75vh] overflow-y-auto no-scrollbar">
               <div>
-               
-
                 <div
                   onClick={() => {
-                    setResumeData(mockEmpty)
+                    setResumeData(mockEmpty);
                     setNewCvModal(false);
                   }}
                   className="px-4 py-5 bg-white border border-[#DBEAFE] cursor-pointer rounded-xl"
