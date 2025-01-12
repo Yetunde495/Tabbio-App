@@ -11,9 +11,6 @@ import {
 import { Menu, MenuItem } from "../../AnimatedUi/AnimatedNav";
 import { HiOutlineTemplate } from "react-icons/hi";
 import { Icons } from "../../components/icons";
-import { RiLayoutTopLine } from "react-icons/ri";
-import { AiOutlineLayout } from "react-icons/ai";
-import { TfiLayout } from "react-icons/tfi";
 import { DropdownSelect } from "../../components/form/customDropdown";
 import {
   FaArrowRightLong,
@@ -38,6 +35,7 @@ import {
   AtsInternships,
   AtsProjects,
   AtsSkills,
+  AtsTrainings,
   CareerSummary,
   ContactInfo,
   RelevantCourses,
@@ -47,6 +45,8 @@ import { FiUpload } from "react-icons/fi";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import Modal from "../../components/modal";
 import useOutsideClick from "../../hooks/useOutsideClick";
+import resumeImg1 from "../../assets/images/entry-resume-sample.png";
+import resumeImg2 from "../../assets/images/pro-resume-sample.png";
 
 const fonts = [
   {
@@ -85,7 +85,7 @@ const EditSmartResume: React.FC = () => {
   const paletteRef = useOutsideClick(() => setShowPalette(false));
   const [editingName, setEditingName] = useState(false);
   const [editingRole, setEditingRole] = useState(false);
-
+  const [templateModal, setTemplateModal] = useState(false);
   const [config, setConfig] = useState<any>(mockResumeData?.config || null);
 
   const [sectionCount, setSectionCount] = useState(0); // To track the number of sections added
@@ -179,7 +179,7 @@ const EditSmartResume: React.FC = () => {
           <div className="flex max-sm:flex-col gap-3 gap-y-1.5 sm:items-center relative w-full z-99">
             <Menu setActive={setActive}>
               <MenuItem
-                setActive={setActive}
+                setActive={() => setTemplateModal(true)}
                 active={active}
                 position="max-sm:-translate-x-[25%]"
                 item={
@@ -192,51 +192,45 @@ const EditSmartResume: React.FC = () => {
                 id="template"
               >
                 <div className="w-full">
-                  <ul className="relative flex flex-col gap-2 text-sm !font-normal list-none rounded-md bg-white">
+                  <ul className="relative flex flex-col gap-5 text-sm !font-normal list-none rounded-md bg-white">
                     <li
                       onClick={() =>
-                        setResumeData((d: any) => ({ ...d, template: "basic" }))
+                        setResumeData((d: any) => ({ ...d, template: "entry" }))
                       }
                       className={`${
                         resumeData?.template === "basic"
                           ? "bg-jobseeker/10 text-[#345624]"
                           : "bg-transparent"
-                      } cursor-pointer z-30 flex items-center rounded-md gap-1.5 px-2 py-2  text-center`}
+                      } cursor-pointer z-30 rounded-md gap-1.5 px-2 py-2  text-center`}
                     >
-                      <RiLayoutTopLine />
-                      Basic Layout
+                      <span>Entry-Level Ats Template</span>
+                      <div className="h-[250px] w-[250px]">
+                        <img
+                          src={resumeImg1}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
                     </li>
                     <li
                       onClick={() =>
                         setResumeData((d: any) => ({
                           ...d,
-                          template: "standard",
+                          template: "professional",
                         }))
                       }
                       className={`${
                         resumeData?.template === "standard"
                           ? "bg-jobseeker/10 text-[#345624]"
                           : "bg-transparent"
-                      } cursor-pointer z-30 flex items-center rounded-md gap-1.5 px-2 py-2  text-center`}
+                      } cursor-pointer z-30 rounded-md gap-1.5 px-2 py-2  text-center`}
                     >
-                      <AiOutlineLayout />
-                      Standard Layout
-                    </li>
-                    <li
-                      onClick={() =>
-                        setResumeData((d: any) => ({
-                          ...d,
-                          template: "hybrid",
-                        }))
-                      }
-                      className={`${
-                        resumeData?.template === "hybrid"
-                          ? "bg-jobseeker/10 text-[#345624]"
-                          : "bg-transparent"
-                      } cursor-pointer z-30 flex items-center rounded-md gap-1.5 px-2 py-2  text-center`}
-                    >
-                      <TfiLayout />
-                      Hybrid Layout
+                      <span>Professional Ats Template</span>
+                      <div className="h-[200px] w-[250px]">
+                        <img
+                          src={resumeImg2}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
                     </li>
                   </ul>
                 </div>
@@ -841,7 +835,7 @@ const EditSmartResume: React.FC = () => {
                       />
                     </div>
                   )}
-                  {config.experience && (
+                  {config?.experience && (
                     <div className="py-5  mb-4">
                       <AtsExperience
                         resumeData={resumeData}
@@ -849,9 +843,17 @@ const EditSmartResume: React.FC = () => {
                       />
                     </div>
                   )}
-                  {config.education && (
+                  {config?.education && (
                     <div className="py-6">
                       <AtsEducation
+                        resumeData={resumeData}
+                        setResumeData={setResumeData}
+                      />
+                    </div>
+                  )}
+                  {config?.trainings && (
+                    <div className="py-6">
+                      <AtsTrainings
                         resumeData={resumeData}
                         setResumeData={setResumeData}
                       />
@@ -962,6 +964,73 @@ const EditSmartResume: React.FC = () => {
                   </FileUpload>
                 </div>
               </div>
+            </div>
+          </Modal>
+        )}
+        {templateModal && (
+          <Modal
+            show={templateModal}
+            onHide={() => {
+              setTemplateModal(false);
+            }}
+            title="Select Resume Template"
+          >
+            <div className="w-full">
+              <ul className="relative flex max-sm:flex-col max-sm:h-[80vh] custom-scrollbar max-sm:overflow-y-auto gap-5 text-sm list-none">
+                <li
+                  onClick={() => {
+                    setResumeData((d: any) => ({ ...d, template: "entry" }));
+                    setTemplateModal(false);
+                  }}
+                  className={` cursor-pointer hover:scale-105 group duration-200 z-30  gap-1.5 px-2 py-2  text-center`}
+                >
+                  <span className="mb-2.5 font-semibold text-lg font-serif">
+                    Entry-Level Ats Template
+                  </span>
+                  <div
+                    className={`p-1 rounded-2xl border-2 ${
+                      resumeData?.template === "entry"
+                        ? "border-primary"
+                        : "border-stroke"
+                    }`}
+                  >
+                    <div className={`h-[350px] w-full `}>
+                      <img
+                        src={resumeImg1}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </div>
+                </li>
+                <li
+                  onClick={() => {
+                    setResumeData((d: any) => ({
+                      ...d,
+                      template: "professional",
+                    }));
+                    setTemplateModal(false);
+                  }}
+                  className={`cursor-pointer z-30 hover:scale-105 duration-200 gap-1.5 px-2 py-2  text-center`}
+                >
+                  <span className="mb-2.5 font-semibold text-lg font-serif">
+                    Professional Ats Template
+                  </span>
+                  <div
+                    className={`p-1 rounded-2xl border-2 ${
+                      resumeData?.template === "professional"
+                        ? "border-primary"
+                        : "border-stroke"
+                    }`}
+                  >
+                    <div className={`h-[350px] w-full `}>
+                      <img
+                        src={resumeImg2}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </div>
+                </li>
+              </ul>
             </div>
           </Modal>
         )}

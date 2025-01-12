@@ -18,7 +18,8 @@ export const mockResumeData = {
     linkedin: true,
     role: true,
     internships: true,
-    career: true
+    career: true,
+    trainings: true,
   },
   style: {
     primary_color: "#007CFF",
@@ -165,6 +166,20 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       link: "https://videos.pexels.com/video-files/1966695/1966695-sd_640_360_30fps.mp4",
     },
     
+  ],
+  trainings: [
+    {
+      id: 1,
+      title: "Bachelor of Science in Computer Science",
+      platform: "University of California, Berkeley",
+      year: "2015",
+    },
+    {
+      id: 2,
+      title: "PHD in Computer Science",
+      platform: "NYU School of Engineering",
+      year: "2020",
+    },
   ],
 };
 

@@ -2821,6 +2821,244 @@ export const AtsEducation: React.FC<{
   );
 };
 
+export const AtsTrainings: React.FC<{
+  resumeData: any;
+  setResumeData: React.Dispatch<React.SetStateAction<any | null>>;
+}> = ({ resumeData, setResumeData }) => {
+  const [hoveredItemId, setHoveredItemId] = useState<number | null>(null);
+  const [editingSchoolId, setEditingSchoolId] = useState<number | null>(null);
+  const [editingDegreeId, setEditingDegreeId] = useState<number | null>(null);
+  const [items, setItems] = useState<any[]>(resumeData?.trainings);
+  const [draggingItem, setDraggingItem] = useState<any | null>(null);
+  const [_currentItem, setCurrentItem] = useState<any>(null);
+
+  useEffect(() => {
+    if (resumeData?.trainings?.length > 0) {
+      setItems(resumeData?.trainings);
+    } else {
+      setItems([
+        {
+          id: 1,
+          title: "Bachelor of Science in Computer Science",
+          platform: "University of California, Berkeley",
+          year: "2015",
+        },
+        {
+          id: 2,
+          title: "PHD in Computer Science",
+          platform: "NYU School of Engineering",
+          year: "2020",
+        },
+      ]);
+    }
+  }, [resumeData?.trainings]);
+
+  const handleDragStart = (
+    e: React.DragEvent<HTMLDivElement | HTMLButtonElement>,
+    item: any
+  ) => {
+    setDraggingItem(item);
+    e.dataTransfer.setData("text/plain", "");
+  };
+
+  const handleDragEnd = () => {
+    setDraggingItem(null);
+  };
+
+  const handleDragOver = (
+    e: React.DragEvent<HTMLDivElement | HTMLButtonElement>
+  ) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (
+    _e: React.DragEvent<HTMLDivElement | HTMLButtonElement>,
+    targetItem: any
+  ) => {
+    if (!draggingItem) return;
+
+    const currentIndex = items.indexOf(draggingItem);
+    const targetIndex = items.indexOf(targetItem);
+
+    if (currentIndex !== -1 && targetIndex !== -1) {
+      const updatedItems = [...items];
+      updatedItems.splice(currentIndex, 1);
+      updatedItems.splice(targetIndex, 0, draggingItem);
+
+      //   const reorderedItems = updatedItems.map((item, index) => ({
+      //     ...item,
+      //     position: index + 1
+      // }));
+
+      setItems(updatedItems);
+      setResumeData(() => ({
+        ...resumeData,
+        trainings: updatedItems,
+      }));
+    }
+  };
+  const handleRemove = (id: number) => {
+    const updatedItems = items.filter((item) => item.id !== id);
+    setItems(updatedItems);
+    setResumeData(() => ({
+      ...resumeData,
+      trainings: updatedItems,
+    }));
+  };
+
+  // Handler to add new education
+  const addExperience = () => {
+    const newEducation = {
+      id: resumeData?.education?.length + 1,
+      title: "Bachelor of Science in Computer Science",
+      platform: "University of California, Berkeley",
+      year: "2015",
+     };
+    setResumeData(() => ({
+      ...resumeData,
+      trainings: [...resumeData?.trainings, newEducation],
+    }));
+  };
+
+  // Handle input change for specific item
+  const handleInputChange = (id: number, field: string, value: string) => {
+    const updatedItems = items.map((item) =>
+      item.id === id ? { ...item, [field]: value } : item
+    );
+    setItems(updatedItems);
+    setResumeData((prev: any) => ({
+      ...prev,
+      trainings: updatedItems,
+    }));
+  };
+  
+  return (
+    <div>
+        <h6
+          className="font-semibold text-lg uppercase border-b-2 ml-3 py-1 mb-2 w-full"
+          style={{
+            color: resumeData?.style?.primary_color,
+            borderColor: resumeData?.style?.primary_color,
+          }}
+        >
+          TRAINING & CERTIFICATIONS
+        </h6>
+      
+      <div className="flex flex-col gap-2.5">
+        {items.map((item, _index) => (
+          <div
+            key={item.id}
+            onMouseEnter={() => setHoveredItemId(item.id)} // Set hovered item id
+            onMouseLeave={() => setHoveredItemId(null)}
+            className={`item ${
+              item.id === draggingItem?.id ? "shadow-3" : ""
+            } hover:border border-stroke rounded-md border-spacing-1 px-2 relative  text-black w-full py-1 `}
+            draggable="true"
+            onDragStart={(e) => handleDragStart(e, item)}
+            onDrop={(e) => handleDrop(e, item)}
+            onDragEnd={handleDragEnd}
+            onDragOver={handleDragOver}
+            onClick={() => setCurrentItem(item)}
+          >
+            {hoveredItemId === item.id && (
+              <div className="flex w-full gap-1 justify-end -mt-6">
+                <div className="bg-white flex gap-1 items-center">
+                  <button
+                    onClick={addExperience}
+                    className="h-8 w-8 flex justify-center items-center border-none text-primary/90 hover:text-primary text-2xl"
+                  >
+                    <BsPlusCircleFill />
+                  </button>
+                  {resumeData?.trainings?.length > 1 && (
+                    <button
+                      onClick={() => {
+                        handleRemove(item.id);
+                      }}
+                      className="h-8 w-8 flex justify-center items-center border-none text-primary/90 hover:text-primary text-2xl"
+                    >
+                      <FaCircleMinus />
+                    </button>
+                  )}
+                  {resumeData?.trainings?.length > 1 && (
+                    <button className=" h-6 w-6 flex justify-center items-center rounded-full border-none text-white bg-primary cursor-grab">
+                      <RiExpandUpDownLine />
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+              <div className="w-full py-2 ml-3 pr-1">
+                <div className="flex justify-between gap-6 items-center">
+                  <div className="flex items-center gap-2 divide-x divide-zinc-600">
+                    <div>
+                      {hoveredItemId === item.id &&
+                      editingSchoolId === item?.id ? (
+                        <input
+                          className={`border-none w-full text-base bg-white text-black focus:outline-none focus:bg-zinc-100 px-2`}
+                          placeholder="Cert/Training Name"
+                          value={item?.title}
+                          autoFocus
+                          onBlur={() => setEditingSchoolId(null)}
+                          onChange={(e) =>
+                            handleInputChange(item.id, "title", e.target.value)
+                          }
+                        />
+                      ) : (
+                        <span
+                          onClick={() => setEditingSchoolId(item?.id)}
+                          className="text-base font-semibold text-zinc-800"
+                        >
+                          {item?.title}
+                        </span>
+                      )}
+                    </div>
+
+                    <span className="font-semibold hidden">|</span>
+                    <div className="pl-2">
+                      {hoveredItemId === item.id &&
+                      editingDegreeId === item?.id ? (
+                        <input
+                          className={`border-none w-full text-base bg-white text-zinc-800 focus:outline-none placeholder:text-zinc-800 focus:bg-zinc-100 px-2`}
+                          placeholder="Platform / Organization"
+                          value={item?.platform}
+                          autoFocus
+                          onBlur={() => setEditingDegreeId(null)}
+                          onChange={(e) =>
+                            handleInputChange(item.id, "platform", e.target.value)
+                          }
+                        />
+                      ) : (
+                        <span
+                          onClick={() => setEditingDegreeId(item?.id)}
+                          className="text-base text-zinc-800"
+                        >
+                          {item?.platform}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="ml-auto">
+                    <input
+                      className={`border-none text-sm text-right w-[50px] font-medium bg-white text-black placeholder:text-black focus:outline-none focus:bg-zinc-100 px-2`}
+                      placeholder="Enter Year (yyyy)"
+                      value={item?.year}
+                      onChange={(e) =>
+                        handleInputChange(item.id, "year", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+
+                
+              </div>
+           
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export const AtsSkills: React.FC<{
   resumeData: any;
   setResumeData: React.Dispatch<React.SetStateAction<any | null>>;
