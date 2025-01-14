@@ -29,15 +29,15 @@ export const ProgressBar2: React.FC<ProgressBarProps> = ({ percent }) => {
 
   return (
     <div className="relative items-center justify-center overflow-hidden rounded-full">
-      <svg className="w-14 h-14">
+      <svg className="w-10 h-10">
         <circle
           className="text-slate-200"
           strokeWidth="3"
           stroke="currentColor"
           fill="transparent"
-          r="20"
-          cx="25"
-          cy="25"
+          r="17"
+          cx="20"
+          cy="20"
         />
         <circle
           className="text-blue-600"
@@ -47,12 +47,12 @@ export const ProgressBar2: React.FC<ProgressBarProps> = ({ percent }) => {
           strokeLinecap="round"
           stroke="currentColor"
           fill="transparent"
-          r="20"
-          cx="25"
-          cy="25"
+          r="17"
+          cx="20"
+          cy="20"
         />
       </svg>
-      <span className="absolute top-4 left-3 text-sm text-primary">{`${percent}%`}</span>
+      <span className="absolute top-3 left-2  text-[10px] font-normal text-primary">{`${percent}%`}</span>
     </div>
   );
 };

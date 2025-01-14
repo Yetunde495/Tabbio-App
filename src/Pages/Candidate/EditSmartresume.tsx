@@ -47,17 +47,9 @@ import Modal from "../../components/modal";
 import useOutsideClick from "../../hooks/useOutsideClick";
 import resumeImg1 from "../../assets/images/entry-resume-sample.png";
 import resumeImg2 from "../../assets/images/pro-resume-sample.png";
+import { ProgressBar2 } from "../../components/ProgressBar";
+import ResumeAiScore from "./ResumeAiScore";
 
-const fonts = [
-  {
-    label: "Nunito",
-    value: "nunito",
-  },
-  {
-    label: "Josefin Sans",
-    value: "josefin",
-  },
-];
 const sizes = [
   {
     label: "Small",
@@ -86,6 +78,7 @@ const EditSmartResume: React.FC = () => {
   const [editingName, setEditingName] = useState(false);
   const [editingRole, setEditingRole] = useState(false);
   const [templateModal, setTemplateModal] = useState(false);
+  const [scoreModal, setScoreModal] =  useState(false);
   const [config, setConfig] = useState<any>(mockResumeData?.config || null);
 
   const [sectionCount, setSectionCount] = useState(0); // To track the number of sections added
@@ -170,6 +163,7 @@ const EditSmartResume: React.FC = () => {
       const { [sectionName]: _, ...rest } = prevData;
       return rest; // Return the remaining sections in resumeData
     });
+    setSectionCount(sectionCount - 1);
   };
 
   return (
@@ -191,49 +185,7 @@ const EditSmartResume: React.FC = () => {
                 }
                 id="template"
               >
-                <div className="w-full">
-                  <ul className="relative flex flex-col gap-5 text-sm !font-normal list-none rounded-md bg-white">
-                    <li
-                      onClick={() =>
-                        setResumeData((d: any) => ({ ...d, template: "entry" }))
-                      }
-                      className={`${
-                        resumeData?.template === "basic"
-                          ? "bg-jobseeker/10 text-[#345624]"
-                          : "bg-transparent"
-                      } cursor-pointer z-30 rounded-md gap-1.5 px-2 py-2  text-center`}
-                    >
-                      <span>Entry-Level Ats Template</span>
-                      <div className="h-[250px] w-[250px]">
-                        <img
-                          src={resumeImg1}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    </li>
-                    <li
-                      onClick={() =>
-                        setResumeData((d: any) => ({
-                          ...d,
-                          template: "professional",
-                        }))
-                      }
-                      className={`${
-                        resumeData?.template === "standard"
-                          ? "bg-jobseeker/10 text-[#345624]"
-                          : "bg-transparent"
-                      } cursor-pointer z-30 rounded-md gap-1.5 px-2 py-2  text-center`}
-                    >
-                      <span>Professional Ats Template</span>
-                      <div className="h-[200px] w-[250px]">
-                        <img
-                          src={resumeImg2}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    </li>
-                  </ul>
-                </div>
+                <div></div>
               </MenuItem>
 
               <MenuItem
@@ -249,16 +201,28 @@ const EditSmartResume: React.FC = () => {
                 }
                 id="typography"
               >
-                <div className="flex flex-col space-y-4 text-sm w-[300px]">
-                  <DropdownSelect
-                    label="Fonts"
-                    placeholder="Select Font..."
-                    options={fonts}
-                    onSelect={(val) => {
-                      console.log(val);
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex flex-col space-y-4 text-sm w-[300px]"
+                >
+                  <select
+                    className="border border-stroke rounded-md p-2 text-sm w-full focus:outline-none focus:border-primary"
+                    onChange={(e) => {
+                      setResumeData((resumeData: any) => ({
+                        ...resumeData,
+                        style: {
+                          ...resumeData.style,
+                          fontFamily: e.target.value,
+                        },
+                      }));
                     }}
-                    defaultValue={{ label: "Nunito", value: "nunito" }}
-                  />
+                  >
+                    <option value={`Arial`}>Arial</option>
+                    <option value={`Times `}>Times New Roman</option>
+                    <option value={`Georgia`}>Georgia</option>
+                    <option value={`Calibri`}>Calibri</option>
+                    <option value={`Helvetica`}>Helvetica</option>
+                  </select>
                   <DropdownSelect
                     label="Size"
                     placeholder="Select size..."
@@ -522,10 +486,19 @@ const EditSmartResume: React.FC = () => {
                 </div>
               </MenuItem>
 
+              <div onClick={() => setScoreModal(true)} className="flex gap-1 cursor-pointer max-sm:hidden text-sm max-sm:text-[10px] items-center">
+                <span><ProgressBar2 percent={50} /></span>
+                <span>View my Tabbio Score</span>
+              </div>
+
               {/* Color Picker */}
             </Menu>
 
             <div className="sm:ml-auto flex items-center gap-2">
+            <div onClick={() => setScoreModal(true)} className="flex gap-1 cursor-pointer sm:hidden text-sm max-sm:text-[10px] items-center">
+                <span><ProgressBar2 percent={50} /></span>
+                <span>View my Tabbio Score</span>
+              </div>
               <button className="flex items-center gap-2 hover:scale-105 duration-150 text-zinc-700">
                 <TbWorld />
               </button>
@@ -540,31 +513,41 @@ const EditSmartResume: React.FC = () => {
         </div>
 
         <div className="px-2 py-4 md:pl-8 md:pr-2">
-          <div className="2xl:hidden lg:w-[90%] w-full flex justify-between gap-6 items-end">
-            <button
-              onClick={() => {}}
-              className="flex items-center font-medium mb-3 gap-3 text-lg"
-            >
-              Exit
-            </button>
-            <button
-              onClick={() => {
-                setResumeData((resumeData: any) => ({
-                  ...resumeData,
-                  template:
-                    resumeData?.template === "entry" ? "professional" : "entry",
-                }));
-              }}
-              className="px-4 py-2 md:px-8 flex bg-primary text-white items-center font-medium text-lg rounded-lg mb-3 gap-3"
-            >
-              Save Changes
-            </button>
+          <div className="2xl:hidden lg:w-[90%] w-full flex justify-between gap-6 items-center">
+            <p className="text-lg text-zinc-700 font-medium">Profile CV</p>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  console.log(resumeData);
+                }}
+                className="flex items-center font-medium mb-3 gap-3 text-lg"
+              >
+                Exit
+              </button>
+              <button
+                onClick={() => {
+                  setResumeData((resumeData: any) => ({
+                    ...resumeData,
+                    template:
+                      resumeData?.template === "entry"
+                        ? "professional"
+                        : "entry",
+                  }));
+                }}
+                className="px-4 py-2 md:px-5 flex bg-primary text-white items-center font-medium rounded-lg mb-3 gap-3"
+              >
+                Save Changes
+              </button>
+            </div>
           </div>
 
           <div className="w-full flex 2xl:flex-row flex-col gap-5 overflow-x-auto">
             <div className="w-full 2xl:max-w-[75%]  lg:w-[90%] min-w-[800px]">
               {resumeData?.template === "entry" && (
-                <div className="bg-white py-8 px-6 w-full overflow-x-auto custom-scrollbar">
+                <div
+                  style={{ fontFamily: resumeData?.style?.fontFamily || "" }}
+                  className={`bg-white py-8 px-6 w-full overflow-x-auto custom-scrollbar`}
+                >
                   <button
                     onClick={() => {
                       console.log(resumeData);
@@ -705,40 +688,41 @@ const EditSmartResume: React.FC = () => {
 
                   {/* Dynamically render custom sections */}
                   <div className="flex w-full flex-col gap-4">
-                    {customSections
-                      .filter((section) => section.placement === "bottom")
-                      .map((section, index) => (
-                        <div key={index}>
-                          {section?.type === "list" ? (
-                            <CustomListSection
-                              props={{
-                                key: section.name,
-                                section: resumeData[section.name],
-                                sectionContent: resumeData[section.name],
-                                updateSectionName: updateSectionName,
-                                updateSectionContent: updateSectionContent,
-                              }}
-                              handleRemove={() => removeSection(section.name)}
-                            />
-                          ) : (
-                            <CustomTextSection
-                              props={{
-                                key: section.name,
-                                section: resumeData[section.name],
-                                updateSectionName: updateSectionName,
-                                updateSectionContent: updateSectionContent,
-                              }}
-                              handleRemove={() => removeSection(section.name)}
-                            />
-                          )}
-                        </div>
-                      ))}
+                    {customSections.map((section, index) => (
+                      <div key={index}>
+                        {section?.type === "list" ? (
+                          <CustomListSection
+                            props={{
+                              key: section.name,
+                              section: resumeData[section.name],
+                              sectionContent: resumeData[section.name],
+                              updateSectionName: updateSectionName,
+                              updateSectionContent: updateSectionContent,
+                            }}
+                            handleRemove={() => removeSection(section.name)}
+                          />
+                        ) : (
+                          <CustomTextSection
+                            props={{
+                              key: section.name,
+                              section: resumeData[section.name],
+                              updateSectionName: updateSectionName,
+                              updateSectionContent: updateSectionContent,
+                            }}
+                            handleRemove={() => removeSection(section.name)}
+                          />
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
 
               {resumeData?.template === "professional" && (
-                <div className="bg-white py-8 px-6 w-full overflow-x-auto">
+                <div
+                  style={{ fontFamily: resumeData?.style?.fontFamily || "" }}
+                  className="bg-white py-8 px-6 w-full overflow-x-auto"
+                >
                   <div className="w-full  mb-15">
                     <div
                       style={{
@@ -859,6 +843,36 @@ const EditSmartResume: React.FC = () => {
                       />
                     </div>
                   )}
+
+                  {/* Dynamically render custom sections */}
+                  <div className="flex w-full flex-col gap-4">
+                    {customSections.map((section, index) => (
+                      <div key={index}>
+                        {section?.type === "list" ? (
+                          <CustomListSection
+                            props={{
+                              key: section.name,
+                              section: resumeData[section.name],
+                              sectionContent: resumeData[section.name],
+                              updateSectionName: updateSectionName,
+                              updateSectionContent: updateSectionContent,
+                            }}
+                            handleRemove={() => removeSection(section.name)}
+                          />
+                        ) : (
+                          <CustomTextSection
+                            props={{
+                              key: section.name,
+                              section: resumeData[section.name],
+                              updateSectionName: updateSectionName,
+                              updateSectionContent: updateSectionContent,
+                            }}
+                            handleRemove={() => removeSection(section.name)}
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -976,7 +990,7 @@ const EditSmartResume: React.FC = () => {
             title="Select Resume Template"
           >
             <div className="w-full">
-              <ul className="relative flex max-sm:flex-col max-sm:h-[80vh] custom-scrollbar max-sm:overflow-y-auto gap-5 text-sm list-none">
+              <ul className="relative justify-center flex max-sm:flex-col max-sm:h-[80vh] custom-scrollbar max-sm:overflow-y-auto gap-5 text-sm list-none">
                 <li
                   onClick={() => {
                     setResumeData((d: any) => ({ ...d, template: "entry" }));
@@ -994,7 +1008,7 @@ const EditSmartResume: React.FC = () => {
                         : "border-stroke"
                     }`}
                   >
-                    <div className={`h-[350px] w-full `}>
+                    <div className={`h-[350px] w-[250px] `}>
                       <img
                         src={resumeImg1}
                         className="w-full h-full object-cover"
@@ -1022,7 +1036,7 @@ const EditSmartResume: React.FC = () => {
                         : "border-stroke"
                     }`}
                   >
-                    <div className={`h-[350px] w-full `}>
+                    <div className={`h-[350px] w-[250px] `}>
                       <img
                         src={resumeImg2}
                         className="w-full h-full object-cover"
@@ -1033,6 +1047,9 @@ const EditSmartResume: React.FC = () => {
               </ul>
             </div>
           </Modal>
+        )}
+        {scoreModal && (
+          <ResumeAiScore show={scoreModal} onHide={() => setScoreModal(false)} />
         )}
       </section>
     </DefaultLayout>

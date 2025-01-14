@@ -27,6 +27,7 @@ export default {
     extend: {
       fontFamily: {
         outfit: ["outfit", "sans-serif"],
+        timesNewRoman: ["Times New Roman", "serif"],
       },
       fontSize: {
         "title-xxl": ["44px", "55px"],

@@ -168,11 +168,11 @@ export const CustomTextSection: React.FC<{
   const inputRef = useRef<HTMLInputElement>(null);
   const [showButon, setShowButton] = useState(false);
 
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus(); // Keep focus on the input field during re-renders
-    }
-  }, [props.key]);
+  // useEffect(() => {
+  //   if (inputRef.current) {
+  //     inputRef.current.focus(); // Keep focus on the input field during re-renders
+  //   }
+  // }, [props.key]);
   const autoResizeTextarea = () => {
     const textarea = textareaRef.current;
     if (textarea) {
@@ -195,7 +195,7 @@ export const CustomTextSection: React.FC<{
     >
       <div
         style={{ marginTop: "20px" }}
-        className="hover:border border-dashed rounded-md border-spacing-1 px-2 py-1"
+        className="hover:border border-stroke rounded-md border-spacing-1 px-2 py-2"
       >
         <div className="w-full flex justify-end">
           {showButon && (
@@ -214,8 +214,9 @@ export const CustomTextSection: React.FC<{
         <input
           type="text"
           ref={inputRef}
+          autoFocus
           placeholder="Section Name"
-          className="font-bold mb-2 text-black bg-white focus:bg-zinc-100 uppercase py-[2px] px-4 w-full"
+          className="border-none text-base font-bold bg-white text-black focus:ring-0 dynamic-input-2 focus:outline-none focus:bg-zinc-100 px-2 mb-2"
           value={props.key || ""}
           onChange={(e) => props.updateSectionName(props.key, e.target.value)} // Update the section name (key)
         />
@@ -223,7 +224,7 @@ export const CustomTextSection: React.FC<{
         {/* Input to update the section content */}
 
         <textarea
-          className={`border-none bg-white focus:bg-zinc-100 px-4 rounded-md font-medium text-black text-base placeholder:text-black w-full`}
+          className={`border-none bg-white focus:bg-zinc-100 px-2 focus:ring-0 focus:outline-none rounded-md font-medium text-black text-base placeholder:text-black w-full`}
           placeholder="Enter your text"
           value={props.section}
           onChange={(e) =>

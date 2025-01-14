@@ -87,7 +87,7 @@ function App() {
                 element={<AuthPages.ResetPassword />}
               />
               <Route
-                path="/reset-password/:email/:token"
+                path="/reset-password/:token"
                 element={<AuthPages.ResetPasswordForm />}
               />
               <Route

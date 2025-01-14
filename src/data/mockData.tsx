@@ -23,7 +23,7 @@ export const mockResumeData = {
   },
   style: {
     primary_color: "#007CFF",
-    font_family: '',
+    fontFamily: '',
     font_size: ''
   },
   professional_summary: `Results-driven Senior Software Engineer with 8+ years of experience in full-stack development and technical leadership. Specialized in building scalable distributed systems and microservices architectures. Proven track record of improving application performance, mentoring junior developers, and delivering high-impact solutions that drive business growth.
