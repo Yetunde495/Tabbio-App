@@ -9,11 +9,11 @@ import { formatEmail } from "../../lib/utils/formatters";
 import { MdOutlineEmail } from "react-icons/md";
 import { TbLoader3 } from "react-icons/tb";
 import { BsPatchCheckFill } from "react-icons/bs";
+import { sendOtp, verifyEmailOtp } from "../../services/authServices";
 
 const EmailVerification: React.FC = () => {
-  const {} = useApp();
+  const {user, signIn} = useApp();
   const navigate = useNavigate();
-  const [email, _setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setSuccess] = useState<boolean>(false);
 
@@ -58,29 +58,28 @@ const EmailVerification: React.FC = () => {
       }
     );
 
-  const SendOTP = async () => {
-    setIsLoading(true);
-    try {
-      // const response = await sendResetOtp({
-      //   email: email,
-      // });
-      // toast.success(response?.message);
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const sendOTP = async () => {
+     try {
+      setIsLoading(true)
+       const response = await sendOtp();
+       toast.success(response.message);
+     } catch (err: any) {
+       toast.error(err.message);
+     } finally {
+      setIsLoading(false)
+     }
+   };
 
   const handleVerifyOtp = async () => {
     setLoading(true);
-    // const data = {
-    //   to: email,
-    //   otp_code: otpValue,
-    // };
     try {
-      // const response = await verifyResetOtp(data);
-      // toast.success("Account verification Successfull!");
+      await verifyEmailOtp({
+        pin: otpValue,
+      });
+      signIn({
+        ...user,
+        verified:true,
+      });
       setSuccess(true);
     } catch (err: any) {
       setIsValid(false);
@@ -107,7 +106,7 @@ const EmailVerification: React.FC = () => {
                   Check your email
                 </h1>
                 <p className="text-zinc-500">
-                  Enter the 6 digit code sent to {formatEmail(email)}
+                  Enter the 6 digit code sent to {formatEmail(user?.email)}
                 </p>
               </div>
             </div>
@@ -165,7 +164,7 @@ const EmailVerification: React.FC = () => {
                 <span
                   className="text-primary hover:opacity-95 cursor-pointer ml-1"
                   onClick={() => {
-                    SendOTP();
+                    sendOTP();
                   }}
                 >
                   {isLoading ? "Resending" : "Click to resend"}{" "}
@@ -173,7 +172,7 @@ const EmailVerification: React.FC = () => {
               </p>
 
               <Link
-                to="/login"
+                to="/signin"
                 className="flex gap-2 items-center pb-4 text-black hover:text-primary"
               >
                 <FaArrowLeftLong /> Back to Sign in

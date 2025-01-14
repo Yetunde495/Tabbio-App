@@ -10,6 +10,7 @@ import FieldInput from "../../components/form/Input";
 import { formatEmail } from "../../lib/utils/formatters";
 import { MdOutlineEmail } from "react-icons/md";
 import { TbLoader3 } from "react-icons/tb";
+import { sendResetOtp, verifyEmailOtp } from "../../services/authServices";
 
 const ResetPassword: React.FC = () => {
   const {} = useApp();
@@ -59,13 +60,10 @@ const ResetPassword: React.FC = () => {
       }
     );
 
-  const SendOTP = async () => {
-    setIsLoading(true);
+  const SendResetOTP = async () => {
     try {
-      // const response = await sendResetOtp({
-      //   email: email,
-      // });
-      // toast.success(response?.message);
+      setIsLoading(true);
+      await sendResetOtp({ email: email });
       setSuccess(true);
     } catch (err: any) {
       toast.error(err.message);
@@ -76,14 +74,12 @@ const ResetPassword: React.FC = () => {
 
   const handleVerifyOtp = async () => {
     setLoading(true);
-    // const data = {
-    //   to: email,
-    //   otp_code: otpValue,
-    // };
     try {
-      // const response = await verifyResetOtp(data);
+      await verifyEmailOtp({
+        pin: otpValue,
+      });
       // toast.success("Account verification Successfull!");
-      navigate(`/reset-password/${email}/${otpValue}`);
+      navigate(`/reset-password/${otpValue}`);
     } catch (err: any) {
       setIsValid(false);
       toast.error(err.message);
@@ -135,17 +131,18 @@ const ResetPassword: React.FC = () => {
               <div className="mt-6">
                 <button
                   type="submit"
-                className="w-full py-3 px-6 rounded-lg flex group disabled:hover:scale-100 disabled:opacity-50 items-center gap-3 bg-gradient-to-r hover:bg-gradient-to-l hover:scale-95 duration-300 ease-in-out from-[#2563EB] to-[#9333EA] justify-center text-white border-none hover:opacity-95"
+                  className="w-full py-3 px-6 rounded-lg flex group disabled:hover:scale-100 disabled:opacity-50 items-center gap-3 bg-gradient-to-r hover:bg-gradient-to-l hover:scale-95 duration-300 ease-in-out from-[#2563EB] to-[#9333EA] justify-center text-white border-none hover:opacity-95"
                   disabled={isLoading}
                   onClick={() => {
-                    SendOTP();
+                    SendResetOTP();
                   }}
                 >
-                  {isLoading ? "Loading..." : "Send"}{isLoading ? (
-                  <TbLoader3 size={20} className="animate-spin" />
-                ) : (
-                  <FaArrowRightLong className="group-hover:translate-x-1.5" />
-                )}
+                  {isLoading ? "Loading..." : "Send"}
+                  {isLoading ? (
+                    <TbLoader3 size={20} className="animate-spin" />
+                  ) : (
+                    <FaArrowRightLong className="group-hover:translate-x-1.5" />
+                  )}
                 </button>
 
                 <div className="text-center mt-4 flex justify-center">
@@ -199,7 +196,7 @@ const ResetPassword: React.FC = () => {
                 <span
                   className="text-primary hover:opacity-95 cursor-pointer ml-1"
                   onClick={() => {
-                    SendOTP();
+                    SendResetOTP();
                   }}
                 >
                   {isLoading ? "Resending" : "Click to resend"}{" "}
@@ -207,7 +204,7 @@ const ResetPassword: React.FC = () => {
               </p>
 
               <Link
-                to="/login"
+                to="/signin"
                 className="flex gap-2 items-center pb-4 text-black hover:text-primary"
               >
                 <FaArrowLeftLong /> Back to Sign in

@@ -8,21 +8,33 @@ export const registerUser = async (data: any) => {
   //check error
   if (response && response?.error) {
     const err = response?.error?.response;
-    const msg = err?.data?.message || err?.statusText;
+    const msg = err?.data?.message || err?.status;
     throw new Error(msg || response?.error?.message);
   }
-
   return response?.data;
 };
 
 export const signInUser = async (data: any) => {
   const response: any = await axios
-    .post(`/user/login`, data)
+    .post(`/auth/login`, data)
     .catch((e) => ({ error: e }));
   //check error
   if (response && response?.error) {
     const err = response?.error?.response;
-    const msg = err?.data?.message || err?.statusText;
+    const msg = err?.data?.message || err?.status;
+    throw new Error(msg || response?.error?.message);
+  }
+  return response?.data;
+};
+
+export const GoogleAuth = async () => {
+  const response: any = await axios
+    .get(`/auth/google`)
+    .catch((e) => ({ error: e }));
+  //check error
+  if (response && response?.error) {
+    const err = response?.error?.response;
+    const msg = err?.data?.message || err?.status;
     throw new Error(msg || response?.error?.message);
   }
   return response?.data;
@@ -36,20 +48,48 @@ export const sendOtp = async () => {
   if (response && response?.error) {
     const err = response?.error?.response;
     const msg = err?.data?.message || err?.status;
-    throw new Error(msg);
+    throw new Error(msg || response?.error?.message);
+  }
+
+  return response?.data;
+};
+
+export const sendResetOtp = async (data:any) => {
+  const response: any = await axios
+    .post(`/auth/forgot-password`, data)
+    .catch((e) => ({ error: e }));
+  //check error
+  if (response && response?.error) {
+    const err = response?.error?.response;
+    const msg = err?.data?.message || err?.status;
+    throw new Error(msg || response?.error?.message);
   }
 
   return response?.data;
 };
 export const verifyEmailOtp = async (data: any) => {
   const response: any = await axios
-    .post(`/user/complete_email_verification`, data)
+    .post(`/auth/verify-otp`, data)
     .catch((e) => ({ error: e }));
   //check error
   if (response && response?.error) {
     const err = response?.error?.response;
     const msg = err?.data?.error || err?.status;
-    throw new Error(msg);
+    throw new Error(msg || response?.error?.message);
+  }
+
+  return response?.data;
+};
+
+export const ResetPassword = async (data:any) => {
+  const response: any = await axios
+    .post(`/auth/reset-password`, data)
+    .catch((e) => ({ error: e }));
+  //check error
+  if (response && response?.error) {
+    const err = response?.error?.response;
+    const msg = err?.data?.message || err?.status;
+    throw new Error(msg || response?.error?.message);
   }
 
   return response?.data;

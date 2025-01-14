@@ -11,10 +11,10 @@ import { FcGoogle } from "react-icons/fc";
 import { BsLinkedin } from "react-icons/bs";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { TbLoader3 } from "react-icons/tb";
-import { registerUser, sendOtp } from "../../services/authServices";
+import { GoogleAuth, registerUser, sendOtp } from "../../services/authServices";
 
 const Signup: React.FC = () => {
-  const {signIn} = useApp();
+  const { signIn } = useApp();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState<boolean | null>(null);
@@ -34,8 +34,22 @@ const Signup: React.FC = () => {
     }
   };
 
+  const signupWithGoogle = async () => {
+    setIsLoading(true);
+    try {
+      const response = await GoogleAuth();
+      console.log(response);
+      toast.success(response.message);
+      // navigate("/email-verify");
+    } catch (err: any) {
+      toast.error(err.message || "Request Failed! Try again");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const onSubmit = async (data: any) => {
-    if (data.password === data.confirm_password) {
+    if (data.password === data.confirmPassword) {
       setConfirmPassword(true);
       setIsConfirmed(true);
     } else if (!confirmPassword) {
@@ -49,13 +63,15 @@ const Signup: React.FC = () => {
       console.log("Validation errors:", errors);
       return;
     }
-
+    setIsLoading(true);
     try {
       const resp = await registerUser(data);
+      console.log(resp);
       signIn({
         email: data?.email,
         token: resp?.token,
-        user_id: resp?.user_id,
+        user_id: resp?.data?.user?.id,
+        ...resp?.data?.user,
       });
       toast.success(resp?.message);
       sendOTP();
@@ -156,7 +172,7 @@ const Signup: React.FC = () => {
                       disabled={isLoading}
                       onClick={() => {}}
                     >
-                      {isLoading ? "Loading" : "Sign in"}
+                      {isLoading ? "Loading" : "Sign up"}
                       {isLoading ? (
                         <TbLoader3 size={20} className="animate-spin" />
                       ) : (
@@ -180,11 +196,11 @@ const Signup: React.FC = () => {
             <div className="flex w-full items-center justify-center gap-5">
               <button
                 className="bg-transparent flex items-center justify-center gap-3 rounded-full hover:border-primary border border-slate-300 w-[200px] py-2 px-8"
-                onClick={() => {}}
+                onClick={() => {signupWithGoogle()}}
                 disabled={isLoading}
               >
                 <FcGoogle size={20} />
-                {isLoading ? "Signing in..." : "Google"}
+                {isLoading ? "Signing up..." : "Google"}
               </button>
 
               <button
@@ -193,7 +209,7 @@ const Signup: React.FC = () => {
                 disabled={isLoading}
               >
                 <BsLinkedin className="text-primary" size={20} />
-                {isLoading ? "Signing in..." : "Linkedin"}
+                {isLoading ? "Signing up..." : "Linkedin"}
               </button>
             </div>
 

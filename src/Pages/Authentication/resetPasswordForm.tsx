@@ -9,15 +9,16 @@ import { PasswordInput } from "../../components/form";
 import { BsCheckCircleFill, BsPatchCheckFill } from "react-icons/bs";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import { TbLoader3 } from "react-icons/tb";
+import { ResetPassword } from "../../services/authServices";
 
 type resetPasswordData = {
   password: string;
-  confirm_password: string;
+  confirmPassword: string;
 };
 
 const ResetPasswordForm: React.FC = () => {
   const {} = useApp();
-  const { email, token } = useParams();
+  const { token } = useParams();
   const navigate = useNavigate();
   const methods = useForm<resetPasswordData>();
   const [isLoading, setIsLoading] = useState(false);
@@ -42,7 +43,7 @@ const ResetPasswordForm: React.FC = () => {
   };
 
   const onSubmit = async (data: resetPasswordData) => {
-    if (data.password === data.confirm_password) {
+    if (data.password === data.confirmPassword) {
       setConfirmPassword(true);
       setIsConfirmed(true);
     } else if (!confirmPassword) {
@@ -64,16 +65,11 @@ const ResetPasswordForm: React.FC = () => {
 
     try {
       setIsLoading(true);
-      console.log({
-        email,
-        new_password: data.password,
-        token,
+      await ResetPassword({
+        password: data.password,
+        confirmPassword: data.confirmPassword,
+        pin: token,
       });
-      //   await ResetPassword({
-      //     email,
-      //     new_password: data.password,
-      //     token,
-      //   });
       setIsSuccess(true);
     } catch (err: any) {
       toast.error(err.message);
@@ -113,10 +109,7 @@ const ResetPasswordForm: React.FC = () => {
 
             {isSuccess && (
               <div className="flex w-full flex-col justify-center items-center">
-                <BsPatchCheckFill
-                  size={58}
-                  className=" text-primary text-lg"
-                />
+                <BsPatchCheckFill size={58} className=" text-primary text-lg" />
                 <h1 className="text-2xl text-center text-white">
                   Password Reset Successfull!
                 </h1>
@@ -175,7 +168,7 @@ const ResetPasswordForm: React.FC = () => {
 
                         <PasswordInput
                           label="Confirm Password"
-                          name="confirm_password"
+                          name="confirmPassword"
                           placeholder="Enter Password"
                           togglePassword={togglePassword}
                           onTogglePassword={setTogglePassword}

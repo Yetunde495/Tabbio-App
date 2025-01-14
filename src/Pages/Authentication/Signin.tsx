@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useApp } from "../../context/AppContext";
+import React, { useEffect, useState } from "react";
+import { useApp, DATA_CENTER_TOKEN, DATA_CENTER_USER, } from "../../context/AppContext";
 import { Link, useNavigate } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 // import { toast } from "react-toastify";
@@ -11,6 +11,7 @@ import { BsLinkedin } from "react-icons/bs";
 import { FcGoogle } from "react-icons/fc";
 import { TbLoader3 } from "react-icons/tb";
 import { FaArrowRightLong } from "react-icons/fa6";
+import { sendOtp, signInUser } from "../../services/authServices";
 
 const Signin: React.FC = () => {
   const { signIn } = useApp();
@@ -19,7 +20,15 @@ const Signin: React.FC = () => {
   //   const [success, setSuccess] = useState(false);
 
   const methods = useForm<any>();
-
+  const sendOTP = async () => {
+    try {
+      const response = await sendOtp();
+      toast.success(response.message);
+      navigate("/email-verify");
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  };
   const onSubmit = async (data: any) => {
     setIsLoading(true);
     const { errors } = methods.formState;
@@ -31,19 +40,40 @@ const Signin: React.FC = () => {
     }
 
     try {
+      const response = await signInUser(data);
       signIn({
-        ...data,
-        resume_link: 'tabbio.link/yetunde-morenikeji56477',
-        category: 'Candidate'
+        token: response?.token,
+        ...response?.data?.user,
+        category: "Candidate",
       });
-      // console.log(response.data)
-      navigate("/app/candidate/profile");
+      if (response?.data?.user?.verified) {
+        navigate(`/app/candidate/profile`);
+      } else {
+        sendOTP();
+      }
     } catch (err: any) {
       toast.error(err.message);
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    const userData: any = localStorage.getItem(DATA_CENTER_USER);
+    const token: any = localStorage.getItem(DATA_CENTER_TOKEN);
+
+    const parsedData = JSON.parse(userData);
+    if (
+      //@ts-ignore
+      token !== (null || undefined) &&
+      //@ts-ignore
+      userData !== (null || undefined) &&
+      parsedData?.is_active
+    ) {
+      signIn(JSON.parse(userData));
+      navigate(`/app/candidate/profile`);
+    }
+  }, []);
 
   return (
     <section className="w-full min-h-screen">
