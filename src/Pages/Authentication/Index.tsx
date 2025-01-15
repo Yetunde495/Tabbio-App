@@ -1,4 +1,5 @@
 import EmailVerification from "./emailVerification";
+import GoogleCallback from "./GoogleCallback";
 import ResetPassword from "./resetPassword";
 import ResetPasswordForm from "./resetPasswordForm";
 import Signin from "./Signin";
@@ -13,6 +14,7 @@ Index.Signup = Signup;
 Index.ResetPassword = ResetPassword;
 Index.ResetPasswordForm = ResetPasswordForm;
 Index.EmailVerification = EmailVerification;
+Index.GoogleAuthCallback = GoogleCallback;
 
 
 

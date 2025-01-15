@@ -11,11 +11,12 @@ import { FcGoogle } from "react-icons/fc";
 import { BsLinkedin } from "react-icons/bs";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { TbLoader3 } from "react-icons/tb";
-import { GoogleAuth, registerUser, sendOtp } from "../../services/authServices";
+import { registerUser, sendOtp } from "../../services/authServices";
 
 const Signup: React.FC = () => {
   const { signIn } = useApp();
   const navigate = useNavigate();
+  const auth_url = import.meta.env.VITE_PUBLIC_TABBIO_GOOGLE_AUTH;
   const [isLoading, setIsLoading] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState<boolean | null>(null);
   const [confirmPassword, setConfirmPassword] = useState(false);
@@ -35,14 +36,11 @@ const Signup: React.FC = () => {
   };
 
   const signupWithGoogle = async () => {
-    setIsLoading(true);
     try {
-      const response = await GoogleAuth();
-      console.log(response);
-      toast.success(response.message);
-      // navigate("/email-verify");
+      setIsLoading(true);
+      window.location.href = auth_url
     } catch (err: any) {
-      toast.error(err.message || "Request Failed! Try again");
+      toast.error(err?.message || "Request Failed! Please, try again");
     } finally {
       setIsLoading(false);
     }

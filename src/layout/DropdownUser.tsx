@@ -68,13 +68,13 @@ const DropdownUser = () => {
           src={user?.photo_url}
           size="small"
           initials={getUserInitials(
-            user?.first_name || user?.name || "User",
-            user?.last_name || ""
+            user?.firstName || "User",
+            user?.lastName || ""
           )}
         />
 
         <span className="lg:hidden block">
-          {user?.first_name || "John" + " " + (user?.last_name || "Doe")}
+          {user?.firstName || "User" + " " + (user?.lastName || "")}
         </span>
 
         <IoMdArrowDropdown

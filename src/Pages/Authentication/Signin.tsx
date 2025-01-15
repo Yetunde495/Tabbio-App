@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useApp, DATA_CENTER_TOKEN, DATA_CENTER_USER, } from "../../context/AppContext";
+import {
+  useApp,
+  DATA_CENTER_TOKEN,
+  DATA_CENTER_USER,
+} from "../../context/AppContext";
 import { Link, useNavigate } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 // import { toast } from "react-toastify";
@@ -17,6 +21,8 @@ const Signin: React.FC = () => {
   const { signIn } = useApp();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const auth_url = import.meta.env.VITE_PUBLIC_TABBIO_GOOGLE_AUTH;
+
   //   const [success, setSuccess] = useState(false);
 
   const methods = useForm<any>();
@@ -53,6 +59,17 @@ const Signin: React.FC = () => {
       }
     } catch (err: any) {
       toast.error(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const signinWithGoogle = async () => {
+    try {
+      setIsLoading(true);
+      window.location.href = auth_url;
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed! Please, try again");
     } finally {
       setIsLoading(false);
     }
@@ -156,7 +173,9 @@ const Signin: React.FC = () => {
             <div className="flex w-full max-sm:gap-3 max-sm:px-1.5 items-center justify-center gap-5">
               <button
                 className="bg-transparent flex items-center justify-center gap-3 rounded-full hover:border-primary border border-slate-300 w-[200px] py-2 px-8"
-                onClick={() => {}}
+                onClick={() => {
+                  signinWithGoogle();
+                }}
                 disabled={isLoading}
               >
                 <FcGoogle size={20} />

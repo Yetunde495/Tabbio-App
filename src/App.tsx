@@ -77,6 +77,7 @@ function App() {
               <Route path="/affiliate" element={<GeneralPages.Affiliate />} />
               <Route path="/careers" element={<GeneralPages.Careers />} />
               <Route path="/signin" element={<AuthPages.Signin />} />
+              <Route path="/auth/google/:status" element={<AuthPages.GoogleAuthCallback />} />
               <Route path="/signup" element={<AuthPages.Signup />} />
               <Route
                 path="/email-verify"
