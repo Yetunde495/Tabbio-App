@@ -12,5 +12,4 @@ Index.CreateLiveResume = CreateLiveResume;
 Index.EditSmartResume = EditSmartResume;
 Index.ProfilePreview = ProfilePreview;
 
-
 export default Index;

@@ -1,16 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { BiLoaderCircle } from "react-icons/bi";
 import { Icons } from "../icons";
-
-interface SearchMultiDropdownProps {
+import { FaCheckCircle } from "react-icons/fa";
+import { FaRegCircle } from "react-icons/fa6";
+interface MultiDropdownProps {
   options: DropDownOption[];
   onSelect: (selectedOptions: DropDownOption[]) => void;
-  setSearch: (searchTerm: string) => void;
   placeholder?: string;
-  label: string;
+  label: string | ReactNode;
   disabled?: boolean;
   clearData?: boolean;
-  setClearData?: (clear: boolean) => void;
   props?: any;
   defaultValue?: DropDownOption[];
 }
@@ -124,8 +123,9 @@ export const SelectDropdown: React.FC<FormDropdownProps> = ({
                     border border-stroke px-5 py-3 
                     outline-none transition focus:border-primary active:border-primary 
                     dark:border-strokedark dark:bg-boxdark-2 
-                    dark:focus:border-primary ${selectedOption ? "text-black dark:text-white" : ""
-            }`}
+                    dark:focus:border-primary ${
+                      selectedOption ? "text-black dark:text-white" : ""
+                    }`}
           value={searchTerm}
           onChange={handleInputChange}
           onFocus={() => setShowMenu(true)}
@@ -194,16 +194,14 @@ export const SelectDropdown: React.FC<FormDropdownProps> = ({
   );
 };
 
-export const MultiDropdown: React.FC<SearchMultiDropdownProps> = ({
+export const MultiDropdown: React.FC<MultiDropdownProps> = ({
   options,
   onSelect,
   placeholder,
   label,
-  disabled,
   props,
   defaultValue = [],
 }) => {
-  const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedOptions, setSelectedOptions] =
     useState<DropDownOption[]>(defaultValue);
   const [filteredOptions, setFilteredOptions] =
@@ -212,38 +210,33 @@ export const MultiDropdown: React.FC<SearchMultiDropdownProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (options && options.length > 0) {
-      const filtered = options
-        .filter(
-          (option) =>
-            !selectedOptions.some(
-              (selectedOption) => selectedOption.value === option.value
-            )
-        )
-        .filter((option) =>
-          option.label.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+    if (options && options?.length > 0) {
+      const filtered = options.filter((option) => option.label.toLowerCase());
       setFilteredOptions(filtered);
     }
-  }, [searchTerm, options, selectedOptions]);
+  }, [options]);
 
   useEffect(() => {
     setSelectedOptions(defaultValue);
-  }, [options]);
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const searchTerm = event.target.value;
-    setSearchTerm(searchTerm);
-  };
+  }, []);
 
   const handleOptionClick = (option: DropDownOption) => {
-    const newSelectedOptions = [...selectedOptions, option];
-    setSelectedOptions(newSelectedOptions);
+    const isSelected = selectedOptions.some(
+      (selectedOption) => selectedOption.value === option.value
+    );
 
-    onSelect(newSelectedOptions);
-    console.log(newSelectedOptions);
-    setSearchTerm("");
-    setShowMenu(false);
+    if (isSelected) {
+      const updatedOptions = selectedOptions.filter(
+        (selectedOption) => selectedOption.value !== option.value
+      );
+      setSelectedOptions(updatedOptions);
+      onSelect(updatedOptions);
+    } else {
+      const newSelectedOptions = [...selectedOptions, option];
+      setSelectedOptions(newSelectedOptions);
+
+      onSelect(newSelectedOptions);
+    }
   };
 
   const removeSelectedOption = (option: DropDownOption) => {
@@ -253,12 +246,7 @@ export const MultiDropdown: React.FC<SearchMultiDropdownProps> = ({
   };
 
   const handleIconClick = () => {
-    if (searchTerm === "") {
-      setShowMenu(!showMenu);
-    } else {
-      setFilteredOptions(options);
-      setShowMenu(!showMenu);
-    }
+    setShowMenu(!showMenu);
   };
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -277,30 +265,54 @@ export const MultiDropdown: React.FC<SearchMultiDropdownProps> = ({
 
   return (
     <div ref={dropdownRef} className={`relative z-${showMenu ? "30" : "0"} `}>
-      <label className="mb-2.5 block text-black dark:text-white">{label}</label>
-      <div className="relative cursor-pointer">
-        <input
-          type="text"
-          disabled={disabled}
-          placeholder={placeholder || "Search..."}
-          className={`relative z-${showMenu ? "20" : "0"
-            } w-full appearance-none rounded 
-                      border border-stroke px-5 py-2 
-                      outline-none transition focus:border-primary active:border-primary 
-                      dark:border-strokedark dark:bg-boxdark-2 
-                      dark:focus:border-primary`}
-          value={searchTerm}
-          onChange={handleInputChange}
-          onFocus={() => setShowMenu(true)}
-        />
+      <label className="text-sm font-medium text-black capitalize mb-1 flex items-center">{props?.labelIcon}{label}</label>
+      <div className="relative flex justify-between items-center">
+        <div
+          className={`w-full appearance-none rounded border 
+                     border-zinc-200 py-1.5 px-2.5 text-left
+                     outline-none transition focus:border-primary 
+                     active:border-primary dark:border-strokedark 
+                     dark:bg-boxdark-2 dark:focus:border-primary`}
+          onClick={handleIconClick}
+        >
+          {props?.loading ? (
+            <div className="flex items-center justify-between">
+              <span>Fetching data...</span>
+              <span className="mr-4">
+                <BiLoaderCircle className="text-primary animate-spin" />
+              </span>
+            </div>
+          ) : selectedOptions.length > 0 ? (
+            <div className="flex flex-wrap gap-1">
+              {selectedOptions.map((val, index) => (
+                <div
+                  key={index}
+                  className="bg-primary text-[13px] text-white rounded-md py-0.5 px-1 flex justify-between items-center"
+                >
+                  <span> {val.label}</span>
+
+                  <button
+                    type="button"
+                    className="ml-1.5 cursor-pointer dark:text-white rounded-sm  hover:text-red-500"
+                    onClick={() => removeSelectedOption(val)}
+                  >
+                    x
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            placeholder
+          )}
+        </div>
         <span
-          className="absolute right-4 top-1/2 z-30 -translate-y-1/2 cursor-pointer"
+          className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer"
           onClick={handleIconClick}
         >
           <svg
             className="fill-current"
-            width="24"
-            height="24"
+            width="20"
+            height="20"
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -318,45 +330,33 @@ export const MultiDropdown: React.FC<SearchMultiDropdownProps> = ({
       </div>
 
       {showMenu && (
-        <ul
-          className={`border-stroke dark:border-strokedark absolute left-0 top-10 z-999 mt-3 ${props?.maxHeight ? props?.maxHeight : "max-h-[300px]"
-            }  w-full overflow-y-auto custom-scrollbar rounded-md border bg-white py-2 shadow-lg dark:bg-black`}
-        >
+        <ul className="border-stroke dark:border-strokedark text-sm absolute left-0 top-15 z-999 mt-3 max-h-[250px] custom-scrollbar w-full overflow-y-auto rounded-md border bg-white py-2 shadow-lg dark:bg-black">
           {filteredOptions.length > 0 ? (
             filteredOptions.map((option, index) => (
               <li
                 key={index}
                 onClick={() => handleOptionClick(option)}
-                className="hover:bg-gray-100 cursor-pointer px-4 py-2 text-left"
+                className="hover:bg-gray-200 cursor-pointer px-4 py-2 flex items-center gap-1"
               >
+                <span>
+                  {selectedOptions.some(
+                    (selectedOption) => selectedOption.value === option.value
+                  ) ? (
+                    <FaCheckCircle className="text-primary" size={18} />
+                  ) : (
+                    <FaRegCircle size={18} />
+                  )}
+                </span>{" "}
                 {option.label}
               </li>
             ))
           ) : (
-            <div className="flex h-20 items-center justify-center text-lg font-semibold">
+            <div className="flex h-20 items-center justify-center text-lg font-bold">
               No option found
             </div>
           )}
         </ul>
       )}
-
-      <div className="flex flex-wrap gap-2 mt-2">
-        {selectedOptions.map((option, index) => (
-          <div
-            key={index}
-            className="flex items-center text-sm bg-primary/10 text-primary rounded-full py-1 px-2 mr-2"
-          >
-            <span>{option.label}</span>
-            <button
-              type="button"
-              className="ml-1.5 cursor-pointer dark:bg-meta-1/60 text-[15px] dark:hover:bg-meta-1 dark:text-white rounded-full px-1.5 text-primary shadow-1 hover:bg-meta-1/25 hover:text-[#ff0000e6]"
-              onClick={() => removeSelectedOption(option)}
-            >
-              x
-            </button>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
@@ -416,13 +416,15 @@ export const DropdownSelect: React.FC<DropdownSelectProps> = ({
           disabled={disabled}
           className={`w-full appearance-none rounded  
                         px-2 py-3 text-left 
-                       outline-none transition ${border
-              ? "border border-stroke dark:border-strokedark active:border-primary focus:border-primary dark:focus:border-primary"
-              : "border-none focus:border-none"
-            }  
+                       outline-none transition ${
+                         border
+                           ? "border border-stroke dark:border-strokedark active:border-primary focus:border-primary dark:focus:border-primary"
+                           : "border-none focus:border-none"
+                       }  
                          
-                       dark:bg-boxdark-2  ${selectedOption ? "text-black dark:text-white" : ""
-            }`}
+                       dark:bg-boxdark-2  ${
+                         selectedOption ? "text-black dark:text-white" : ""
+                       }`}
           onClick={handleIconClick}
         >
           {loading ? (
@@ -469,8 +471,9 @@ export const DropdownSelect: React.FC<DropdownSelectProps> = ({
               <li
                 key={index}
                 onClick={() => handleOptionClick(option)}
-                className={`hover:bg-slate-50 cursor-pointer px-4 py-2 w-full flex justify-between items-center ${selectedOption?.value === option.value ? "bg-gray-200" : ""
-                  }`}
+                className={`hover:bg-slate-50 cursor-pointer px-4 py-2 w-full flex justify-between items-center ${
+                  selectedOption?.value === option.value ? "bg-gray-200" : ""
+                }`}
               >
                 {option.label}
                 {selectedOption?.value === option.value && (
@@ -575,8 +578,9 @@ export const TableSort: React.FC<DropdownSelectProps> = ({
               <li
                 key={index}
                 onClick={() => handleOptionClick(option)}
-                className={`hover:bg-slate-50 cursor-pointer px-4 py-2 w-full flex justify-between items-center ${selectedOption?.value === option.value ? "bg-gray-200" : ""
-                  }`}
+                className={`hover:bg-slate-50 cursor-pointer px-4 py-2 w-full flex justify-between items-center ${
+                  selectedOption?.value === option.value ? "bg-gray-200" : ""
+                }`}
               >
                 {option.label}
                 {selectedOption?.value === option.value && (

@@ -6,6 +6,7 @@ import { HiOutlineSparkles } from "react-icons/hi";
 import { Pill } from "../../components/Pills";
 import { IoIosArrowDown, IoIosArrowUp, IoLogoLinkedin } from "react-icons/io";
 import {
+  BsEye,
   BsPatchCheck,
   BsPlus,
   BsPlusLg,
@@ -29,6 +30,13 @@ import { MdOutlineMailOutline, MdOutlinePhone } from "react-icons/md";
 import TabbioIcon from "../../assets/svg/t-icon.svg";
 import Alert from "../../components/Alert";
 import ProfilePicture from "../PageComponents/ProfilePhoto";
+import { formatMonthYear } from "../../lib/utils/formatters";
+import { updateProfile } from "../../services/profileServices";
+import { toast } from "react-toastify";
+import { RiLoader3Fill } from "react-icons/ri";
+import { Switch } from "../../components/form/Switch";
+import { useApp } from "../../context/AppContext";
+import { generateUniqueId } from "../../lib/utils";
 
 export const ItemList = ({ items }: any) => {
   const [showAll, setShowAll] = useState(false);
@@ -63,24 +71,45 @@ export const ItemList = ({ items }: any) => {
   );
 };
 
-export const BasicDetails: React.FC<{ profileData: any }> = ({
-  profileData,
-}) => {
+export const BasicDetails: React.FC<{
+  profileData: any;
+  setProfileData: React.Dispatch<React.SetStateAction<any | null>>;
+}> = ({ profileData, setProfileData }) => {
+  const { user } = useApp();
   const [showModal, setShowModal] = useState(false);
   const [formView, setFormView] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [infoModal, setInfoModal] = useState(false);
   const [basicDetails, setBasicDetails] = useState({
     email: profileData?.email,
     role: profileData?.role,
-    phone_number: profileData?.phone_number,
-    linkedin_url: profileData?.linkedin_url,
+    phone: profileData?.phone,
+    linkedIn: profileData?.linkedIn,
     name: profileData?.name,
   });
+  const handleUpdateProfile = async (data: any) => {
+    setLoading(true);
+    try {
+      const resp = await updateProfile(profileData?._id, data);
+      setProfileData(resp?.data?.profile);
+      toast.success("Update Successful!");
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    } finally {
+      setLoading(false);
+      setFormView(false);
+      setInfoModal(false);
+      setShowModal(false);
+    }
+  };
   return (
     <div>
       <div className="flex md:flex-row flex-col gap-x-6 items-center gap-y-6 mb-8">
         <div>
-          <ProfilePicture name={profileData?.name} photo={profileData?.photo_url} />
+          <ProfilePicture
+            name={profileData?.name}
+            photo={profileData?.photo_url}
+          />
         </div>
         <div>
           <div className="my-2">
@@ -164,11 +193,11 @@ export const BasicDetails: React.FC<{ profileData: any }> = ({
                   international
                   defaultCountry="US"
                   placeholder="Enter phone number"
-                  value={basicDetails?.phone_number}
+                  value={basicDetails?.phone}
                   onChange={(val) => {
                     setBasicDetails((data: any) => ({
                       ...data,
-                      phone_number: val,
+                      phone: val,
                     }));
                   }}
                 />
@@ -186,17 +215,17 @@ export const BasicDetails: React.FC<{ profileData: any }> = ({
                     type="text"
                     className={`w-full py-3 pl-4.5 pr-4.5 text-zinc-800 font-normal border-none rounded-lg focus:border-primary/50 focus-visible:outline-none custom-scrollbar `}
                     name="linkedin-url"
-                    value={basicDetails.linkedin_url}
+                    value={basicDetails?.linkedIn}
                     onChange={(e) => {
                       setBasicDetails((data: any) => ({
                         ...data,
-                        phone_number: e.target.value,
+                        linkedIn: e.target.value,
                       }));
                     }}
                     onKeyDown={(e) => {
                       if (
                         (e.key === "Backspace" || e.key === "Delete") &&
-                        basicDetails.linkedin_url === "https://linkedin.com/in/"
+                        basicDetails.linkedIn === "https://linkedin.com/in/"
                       ) {
                         e.preventDefault();
                       }
@@ -216,10 +245,17 @@ export const BasicDetails: React.FC<{ profileData: any }> = ({
                 Cancel
               </button>
               <button
-                onClick={() => console.log(basicDetails)}
-                className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+                onClick={() => {
+                  handleUpdateProfile({
+                    email: basicDetails?.name,
+                    phone: basicDetails?.phone,
+                    linkedIn: basicDetails?.linkedIn,
+                  });
+                }}
+                disabled={loading}
+                className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
               >
-                Save
+                {loading ? "Loading..." : "Save"}
               </button>
             </div>
           </div>
@@ -255,21 +291,48 @@ export const BasicDetails: React.FC<{ profileData: any }> = ({
                 <div>
                   <p>Phone Number</p>
                   <span className="text-primary text-sm">
-                    {profileData?.phone_number}
+                    {profileData?.phone}
                   </span>
                 </div>
               </div>
-              <div className="mb-5 w-full flex gap-2.5 items-start">
-                <span>
-                  <img src={TabbioIcon} className="mt-1.5" />
-                </span>
-                <div>
-                  <p>Tabbio Link</p>
-                  <span className="text-primary text-sm">
-                    {profileData?.tabbio_link}
+              <div className="mb-5 w-full flex justify-between gap-2.5 items-center">
+                <div className="flex gap-2.5 items-start">
+                  <span>
+                    <img src={TabbioIcon} className="mt-1.5" />
                   </span>
+                  <div>
+                    <p>
+                      Tabbio Link{" "}
+                      <small>show Tabbio link on downloadable CV</small>
+                    </p>
+                    <span className="text-primary text-sm">
+                      {user?.tabbioLink}
+                    </span>
+                  </div>
+                </div>
+                <div className="ml-auto">
+                  {loading ? (
+                    <span>
+                      <RiLoader3Fill className="animate-spin" />
+                    </span>
+                  ) : (
+                    <Switch
+                      value={profileData?.config?.showTabbioLink}
+                      checked={true}
+                      onChange={(value) => {
+                        handleUpdateProfile({
+                          config: {
+                            ...profileData?.config,
+                            showTabbioLink: value,
+                          },
+                        });
+                      }}
+                      size="sm"
+                    />
+                  )}
                 </div>
               </div>
+
               <div className="mb-5 w-full flex gap-2.5 items-start">
                 <span>
                   <IoLogoLinkedin className="mt-1.5" />
@@ -277,7 +340,7 @@ export const BasicDetails: React.FC<{ profileData: any }> = ({
                 <div>
                   <p>Linkedin</p>
                   <span className="text-primary text-sm">
-                    {profileData?.linkedin_url}
+                    {profileData?.linkedIn}
                   </span>
                 </div>
               </div>
@@ -354,10 +417,16 @@ export const BasicDetails: React.FC<{ profileData: any }> = ({
               Cancel
             </button>
             <button
-              onClick={() => console.log(basicDetails)}
-              className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              onClick={() => {
+                handleUpdateProfile({
+                  name: basicDetails?.name,
+                  role: basicDetails?.role,
+                });
+              }}
+              disabled={loading}
+              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
             >
-              Save
+              {loading ? "Loading..." : "Save"}
             </button>
           </div>
         </div>
@@ -366,18 +435,29 @@ export const BasicDetails: React.FC<{ profileData: any }> = ({
   );
 };
 
-export const ProfileSummary: React.FC<{ resumeData: any }> = ({
-  resumeData,
-}) => {
-  const [bio, setBio] = useState(resumeData?.professional_summary);
+export const ProfileSummary: React.FC<{
+  resumeData: any;
+  setResumeData: React.Dispatch<React.SetStateAction<any | null>>;
+}> = ({ resumeData, setResumeData }) => {
+  const [bio, setBio] = useState(resumeData?.professionalSummary);
   const [editBioMode, setEditBioMode] = useState(false);
   const [showCompetencies, setShowCompetencies] = useState(false);
-
-  const [experience, setExperience] = useState("");
-  const [level, setLevel] = useState("Beginner");
-  const [majorSkill, setMajorSkill] = useState("");
-  const [skills, setSkills] = useState<string[]>([]);
+  const [experience, setExperience] = useState(
+    resumeData?.yearsOfExperience || 0
+  );
+  const [level, setLevel] = useState(resumeData?.level);
+  const [majorSkill, setMajorSkill] = useState(resumeData?.majorSkill);
+  const [skills, setSkills] = useState<string[]>(
+    resumeData?.skills.find((skill: any) => skill?.name === "technical")
+      ?.items || []
+  );
   const [newSkill, setNewSkill] = useState("");
+
+  const [loading, setLoading] = useState(false);
+
+  const technicalSkill = resumeData?.skills.find(
+    (skill: any) => skill?.name === "technical"
+  );
 
   const addSkill = () => {
     if (newSkill && !skills.includes(newSkill)) {
@@ -388,6 +468,31 @@ export const ProfileSummary: React.FC<{ resumeData: any }> = ({
 
   const removeSkill = (skill: string) => {
     setSkills(skills.filter((s) => s !== skill));
+  };
+
+  const handleUpdateProfile = async () => {
+    setLoading(true);
+    try {
+      const resp = await updateProfile(resumeData?._id, {
+        professionalSummary: bio,
+        majorSkill,
+        skills: [
+          ...resumeData?.skills.filter(
+            (skill: any) => skill.name !== "technical"
+          ),
+          { name: "technical", items: skills },
+        ],
+        level,
+        yearsOfExperience: experience.toString(),
+      });
+      setResumeData(resp?.data?.profile);
+      toast.success("Your Professional Summary was successfully updated");
+      setEditBioMode(false);
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -404,12 +509,18 @@ export const ProfileSummary: React.FC<{ resumeData: any }> = ({
         </button>
       </div>
       <div className="border border-stroke rounded-lg shadow-sm bg-white p-3">
-        <ReadMore text={resumeData?.professional_summary} />
+        <ReadMore text={resumeData?.professionalSummary} />
 
         <div className="w-full flex gap-x-3 max-md:flex-wrap gap-y-2 items-center">
-          <Pill>{8}+ Years of Experience</Pill>
-          <Pill variant="primary">{"Senior"} Level</Pill>
-          <Pill variant="none">{"Full Stack Development"}</Pill>
+          <Pill>
+            {resumeData?.yearsOfExperience || "Unspecified"} Years of Experience
+          </Pill>
+          <Pill variant="primary">
+            {resumeData?.level || "Unspecified"} Level
+          </Pill>
+          <Pill variant="none">
+            {resumeData?.majorSkill || "Unspecified Major Skill"}
+          </Pill>
         </div>
 
         <div className="mt-3 ">
@@ -424,9 +535,9 @@ export const ProfileSummary: React.FC<{ resumeData: any }> = ({
           </button>
           {showCompetencies && (
             <div className="py-2 border-t border-stroke w-full flex gap-2 items-center flex-wrap">
-              <Pill>System Architecture</Pill> <Pill>Cloud Infrastructure</Pill>{" "}
-              <Pill>Agile/Scrum</Pill> <Pill>DevOps</Pill>{" "}
-              <Pill>API Design</Pill> <Pill>Performance Optimization</Pill>
+              {technicalSkill?.items?.map((val: string, index: number) => (
+                <Pill key={index}>{val}</Pill>
+              ))}
             </div>
           )}
         </div>
@@ -508,9 +619,12 @@ export const ProfileSummary: React.FC<{ resumeData: any }> = ({
                     onChange={(e) => setLevel(e.target.value)}
                     className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   >
-                    <option value="beginner">Beginner</option>
-                    <option value="Junior">Junior</option>
-                    <option value="Senior">Senior</option>
+                    <option value={level}>
+                      {level || "Select your Level of Expertise"}
+                    </option>
+                    <option>Beginner</option>
+                    <option>Intermediate</option>
+                    <option>Expert</option>
                   </select>
                 </div>
 
@@ -582,7 +696,7 @@ export const ProfileSummary: React.FC<{ resumeData: any }> = ({
                     </p>
 
                     <div className="flex flex-wrap items-center gap-2">
-                      {resumeData?.suggested_skills
+                      {resumeData?.suggestedSkills
                         ?.filter((skill: string) => !skills.includes(skill))
                         .map((skill: string) => (
                           <span
@@ -616,8 +730,14 @@ export const ProfileSummary: React.FC<{ resumeData: any }> = ({
             >
               Close
             </button>
-            <button className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium">
-              Save
+            <button
+              onClick={() => {
+                handleUpdateProfile();
+              }}
+              disabled={loading}
+              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+            >
+              {loading ? "Loading..." : "Save"}
             </button>
           </div>
         </div>
@@ -626,9 +746,10 @@ export const ProfileSummary: React.FC<{ resumeData: any }> = ({
   );
 };
 
-export const WorkExperience: React.FC<{ profileData: any }> = ({
-  profileData,
-}) => {
+export const WorkExperience: React.FC<{
+  profileData: any;
+  setProfileData: React.Dispatch<React.SetStateAction<any | null>>;
+}> = ({ profileData, setProfileData }) => {
   const [newExperienceModal, setNewExperienceModal] = useState(false);
   const [selectedExperience, setSelectedExperience] = useState<any>(null);
   const [editModal, setEditModal] = useState(false);
@@ -636,18 +757,20 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
   const [skills, setSkills] = useState<string[]>([]);
   const [achievments, setAchievments] = useState<string[]>([]);
   const [experienceData, setExperienceData] = useState({
-    position: "",
+    title: "",
     company: "",
     description: "",
-    key_achievments: [],
-    start_year: new Date(),
-    end_year: new Date(),
+    keyAchievements: [],
+    startDate: new Date(),
+    endDate: new Date(),
     skills: [],
     active: false,
+    _id: generateUniqueId(),
   });
   const [newSkill, setNewSkill] = useState("");
   const [newAchievment, setNewAchievment] = useState("");
   const [draggingItem, setDraggingItem] = useState<any | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const addAchievment = () => {
     if (newAchievment && !achievments.includes(newAchievment)) {
@@ -707,6 +830,24 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
     }
   };
 
+  const handleUpdateProfile = async (data: any) => {
+    setLoading(true);
+    try {
+      const resp = await updateProfile(profileData?._id, data);
+      setProfileData(resp?.data?.profile);
+      toast.success("Successfull!");
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    } finally {
+      setLoading(false);
+      setNewExperienceModal(false);
+      setEditModal(false);
+      setDeleteModal(false);
+      setAchievments([]);
+      setSkills([]);
+    }
+  };
+
   return (
     <div className="relative">
       <div className="flex w-full justify-between items-center mb-2">
@@ -721,29 +862,27 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
         </button>
       </div>
       <div className="flex flex-col gap-3">
-        {profileData?.work_experience.map((item: any, index: number) => (
+        {profileData?.workExperience.map((item: any, index: number) => (
           <div
             key={index}
             className="border border-stroke rounded-lg shadow-sm bg-white p-3"
             onClick={() => {
               setSelectedExperience(item);
-              setAchievments(item?.key_achievments);
+              setAchievments(item?.keyAchievements);
               setSkills(item?.skills);
             }}
           >
             <div className="flex justify-between items-start mb-3">
               <div>
                 <h6 className="md:text-lg text-base font-medium text-zinc-800 mb-0">
-                  {item?.position}
+                  {item?.title}
                 </h6>
                 <p className=" text-primary max-md:text-sm">{item?.company}</p>
               </div>
               <div className="flex items-center">
                 <p className="text-xs text-zinc-500 lg:mr-4">
-                  {item?.start_year}-
-                  {item?.end_year === new Date().getFullYear().toString()
-                    ? "Present"
-                    : item?.end_year}
+                  {item?.startDate && formatMonthYear(item?.startDate)} -{" "}
+                  {item?.endDate && formatMonthYear(item?.endDate)}
                 </p>
                 <button
                   onClick={() => {
@@ -774,7 +913,7 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
               <p className="text-zinc-800 max-md:text-sm text-base font-medium mb-1">
                 Key Achievements:
               </p>
-              <ItemList items={item?.key_achievments} />
+              <ItemList items={item?.keyAchievements} />
             </div>
 
             <div className="mb-4">
@@ -808,12 +947,12 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
               </label>
               <input
                 type="text"
-                id="position"
-                value={experienceData.position}
+                id="title"
+                value={experienceData?.title}
                 onChange={(e) =>
                   setExperienceData((data: any) => ({
                     ...data,
-                    position: e.target.value,
+                    title: e.target.value,
                   }))
                 }
                 placeholder="Ex: Project Manager"
@@ -822,7 +961,7 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
             </div>
             <div className="mb-6">
               <label
-                htmlFor="major_skill"
+                htmlFor="company"
                 className="text-sm font-medium text-gray-700 flex items-center gap-1"
               >
                 Company Name{" "}
@@ -833,7 +972,7 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
               <input
                 type="text"
                 id="company"
-                value={experienceData.company}
+                value={experienceData?.company}
                 onChange={(e) =>
                   setExperienceData((data: any) => ({
                     ...data,
@@ -853,37 +992,37 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
                   </span>
                 </p>
                 <DatePicker
-                  selected={experienceData.start_year}
+                  selected={experienceData.startDate}
                   onChange={(date) =>
                     setExperienceData((s: any) => ({
                       ...s,
-                      start_year: date,
+                      startDate: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
+                  // dateFormat="M"
                 />
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-700">End Date</p>
                 <DatePicker
-                  selected={experienceData.end_year}
+                  selected={experienceData.endDate}
                   onChange={(date) =>
                     setExperienceData((s: any) => ({
                       ...s,
-                      end_year: date,
+                      endDate: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
+                  // dateFormat="yyyy"
                 />
               </div>
             </FormGroup>
@@ -923,7 +1062,7 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
                      dark:text-white dark:focus:border-primary `}
                   name={`Description`}
                   placeholder="Enter a short description"
-                  value={experienceData.description}
+                  value={experienceData?.description}
                   onChange={(e) =>
                     setExperienceData((data: any) => ({
                       ...data,
@@ -1040,7 +1179,7 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
                 </p>
 
                 <div className="flex flex-wrap items-center gap-2">
-                  {profileData?.suggested_skills
+                  {profileData?.suggestedSkills
                     ?.filter((skill: string) => !skills.includes(skill))
                     .map((skill: string) => (
                       <span
@@ -1073,10 +1212,22 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
               Close
             </button>
             <button
-              onClick={() => console.log(experienceData)}
-              className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              disabled={loading}
+              onClick={() => {
+                handleUpdateProfile({
+                  workExperience: [
+                    ...profileData?.workExperience,
+                    {
+                      ...experienceData,
+                      skills: skills,
+                      keyAchievements: achievments,
+                    },
+                  ],
+                });
+              }}
+              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
             >
-              Save
+              {loading ? "Saving..." : "Save"}
             </button>
           </div>
         </div>
@@ -1106,11 +1257,11 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
               <input
                 type="text"
                 id="position"
-                value={selectedExperience?.position}
+                value={selectedExperience?.title}
                 onChange={(e) =>
                   setSelectedExperience((data: any) => ({
                     ...data,
-                    position: e.target.value,
+                    title: e.target.value,
                   }))
                 }
                 placeholder="Ex: Project Manager"
@@ -1119,7 +1270,7 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
             </div>
             <div className="mb-6">
               <label
-                htmlFor="major_skill"
+                htmlFor="company"
                 className="text-sm font-medium text-gray-700 flex items-center gap-1"
               >
                 Company Name{" "}
@@ -1150,37 +1301,37 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
                   </span>
                 </p>
                 <DatePicker
-                  selected={selectedExperience?.start_year}
+                  selected={selectedExperience?.startDate}
                   onChange={(date) =>
                     setSelectedExperience((s: any) => ({
                       ...s,
-                      start_year: date,
+                      startDate: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
+                  // dateFormat="yyyy"
                 />
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-700">End Date</p>
                 <DatePicker
-                  selected={selectedExperience?.end_year}
+                  selected={selectedExperience?.endDate}
                   onChange={(date) =>
                     setSelectedExperience((s: any) => ({
                       ...s,
-                      end_year: date,
+                      endDate: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
+                  // dateFormat="yyyy"
                 />
               </div>
             </FormGroup>
@@ -1337,7 +1488,7 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
                 </p>
 
                 <div className="flex flex-wrap items-center gap-2">
-                  {profileData?.suggested_skills
+                  {profileData?.suggestedSkills
                     ?.filter((skill: string) => !skills.includes(skill))
                     .map((skill: string) => (
                       <span
@@ -1371,8 +1522,26 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
             >
               Close
             </button>
-            <button className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium">
-              Update
+            <button
+              disabled={loading}
+              onClick={() => {
+                const updatedWorkExperience = profileData?.workExperience.map(
+                  (exp: any) =>
+                    exp._id === selectedExperience?._id
+                      ? {
+                          ...selectedExperience,
+                          skills: skills,
+                          keyAchievements: achievments,
+                        }
+                      : exp
+                );
+                handleUpdateProfile({
+                  workExperience: updatedWorkExperience,
+                });
+              }}
+              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+            >
+              {loading ? "Loading..." : "Update"}
             </button>
           </div>
         </div>
@@ -1384,17 +1553,27 @@ export const WorkExperience: React.FC<{ profileData: any }> = ({
           setSkills([]);
           setDeleteModal(false);
         }}
-        title={`Delete ${selectedExperience?.position} ?`}
+        isLoading={loading}
+        isLoadingText="Deleting"
+        title={`Delete ${selectedExperience?.title} ?`}
         desc={`Are you sure you want to delete this item from your work experiences? This action is irreversible`}
-        onProceed={() => {}}
+        onProceed={() => {
+          const updatedWorkExperience = profileData?.workExperience.filter(
+            (exp: any) => exp._id !== selectedExperience?._id
+          );
+          handleUpdateProfile({
+            workExperience: updatedWorkExperience,
+          });
+        }}
       ></Delete>
     </div>
   );
 };
 
-export const CareerHighlight: React.FC<{ profileData: any }> = ({
-  profileData,
-}) => {
+export const CareerHighlight: React.FC<{
+  profileData: any;
+  setProfileData: React.Dispatch<React.SetStateAction<any | null>>;
+}> = ({ profileData, setProfileData }) => {
   const [newExperienceModal, setNewExperienceModal] = useState(false);
   const [selectedCareer, setSelectedCareer] = useState<any>(null);
   const [showAll, setShowAll] = useState(false);
@@ -1404,15 +1583,21 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
   const [skills, setSkills] = useState<string[]>([]);
   const [newSkill, setNewSkill] = useState("");
   const [careerData, setCareerData] = useState({
+    _id: generateUniqueId,
     title: "",
     description: "",
     thumbnail: "",
     link: "",
     skills: [],
+    attachments: {
+      type: "link",
+      link: "",
+    },
   });
   const [showUpload, setShowUpload] = useState(false);
   const [showLinkForm, setShowLinkForm] = useState(false);
   const [showMediaForm, setShowMediaForm] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const addSkill = () => {
     if (newSkill && !skills.includes(newSkill)) {
@@ -1423,6 +1608,23 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
 
   const removeSkill = (skill: string) => {
     setSkills(skills.filter((s) => s !== skill));
+  };
+
+  const handleUpdateProfile = async (data: any) => {
+    setLoading(true);
+    try {
+      const resp = await updateProfile(profileData?._id, data);
+      setProfileData(resp?.data?.profile);
+      toast.success("Successfull!");
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    } finally {
+      setLoading(false);
+      setNewExperienceModal(false);
+      setEditModal(false);
+      setDeleteModal(false);
+      setSkills([]);
+    }
   };
 
   return (
@@ -1438,11 +1640,11 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
           <BsPlusLg size={18} />
         </button>
       </div>
-      <div className="grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-3">
-        {profileData?.career_highlights &&
+      <div className="grid xl:grid-cols-2 2xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-3">
+        {profileData?.careerHighlights &&
           (showAll
-            ? profileData.career_highlights
-            : profileData.career_highlights.slice(0, 3)
+            ? profileData.careerHighlights
+            : profileData.careerHighlights.slice(0, 3)
           ).map((item: any, index: number) => (
             <div
               key={index}
@@ -1452,7 +1654,7 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
                 setSelectedCareer(item);
               }}
             >
-              <div onClick={() => setDetailModal(true)}>
+              <div>
                 {!item?.thumbnail && (
                   <div className="w-full text-primary bg-[#EFF6FFCC] h-40 flex justify-center items-center">
                     <FaImage size={40} />
@@ -1475,11 +1677,26 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
                     </button>
                     <button
                       onClick={() => {
+                        if (item?.attachments?.link) {
+                          if (item?.attachments?.type === "link") {
+                            setShowLinkForm(true);
+                          } else {
+                            setShowMediaForm(true);
+                          }
+                        }
                         setEditModal(true);
                       }}
                       className="hover:bg-primary/10 hover:text-primary rounded-full text-zinc-500 h-8 w-8 flex items-center justify-center"
                     >
                       <LuPencil size={14} />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setDetailModal(true);
+                      }}
+                      className="hover:bg-primary/10 hover:text-primary rounded-full text-zinc-500 h-8 w-8 flex items-center justify-center"
+                    >
+                      <BsEye size={14} />
                     </button>
                   </div>
                 </div>
@@ -1495,7 +1712,7 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
       </div>
 
       <div className="py-5 w-full flex justify-center items-center">
-        {profileData?.career_highlights.length > 3 && (
+        {profileData?.careerHighlights.length > 3 && (
           <button
             onClick={() => setShowAll(!showAll)}
             className="text-primary flex gap-1.5 items-center py-3 text-lg"
@@ -1619,7 +1836,7 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
                   </p>
 
                   <div className="flex flex-wrap items-center gap-2">
-                    {profileData?.suggested_skills
+                    {profileData?.suggestedSkills
                       ?.filter((skill: string) => !skills.includes(skill))
                       .map((skill: string) => (
                         <span
@@ -1651,6 +1868,10 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
                 >
                   <div
                     onClick={() => {
+                      setCareerData((data: any) => ({
+                        ...data,
+                        attachments: { type: "link", link: "" },
+                      }));
                       setShowMediaForm(false);
                       setShowLinkForm(true);
                     }}
@@ -1742,11 +1963,14 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
                       <input
                         type="text"
                         id="link"
-                        value={careerData?.link}
+                        value={careerData?.attachments?.link}
                         onChange={(e) =>
                           setCareerData((data: any) => ({
                             ...data,
-                            link: e.target.value,
+                            attachments: {
+                              ...data?.attachments,
+                              link: e.target.value,
+                            },
                           }))
                         }
                         placeholder="Paste your link here"
@@ -1826,10 +2050,19 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
                 Close
               </button>
               <button
-                onClick={() => console.log(careerData)}
-                className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+                onClick={() => {
+                  handleUpdateProfile({
+                    careerHighlights: [
+                      ...profileData?.careerHighlights,
+                      { ...careerData, skills: skills },
+                    ],
+                  });
+                  console.log(careerData);
+                }}
+                disabled={loading}
+                className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
               >
-                Save
+                {loading ? "Loading..." : "Save"}
               </button>
             </div>
           </div>
@@ -1949,7 +2182,7 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
                   </p>
 
                   <div className="flex flex-wrap items-center gap-2">
-                    {profileData?.suggested_skills
+                    {profileData?.suggestedSkills
                       ?.filter((skill: string) => !skills.includes(skill))
                       .map((skill: string) => (
                         <span
@@ -1981,6 +2214,10 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
                 >
                   <div
                     onClick={() => {
+                      setSelectedCareer((data: any) => ({
+                        ...data,
+                        attachments: { type: "link", link: "" },
+                      }));
                       setShowMediaForm(false);
                       setShowLinkForm(true);
                     }}
@@ -2072,11 +2309,14 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
                       <input
                         type="text"
                         id="link"
-                        value={careerData?.link}
+                        value={selectedCareer?.attachments?.link}
                         onChange={(e) =>
-                          setCareerData((data: any) => ({
+                          setSelectedCareer((data: any) => ({
                             ...data,
-                            link: e.target.value,
+                            attachments: {
+                              ...data?.attachments,
+                              link: e.target.value,
+                            },
                           }))
                         }
                         placeholder="Paste your link here"
@@ -2150,14 +2390,32 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
           <div className="w-full border-t flex bg-white mt-3 pt-4 justify-between items-center border-stroke">
             <button
               onClick={() => {
+                setSkills([]);
                 setEditModal(false);
               }}
               className="text-zinc-600 hover:scale-105 font-medium py-1.5 px-4"
             >
               Close
             </button>
-            <button className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium">
-              Update
+            <button
+              disabled={loading}
+              onClick={() => {
+                const updatedCareerHighlight =
+                  profileData?.careerHighlights.map((exp: any) =>
+                    exp._id === selectedCareer?._id
+                      ? {
+                          ...selectedCareer,
+                          skills: skills,
+                        }
+                      : exp
+                  );
+                handleUpdateProfile({
+                  careerHighlights: updatedCareerHighlight,
+                });
+              }}
+              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+            >
+              {loading ? "Loading..." : "Update"}
             </button>
           </div>
         </div>
@@ -2189,39 +2447,39 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
             )}
           </div>
 
-          {selectedCareer?.attachment && (
+          {selectedCareer?.attachments && (
             <div>
               <div className="mt-6">
                 <p className="text-base font-semibold text-zinc-600 mb-1">
                   Attachment
                 </p>
-                {selectedCareer?.attachment?.type === "link" && (
+                {selectedCareer?.attachments?.type === "link" && (
                   <div>
                     <a
-                      href={selectedCareer?.attachment?.url}
+                      href={selectedCareer?.attachments?.link}
                       target="_blank"
                       rel="noreferrer"
                     >
                       Follow this link to view more details:{" "}
                       <span className="text-blue-500 hover:underline">
-                        {selectedCareer?.attachment?.url}
+                        {selectedCareer?.attachments?.link}
                       </span>
                     </a>
                   </div>
                 )}
-                {selectedCareer?.attachment?.type === "image" && (
+                {selectedCareer?.attachments?.type === "image" && (
                   <div className="h-50 w-full max-w-[280px] pt-3">
                     <img
-                      src={selectedCareer?.attachment?.url}
+                      src={selectedCareer?.attachments?.link}
                       alt="career highlight image"
                       className="object-cover w-full h-full rounded-md"
                     />
                   </div>
                 )}
-                {selectedCareer?.attachment?.type === "video" && (
+                {selectedCareer?.attachments?.type === "video" && (
                   <div className="h-50 w-full max-w-[280px] pt-3">
                     <video
-                      src={selectedCareer?.attachment?.url}
+                      src={selectedCareer?.attachments?.link}
                       className="object-cover w-full h-full rounded-md"
                       controls
                     />
@@ -2235,19 +2493,30 @@ export const CareerHighlight: React.FC<{ profileData: any }> = ({
       <Delete
         show={deleteModal}
         onHide={() => {
+          setSkills([]);
           setDeleteModal(false);
         }}
         title={`Delete ${selectedCareer?.title} ?`}
         desc={`Are you sure you want to delete this item from your career highlights? This action is irreversible`}
-        onProceed={() => {}}
+        isLoading={loading}
+        isLoadingText="Deleting"
+        onProceed={() => {
+          const updatedCareerHighlights = profileData?.careerHighlights.filter(
+            (exp: any) => exp._id !== selectedCareer?._id
+          );
+          handleUpdateProfile({
+            careerHighlights: updatedCareerHighlights,
+          });
+        }}
       ></Delete>
     </div>
   );
 };
 
-export const VolunteerExperience: React.FC<{ profileData: any }> = ({
-  profileData,
-}) => {
+export const VolunteerExperience: React.FC<{
+  profileData: any;
+  setProfileData: React.Dispatch<React.SetStateAction<any | null>>;
+}> = ({ profileData, setProfileData }) => {
   const [newExperienceModal, setNewExperienceModal] = useState(false);
   const [selectedExperience, setSelectedExperience] = useState<any>(null);
   const [editModal, setEditModal] = useState(false);
@@ -2255,18 +2524,20 @@ export const VolunteerExperience: React.FC<{ profileData: any }> = ({
   const [skills, setSkills] = useState<string[]>([]);
   const [achievments, setAchievments] = useState<string[]>([]);
   const [experienceData, setExperienceData] = useState({
-    position: "",
+    title: "",
     company: "",
     description: "",
-    key_achievments: [],
-    start_year: new Date(),
-    end_year: new Date(),
+    keyAchievements: [],
+    startDate: new Date(),
+    endDate: new Date(),
     skills: [],
     active: false,
+    _id: generateUniqueId(),
   });
   const [newSkill, setNewSkill] = useState("");
   const [newAchievment, setNewAchievment] = useState("");
   const [draggingItem, setDraggingItem] = useState<any | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const addAchievment = () => {
     if (newAchievment && !achievments.includes(newAchievment)) {
@@ -2326,6 +2597,23 @@ export const VolunteerExperience: React.FC<{ profileData: any }> = ({
     }
   };
 
+  const handleUpdateProfile = async (data: any) => {
+    setLoading(true);
+    try {
+      const resp = await updateProfile(profileData?._id, data);
+      setProfileData(resp?.data?.profile);
+      toast.success("Successfull!");
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    } finally {
+      setLoading(false);
+      setNewExperienceModal(false);
+      setEditModal(false);
+      setDeleteModal(false);
+      setSkills([]);
+    }
+  };
+
   return (
     <div className="relative">
       <div className="flex w-full justify-between items-center mb-2">
@@ -2342,12 +2630,12 @@ export const VolunteerExperience: React.FC<{ profileData: any }> = ({
         </button>
       </div>
       <div className="flex flex-col gap-3">
-        {profileData?.volunteer_experience.map((item: any, index: number) => (
+        {profileData?.volunteerExperience.map((item: any, index: number) => (
           <div
             key={index}
             onClick={() => {
               setSelectedExperience(item);
-              setAchievments(item?.key_achievments);
+              setAchievments(item?.keyAchievements);
               setSkills(item?.skills);
             }}
             className="border border-stroke rounded-lg shadow-sm bg-white p-3"
@@ -2355,16 +2643,14 @@ export const VolunteerExperience: React.FC<{ profileData: any }> = ({
             <div className="flex justify-between items-start mb-3">
               <div>
                 <h6 className="md:text-lg text-base font-medium text-zinc-800 mb-0">
-                  {item?.position}
+                  {item?.title}
                 </h6>
                 <p className=" text-primary max-md:text-sm">{item?.company}</p>
               </div>
               <div className="flex items-center">
                 <p className="text-xs text-zinc-500 lg:mr-4">
-                  {item?.start_year}-
-                  {item?.end_year === new Date().getFullYear().toString()
-                    ? "Present"
-                    : item?.end_year}
+                  {item?.startDate && formatMonthYear(item?.startDate)} -{" "}
+                  {item?.endDate && formatMonthYear(item?.endDate)}
                 </p>
                 <button
                   onClick={() => {
@@ -2395,7 +2681,7 @@ export const VolunteerExperience: React.FC<{ profileData: any }> = ({
               <p className="text-zinc-800 max-md:text-sm text-base font-medium mb-1">
                 Key Achievements:
               </p>
-              <ItemList items={item?.key_achievments} />
+              <ItemList items={item?.keyAchievements} />
             </div>
 
             <div className="mb-4">
@@ -2430,11 +2716,11 @@ export const VolunteerExperience: React.FC<{ profileData: any }> = ({
               <input
                 type="text"
                 id="position"
-                value={experienceData.position}
+                value={experienceData?.title}
                 onChange={(e) =>
                   setExperienceData((data: any) => ({
                     ...data,
-                    position: e.target.value,
+                    title: e.target.value,
                   }))
                 }
                 placeholder="Ex: Project Manager"
@@ -2474,37 +2760,37 @@ export const VolunteerExperience: React.FC<{ profileData: any }> = ({
                   </span>
                 </p>
                 <DatePicker
-                  selected={experienceData.start_year}
+                  selected={experienceData?.startDate || new Date()}
                   onChange={(date) =>
                     setExperienceData((s: any) => ({
                       ...s,
-                      start_year: date,
+                      startDate: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
+                  // dateFormat="M"
                 />
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-700">End Date</p>
                 <DatePicker
-                  selected={experienceData.end_year}
+                  selected={experienceData?.endDate || new Date()}
                   onChange={(date) =>
                     setExperienceData((s: any) => ({
                       ...s,
-                      end_year: date,
+                      endDate: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
+                  // dateFormat="M"
                 />
               </div>
             </FormGroup>
@@ -2661,7 +2947,7 @@ export const VolunteerExperience: React.FC<{ profileData: any }> = ({
                 </p>
 
                 <div className="flex flex-wrap items-center gap-2">
-                  {profileData?.suggested_skills
+                  {profileData?.suggestedSkills
                     ?.filter((skill: string) => !skills.includes(skill))
                     .map((skill: string) => (
                       <span
@@ -2694,10 +2980,22 @@ export const VolunteerExperience: React.FC<{ profileData: any }> = ({
               Close
             </button>
             <button
-              onClick={() => console.log(experienceData)}
-              className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              disabled={loading}
+              onClick={() => {
+                handleUpdateProfile({
+                  volunteerExperience: [
+                    ...profileData?.volunteerExperience,
+                    {
+                      ...experienceData,
+                      skills: skills,
+                      keyAchievements: achievments,
+                    },
+                  ],
+                });
+              }}
+              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
             >
-              Save
+              {loading ? "Saving..." : "Save"}
             </button>
           </div>
         </div>
@@ -2726,12 +3024,12 @@ export const VolunteerExperience: React.FC<{ profileData: any }> = ({
               </label>
               <input
                 type="text"
-                id="position"
-                value={selectedExperience?.position}
+                id="title"
+                value={selectedExperience?.title}
                 onChange={(e) =>
                   setSelectedExperience((data: any) => ({
                     ...data,
-                    position: e.target.value,
+                    title: e.target.value,
                   }))
                 }
                 placeholder="Ex: Project Manager"
@@ -2740,7 +3038,7 @@ export const VolunteerExperience: React.FC<{ profileData: any }> = ({
             </div>
             <div className="mb-6">
               <label
-                htmlFor="major_skill"
+                htmlFor="company"
                 className="text-sm font-medium text-gray-700 flex items-center gap-1"
               >
                 Company Name{" "}
@@ -2771,37 +3069,35 @@ export const VolunteerExperience: React.FC<{ profileData: any }> = ({
                   </span>
                 </p>
                 <DatePicker
-                  selected={selectedExperience?.start_year}
+                  selected={selectedExperience?.startDate || new Date()}
                   onChange={(date) =>
                     setSelectedExperience((s: any) => ({
                       ...s,
-                      start_year: date,
+                      startDate: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
                 />
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-700">End Date</p>
                 <DatePicker
-                  selected={selectedExperience?.end_year}
+                  selected={selectedExperience?.endDate || new Date()}
                   onChange={(date) =>
                     setSelectedExperience((s: any) => ({
                       ...s,
-                      end_year: date,
+                      endDate: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
                 />
               </div>
             </FormGroup>
@@ -2958,7 +3254,7 @@ export const VolunteerExperience: React.FC<{ profileData: any }> = ({
                 </p>
 
                 <div className="flex flex-wrap items-center gap-2">
-                  {profileData?.suggested_skills
+                  {profileData?.suggestedSkills
                     ?.filter((skill: string) => !skills.includes(skill))
                     .map((skill: string) => (
                       <span
@@ -2992,8 +3288,26 @@ export const VolunteerExperience: React.FC<{ profileData: any }> = ({
             >
               Close
             </button>
-            <button className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium">
-              Update
+            <button
+              disabled={loading}
+              onClick={() => {
+                const updatedVolunteerExperience =
+                  profileData?.volunteerExperience.map((exp: any) =>
+                    exp._id === selectedExperience?._id
+                      ? {
+                          ...selectedExperience,
+                          skills: skills,
+                          keyAchievements: achievments,
+                        }
+                      : exp
+                  );
+                handleUpdateProfile({
+                  volunteerExperience: updatedVolunteerExperience,
+                });
+              }}
+              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+            >
+              {loading ? "Loading..." : "Update"}
             </button>
           </div>
         </div>
@@ -3005,17 +3319,28 @@ export const VolunteerExperience: React.FC<{ profileData: any }> = ({
           setSkills([]);
           setDeleteModal(false);
         }}
+        isLoading={loading}
+        isLoadingText="Deleting"
         title={`Delete ${selectedExperience?.position} ?`}
         desc={`Are you sure you want to delete this item from your volunteer experiences? This action is irreversible`}
-        onProceed={() => {}}
+        onProceed={() => {
+          const updatedVolunteerExperience =
+            profileData?.volunteerExperience.filter(
+              (exp: any) => exp._id !== selectedExperience?._id
+            );
+          handleUpdateProfile({
+            volunteerExperience: updatedVolunteerExperience,
+          });
+        }}
       ></Delete>
     </div>
   );
 };
 
-export const Internships: React.FC<{ profileData: any }> = ({
-  profileData,
-}) => {
+export const Internships: React.FC<{
+  profileData: any;
+  setProfileData: React.Dispatch<React.SetStateAction<any | null>>;
+}> = ({ profileData, setProfileData }) => {
   const [newExperienceModal, setNewExperienceModal] = useState(false);
   const [selectedExperience, setSelectedExperience] = useState<any>(null);
   const [editModal, setEditModal] = useState(false);
@@ -3023,18 +3348,19 @@ export const Internships: React.FC<{ profileData: any }> = ({
   const [skills, setSkills] = useState<string[]>([]);
   const [achievments, setAchievments] = useState<string[]>([]);
   const [experienceData, setExperienceData] = useState({
-    position: "",
+    title: "",
     company: "",
     description: "",
-    key_achievments: [],
-    start_year: new Date(),
-    end_year: new Date(),
+    keyAchievements: [],
+    startDate: new Date(),
+    endDate: new Date(),
     skills: [],
     active: false,
   });
   const [newSkill, setNewSkill] = useState("");
   const [newAchievment, setNewAchievment] = useState("");
   const [draggingItem, setDraggingItem] = useState<any | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const addAchievment = () => {
     if (newAchievment && !achievments.includes(newAchievment)) {
@@ -3092,7 +3418,22 @@ export const Internships: React.FC<{ profileData: any }> = ({
       setSkills(updatedItems);
     }
   };
-
+  const handleUpdateProfile = async (data: any) => {
+    setLoading(true);
+    try {
+      const resp = await updateProfile(profileData?._id, data);
+      setProfileData(resp?.data?.profile);
+      toast.success("Successfull!");
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    } finally {
+      setLoading(false);
+      setNewExperienceModal(false);
+      setEditModal(false);
+      setDeleteModal(false);
+      setSkills([]);
+    }
+  };
   return (
     <div className="relative">
       <div className="flex w-full justify-between items-center mb-2">
@@ -3112,7 +3453,7 @@ export const Internships: React.FC<{ profileData: any }> = ({
             key={index}
             onClick={() => {
               setSelectedExperience(item);
-              setAchievments(item?.key_achievments);
+              setAchievments(item?.keyAchievements);
               setSkills(item?.skills);
             }}
             className="border border-stroke rounded-lg shadow-sm bg-white p-3"
@@ -3120,16 +3461,16 @@ export const Internships: React.FC<{ profileData: any }> = ({
             <div className="flex justify-between items-start mb-3">
               <div>
                 <h6 className="md:text-lg text-base font-medium text-zinc-800 mb-0">
-                  {item?.position}
+                  {item?.title}
                 </h6>
                 <p className=" text-primary max-md:text-sm">{item?.company}</p>
               </div>
               <div className="flex items-center">
                 <p className="text-xs text-zinc-500 lg:mr-4">
-                  {item?.start_year}-
-                  {item?.end_year === new Date().getFullYear().toString()
+                  {item?.startDate && formatMonthYear(item?.startDate)}-
+                  {item?.active
                     ? "Present"
-                    : item?.end_year}
+                    : item?.endDate && formatMonthYear(item?.endDate)}
                 </p>
                 <button
                   onClick={() => {
@@ -3160,7 +3501,7 @@ export const Internships: React.FC<{ profileData: any }> = ({
               <p className="text-zinc-800 max-md:text-sm text-base font-medium mb-1">
                 Key Achievements:
               </p>
-              <ItemList items={item?.key_achievments} />
+              <ItemList items={item?.keyAchievements} />
             </div>
 
             <div className="mb-4">
@@ -3195,11 +3536,11 @@ export const Internships: React.FC<{ profileData: any }> = ({
               <input
                 type="text"
                 id="position"
-                value={experienceData.position}
+                value={experienceData?.title}
                 onChange={(e) =>
                   setExperienceData((data: any) => ({
                     ...data,
-                    position: e.target.value,
+                    title: e.target.value,
                   }))
                 }
                 placeholder="Ex: Project Manager"
@@ -3239,37 +3580,37 @@ export const Internships: React.FC<{ profileData: any }> = ({
                   </span>
                 </p>
                 <DatePicker
-                  selected={experienceData.start_year}
+                  selected={experienceData?.startDate || new Date()}
                   onChange={(date) =>
                     setExperienceData((s: any) => ({
                       ...s,
-                      start_year: date,
+                      startDate: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
+                  // dateFormat="M"
                 />
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-700">End Date</p>
                 <DatePicker
-                  selected={experienceData.end_year}
+                  selected={experienceData?.endDate || new Date()}
                   onChange={(date) =>
                     setExperienceData((s: any) => ({
                       ...s,
-                      end_year: date,
+                      endDate: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
+                  // dateFormat="M"
                 />
               </div>
             </FormGroup>
@@ -3426,7 +3767,7 @@ export const Internships: React.FC<{ profileData: any }> = ({
                 </p>
 
                 <div className="flex flex-wrap items-center gap-2">
-                  {profileData?.suggested_skills
+                  {profileData?.suggestedSkills
                     ?.filter((skill: string) => !skills.includes(skill))
                     .map((skill: string) => (
                       <span
@@ -3452,6 +3793,8 @@ export const Internships: React.FC<{ profileData: any }> = ({
           <div className="w-full border-t flex bg-white mt-3 pt-4 justify-between items-center border-stroke">
             <button
               onClick={() => {
+                setSkills([]);
+                setAchievments([]);
                 setNewExperienceModal(false);
               }}
               className="text-zinc-600 hover:scale-105 font-medium py-1.5 px-4"
@@ -3459,10 +3802,22 @@ export const Internships: React.FC<{ profileData: any }> = ({
               Close
             </button>
             <button
-              onClick={() => console.log(experienceData)}
+              disabled={loading}
+              onClick={() => {
+                handleUpdateProfile({
+                  internships: [
+                    ...profileData?.internships,
+                    {
+                      ...experienceData,
+                      skills: skills,
+                      keyAchievements: achievments,
+                    },
+                  ],
+                });
+              }}
               className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
             >
-              Save
+              {loading ? "Loading..." : "Save"}
             </button>
           </div>
         </div>
@@ -3491,12 +3846,12 @@ export const Internships: React.FC<{ profileData: any }> = ({
               </label>
               <input
                 type="text"
-                id="position"
-                value={selectedExperience?.position}
+                id="title"
+                value={selectedExperience?.title}
                 onChange={(e) =>
                   setSelectedExperience((data: any) => ({
                     ...data,
-                    position: e.target.value,
+                    title: e.target.value,
                   }))
                 }
                 placeholder="Ex: Project Manager"
@@ -3536,37 +3891,35 @@ export const Internships: React.FC<{ profileData: any }> = ({
                   </span>
                 </p>
                 <DatePicker
-                  selected={selectedExperience?.start_year}
+                  selected={selectedExperience?.startDate}
                   onChange={(date) =>
                     setSelectedExperience((s: any) => ({
                       ...s,
-                      start_year: date,
+                      startDate: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
                 />
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-700">End Date</p>
                 <DatePicker
-                  selected={selectedExperience?.end_year}
+                  selected={selectedExperience?.endDate}
                   onChange={(date) =>
                     setSelectedExperience((s: any) => ({
                       ...s,
-                      end_year: date,
+                      endDate: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
                 />
               </div>
             </FormGroup>
@@ -3723,7 +4076,7 @@ export const Internships: React.FC<{ profileData: any }> = ({
                 </p>
 
                 <div className="flex flex-wrap items-center gap-2">
-                  {profileData?.suggested_skills
+                  {profileData?.suggestedSkills
                     ?.filter((skill: string) => !skills.includes(skill))
                     .map((skill: string) => (
                       <span
@@ -3757,8 +4110,26 @@ export const Internships: React.FC<{ profileData: any }> = ({
             >
               Close
             </button>
-            <button className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium">
-              Update
+            <button
+              disabled={loading}
+              onClick={() => {
+                const updatedInternshipExperience =
+                  profileData?.internships.map((exp: any) =>
+                    exp._id === selectedExperience?._id
+                      ? {
+                          ...selectedExperience,
+                          skills: skills,
+                          keyAchievements: achievments,
+                        }
+                      : exp
+                  );
+                handleUpdateProfile({
+                  internships: updatedInternshipExperience,
+                });
+              }}
+              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+            >
+              {loading ? "Loading" : "Update"}
             </button>
           </div>
         </div>
@@ -3770,28 +4141,56 @@ export const Internships: React.FC<{ profileData: any }> = ({
           setSkills([]);
           setDeleteModal(false);
         }}
+        isLoading={loading}
+        isLoadingText="Deleting"
         title={`Delete ${selectedExperience?.position} ?`}
         desc={`Are you sure you want to delete this item from your internship experiences? This action is irreversible`}
-        onProceed={() => {}}
+        onProceed={() => {
+          const updatedInternshipExperience = profileData?.internships.filter(
+            (exp: any) => exp._id !== selectedExperience?._id
+          );
+          handleUpdateProfile({
+            internships: updatedInternshipExperience,
+          });
+        }}
       ></Delete>
     </div>
   );
 };
 
-export const Education: React.FC<{ profileData: any }> = ({ profileData }) => {
+export const Education: React.FC<{
+  profileData: any;
+  setProfileData: React.Dispatch<React.SetStateAction<any | null>>;
+}> = ({ profileData, setProfileData }) => {
   const [newItemModal, setNewItemModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-  const [experienceData, setExperienceData] = useState({
+  const [educationData, setEducationData] = useState({
     degree: "",
-    school: "",
+    institution: "",
     description: "",
-    start_year: new Date(),
-    end_year: new Date(),
+    startDate: new Date(),
+    endDate: new Date(),
     active: false,
   });
+  const [loading, setLoading] = useState(false);
 
+  const handleUpdateProfile = async (data: any) => {
+    setLoading(true);
+    try {
+      const resp = await updateProfile(profileData?._id, data);
+      setProfileData(resp?.data?.profile);
+      toast.success("Successfull!");
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    } finally {
+      setLoading(false);
+      setNewItemModal(false);
+      setEditModal(false);
+      setDeleteModal(false);
+    }
+  };
   return (
     <div className="relative">
       <div className="flex w-full justify-between items-center mb-2">
@@ -3819,11 +4218,16 @@ export const Education: React.FC<{ profileData: any }> = ({ profileData }) => {
                 <h6 className="text-base max-sm:text-[15px] font-medium text-zinc-800 mb-0">
                   {item?.degree}
                 </h6>
-                <p className=" text-primary max-md:text-sm">{item?.school}</p>
+                <p className=" text-primary max-md:text-sm">
+                  {item?.institution}
+                </p>
               </div>
               <div className="flex items-center">
                 <p className="text-xs text-zinc-500 lg:mr-4">
-                  {item?.start_year}-{item?.active ? "Present" : item?.end_year}
+                  {item?.startDate && formatMonthYear(item?.startDate)}-
+                  {item?.active
+                    ? "Present"
+                    : item?.endDate && formatMonthYear(item?.endDate)}
                 </p>
                 <button
                   onClick={() => {
@@ -3874,9 +4278,9 @@ export const Education: React.FC<{ profileData: any }> = ({ profileData }) => {
               <input
                 type="text"
                 id="degree"
-                value={experienceData?.degree}
+                value={educationData?.degree}
                 onChange={(e) =>
-                  setExperienceData((data: any) => ({
+                  setEducationData((data: any) => ({
                     ...data,
                     degree: e.target.value,
                   }))
@@ -3887,25 +4291,25 @@ export const Education: React.FC<{ profileData: any }> = ({ profileData }) => {
             </div>
             <div className="mb-6">
               <label
-                htmlFor="major_skill"
+                htmlFor="institution"
                 className="text-sm font-medium text-gray-700 flex items-center gap-1"
               >
-                School{" "}
+                Institution{" "}
                 <span>
                   <FaStarOfLife className="text-danger" size={8} />
                 </span>
               </label>
               <input
                 type="text"
-                id="school"
-                value={experienceData?.school}
+                id="institution"
+                value={educationData?.institution}
                 onChange={(e) =>
-                  setExperienceData((data: any) => ({
+                  setEducationData((data: any) => ({
                     ...data,
-                    school: e.target.value,
+                    institution: e.target.value,
                   }))
                 }
-                placeholder="Enter name of School"
+                placeholder="Enter name of Institution"
                 className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
@@ -3918,37 +4322,35 @@ export const Education: React.FC<{ profileData: any }> = ({ profileData }) => {
                   </span>
                 </p>
                 <DatePicker
-                  selected={experienceData.start_year}
+                  selected={educationData?.startDate}
                   onChange={(date) =>
-                    setExperienceData((s: any) => ({
+                    setEducationData((s: any) => ({
                       ...s,
-                      start_year: date,
+                      startDate: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
                 />
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-700">End Date</p>
                 <DatePicker
-                  selected={experienceData.end_year}
+                  selected={educationData?.endDate}
                   onChange={(date) =>
-                    setExperienceData((s: any) => ({
+                    setEducationData((s: any) => ({
                       ...s,
-                      end_year: date,
+                      endDate: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
                 />
               </div>
             </FormGroup>
@@ -3957,9 +4359,9 @@ export const Education: React.FC<{ profileData: any }> = ({ profileData }) => {
                 type="checkbox"
                 id="active"
                 name="active"
-                checked={experienceData?.active}
+                checked={educationData?.active}
                 onChange={(e) =>
-                  setExperienceData((data: any) => ({
+                  setEducationData((data: any) => ({
                     ...data,
                     active: e.target.checked,
                   }))
@@ -3987,9 +4389,9 @@ export const Education: React.FC<{ profileData: any }> = ({ profileData }) => {
                      dark:text-white dark:focus:border-primary `}
                   name={`Description`}
                   placeholder="Ex: Graduated with Honors, GPA: 3.8/4.0"
-                  value={experienceData.description}
+                  value={educationData?.description}
                   onChange={(e) =>
-                    setExperienceData((data: any) => ({
+                    setEducationData((data: any) => ({
                       ...data,
                       description: e.target.value,
                     }))
@@ -4008,10 +4410,15 @@ export const Education: React.FC<{ profileData: any }> = ({ profileData }) => {
               Close
             </button>
             <button
-              onClick={() => console.log(experienceData)}
-              className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              disabled={loading}
+              onClick={() => {
+                handleUpdateProfile({
+                  education: [...profileData?.education, educationData],
+                });
+              }}
+              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
             >
-              Save
+              {loading ? "Loading..." : "Save"}
             </button>
           </div>
         </div>
@@ -4052,25 +4459,25 @@ export const Education: React.FC<{ profileData: any }> = ({ profileData }) => {
             </div>
             <div className="mb-6">
               <label
-                htmlFor="school"
+                htmlFor="institution"
                 className="text-sm font-medium text-gray-700 flex items-center gap-1"
               >
-                School{" "}
+                Institution{" "}
                 <span>
                   <FaStarOfLife className="text-danger" size={8} />
                 </span>
               </label>
               <input
                 type="text"
-                id="school"
-                value={selectedItem?.school}
+                id="institution"
+                value={selectedItem?.institution}
                 onChange={(e) =>
                   setSelectedItem((data: any) => ({
                     ...data,
-                    school: e.target.value,
+                    institution: e.target.value,
                   }))
                 }
-                placeholder="Enter name of school"
+                placeholder="Enter name of institution"
                 className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
@@ -4083,37 +4490,35 @@ export const Education: React.FC<{ profileData: any }> = ({ profileData }) => {
                   </span>
                 </p>
                 <DatePicker
-                  selected={selectedItem?.start_year}
+                  selected={selectedItem?.startDate}
                   onChange={(date) =>
                     setSelectedItem((s: any) => ({
                       ...s,
-                      start_year: date,
+                      startDate: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
                 />
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-700">End Date</p>
                 <DatePicker
-                  selected={selectedItem?.end_year}
+                  selected={selectedItem?.endDate}
                   onChange={(date) =>
                     setSelectedItem((s: any) => ({
                       ...s,
-                      end_year: date,
+                      endDate: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
                 />
               </div>
             </FormGroup>
@@ -4172,8 +4577,20 @@ export const Education: React.FC<{ profileData: any }> = ({ profileData }) => {
             >
               Close
             </button>
-            <button className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium">
-              Update
+            <button
+              disabled={loading}
+              onClick={() => {
+                const updatedEducation = profileData?.education.map(
+                  (exp: any) =>
+                    exp._id === selectedItem?._id ? selectedItem : exp
+                );
+                handleUpdateProfile({
+                  education: updatedEducation,
+                });
+              }}
+              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+            >
+              {loading ? "Loading..." : "Update"}
             </button>
           </div>
         </div>
@@ -4183,26 +4600,53 @@ export const Education: React.FC<{ profileData: any }> = ({ profileData }) => {
         onHide={() => {
           setDeleteModal(false);
         }}
+        isLoading={loading}
+        isLoadingText="Deleting"
         title={`Delete ${selectedItem?.degree} ?`}
         desc={`Are you sure you want to delete this item from your academic data? This action is irreversible`}
-        onProceed={() => {}}
+        onProceed={() => {
+          const updatedEducation = profileData?.education.filter(
+            (exp: any) => exp._id !== selectedItem?._id
+          );
+          handleUpdateProfile({
+            education: updatedEducation,
+          });
+        }}
       ></Delete>
     </div>
   );
 };
 
-export const Certifications: React.FC<{ profileData: any }> = ({
-  profileData,
-}) => {
+export const Certifications: React.FC<{
+  profileData: any;
+  setProfileData: React.Dispatch<React.SetStateAction<any | null>>;
+}> = ({ profileData, setProfileData }) => {
   const [newItemModal, setNewItemModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-  const [experienceData, setExperienceData] = useState({
-    title: "",
-    platform: "",
+  const [certData, setCertData] = useState({
+    name: "",
+    institution: "",
     date: new Date(),
+    _id: generateUniqueId(),
   });
+  const [loading, setLoading] = useState(false);
+  const handleUpdateProfile = async (data: any) => {
+    setLoading(true);
+    try {
+      const resp = await updateProfile(profileData?._id, data);
+      setProfileData(resp?.data?.profile);
+      toast.success("Successfull!");
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    } finally {
+      setLoading(false);
+      setNewItemModal(false);
+      setEditModal(false);
+      setDeleteModal(false);
+    }
+  };
 
   return (
     <div className="relative">
@@ -4231,12 +4675,18 @@ export const Certifications: React.FC<{ profileData: any }> = ({
             <div className="flex justify-between items-start mb-3">
               <div>
                 <h6 className="text-base max-sm:text-[15px] font-medium text-zinc-800 mb-0">
-                  {item?.title}
+                  {item?.name}
                 </h6>
-                <p className=" text-primary max-md:text-sm">{item?.platform}</p>
+                <p className=" text-primary max-md:text-sm">
+                  {item?.institution}
+                </p>
               </div>
               <div className="flex items-center">
-                <p className="text-xs text-zinc-500 lg:mr-4">{item?.date}</p>
+                {item?.date && (
+                  <p className="text-xs text-zinc-500 lg:mr-4">
+                    {formatMonthYear(item?.date)}
+                  </p>
+                )}
                 <button
                   onClick={() => {
                     setDeleteModal(true);
@@ -4279,12 +4729,12 @@ export const Certifications: React.FC<{ profileData: any }> = ({
               </label>
               <input
                 type="text"
-                id="degree"
-                value={experienceData?.title}
+                id="name"
+                value={certData?.name}
                 onChange={(e) =>
-                  setExperienceData((data: any) => ({
+                  setCertData((data: any) => ({
                     ...data,
-                    degree: e.target.value,
+                    name: e.target.value,
                   }))
                 }
                 placeholder="Ex: AWS Certified Solutions Architecture"
@@ -4304,11 +4754,11 @@ export const Certifications: React.FC<{ profileData: any }> = ({
               <input
                 type="text"
                 id="platform"
-                value={experienceData?.platform}
+                value={certData?.institution}
                 onChange={(e) =>
-                  setExperienceData((data: any) => ({
+                  setCertData((data: any) => ({
                     ...data,
-                    school: e.target.value,
+                    institution: e.target.value,
                   }))
                 }
                 placeholder="Enter name of company or platform"
@@ -4324,19 +4774,18 @@ export const Certifications: React.FC<{ profileData: any }> = ({
                   </span>
                 </p>
                 <DatePicker
-                  selected={experienceData?.date}
+                  selected={certData?.date}
                   onChange={(date) =>
-                    setExperienceData((s: any) => ({
+                    setCertData((s: any) => ({
                       ...s,
-                      start_year: date,
+                      date: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
                 />
               </div>
             </FormGroup>
@@ -4351,10 +4800,15 @@ export const Certifications: React.FC<{ profileData: any }> = ({
               Close
             </button>
             <button
-              onClick={() => console.log(experienceData)}
-              className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              disabled={loading}
+              onClick={() => {
+                handleUpdateProfile({
+                  certifications: [...profileData?.certifications, certData],
+                });
+              }}
+              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
             >
-              Save
+              {loading ? "Loading..." : "Save"}
             </button>
           </div>
         </div>
@@ -4371,7 +4825,7 @@ export const Certifications: React.FC<{ profileData: any }> = ({
           <div className="no-scrollbar h-[65vh] max-sm:h-[70vh] overflow-y-auto pr-2">
             <div className="mb-6">
               <label
-                htmlFor="title"
+                htmlFor="name"
                 className="text-sm font-medium text-gray-700 flex items-center gap-1"
               >
                 Title{" "}
@@ -4381,12 +4835,12 @@ export const Certifications: React.FC<{ profileData: any }> = ({
               </label>
               <input
                 type="text"
-                id="title"
-                value={selectedItem?.title}
+                id="name"
+                value={selectedItem?.name}
                 onChange={(e) =>
                   setSelectedItem((data: any) => ({
                     ...data,
-                    title: e.target.value,
+                    name: e.target.value,
                   }))
                 }
                 placeholder="Ex: Bachelor of Science in Computer Science"
@@ -4395,7 +4849,7 @@ export const Certifications: React.FC<{ profileData: any }> = ({
             </div>
             <div className="mb-6">
               <label
-                htmlFor="school"
+                htmlFor="platform"
                 className="text-sm font-medium text-gray-700 flex items-center gap-1"
               >
                 Company/Platform{" "}
@@ -4406,14 +4860,14 @@ export const Certifications: React.FC<{ profileData: any }> = ({
               <input
                 type="text"
                 id="platform"
-                value={selectedItem?.platform}
+                value={selectedItem?.institution}
                 onChange={(e) =>
                   setSelectedItem((data: any) => ({
                     ...data,
-                    school: e.target.value,
+                    institution: e.target.value,
                   }))
                 }
-                placeholder="Enter name of company or platform"
+                placeholder="Enter name of institution or platform"
                 className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
@@ -4433,12 +4887,11 @@ export const Certifications: React.FC<{ profileData: any }> = ({
                       date: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
                 />
               </div>
             </FormGroup>
@@ -4452,8 +4905,20 @@ export const Certifications: React.FC<{ profileData: any }> = ({
             >
               Close
             </button>
-            <button className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium">
-              Update
+            <button
+              disabled={loading}
+              onClick={() => {
+                const updatedCert = profileData?.certifications.map(
+                  (exp: any) =>
+                    exp._id === selectedItem?._id ? selectedItem : exp
+                );
+                handleUpdateProfile({
+                  certifications: updatedCert,
+                });
+              }}
+              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+            >
+              {loading ? "Loading..." : "Update"}
             </button>
           </div>
         </div>
@@ -4463,30 +4928,56 @@ export const Certifications: React.FC<{ profileData: any }> = ({
         onHide={() => {
           setDeleteModal(false);
         }}
-        title={`Delete ${selectedItem?.title} ?`}
+        isLoading={loading}
+        isLoadingText="Deleting"
+        title={`Delete ${selectedItem?.name} ?`}
         desc={`Are you sure you want to delete this item from your certifications & trainings data? This action is irreversible`}
-        onProceed={() => {}}
+        onProceed={() => {
+          const updatedCert = profileData?.certifications.filter(
+            (exp: any) => exp._id !== selectedItem?._id
+          );
+          handleUpdateProfile({
+            certifications: updatedCert,
+          });
+        }}
       ></Delete>
     </div>
   );
 };
 
-export const ProfessionalReference: React.FC<{ profileData: any }> = ({
-  profileData,
-}) => {
+export const ProfessionalReference: React.FC<{
+  profileData: any;
+  setProfileData: React.Dispatch<React.SetStateAction<any | null>>;
+}> = ({ profileData, setProfileData }) => {
   const [newItemModal, setNewItemModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [referenceData, setReferenceData] = useState({
-    id: "",
+    _id: generateUniqueId(),
     name: "",
-    role: "",
+    title: "",
     company: "",
     email: "",
     phone: "",
     relationship: "",
   });
+  const [loading, setLoading] = useState(false);
+  const handleUpdateProfile = async (data: any) => {
+    setLoading(true);
+    try {
+      const resp = await updateProfile(profileData?._id, data);
+      setProfileData(resp?.data?.profile);
+      toast.success("Successfull!");
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    } finally {
+      setLoading(false);
+      setNewItemModal(false);
+      setEditModal(false);
+      setDeleteModal(false);
+    }
+  };
 
   return (
     <div className="relative">
@@ -4524,7 +5015,7 @@ export const ProfessionalReference: React.FC<{ profileData: any }> = ({
                       {item?.name}
                     </h6>
                     <p className=" text-primary max-md:text-sm mb-2">
-                      {item?.role}
+                      {item?.title}
                     </p>
                     <p className=" text-zinc-500 max-md:text-sm mb-1">
                       {item?.company}
@@ -4599,7 +5090,7 @@ export const ProfessionalReference: React.FC<{ profileData: any }> = ({
             </div>
             <div className="mb-6">
               <label
-                htmlFor="role"
+                htmlFor="title"
                 className="text-sm font-medium text-gray-700 flex items-center gap-1"
               >
                 Role{" "}
@@ -4609,8 +5100,8 @@ export const ProfessionalReference: React.FC<{ profileData: any }> = ({
               </label>
               <input
                 type="text"
-                id="role"
-                value={referenceData?.role}
+                id="title"
+                value={referenceData?.title}
                 onChange={(e) =>
                   setReferenceData((data: any) => ({
                     ...data,
@@ -4633,7 +5124,7 @@ export const ProfessionalReference: React.FC<{ profileData: any }> = ({
               </label>
               <input
                 type="text"
-                id="role"
+                id="company"
                 value={referenceData?.company}
                 onChange={(e) =>
                   setReferenceData((data: any) => ({
@@ -4692,7 +5183,7 @@ export const ProfessionalReference: React.FC<{ profileData: any }> = ({
             <div className="w-full mb-5">
               <label
                 className="mb-[0.7rem] block text-sm font-normal text-zinc-800 dark:text-white"
-                htmlFor="description"
+                htmlFor="relationship"
               >
                 Relationship
               </label>
@@ -4727,10 +5218,15 @@ export const ProfessionalReference: React.FC<{ profileData: any }> = ({
               Close
             </button>
             <button
-              onClick={() => console.log(referenceData)}
-              className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              disabled={loading}
+              onClick={() => {
+                handleUpdateProfile({
+                  references: [...profileData?.references, referenceData],
+                });
+              }}
+              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
             >
-              Save
+              {loading ? "Loading..." : "Save"}
             </button>
           </div>
         </div>
@@ -4771,7 +5267,7 @@ export const ProfessionalReference: React.FC<{ profileData: any }> = ({
             </div>
             <div className="mb-6">
               <label
-                htmlFor="role"
+                htmlFor="title"
                 className="text-sm font-medium text-gray-700 flex items-center gap-1"
               >
                 Role{" "}
@@ -4781,12 +5277,12 @@ export const ProfessionalReference: React.FC<{ profileData: any }> = ({
               </label>
               <input
                 type="text"
-                id="role"
-                value={selectedItem?.role}
+                id="title"
+                value={selectedItem?.title}
                 onChange={(e) =>
                   setSelectedItem((data: any) => ({
                     ...data,
-                    role: e.target.value,
+                    title: e.target.value,
                   }))
                 }
                 placeholder="Ex: Technical Lead"
@@ -4898,8 +5394,19 @@ export const ProfessionalReference: React.FC<{ profileData: any }> = ({
             >
               Close
             </button>
-            <button className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium">
-              Update
+            <button
+              disabled={loading}
+              onClick={() => {
+                const updatedData = profileData?.references.map((exp: any) =>
+                  exp._id === selectedItem?._id ? selectedItem : exp
+                );
+                handleUpdateProfile({
+                  references: updatedData,
+                });
+              }}
+              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+            >
+              {loading ? "Loading..." : "Update"}
             </button>
           </div>
         </div>
@@ -4910,16 +5417,26 @@ export const ProfessionalReference: React.FC<{ profileData: any }> = ({
           setDeleteModal(false);
         }}
         title={`Delete ${selectedItem?.name} ?`}
+        isLoading={loading}
+        isLoadingText="Deleting"
         desc={`Are you sure you want to delete this item from your professional references data? This action is irreversible`}
-        onProceed={() => {}}
+        onProceed={() => {
+          const updatedCert = profileData?.references.filter(
+            (exp: any) => exp._id !== selectedItem?._id
+          );
+          handleUpdateProfile({
+            references: updatedCert,
+          });
+        }}
       ></Delete>
     </div>
   );
 };
 
-export const Memberships: React.FC<{ profileData: any }> = ({
-  profileData,
-}) => {
+export const Memberships: React.FC<{
+  profileData: any;
+  setProfileData: React.Dispatch<React.SetStateAction<any | null>>;
+}> = ({ profileData, setProfileData }) => {
   const [newItemModal, setNewItemModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [editModal, setEditModal] = useState(false);
@@ -4927,11 +5444,27 @@ export const Memberships: React.FC<{ profileData: any }> = ({
   const [membershipData, setMembershipData] = useState({
     title: "",
     role: "",
-    start_year: new Date(),
-    end_year: new Date(),
+    startDate: new Date(),
+    endDate: new Date(),
     active: false,
+    _id: generateUniqueId(),
   });
-
+  const [loading, setLoading] = useState(false);
+  const handleUpdateProfile = async (data: any) => {
+    setLoading(true);
+    try {
+      const resp = await updateProfile(profileData?._id, data);
+      setProfileData(resp?.data?.profile);
+      toast.success("Successfull!");
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    } finally {
+      setLoading(false);
+      setNewItemModal(false);
+      setEditModal(false);
+      setDeleteModal(false);
+    }
+  };
   return (
     <div className="relative">
       <div className="flex w-full justify-between items-center mb-2">
@@ -4948,7 +5481,7 @@ export const Memberships: React.FC<{ profileData: any }> = ({
         </button>
       </div>
       <div className="flex 2xl:flex-row flex-col w-full gap-4">
-        {profileData?.memberships?.map((item: any, index: number) => (
+        {profileData?.membership?.map((item: any, index: number) => (
           <div
             key={index}
             onClick={() => {
@@ -5059,37 +5592,35 @@ export const Memberships: React.FC<{ profileData: any }> = ({
                   </span>
                 </p>
                 <DatePicker
-                  selected={membershipData.start_year}
+                  selected={membershipData?.startDate}
                   onChange={(date) =>
                     setMembershipData((s: any) => ({
                       ...s,
-                      start_year: date,
+                      startDate: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
                 />
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-700">End Date</p>
                 <DatePicker
-                  selected={membershipData.end_year}
+                  selected={membershipData?.endDate}
                   onChange={(date) =>
                     setMembershipData((s: any) => ({
                       ...s,
-                      end_year: date,
+                      endDate: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
                 />
               </div>
             </FormGroup>
@@ -5122,10 +5653,15 @@ export const Memberships: React.FC<{ profileData: any }> = ({
               Close
             </button>
             <button
-              onClick={() => console.log(membershipData)}
-              className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              disabled={loading}
+              onClick={() => {
+                handleUpdateProfile({
+                  membership: [...profileData?.membership, membershipData],
+                });
+              }}
+              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
             >
-              Save
+              {loading ? "Loading..." : "Save"}
             </button>
           </div>
         </div>
@@ -5197,37 +5733,35 @@ export const Memberships: React.FC<{ profileData: any }> = ({
                   </span>
                 </p>
                 <DatePicker
-                  selected={selectedItem?.start_year}
+                  selected={selectedItem?.startDate}
                   onChange={(date) =>
                     setSelectedItem((s: any) => ({
                       ...s,
-                      start_year: date,
+                      startDate: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
                 />
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-700">End Date</p>
                 <DatePicker
-                  selected={selectedItem?.end_year}
+                  selected={selectedItem?.endDate}
                   onChange={(date) =>
                     setSelectedItem((s: any) => ({
                       ...s,
-                      end_year: date,
+                      endDate: date,
                     }))
                   }
-                  showYearPicker
+                  showMonthYearPicker
                   icon={<FcCalendar />}
                   showIcon
                   toggleCalendarOnIconClick
                   showPopperArrow={false}
-                  dateFormat="yyyy"
                 />
               </div>
             </FormGroup>
@@ -5259,8 +5793,19 @@ export const Memberships: React.FC<{ profileData: any }> = ({
             >
               Close
             </button>
-            <button className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium">
-              Update
+            <button
+              disabled={loading}
+              onClick={() => {
+                const updatedData = profileData?.membership?.map((exp: any) =>
+                  exp._id === selectedItem?._id ? selectedItem : exp
+                );
+                handleUpdateProfile({
+                  membership: updatedData,
+                });
+              }}
+              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+            >
+              {loading ? "Loading..." : "Update"}
             </button>
           </div>
         </div>
@@ -5270,9 +5815,18 @@ export const Memberships: React.FC<{ profileData: any }> = ({
         onHide={() => {
           setDeleteModal(false);
         }}
+        isLoading={loading}
+        isLoadingText="Deleting"
         title={`Delete ${selectedItem?.title} ?`}
         desc={`Are you sure you want to delete this item from your membership data? This action is irreversible`}
-        onProceed={() => {}}
+        onProceed={() => {
+          const updatedCert = profileData?.membership.filter(
+            (exp: any) => exp._id !== selectedItem?._id
+          );
+          handleUpdateProfile({
+            membership: updatedCert,
+          });
+        }}
       ></Delete>
     </div>
   );

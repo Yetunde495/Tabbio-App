@@ -95,7 +95,7 @@ function App() {
                 path="/live-resume"
                 element={<GeneralPages.LiveResume />}
               />
-              <Route path="/tb/:name" element={<GeneralPages.SmartResume />} />
+              <Route path="/tabbio/profile/:tabbioLink" element={<GeneralPages.SmartResume />} />
             </>
 
             {/* Candidate Pages */}
@@ -105,8 +105,9 @@ function App() {
                   path="/app/candidate/profile"
                   element={<CandidatePages.Profile />}
                 />
+               
                 <Route
-                  path="/app/candidate/profile/edit-cv"
+                  path="/app/candidate/profile/edit-cv/:profileId"
                   element={<CandidatePages.EditSmartResume />}
                 />
                 <Route

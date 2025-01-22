@@ -1,6 +1,6 @@
 import { useApp } from "../../context/AppContext";
 import DefaultLayout from "../../layout/DefaultLayout";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Switch } from "../../components/form/Switch";
 import { MdOutlineColorLens } from "react-icons/md";
 import { mockEmpty, mockResumeData } from "../../data/mockData";
@@ -24,7 +24,7 @@ import { PiSlidersHorizontalBold } from "react-icons/pi";
 import { Select4 } from "../../components/form/Select";
 import { Sketch } from "@uiw/react-color";
 import { BsPencil } from "react-icons/bs";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { LuExternalLink } from "react-icons/lu";
 import { TbWorld } from "react-icons/tb";
 import {
@@ -49,6 +49,9 @@ import resumeImg1 from "../../assets/images/entry-resume-sample.png";
 import resumeImg2 from "../../assets/images/pro-resume-sample.png";
 import { ProgressBar2 } from "../../components/ProgressBar";
 import ResumeAiScore from "./ResumeAiScore";
+import { PageLoader } from "../../components/Loader";
+import { getProfileResume } from "../../services/resumeServices";
+import { toast } from "react-toastify";
 
 const sizes = [
   {
@@ -69,10 +72,12 @@ const primaryColors = ["#0077B5", "#CC0074", "#FF7D00", "#00C196", "#000000"];
 
 const EditSmartResume: React.FC = () => {
   const {} = useApp();
+  const {profileId} = useParams();
   const navigate = useNavigate();
   const [newCvModal, setNewCvModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [active, setActive] = useState<string | null>(null);
-  const [resumeData, setResumeData] = useState<any>(mockResumeData);
+  const [resumeData, setResumeData] = useState<any>(null);
   const [showPalette, setShowPalette] = useState(false);
   const paletteRef = useOutsideClick(() => setShowPalette(false));
   const [editingName, setEditingName] = useState(false);
@@ -80,7 +85,6 @@ const EditSmartResume: React.FC = () => {
   const [templateModal, setTemplateModal] = useState(false);
   const [scoreModal, setScoreModal] =  useState(false);
   const [config, setConfig] = useState<any>(mockResumeData?.config || null);
-
   const [sectionCount, setSectionCount] = useState(0); // To track the number of sections added
   const [customSections, setCustomSections] = useState<any[]>([]);
   const [sectionType, setSectionType] = useState("");
@@ -166,9 +170,22 @@ const EditSmartResume: React.FC = () => {
     setSectionCount(sectionCount - 1);
   };
 
+  useMemo(async() => {
+    setLoading(true)
+   try {
+    const resp = await getProfileResume(profileId)
+    console.log(resp)
+    setResumeData(resp?.data?.resume)
+   } catch (err:any) {
+     toast.error(err?.message || 'Request Failed! Please try again')
+   } finally {
+    setLoading(false)
+   }
+  }, [profileId])
+
   return (
     <DefaultLayout>
-      <section className="w-full">
+      {loading ? <PageLoader /> :<section className="w-full">
         <div className="bg-zinc-50/90 lg:px-9 md:px-6 px-2 py-3 mb-6 w-full">
           <div className="flex max-sm:flex-col gap-3 gap-y-1.5 sm:items-center relative w-full z-99">
             <Menu setActive={setActive}>
@@ -259,7 +276,7 @@ const EditSmartResume: React.FC = () => {
                                 ...d,
                                 style: {
                                   ...d.style,
-                                  primary_color: val,
+                                  primaryColor: val,
                                 },
                               }));
                             }}
@@ -267,7 +284,7 @@ const EditSmartResume: React.FC = () => {
                             className={`h-9 w-9 rounded-full flex justify-center items-center cursor-pointer`}
                             style={{ backgroundColor: val }}
                           >
-                            {resumeData?.style?.primary_color === val && (
+                            {resumeData?.style?.primaryColor === val && (
                               <FaCheck className="text-white" />
                             )}
                           </span>
@@ -292,13 +309,13 @@ const EditSmartResume: React.FC = () => {
                     ref={paletteRef}
                   >
                     <Sketch
-                      color={resumeData?.style?.primary_color}
+                      color={resumeData?.style?.primaryColor}
                       onChange={(color) =>
                         setResumeData((d: any) => ({
                           ...d,
                           style: {
                             ...d.style,
-                            primary_color: color.hex,
+                            primaryColor: color.hex,
                           },
                         }))
                       }
@@ -560,7 +577,7 @@ const EditSmartResume: React.FC = () => {
                   <div className="flex flex-col w-full justify-center items-center  mb-8 border-b pb-2 border-stroke">
                     <input
                       className={`border-none bg-white focus:bg-zinc-100 focus:outline-none text-center  px-3 font-medium text-[40px] dynamic-input`}
-                      style={{ color: resumeData?.style?.primary_color }}
+                      style={{ color: resumeData?.style?.primaryColor }}
                       placeholder="Your Name"
                       value={resumeData?.name}
                       onChange={(e) =>
@@ -592,7 +609,7 @@ const EditSmartResume: React.FC = () => {
                     <style>
                       {`
                               .dynamic-input::placeholder {
-                               color: ${resumeData?.style?.primary_color}
+                               color: ${resumeData?.style?.primaryColor}
                               }
                             `}
                     </style>
@@ -726,15 +743,15 @@ const EditSmartResume: React.FC = () => {
                   <div className="w-full  mb-15">
                     <div
                       style={{
-                        color: resumeData?.style?.primary_color,
-                        borderColor: resumeData?.style?.primary_color,
+                        color: resumeData?.style?.primaryColor,
+                        borderColor: resumeData?.style?.primaryColor,
                       }}
                       className="w-full flex divide-x-2 border-b-2 gap-3 items-center mt-15"
                     >
                       {editingName ? (
                         <input
                           className={`border-none bg-white focus:bg-zinc-100 focus:outline-none px-3 font-medium text-[40px] dynamic-input`}
-                          style={{ color: resumeData?.style?.primary_color }}
+                          style={{ color: resumeData?.style?.primaryColor }}
                           placeholder="Your Name"
                           value={resumeData?.name}
                           autoFocus
@@ -784,7 +801,7 @@ const EditSmartResume: React.FC = () => {
                       <style>
                         {`
                               .dynamic-input::placeholder {
-                               color: ${resumeData?.style?.primary_color}
+                               color: ${resumeData?.style?.primaryColor}
                               }
                             `}
                       </style>
@@ -811,7 +828,7 @@ const EditSmartResume: React.FC = () => {
                       />
                     </div>
                   )}
-                  {config?.career && (
+                  {config?.careerHighlights && (
                     <div className="pb-4">
                       <AtsCareerHighlight
                         resumeData={resumeData}
@@ -1051,7 +1068,7 @@ const EditSmartResume: React.FC = () => {
         {scoreModal && (
           <ResumeAiScore show={scoreModal} onHide={() => setScoreModal(false)} />
         )}
-      </section>
+      </section>}
     </DefaultLayout>
   );
 };

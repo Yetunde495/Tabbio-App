@@ -11,6 +11,7 @@ const defaultContext = {
   isLoggedIn: false,
   newChat: false,
   category: 'Candidate',
+  parsedResume: null,
   savedResumes: [],
   setSavedResumes: (_savedResumes: any[]) => {},
   changeCategory: (_category: string) => {},
@@ -18,16 +19,19 @@ const defaultContext = {
   setNewChat: (_value:boolean) => {},
   signOut: () => {},
   updateUser: (_user: any) => {},
+  setParsedResume: (_parsedResume: any) => {},
   loadData: () => {},
 } as any;
 
 interface AppContextInterface {
   user: any | null;
+  parsedResume: any | null;
   isLoggedIn: boolean;
   newChat: boolean;
   category:string;
   savedResumes: any[],
   setSavedResumes: (value: any[]) => void;
+  setParsedResume: (data: any) => void;
   signIn: (data: any) => void;
   signOut: () => void;
   updateUser: (data:  any) => void;
@@ -117,18 +121,25 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
     update({savedResumes: value})
   }
 
+  
+  const setParsedResume = (data: any) => {
+    update({parsedResume: data})
+  }
+
 
  
 
 
   let value: AppContextInterface = {
     user: state?.user,
+    parsedResume: state?.parsedResume,
     isLoggedIn: state?.isLoggedIn,
     newChat: state?.newChat,
     category: state?.category,
     changeCategory,
     savedResumes: state?.savedResumes,
     setSavedResumes,
+    setParsedResume,
     setNewChat,
     signIn,
     signOut,

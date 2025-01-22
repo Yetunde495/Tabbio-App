@@ -1,10 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { FaArrowRightLong } from "react-icons/fa6";
-import { RiRobot2Line } from "react-icons/ri";
+// import { RiRobot2Line } from "react-icons/ri";
 import { RxCross2 } from "react-icons/rx";
 import { VscWand } from "react-icons/vsc";
 import { TextArea } from "../../components/form";
+import Alert from "../../components/Alert";
 
 type Props = {
   show?: boolean;
@@ -54,7 +55,7 @@ const AiMatchModal: React.FC<Props> = ({ show, onHide }) => {
           <div className="flex items-center md:px-6 px-4">
             <div className="flex items-center gap-2">
               <VscWand size={28} className="text-primary" />
-              <h3 className="text-xl font-semibold text-black dark:text-white sm:text-2xl mb-0">
+              <h3 className="text-xl font-semibold text-black dark:text-white mb-0">
                 AI-Powered Applicant Matching
               </h3>
             </div>
@@ -68,18 +69,18 @@ const AiMatchModal: React.FC<Props> = ({ show, onHide }) => {
           </div>
 
           <div className="px-10 py-5">
-            <div className="bg-[#F9FAFB] border-stroke py-4 px-3 rounded-lg shadow mb-8">
-              <div className="flex gap-2 mb-2 items-center text-[#4F46E5] font-semibold text-lg">
-                <span>
-                  <RiRobot2Line />
-                </span>{" "}
-                <span>How it works</span>
-              </div>
-              <p className="text-primary">
-                Our AI analyzes the job description to find the best matches
-                based on skills, experience, and qualifications. Simply paste
-                the job description below and let our AI do the work.
-              </p>
+            <div className="pt-3 mb-7">
+              <Alert variant="info">
+                <div className="text-sm font-normal">
+                  {" "}
+                  <p className=" text-base font-semibold">How it works</p>
+                  <p className="">
+                    Our AI analyzes the job description to find the best matches
+                    based on skills, experience, and qualifications. Simply
+                    paste the job description below and let our AI do the work.
+                  </p>
+                </div>
+              </Alert>
             </div>
 
             <div>
@@ -96,7 +97,10 @@ const AiMatchModal: React.FC<Props> = ({ show, onHide }) => {
               <button className="text-zinc-700 hover:scale-105 duration-150">
                 Cancel
               </button>
-              <button disabled={value === ""} className="bg-primary disabled:bg-opacity-50 text-white justify-center font-semibold group rounded-md py-3 px-8 flex items-center gap-2">
+              <button
+                disabled={value === ""}
+                className="bg-primary disabled:bg-opacity-50 text-white justify-center font-semibold group rounded-md py-3 px-8 flex items-center gap-2"
+              >
                 Find Matches{" "}
                 <FaArrowRightLong className="group-hover:ml-4 duration-200" />
               </button>

@@ -72,7 +72,7 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       description:
         "Developed responsive web applications using React and JavaScript. Collaborated with designers to create seamless UI experiences.",
       duration: "Jan 2021 - Present",
-      key_achievements: [
+      keyAchievements: [
         "Led development of microservices architecture serving 1M+ users",
         "Improved application performance by 30% through code refactoring",
         "Mentored junior developers in best practices and coding standards",
@@ -85,7 +85,7 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       description:
         "Built and maintained REST APIs using Node.js and Express. Improved application performance and data handling.",
       duration: "Aug 2019 - Dec 2020",
-      key_achievements: [
+      keyAchievements: [
         "Led development of microservices architecture serving 1M+ users",
         "Improved application performance by 30% through code refactoring",
         "Mentored junior developers in best practices and coding standards",
@@ -100,7 +100,7 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       description:
         "Developed responsive web applications using React and JavaScript. Collaborated with designers to create seamless UI experiences.",
       duration: "Jan 2021 - Present",
-      key_achievements: [
+      keyAchievements: [
         "Led development of microservices architecture serving 1M+ users",
         "Improved application performance by 30% through code refactoring",
         "Mentored junior developers in best practices and coding standards",
@@ -113,7 +113,7 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       description:
         "Built and maintained REST APIs using Node.js and Express. Improved application performance and data handling.",
       duration: "Aug 2019 - Dec 2020",
-      key_achievements: [
+      keyAchievements: [
         "Led development of microservices architecture serving 1M+ users",
         "Improved application performance by 30% through code refactoring",
         "Mentored junior developers in best practices and coding standards",
@@ -181,6 +181,52 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       year: "2020",
     },
   ],
+};
+
+export const mockEmptyResume = {
+  name: "Your Name",
+  role: "Professional Role",
+  template: "professional",
+  config: {
+    photo: false,
+    about: true,
+    experience: true,
+    address: true,
+    education: true,
+    skills: true,
+    courses: true,
+    languages: false,
+    projects: true,
+    email: true,
+    website: true,
+    phone: true,
+    linkedin: true,
+    role: true,
+    internships: true,
+    career: true,
+    trainings: true,
+  },
+  style: {
+    primary_color: "#007CFF",
+    fontFamily: '',
+    font_size: ''
+  },
+  professional_summary: ``,
+  location: "Enter Address",
+  address: "Enter Address",
+  email: "Email",
+  phone_number: "Phone Numbe",
+  website_url: "Website",
+  linkedin_url: "Linkedin Url",
+  areasOfExpertise: [],
+  skills: [],
+  relevantCourses: [],
+  experience: [],
+  internships: [],
+  education: [],
+  projects: [],
+  careerHighlights: [],
+  trainings: [],
 };
 
 export const mockEmpty = {
@@ -452,24 +498,24 @@ export const mockProfileData = {
   config: {
     location: true,
     role:true,
-    work_experience: true,
-    professional_summary: true,
+    workExperience: true,
+    professionalSummary: true,
     email: true,
     phone_number: true,
     skills: true,
     links:true,
-    volunteer_experience: true,
-    career_highlights:true,
+    volunteerExperience: true,
+    careerHighlights:true,
     internships: true,
     education: true,
     memberships: true,
-    professional_reference: true,
+    references: true,
     certifications: true
   },
   name: "John Doe",
   role: "Senior HR Expert | CIPD, MBA, HRBP",
   resume_id: "",
-  professional_summary: `Results-driven Senior Software Engineer with 8+ years of experience in full-stack development and technical leadership. Specialized in building scalable distributed systems and microservices architectures. Proven track record of improving application performance, mentoring junior developers, and delivering high-impact solutions that drive business growth.
+  professionalSummary: `Results-driven Senior Software Engineer with 8+ years of experience in full-stack development and technical leadership. Specialized in building scalable distributed systems and microservices architectures. Proven track record of improving application performance, mentoring junior developers, and delivering high-impact solutions that drive business growth.
   
 Skilled in creating dynamic, user-friendly applications and collaborating within agile teams.
      `,
@@ -477,34 +523,32 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
     "https://images.pexels.com/photos/3778603/pexels-photo-3778603.jpeg?auto=compress&cs=tinysrgb&w=600",
   location: "San Francisco, CA",
   email: "johndoe@example.com",
-  phone_number: "+1 (555) 123-4567",
-  website_url: "https://johndoeportfolio.com",
-  linkedin_url: "https://linkedin.com/in/johndoe",
-  tabbio_link: "https://tabbio.com/tp/john-doe",
-  location_type: ["Hybrid", 'Remote', 'On-Site'],
+  phone: "+1 (555) 123-4567",
+  website: "https://johndoeportfolio.com",
+  linkedin: "https://linkedin.com/in/johndoe",
+  tabbioLink: "https://tabbio.com/tp/john-doe",
+  locationType: ["Hybrid", 'Remote', 'On-Site'],
   relocation: 'Open to Relocate',
   skills: [
-    "JavaScript",
-    "React",
-    "Node.js",
-    "Express",
-    "MongoDB",
-    "HTML",
-    "CSS",
-    "TypeScript",
-    "Git",
-    "Agile Methodologies",
-  ],
+    {
+      name: 'technical',
+      items: [ "JavaScript",
+        "React",
+        "Node.js",
+        "Express",
+        "MongoDB",
+        "HTML",]
+    }],
   hobbies: ["Hiking", "Photography", "Cooking"],
   languages: ["English", "Spanish"],
-  work_experience: [
+  workExperience: [
     {
       id: 1,
       position: "Frontend Developer",
       company: "Tech Solutions Inc.",
       description:
         "Developed responsive web applications using React and JavaScript. Collaborated with designers to create seamless UI experiences.",
-      key_achievments: [
+      keyAchievements: [
         "Led development of microservices architecture serving 1M+ users",
         "Improved application performance by 30% through code refactoring",
         "Mentored junior developers in best practices and coding standards",
@@ -527,7 +571,7 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       end_year: "2022",
       description:
         "Built and maintained REST APIs using Node.js and Express. Improved application performance and data handling.",
-      key_achievments: [
+      keyAchievements: [
         "Optimized database queries, reducing response time by 50%",
         "Implemented CI/CD pipelines for automated testing and deployment",
         "Collaborated with cross-functional teams to deliver project milestones",
@@ -542,7 +586,7 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       ],
     },
   ],
-  suggested_skills: [
+  suggestedSkills: [
     "JavaScript",
     "React",
     "Node.js",
@@ -561,7 +605,7 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       company: "StartupX",
       description:
         "Developed responsive web applications using React and JavaScript. Collaborated with designers to create seamless UI experiences.",
-      key_achievments: [
+      keyAchievements: [
         "Led development of microservices architecture serving 1M+ users",
         "Improved application performance by 30% through code refactoring",
         "Mentored junior developers in best practices and coding standards",
@@ -571,14 +615,14 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       end_year: "2024",
     },
   ],
-  volunteer_experience: [
+  volunteerExperience: [
     {
       id: 1,
       position: "Tech Mentor",
       company: "Tech Solutions Inc.",
       description:
         "Mentoring underprivileged students in web development and programming fundamentals.",
-      key_achievments: [
+      keyAchievements: [
         "Led development of microservices architecture serving 1M+ users",
         "Improved application performance by 30% through code refactoring",
         "Mentored junior developers in best practices and coding standards",
@@ -588,7 +632,7 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       end_year: "2024",
     },
   ],
-  career_highlights: [
+  careerHighlights: [
     {
       id: 1,
       title: "Technical Leadership",
@@ -673,7 +717,7 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       active: true
     },
   ],
-  professional_reference: [
+  references: [
     {
       id: 1,
       name: "Michael Chen",
@@ -693,6 +737,64 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       relationship: "Team Lead (2020-2023)",
     },
   ],
+};
+
+export const mockEmptyProfileData = {
+  config: {
+    location: true,
+    role:true,
+    isLive: false,
+    lastUpdate: true,
+    workExperience: true,
+    professionalSummary: true,
+    email: true,
+    phone: true,
+    skills: true,
+    links:true,
+    volunteerExperience: true,
+    careerHighlights:false,
+    internships: true,
+    education: true,
+    memberships: false,
+    references: false,
+    trainings: false,
+    certifications: true
+  },
+  name: "",
+  role: "",
+  level: '',
+  yearsOfExperience: '',
+  majorSkill: '',
+  resume: "",
+  professionalSummary: "",
+  areasOfExpertise: [],
+  photo_url:
+    "",
+  location: "",
+  email: "",
+  phone_number: "",
+  website: "",
+  linkedIn: "",
+  tabbioLink: "",
+  locationType: [],
+  language: 'EN',
+  relocation: '',
+  skills: [],
+  hobbies: [],
+  languages: [],
+  workExperience: [],
+  suggestedSkills: [],
+  internships: [],
+  volunteerExperience: [],
+  careerHighlights: [],
+  education: [],
+  relevantCourses: [],
+  projects: [],
+  certifications: [],
+  memberships: [],
+  references: [],
+  awards: [],
+  trainings: []
 };
 
 export const faqData = [

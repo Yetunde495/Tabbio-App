@@ -124,6 +124,9 @@
   color: #ffffff !important;
   border-radius: 9px !important;
 }
+.Toastify__toast-container {
+  z-index: 99999!important;
+}
 
 .PhoneInput {
   /* min-height: 50px; */

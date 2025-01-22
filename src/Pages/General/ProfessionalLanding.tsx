@@ -25,9 +25,11 @@ import { IoFlashOutline } from "react-icons/io5";
 import { Ratings } from "../../components/Rating";
 import { BsBrowserChrome } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+import { useApp } from "../../context/AppContext";
 
 const ProfessionalLandingpage: React.FC = () => {
   const navigate = useNavigate();
+  const {setParsedResume} = useApp()
   const [colorMode, setColorMode] = useColorMode();
   const [hasEntered, setHasEntered] = useState(false);
 
@@ -71,8 +73,12 @@ const ProfessionalLandingpage: React.FC = () => {
 
         <div className="mt-10">
           <UploadResume
-            onChange={() => navigate("/live-resume")}
+            onChange={() => {}}
             maxWidth="max-w-[800px]"
+            onSuccess={(response) => {
+              setParsedResume(response?.data?.profile)
+              navigate("/live-resume")
+            }}
           />
         </div>
 

@@ -1,7 +1,7 @@
 import { useApp } from "../../context/AppContext";
 import DefaultLayout from "../../layout/DefaultLayout";
 import { ResumeUpload } from "../General/ResumeUpload";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Modal from "../../components/modal";
 import { Switch } from "../../components/form/Switch";
 import { CiEdit } from "react-icons/ci";
@@ -37,7 +37,7 @@ import {
   LuPencil,
 } from "react-icons/lu";
 import { CgFileDocument } from "react-icons/cg";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FiExternalLink } from "react-icons/fi";
 import { SlSettings } from "react-icons/sl";
 import { TbCopy, TbWorld } from "react-icons/tb";
@@ -59,37 +59,80 @@ import {
 } from "./SmartResumeComponents";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { truncateString } from "../../lib/utils/formatters";
+import {
+  getUserProfile,
+  SaveProfile,
+  updateProfile,
+} from "../../services/profileServices";
+import { toast } from "react-toastify";
+import { PageLoader } from "../../components/Loader";
+import { RiLoader3Fill } from "react-icons/ri";
 
-const SmartResumeSettings: React.FC<{ profileData: any }> = ({
-  profileData,
-}) => {
+const SmartResumeSettings: React.FC<{
+  profileData: any;
+  setProfileData: React.Dispatch<React.SetStateAction<any | null>>;
+}> = ({ profileData, setProfileData }) => {
   const { user, updateUser } = useApp();
   const [editLink, setEditLink] = useState(false);
   const navigate = useNavigate();
   const prefix = "tabbio.link/";
   const [inputValue, setInputValue] = useState(
-    user?.resume_link || "tabbio.link/"
+    `${user?.tabbioLink}` || "tabbio.link/"
   );
   const [linkModal, setLinkModal] = useState(false);
   const [contactPrivacyModal, setContactPrivacyModal] = useState(false);
   const [status, setStatus] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [key, setKey] = useState("");
 
   const [infoModal, setInfoModal] = useState(false);
   const [basicDetails, setBasicDetails] = useState({
-    linkedin_url: profileData?.linkedin_url,
+    linkedin: profileData?.linkedin,
     location: profileData?.location,
-    location_type: profileData?.location_type,
+    locationType: profileData?.locationType,
     relocation: profileData?.relocation,
+    workAvailability: profileData?.workAvailability || false,
   });
   const toggleLocationType = (type: string) => {
-    const d = basicDetails?.location_type.includes(type)
-      ? basicDetails?.location_type.filter((item: string) => item !== type)
-      : [...basicDetails?.location_type, type];
+    const d = basicDetails?.locationType.includes(type)
+      ? basicDetails?.locationType.filter((item: string) => item !== type)
+      : [...basicDetails?.locationType, type];
 
     setBasicDetails((data: any) => ({
       ...data,
-      location_type: d,
+      locationType: d,
     }));
+  };
+
+  const handleUpdateProfile = async (data: any) => {
+    setLoading(true);
+    try {
+      const resp = await updateProfile(profileData?._id, data);
+      setProfileData(resp?.data?.profile);
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    } finally {
+      setLoading(false);
+      setInfoModal(false);
+      setKey("");
+    }
+  };
+  const handleUpdateLink = async (data: any) => {
+    setLoading(true);
+    try {
+      const resp = await updateProfile(profileData?._id, data);
+      setProfileData(resp?.data?.profile);
+      updateUser({
+        ...user,
+        tabbioLink: inputValue,
+      });
+      setLinkModal(true);
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    } finally {
+      setLoading(false);
+      setEditLink(false)
+    }
   };
 
   return (
@@ -100,32 +143,51 @@ const SmartResumeSettings: React.FC<{ profileData: any }> = ({
       <div className="p-3">
         {!editLink && (
           <div className="bg-gradient-to-l from-[#EFF6FF] to-[#DBEAFE] rounded-lg px-2 py-2.5">
-            <div className="flex items-center gap-2">
+            <div
+              onClick={() => setKey("isLive")}
+              className="flex items-center gap-2"
+            >
               <TbWorld className="text-primary" size={14} />
               <div className="flex flex-col">
                 <span className="text-sm">Smart Resume</span>
                 <span className="text-xs">
-                  Your Smart Resume is {status ? "live" : "not live"}
+                  Your Smart Resume is{" "}
+                  {profileData?.isLive ? "live" : "not live"}
                 </span>
               </div>
               <div className="ml-auto">
-                <Switch
-                  value={status}
-                  checked={user?.resume_link_active}
-                  onChange={(value) => {
-                    setStatus(value);
-                  }}
-                  size="sm"
-                />
+                {loading && key === "isLive" ? (
+                  <span>
+                    <RiLoader3Fill className="animate-spin" />
+                  </span>
+                ) : (
+                  <Switch
+                    value={profileData?.isLive}
+                    checked={profileData?.isLive}
+                    onChange={(value) => {
+                      handleUpdateProfile({
+                        config: {
+                          ...profileData?.config,
+                          isLive: value,
+                        },
+                      });
+                    }}
+                    size="sm"
+                  />
+                )}
               </div>
             </div>
             <div className="bg-white flex items-center gap-1 py-2 px-2 rounded-md border border-slate-200 my-3">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 ">
                 <MdInsertLink className="text-primary" />
-                <span className="text-sm">{user?.resume_link}</span>
+                <span className="text-sm break-words w-[150px]">{user?.tabbioLink}</span>
               </div>
               <div className="flex items-center gap-2 ml-auto">
-                <button className="text-primary" onClick={() => {}}>
+                <button className="text-primary" onClick={() => {
+                    navigator.clipboard.writeText(user?.tabbioLink).then(() => {
+                      alert("Tabbio link Copied!");
+                    });
+                  }}>
                   <TbCopy />
                 </button>
                 <button
@@ -139,7 +201,7 @@ const SmartResumeSettings: React.FC<{ profileData: any }> = ({
           </div>
         )}
 
-        {editLink && user?.resume_link && (
+        {editLink && user?.tabbioLink && (
           <div className="bg-gradient-to-l from-[#EFF6FF] to-[#DBEAFE] rounded-lg px-2 py-2.5">
             <div className="flex items-center gap-2">
               <TbWorld className="text-primary" size={14} />
@@ -180,11 +242,10 @@ const SmartResumeSettings: React.FC<{ profileData: any }> = ({
               <button
                 className="bg-primary px-6 py-2.5 rounded-md text-white hover:scale-95 w-full font-medium"
                 onClick={() => {
-                  updateUser({
-                    ...user,
-                    resume_link: inputValue,
-                  });
-                  setLinkModal(true);
+                  handleUpdateLink({
+                    tabbioLink: inputValue
+                  })
+                
                 }}
               >
                 Save
@@ -208,7 +269,7 @@ const SmartResumeSettings: React.FC<{ profileData: any }> = ({
             </div>
             <div className="ml-auto">
               <button
-                onClick={() => navigate("edit-cv")}
+                onClick={() => navigate(`edit-cv/${profileData?._id}`)}
                 className="text-zinc-500"
               >
                 <LuPencil />
@@ -236,7 +297,10 @@ const SmartResumeSettings: React.FC<{ profileData: any }> = ({
             </button>
           </div>
         </div>
-        <div className="flex items-center border-t border-zinc-100 gap-2 py-4 px-3 mb-5 shadow rounded-lg">
+        <div
+          onClick={() => setKey("lastUpdate")}
+          className="flex items-center border-t border-zinc-100 gap-2 py-4 px-3 mb-5 shadow rounded-lg"
+        >
           <FaRegCalendar className="text-primary" size={16} />
           <div className="flex flex-col">
             <span className="text-sm font-semibold">Last Update Status</span>
@@ -245,20 +309,31 @@ const SmartResumeSettings: React.FC<{ profileData: any }> = ({
             </span>
           </div>
           <div className="ml-auto">
-            <Switch
-              value={status}
-              checked={user?.resume_link_active}
-              onChange={(value) => {
-                setStatus(value);
-              }}
-              size="sm"
-            />
+            {loading && key === "lastUpdate" ? (
+              <span>
+                <RiLoader3Fill className="animate-spin" />
+              </span>
+            ) : (
+              <Switch
+                value={profileData?.config?.lastUpdate}
+                checked={profileData?.config?.lastUpdate}
+                onChange={(value) => {
+                  handleUpdateProfile({
+                    config: {
+                      ...profileData?.config,
+                      lastUpdate: value,
+                    },
+                  });
+                }}
+                size="sm"
+              />
+            )}
           </div>
         </div>
         <div className="flex items-center gap-2 border-t border-zinc-100 py-4 px-3 mb-5 shadow rounded-lg">
           <LuContact className="text-primary" size={16} />
           <div className="flex flex-col">
-            <span className="text-sm">Contact Privacy</span>
+            <span className="text-sm font-semibold">Contact Privacy</span>
             <span className="text-xs">Showing all contact details</span>
           </div>
           <div className="ml-auto">
@@ -282,11 +357,11 @@ const SmartResumeSettings: React.FC<{ profileData: any }> = ({
             <p>Profile Summary</p>
             <div className="ml-auto flex items-center gap-1">
               <span>
-                {profileData?.config?.professional_summary ? "+" : "-"}
+                {profileData?.config?.professionalSummary ? "+" : "-"}
               </span>
               <Switch
                 value={status}
-                checked={profileData?.config?.professional_summary}
+                checked={profileData?.config?.professionalSummary}
                 onChange={(value) => {
                   setStatus(value);
                 }}
@@ -294,117 +369,260 @@ const SmartResumeSettings: React.FC<{ profileData: any }> = ({
               />
             </div>
           </div>
-          <div className="flex text-sm items-center gap-3 justify-between">
+          <div
+            onClick={() => setKey("role")}
+            className="flex text-sm items-center gap-3 justify-between"
+          >
+            <p>Professional Title</p>
+            <div className="ml-auto flex items-center gap-1">
+              {loading && key === "role" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin" />
+                </span>
+              ) : (
+                <span>{profileData?.config?.role ? "+" : "-"}</span>
+              )}
+
+              <Switch
+                value={profileData?.config?.role}
+                checked={profileData?.config?.role}
+                onChange={(value) => {
+                  handleUpdateProfile({
+                    config: {
+                      ...profileData?.config,
+                      role: value,
+                    },
+                  });
+                }}
+                size="sm"
+              />
+            </div>
+          </div>
+          <div
+            onClick={() => setKey("careerHighlight")}
+            className="flex text-sm items-center gap-3 justify-between"
+          >
             <p>Career Highlights</p>
             <div className="ml-auto flex items-center gap-1">
-              <span>{profileData?.config?.career_highlights ? "+" : "-"}</span>
+              {loading && key === "careerHighlight" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin" />
+                </span>
+              ) : (
+                <span>{profileData?.config?.careerHighlights ? "+" : "-"}</span>
+              )}
+
               <Switch
-                value={status}
-                checked={profileData?.config?.career_highlights}
+                value={profileData?.config?.careerHighlights}
+                checked={profileData?.config?.careerHighlights}
                 onChange={(value) => {
-                  setStatus(value);
+                  handleUpdateProfile({
+                    config: {
+                      ...profileData?.config,
+                      careerHighlights: value,
+                    },
+                  });
                 }}
                 size="sm"
               />
             </div>
           </div>
-          <div className="flex text-sm items-center gap-3 justify-between">
+          <div
+            onClick={() => setKey("workExperience")}
+            className="flex text-sm items-center gap-3 justify-between"
+          >
             <p>Work Experience</p>
             <div className="ml-auto flex items-center gap-1">
-              <span>{profileData?.config?.work_experience ? "+" : "-"}</span>
+              {loading && key === "workExperience" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin" />
+                </span>
+              ) : (
+                <span>{profileData?.config?.workExperience ? "+" : "-"}</span>
+              )}
+
               <Switch
-                value={status}
-                checked={profileData?.config?.work_experience}
+                value={profileData?.config?.workExperience}
+                checked={profileData?.config?.workExperience}
                 onChange={(value) => {
-                  setStatus(value);
+                  handleUpdateProfile({
+                    config: {
+                      ...profileData?.config,
+                      workExperience: value,
+                    },
+                  });
                 }}
                 size="sm"
               />
             </div>
           </div>
-          <div className="flex text-sm items-center gap-3 justify-between">
+          <div
+            onClick={() => setKey("volunteerExperience")}
+            className="flex text-sm items-center gap-3 justify-between"
+          >
             <p>Volunteer Experience</p>
             <div className="ml-auto flex items-center gap-1">
-              <span>
-                {profileData?.config?.volunteer_experience ? "+" : "-"}
-              </span>
+              {loading && key === "volunteerExperience" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin" />
+                </span>
+              ) : (
+                <span>
+                  {profileData?.config?.volunteerExperience ? "+" : "-"}
+                </span>
+              )}
+
               <Switch
-                value={status}
-                checked={profileData?.config?.volunteer_experience}
+                value={profileData?.config?.volunteerExperience}
+                checked={profileData?.config?.volunteerExperience}
                 onChange={(value) => {
-                  setStatus(value);
+                  handleUpdateProfile({
+                    config: {
+                      ...profileData?.config,
+                      volunteerExperience: value,
+                    },
+                  });
                 }}
                 size="sm"
               />
             </div>
           </div>
-          <div className="flex text-sm items-center gap-3 justify-between">
+          <div
+            onClick={() => setKey("internships")}
+            className="flex text-sm items-center gap-3 justify-between"
+          >
             <p>Internships</p>
             <div className="ml-auto flex items-center gap-1">
-              <span>{profileData?.config?.internships ? "+" : "-"}</span>
+              {loading && key === "internships" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin" />
+                </span>
+              ) : (
+                <span>{profileData?.config?.internships ? "+" : "-"}</span>
+              )}
+
               <Switch
-                value={status}
+                value={profileData?.config?.internships}
                 checked={profileData?.config?.internships}
                 onChange={(value) => {
-                  setStatus(value);
+                  handleUpdateProfile({
+                    config: {
+                      ...profileData?.config,
+                      internships: value,
+                    },
+                  });
                 }}
                 size="sm"
               />
             </div>
           </div>
-          <div className="flex text-sm items-center gap-3 justify-between">
+          <div
+            onClick={() => setKey("education")}
+            className="flex text-sm items-center gap-3 justify-between"
+          >
             <p>Education</p>
             <div className="ml-auto flex items-center gap-1">
-              <span>{profileData?.config?.certifications ? "+" : "-"}</span>
+              {loading && key === "education" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin" />
+                </span>
+              ) : (
+                <span>{profileData?.config?.education ? "+" : "-"}</span>
+              )}
               <Switch
-                value={status}
+                value={profileData?.config?.education}
                 checked={profileData?.config?.education}
                 onChange={(value) => {
-                  setStatus(value);
+                  handleUpdateProfile({
+                    config: {
+                      ...profileData?.config,
+                      education: value,
+                    },
+                  });
                 }}
                 size="sm"
               />
             </div>
           </div>
-          <div className="flex text-sm items-center gap-3 justify-between">
+          <div
+            onClick={() => setKey("certifications")}
+            className="flex text-sm items-center gap-3 justify-between"
+          >
             <p>Certifications and Trainings</p>
             <div className="ml-auto flex items-center gap-1">
-              <span>{profileData?.config?.certifications ? "+" : "-"}</span>
+              {loading && key === "certifications" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin" />
+                </span>
+              ) : (
+                <span>{profileData?.config?.certifications ? "+" : "-"}</span>
+              )}
               <Switch
-                value={status}
+                value={profileData?.config?.certifications}
                 checked={profileData?.config?.certifications}
                 onChange={(value) => {
-                  setStatus(value);
+                  handleUpdateProfile({
+                    config: {
+                      ...profileData?.config,
+                      certifications: value,
+                    },
+                  });
                 }}
                 size="sm"
               />
             </div>
           </div>
-          <div className="flex text-sm items-center gap-3 justify-between">
+          <div
+            onClick={() => setKey("memberships")}
+            className="flex text-sm items-center gap-3 justify-between"
+          >
             <p>Membership & Affiliation</p>
             <div className="ml-auto flex items-center gap-1">
-              <span>{profileData?.config?.memberships ? "+" : "-"}</span>
+              {loading && key === "memberships" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin" />
+                </span>
+              ) : (
+                <span>{profileData?.config?.memberships ? "+" : "-"}</span>
+              )}
               <Switch
-                value={status}
+                value={profileData?.config?.memberships}
                 checked={profileData?.config?.memberships}
                 onChange={(value) => {
-                  setStatus(value);
+                  handleUpdateProfile({
+                    config: {
+                      ...profileData?.config,
+                      memberships: value,
+                    },
+                  });
                 }}
                 size="sm"
               />
             </div>
           </div>
-          <div className="flex text-sm items-center gap-3 justify-between">
+          <div
+            onClick={() => setKey("references")}
+            className="flex text-sm items-center gap-3 justify-between"
+          >
             <p>Professional Reference</p>
             <div className="ml-auto flex items-center gap-1">
-              <span>
-                {profileData?.config?.professional_reference ? "+" : "-"}
-              </span>
+              {loading && key === "references" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin" />
+                </span>
+              ) : (
+                <span>{profileData?.config?.references ? "+" : "-"}</span>
+              )}
               <Switch
-                value={status}
-                checked={profileData?.config?.professional_reference}
+                value={profileData?.config?.references}
+                checked={profileData?.config?.references}
                 onChange={(value) => {
-                  setStatus(value);
+                  handleUpdateProfile({
+                    config: {
+                      ...profileData?.config,
+                      references: value,
+                    },
+                  });
                 }}
                 size="sm"
               />
@@ -429,7 +647,7 @@ const SmartResumeSettings: React.FC<{ profileData: any }> = ({
           </p>
 
           <p className="text-3xl font-medium text-primary py-3 text-center">
-            {user?.resume_link}
+            {user?.tabbioLink}
           </p>
           <Button
             size="lg"
@@ -451,56 +669,112 @@ const SmartResumeSettings: React.FC<{ profileData: any }> = ({
         title="Contact Privacy"
       >
         <div className="space-y-4 flex-col w-full flex">
-          <div className="flex text-sm items-center gap-3 justify-between">
+          <div
+            onClick={() => setKey("email")}
+            className="flex text-sm items-center gap-3 justify-between"
+          >
             <p>Email</p>
             <div className="ml-auto">
-              <Switch
-                value={status}
-                checked={profileData?.config?.email}
-                onChange={(value) => {
-                  setStatus(value);
-                }}
-                size="sm"
-              />
+              {loading && key === "email" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin" />
+                </span>
+              ) : (
+                <Switch
+                  value={profileData?.config?.email}
+                  checked={profileData?.config?.email}
+                  onChange={(value) => {
+                    handleUpdateProfile({
+                      config: {
+                        ...profileData?.config,
+                        email: value,
+                      },
+                    });
+                  }}
+                  size="sm"
+                />
+              )}
             </div>
           </div>
-          <div className="flex text-sm items-center gap-3 justify-between">
+          <div
+            onClick={() => setKey("phone")}
+            className="flex text-sm items-center gap-3 justify-between"
+          >
             <p>Phone</p>
             <div className="ml-auto">
-              <Switch
-                value={status}
-                checked={profileData?.config?.phone_number}
-                onChange={(value) => {
-                  setStatus(value);
-                }}
-                size="sm"
-              />
+              {loading && key === "phone" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin" />
+                </span>
+              ) : (
+                <Switch
+                  value={profileData?.config?.phone}
+                  checked={profileData?.config?.phone}
+                  onChange={(value) => {
+                    handleUpdateProfile({
+                      config: {
+                        ...profileData?.config,
+                        phone: value,
+                      },
+                    });
+                  }}
+                  size="sm"
+                />
+              )}
             </div>
           </div>
-          <div className="flex text-sm items-center gap-3 justify-between">
+          <div
+            onClick={() => setKey("location")}
+            className="flex text-sm items-center gap-3 justify-between"
+          >
             <p>Location</p>
             <div className="ml-auto">
-              <Switch
-                value={status}
-                checked={profileData?.config?.location}
-                onChange={(value) => {
-                  setStatus(value);
-                }}
-                size="sm"
-              />
+              {loading && key === "location" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin" />
+                </span>
+              ) : (
+                <Switch
+                  value={profileData?.config?.location}
+                  checked={profileData?.config?.location}
+                  onChange={(value) => {
+                    handleUpdateProfile({
+                      config: {
+                        ...profileData?.config,
+                        location: value,
+                      },
+                    });
+                  }}
+                  size="sm"
+                />
+              )}
             </div>
           </div>
-          <div className="flex text-sm items-center gap-3 justify-between">
+          <div
+            onClick={() => setKey("links")}
+            className="flex text-sm items-center gap-3 justify-between"
+          >
             <p>Links</p>
             <div className="ml-auto">
-              <Switch
-                value={status}
-                checked={profileData?.config?.links}
-                onChange={(value) => {
-                  setStatus(value);
-                }}
-                size="sm"
-              />
+              {loading && key === "links" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin" />
+                </span>
+              ) : (
+                <Switch
+                  value={profileData?.config?.links}
+                  checked={profileData?.config?.links}
+                  onChange={(value) => {
+                    handleUpdateProfile({
+                      config: {
+                        ...profileData?.config,
+                        links: value,
+                      },
+                    });
+                  }}
+                  size="sm"
+                />
+              )}
             </div>
           </div>
         </div>
@@ -546,12 +820,12 @@ const SmartResumeSettings: React.FC<{ profileData: any }> = ({
                     onClick={() => toggleLocationType(type)}
                     className={`px-4 py-1.5 rounded-full flex gap-2 font-normal items-center border border-stroke focus:outline-none  transition 
               ${
-                basicDetails?.location_type.includes(type)
+                basicDetails?.locationType.includes(type)
                   ? "bg-primary text-white"
                   : "bg-white text-zinc-700"
               }`}
                   >
-                    {basicDetails?.location_type.includes(type) ? (
+                    {basicDetails?.locationType.includes(type) ? (
                       <FaCheck />
                     ) : (
                       <BsPlusLg />
@@ -567,22 +841,53 @@ const SmartResumeSettings: React.FC<{ profileData: any }> = ({
               </label>
               <div className="flex flex-col gap-3 pl-1">
                 {[
-                  { label: "Open to Relocate", value: "Open to Relocate" },
+                  { label: "Open to Relocate", value: true },
                   {
                     label: "Not Open to Relocate",
-                    value: "Not Open to Relocate",
+                    value: false,
                   },
-                ].map((option) => (
-                  <label key={option.value} className="flex items-center gap-2">
+                ].map((option, index) => (
+                  <label key={index} className="flex items-center gap-2">
                     <input
                       type="radio"
                       name="relocation"
-                      value={option.value}
+                      value={String(option.value)}
                       checked={basicDetails?.relocation === option.value}
                       onChange={(e) => {
                         setBasicDetails((data: any) => ({
                           ...data,
-                          relocation: e.target.value,
+                          relocation: e.target.value === "true",
+                        }));
+                      }}
+                      className="text-blue-500 focus:ring-blue-500"
+                    />
+                    {option.label}
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Availability
+              </label>
+              <div className="flex flex-col gap-3 pl-1">
+                {[
+                  { label: "Available for Work", value: true },
+                  {
+                    label: "Not available for work ",
+                    value: false,
+                  },
+                ].map((option, index) => (
+                  <label key={index} className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="availability"
+                      value={String(option.value)}
+                      checked={basicDetails?.workAvailability === option.value}
+                      onChange={(e) => {
+                        setBasicDetails((data: any) => ({
+                          ...data,
+                          workAvailability: e.target.value === "true",
                         }));
                       }}
                       className="text-blue-500 focus:ring-blue-500"
@@ -603,10 +908,13 @@ const SmartResumeSettings: React.FC<{ profileData: any }> = ({
               Cancel
             </button>
             <button
-              onClick={() => console.log(basicDetails)}
-              className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              onClick={() => {
+                handleUpdateProfile(basicDetails);
+              }}
+              disabled={loading}
+              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
             >
-              Save
+              {loading ? "Loading..." : "Save"}
             </button>
           </div>
         </div>
@@ -701,183 +1009,264 @@ const ShareCV: React.FC = () => {
 const Profile: React.FC = () => {
   const { user } = useApp();
   const navigate = useNavigate();
-  const [active, _setActive] = useState(true);
-  const [candidateData] = useState<any | null>(mockProfileData);
+  const [active, setActive] = useState(false);
+  const [profileData, setProfileData] = useState<any | null>(null);
   const [showDrawer, setShowDrawer] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [upgradeModal, setUpgradeModal] = useState(false);
   const [shareModal, setShareModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleCreateProfile = async (data: any) => {
+    const toastId = toast.loading("Setting up your Profile...");
+    try {
+      const resp = await SaveProfile(data);
+      setProfileData(resp?.data?.profile);
+      toast.update(toastId, {
+        render: "Your Professional Profile has been setup successfully",
+        type: "success",
+        isLoading: false,
+        closeButton: true,
+        autoClose: 3000,
+      });
+      setActive(true);
+      //
+      console.log(resp?.data?.profile);
+    } catch (err: any) {
+      toast.dismiss(toastId);
+      toast.error(err?.message || "Request Failed");
+    }
+  };
+
+  useMemo(async () => {
+    if (user) {
+      try {
+        setLoading(true);
+        const resp = await getUserProfile();
+        setProfileData(resp?.data?.profile);
+        setActive(true);
+        console.log(resp.data?.profile);
+      } catch (err: any) {
+        if (err?.message !== "Profile not found") {
+          toast.error(err?.message || "Request Failed");
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+  }, [user]);
   return (
     <DefaultLayout>
-      <section className="">
-        <div className="bg-gradient-to-r from-[#F9FAFBCC] to-[#FFFFFF66] border border-[#F3F4F6] py-2.5 px-4.5 text-sm flex flex-wrap sm:gap-2 lg:items-center justify-between gap-3">
-          <div className="flex items-center gap-4 max-sm:justify-between">
-            <div className="flex items-center gap-1">
-              <FaCircle size={10} className="text-green-500 max-lg:hidden" />
-              <span>{user?.plan || "Free Plan"}</span>
+      {loading ? (
+        <PageLoader />
+      ) : (
+        <section className="">
+          <div className="bg-gradient-to-r from-[#F9FAFBCC] to-[#FFFFFF66] border border-[#F3F4F6] py-2.5 px-4.5 text-sm flex flex-wrap sm:gap-2 lg:items-center justify-between gap-3">
+            <div className="flex items-center gap-4 max-sm:justify-between">
+              <div className="flex items-center gap-1">
+                <FaCircle size={10} className="text-green-500 max-lg:hidden" />
+                <span>{user?.plan || "Free Plan"}</span>
+                <button
+                  onClick={() => setUpgradeModal(true)}
+                  className="py-1 px-1.5 ml-1 text-xs hover:scale-x-105 text-white rounded-full bg-[#C89529]"
+                >
+                  Upgrade <span className="max-lg:hidden">to Premium</span>
+                </button>
+              </div>
               <button
-                onClick={() => setUpgradeModal(true)}
-                className="py-1 px-1.5 ml-1 text-xs hover:scale-x-105 text-white rounded-full bg-[#C89529]"
+                onClick={() => setShowAnalytics(true)}
+                className="flex max-sm:hidden items-center gap-1 hover:scale-x-105 duration-100"
               >
-                Upgrade <span className="max-lg:hidden">to Premium</span>
+                <BsEye className="max-lg:hidden" />
+                <span className="max-md:hidden">
+                  {user?.plan || "10 profile views"}
+                </span>
+                <AiOutlineBarChart className="text-primary text-lg" />
               </button>
             </div>
+
             <button
               onClick={() => setShowAnalytics(true)}
-              className="flex max-sm:hidden items-center gap-1 hover:scale-x-105 duration-100"
+              className="flex sm:hidden items-center gap-1 hover:scale-x-105 duration-100"
             >
-              <BsEye className="max-lg:hidden" />
-              <span className="max-md:hidden">
-                {user?.plan || "10 profile views"}
-              </span>
-              <AiOutlineBarChart className="text-primary text-lg" />
+              <BsEye className="" />
+              <span className="">{user?.plan || "10 profile views"}</span>
+              <AiOutlineBarChart className="text-primary text-lg hidden" />
             </button>
-          </div>
 
-          <button
-            onClick={() => setShowAnalytics(true)}
-            className="flex sm:hidden items-center gap-1 hover:scale-x-105 duration-100"
-          >
-            <BsEye className="" />
-            <span className="">{user?.plan || "10 profile views"}</span>
-            <AiOutlineBarChart className="text-primary text-lg hidden" />
-          </button>
+            <div className="flex items-center  gap-4 max-sm:w-full max-sm:justify-between">
+              <div className="lg:flex hidden max-sm:flex items-center gap-1 text-zinc-400">
+                <LuClock className="max-sm:hidden" />
+                <span>{user?.plan || "Updated 1d ago"}</span>
+              </div>
 
-          <div className="flex items-center  gap-4 max-sm:w-full max-sm:justify-between">
-            <div className="lg:flex hidden max-sm:flex items-center gap-1 text-zinc-400">
-              <LuClock className="max-sm:hidden" />
-              <span>{user?.plan || "Updated 1d ago"}</span>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => navigate("preview-cv")}
+                  className="py-1 px-1.5 md:ml-1 max-md:pl-0 flex items-center gap-1 hover:scale-x-105"
+                >
+                  <FaCircle
+                    size={10}
+                    className="text-green-500 max-md:hidden"
+                  />
+                  <span className="max-md:hidden">
+                    {user?.tabbioLink}
+                  </span>{" "}
+                  <span className="md:hidden">
+                    {truncateString(
+                      user?.plan || "tabbio.com/ahmed-mohammed",
+                      10
+                    )}
+                  </span>{" "}
+                  <LuExternalLink size={14} className="" />
+                </button>
+
+                <button
+                  onClick={() => setShareModal(true)}
+                  className="py-1 px-1.5 md:ml-1 max-md:pl-0 flex items-center gap-1 hover:scale-x-105 "
+                >
+                  <MdShare /> <span className="">Share</span>
+                </button>
+              </div>
             </div>
-
-            <div className="flex items-center gap-1">
-              <button onClick={() => navigate("preview-cv")} className="py-1 px-1.5 md:ml-1 max-md:pl-0 flex items-center gap-1 hover:scale-x-105">
-                <FaCircle size={10} className="text-green-500 max-md:hidden" />
-                <span
-                  className="max-md:hidden"
-                >
-                  {user?.plan || "tabbio.com/name"}
-                </span>{" "}
-                <span
-                  className="md:hidden"
-                >
-                  {truncateString(user?.plan || "tabbio.com/ahmed-mohammed", 10)}
-                </span>{" "}
-                <LuExternalLink size={14} className="" />
-              </button>
-
+          </div>
+          <div className="px-2 py-4 md:pl-8 md:pr-2">
+            <div className="xl:hidden flex justify-end items-center">
               <button
-                onClick={() => setShareModal(true)}
-                className="py-1 px-1.5 md:ml-1 max-md:pl-0 flex items-center gap-1 hover:scale-x-105 "
+                onClick={() => setShowDrawer(true)}
+                className="px-4 py-1.5 flex items-center text-xl mb-3 gap-3"
               >
-                <MdShare /> <span className="">Share</span>
+                <MdKeyboardDoubleArrowLeft /> <SlSettings />
               </button>
             </div>
-          </div>
-        </div>
-        <div className="px-2 py-4 md:pl-8 md:pr-2">
-          <div className="xl:hidden flex justify-end items-center">
-            <button
-              onClick={() => setShowDrawer(true)}
-              className="px-4 py-1.5 flex items-center text-xl mb-3 gap-3"
-            >
-              <MdKeyboardDoubleArrowLeft /> <SlSettings />
-            </button>
-          </div>
-          {active ? (
-            <div className="w-full flex xl:flex-row flex-col gap-5">
+            {active ? (
+              <div className="w-full flex xl:flex-row flex-col gap-5">
+                <div className="xl:min-w-[68%]">
+                  <section className="bg-white flex flex-col space-y-10 px-6 max-sm:px-2.5 py-5 w-full h-full ">
+                    <BasicDetails setProfileData={setProfileData} profileData={profileData} />
+                    {profileData?.config?.professionalSummary && (
+                      <ProfileSummary
+                        resumeData={profileData}
+                        setResumeData={setProfileData}
+                      />
+                    )}
+                    {profileData?.config?.careerHighlights && (
+                      <CareerHighlight profileData={profileData} setProfileData={setProfileData} />
+                    )}
+                    {profileData?.config?.workExperience && (
+                      <WorkExperience profileData={profileData} setProfileData={setProfileData} />
+                    )}
+                    {profileData?.config?.volunteerExperience && (
+                      <VolunteerExperience profileData={profileData} setProfileData={setProfileData} />
+                    )}
+
+                    {profileData?.config?.internships && (
+                      <Internships profileData={profileData} setProfileData={setProfileData} />
+                    )}
+                    {profileData?.config?.education && (
+                      <Education profileData={profileData} setProfileData={setProfileData} />
+                    )}
+
+                    {profileData?.config?.certifications && (
+                      <Certifications profileData={profileData} setProfileData={setProfileData} />
+                    )}
+
+                    {profileData?.config?.memberships && (
+                      <Memberships profileData={profileData} setProfileData={setProfileData} />
+                    )}
+                    {profileData?.config?.references && (
+                      <ProfessionalReference profileData={profileData} setProfileData={setProfileData} />
+                    )}
+                  </section>
+                </div>
+                <div className="max-xl:hidden">
+                  <SmartResumeSettings
+                    setProfileData={setProfileData}
+                    profileData={profileData}
+                  />
+                </div>
+              </div>
+            ) : (
               <div className="">
-                <section className="bg-white flex flex-col space-y-10 px-6 max-sm:px-2.5 py-5 w-full h-full">
-                  <BasicDetails profileData={candidateData} />
-                  <ProfileSummary resumeData={candidateData} />
-                  <CareerHighlight profileData={candidateData} />
-                  <WorkExperience profileData={candidateData} />
-                  <VolunteerExperience profileData={candidateData} />
-                  <Internships profileData={candidateData} />
-                  <Education profileData={candidateData} />
-                  {candidateData?.config?.certifications && (
-                    <Certifications profileData={candidateData} />
-                  )}
+                <div className="flex w-full min-h-[85vh] flex-col items-center justify-center py-20">
+                  <div className="bg-white flex flex-col gap-3.5 justify-center items-center rounded-xl py-5 px-4 lg:w-[70%] w-[90%]">
+                    <span className="p-2 w-12 h-12 rounded-full flex justify-center items-center text-primary bg-primary/10">
+                      <CgFileDocument size={28} />
+                    </span>
+                    <h2 className="text-xl text-center font-semibold text-black dark:text-white">
+                      Create Your Profile
+                    </h2>
+                    <p className="text-neutral-500 mb-3">
+                      Upload your existing resume or create a new one
+                    </p>
+                    <div className="px-5 w-full">
+                      <ResumeUpload
+                        onSuccess={(response: any) => {
+                          handleCreateProfile(response?.data?.profile);
+                        }}
+                      />
+                    </div>
+                  </div>
 
-                  {candidateData?.config?.memberships && (
-                    <Memberships profileData={candidateData} />
-                  )}
-
-                  <ProfessionalReference profileData={candidateData} />
-                </section>
-              </div>
-              <div className="max-xl:hidden">
-                <SmartResumeSettings profileData={candidateData} />
-              </div>
-            </div>
-          ) : (
-            <div className="">
-              <div className="flex w-full min-h-[85vh] flex-col items-center justify-center py-20">
-                <div className="bg-white flex flex-col gap-3.5 justify-center items-center rounded-xl py-5 px-4 lg:w-[70%] w-[90%]">
-                  <span className="p-2 w-12 h-12 rounded-full flex justify-center items-center text-primary bg-primary/10">
-                    <CgFileDocument size={28} />
-                  </span>
-                  <h2 className="text-xl text-center font-semibold text-black dark:text-white">
-                    Create Your Profile
-                  </h2>
-                  <p className="text-neutral-500 mb-3">
-                    Upload your existing resume or create a new one
-                  </p>
-                  <div className="px-5 w-full">
-                    <ResumeUpload />
+                  <div className="my-6 flex flex-col gap-4 w-full justify-center items-center">
+                    <p>OR</p>
+                    <button
+                      onClick={() => {
+                        navigate(`/app/candidate/resume-builder`);
+                        setProfileData(mockProfileData);
+                        setActive(true);
+                      }}
+                      className="text-lg text-primary flex items-center gap-2 hover:scale-x-105"
+                    >
+                      Create from Scratch <FiExternalLink />
+                    </button>
                   </div>
                 </div>
-
-                <div className="my-6 flex flex-col gap-4 w-full justify-center items-center">
-                  <p>OR</p>
-                  <Link
-                    to={``}
-                    className="text-lg text-primary flex items-center gap-2 hover:scale-x-105"
-                  >
-                    Create from Scratch <FiExternalLink />
-                  </Link>
-                </div>
               </div>
-            </div>
+            )}
+          </div>
+
+          {showDrawer && (
+            <Drawer
+              title="Profile Settings"
+              isOpen={showDrawer}
+              onClose={() => setShowDrawer(false)}
+              props={{ disableCloseOnOutsideClick: true }}
+            >
+              <div className="mt-10 pb-10">
+                <SmartResumeSettings
+                  setProfileData={setProfileData}
+                  profileData={profileData}
+                />
+              </div>
+            </Drawer>
           )}
-        </div>
 
-        {showDrawer && (
-          <Drawer
-            title="Profile Settings"
-            isOpen={showDrawer}
-            onClose={() => setShowDrawer(false)}
-            props={{ disableCloseOnOutsideClick: true }}
-          >
-            <div className="mt-10 pb-10">
-              <SmartResumeSettings profileData={candidateData} />
-            </div>
-          </Drawer>
-        )}
-
-        {showAnalytics && (
-          <ResumeAnalytics
-            show={showAnalytics}
-            onHide={() => setShowAnalytics(false)}
-          />
-        )}
-        {upgradeModal && (
-          <UpgradeCandidateSubscription
-            show={upgradeModal}
-            onHide={() => {
-              setUpgradeModal(false);
-            }}
-          />
-        )}
-        {shareModal && (
-          <Modal
-            title="Share your CV"
-            show={shareModal}
-            onHide={() => setShareModal(false)}
-          >
-            <ShareCV />
-          </Modal>
-        )}
-      </section>
+          {showAnalytics && (
+            <ResumeAnalytics
+              show={showAnalytics}
+              onHide={() => setShowAnalytics(false)}
+            />
+          )}
+          {upgradeModal && (
+            <UpgradeCandidateSubscription
+              show={upgradeModal}
+              onHide={() => {
+                setUpgradeModal(false);
+              }}
+            />
+          )}
+          {shareModal && (
+            <Modal
+              title="Share your CV"
+              show={shareModal}
+              onHide={() => setShareModal(false)}
+            >
+              <ShareCV />
+            </Modal>
+          )}
+        </section>
+      )}
     </DefaultLayout>
   );
 };

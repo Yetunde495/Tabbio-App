@@ -4,11 +4,11 @@ import { FiLink } from "react-icons/fi";
 import Navbar from "../../layout/HomeNav";
 import Button from "../../components/Button";
 import OnboardCandidate from "../Authentication/OnboardCandidate";
-import { mockResumeData } from "../../data/mockData";
+import { useApp } from "../../context/AppContext";
 
 const LiveResume: React.FC = () => {
+  const {parsedResume} = useApp()
   const [inputValue, setInputValue] = useState("");
-  const [resumeData, _setResumeData] = useState(mockResumeData);
   const [onboardModal, setOnboardModal] = useState(false);
   const [showMobileLink, setShow] = useState(false);
   return (
@@ -76,7 +76,7 @@ const LiveResume: React.FC = () => {
               </div>
             </div>
           )}
-          <ResumePreview resumeData={resumeData} />
+          <ResumePreview resumeData={parsedResume} />
         </div>
         <div className="mt-13 lg:block hidden">
           {/* Resume Link */}

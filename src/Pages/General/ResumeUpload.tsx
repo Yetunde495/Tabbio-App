@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Button from "../../components/Button";
 import { FiUpload } from "react-icons/fi";
+import { ParseCV } from "../../services/profileServices";
 
 const mainVariant = {
   initial: {
@@ -26,11 +27,13 @@ export const UploadResume = ({
   onChange,
   acceptedFiles,
   maxWidth,
+  onSuccess
 }: {
   onChange?: (files: File[]) => void;
   acceptedFiles?: string[];
   supportedFormat?: string;
   maxWidth?: string;
+  onSuccess?: (response:any) => void;
 }) => {
   const { } = useApp();
   const [loading, setLoading] = useState(false);
@@ -49,12 +52,22 @@ export const UploadResume = ({
     // Return the updated files list
   };
 
+ 
+
   const onProceed = async () => {
+    const formData = new FormData();
+    formData.append("document", files[0])
     try {
       setLoading(true);
-      onChange && onChange(files);
+     const id = toast.loading("Processing your document, please wait...");
+      const resp = await ParseCV(formData);
+      toast.update(id, { render: "Your Resume was successfully processed", type: "success", isLoading: false, closeButton: true, autoClose:3000 });
+      onSuccess && onSuccess(resp);
     } catch (err: any) {
       toast.error(err?.message || "Request Failed");
+      setFiles([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -214,7 +227,7 @@ export const UploadResume = ({
               </div>
 
               <Button
-                rounded
+                // rounded
                 size="lg"
                 disabled={loading}
                 onClick={(e: any) => {
@@ -447,14 +460,14 @@ export const ResumeUpload = ({
   onChange,
   acceptedFiles,
   maxWidth,
+  onSuccess
 }: {
   onChange?: (files: File[]) => void;
   acceptedFiles?: string[];
   supportedFormat?: string;
   maxWidth?: string;
+  onSuccess?: (response:any) => void;
 }) => {
-  const { user } = useApp();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -470,17 +483,22 @@ export const ResumeUpload = ({
 
     // Return the updated files list
   };
+  
 
   const onProceed = async () => {
+    const formData = new FormData();
+    formData.append("document", files[0])
     try {
       setLoading(true);
-      if (user) {
-        onChange && onChange(files);
-      } else {
-        navigate("/live-resume");
-      }
+     const id = toast.loading("Processing your resume, please wait...");
+      const resp = await ParseCV(formData);
+      toast.update(id, { render: "Your Resume was successfully processed", type: "success", isLoading: false, closeButton: true, autoClose:3000 });
+      onSuccess && onSuccess(resp);
     } catch (err: any) {
       toast.error(err?.message || "Request Failed");
+      setFiles([]);
+    } finally {
+      setLoading(false);
     }
   };
 

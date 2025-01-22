@@ -61,6 +61,19 @@ export const formatDateString = (dateInput: string | Date): string => {
   return date.toLocaleString("en-US", options);
 };
 
+export const formatMonthYear = (dateString: string): string => {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) {
+    throw new Error("Invalid date string");
+  }
+
+  const options: Intl.DateTimeFormatOptions = { month: "long", year: "numeric" };
+  return date.toLocaleDateString("en-US", options);
+}
+
+
+
+
 
 
 
