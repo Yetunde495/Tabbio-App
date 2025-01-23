@@ -108,7 +108,12 @@ export const BasicDetails: React.FC<{
         <div>
           <ProfilePicture
             name={profileData?.name}
-            photo={profileData?.photo_url}
+            photo={profileData?.image}
+            onSuccess={(url) => {
+              handleUpdateProfile({
+                image: url,
+              });
+            }}
           />
         </div>
         <div>
@@ -1595,6 +1600,7 @@ export const CareerHighlight: React.FC<{
     },
   });
   const [showUpload, setShowUpload] = useState(false);
+  const [showPicker, setShowPicker] = useState(false);
   const [showLinkForm, setShowLinkForm] = useState(false);
   const [showMediaForm, setShowMediaForm] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -1621,9 +1627,13 @@ export const CareerHighlight: React.FC<{
     } finally {
       setLoading(false);
       setNewExperienceModal(false);
-      setEditModal(false);
+      setShowMediaForm(false);
+      setShowLinkForm(false);
+      setShowUpload(false);
+
       setDeleteModal(false);
       setSkills([]);
+      setEditModal(false);
     }
   };
 
@@ -1652,12 +1662,21 @@ export const CareerHighlight: React.FC<{
               onClick={() => {
                 setSkills(item?.skills);
                 setSelectedCareer(item);
+                setShowPicker(item?.attachments?.link ? false : true);
               }}
             >
               <div>
-                {!item?.thumbnail && (
+                {!item?.thumbnail ? (
                   <div className="w-full text-primary bg-[#EFF6FFCC] h-40 flex justify-center items-center">
                     <FaImage size={40} />
+                  </div>
+                ) : (
+                  <div className="w-full h-40">
+                    <img
+                      src={item?.thumbnail}
+                      className="w-full h-full object-cover"
+                      alt="career highlight thumbnail"
+                    />
                   </div>
                 )}
                 <div className="flex justify-between items-start mb-3 pt-2">
@@ -1677,13 +1696,13 @@ export const CareerHighlight: React.FC<{
                     </button>
                     <button
                       onClick={() => {
-                        if (item?.attachments?.link) {
-                          if (item?.attachments?.type === "link") {
-                            setShowLinkForm(true);
-                          } else {
-                            setShowMediaForm(true);
-                          }
-                        }
+                        // if (item?.attachments?.link) {
+                        //   if (item?.attachments?.type === "link") {
+                        //     setShowLinkForm(true);
+                        //   } else {
+                        //     setShowMediaForm(true);
+                        //   }
+                        // }
                         setEditModal(true);
                       }}
                       className="hover:bg-primary/10 hover:text-primary rounded-full text-zinc-500 h-8 w-8 flex items-center justify-center"
@@ -1858,6 +1877,7 @@ export const CareerHighlight: React.FC<{
                   </div>
                 </div>
               </div>
+
               <div className="relative mb-6 max-w-[280px]">
                 <Dropdown2
                   buttonContent={
@@ -1914,34 +1934,79 @@ export const CareerHighlight: React.FC<{
 
               {showMediaForm && (
                 <div className="md:px-2 relative flex gap-3 items-start mb-6">
-                  <FileUpload>
-                    <p className="font-bold text-neutral-700 text-center text-lg pt-4">
-                      Drag & drop your file here
-                    </p>
-
-                    <p className="text-neutral-500 text-center text-base">
-                      or click to browse your files
-                    </p>
-
-                    <div className="flex gap-5 text-sm text-neutral-500 items-center justify-center w-full mt-3">
-                      <p className="flex items-center gap-1">
-                        <span>
-                          <FaRegFile />
-                        </span>
-                        PNG, JPG, JPEG, MP4, MP3
-                      </p>
-
-                      <span>
-                        <FaCircle size={4} className="rounded-full" />
-                      </span>
-                      <p className="flex items-center gap-1">
-                        <span>
-                          <FiUpload />
-                        </span>
-                        Max size 10MB
-                      </p>
+                  {careerData?.attachments?.link ? (
+                    <div>
+                      {careerData?.attachments?.type === "image" && (
+                        <div className="h-50 w-full max-w-[280px] pt-3">
+                          <img
+                            src={careerData?.attachments?.link}
+                            alt="career highlight image"
+                            className="object-cover w-full h-full rounded-md"
+                          />
+                        </div>
+                      )}
+                      {careerData?.attachments?.type === "video" && (
+                        <div className="h-50 w-full max-w-[280px] pt-3">
+                          <video
+                            src={careerData?.attachments?.link}
+                            className="object-cover w-full h-full rounded-md"
+                            controls
+                          />
+                        </div>
+                      )}
                     </div>
-                  </FileUpload>
+                  ) : (
+                    <FileUpload
+                      acceptedFiles={[
+                        "image/png",
+                        "image/jpeg",
+                        "image/jpg",
+                        "video/mp4",
+                        "video/mpeg",
+                      ]}
+                      onSuccess={(url, fileType) => {
+                        if (fileType.startsWith("video/")) {
+                          setCareerData((data: any) => ({
+                            ...data,
+                            attachments: { type: "video", link: url },
+                          }));
+                        } else {
+                          setCareerData((data: any) => ({
+                            ...data,
+                            attachments: { type: "image", link: url },
+                          }));
+                        }
+                      }}
+                    >
+                      <p className="font-bold text-neutral-700 text-center text-lg pt-4">
+                        Drag & drop your file here
+                      </p>
+
+                      <p className="text-neutral-500 text-center text-base">
+                        or click to browse your files
+                      </p>
+
+                      <div className="flex gap-5 text-sm text-neutral-500 items-center justify-center w-full mt-3">
+                        <p className="flex items-center gap-1">
+                          <span>
+                            <FaRegFile />
+                          </span>
+                          PNG, JPG, JPEG, MP4, MP3
+                        </p>
+
+                        <span>
+                          <FaCircle size={4} className="rounded-full" />
+                        </span>
+                        <p className="flex items-center gap-1">
+                          <span>
+                            <FiUpload />
+                          </span>
+                          Max size 10MB
+                        </p>
+                      </div>
+                    </FileUpload>
+                  )}
+
                   <span
                     onClick={() => setShowMediaForm(false)}
                     className="w-6 text-zinc-400 cursor-pointer h-6 flex justify-center items-center rounded-full text-lg"
@@ -1990,9 +2055,19 @@ export const CareerHighlight: React.FC<{
                 <p className="font-semibold text-black mb-2 px-2">Thumbnail</p>
                 {!showUpload ? (
                   <div className="flex gap-3 items-start md:px-2">
-                    <div className="w-[240px] border border-stroke rounded-xl text-primary bg-[#EFF6FFCC] h-40 flex justify-center items-center">
-                      <FaImage size={40} />
-                    </div>
+                    {!careerData?.thumbnail ? (
+                      <div className="w-[240px] border border-stroke rounded-xl text-primary bg-[#EFF6FFCC] h-40 flex justify-center items-center">
+                        <FaImage size={40} />
+                      </div>
+                    ) : (
+                      <div className="w-full max-w-[300px] h-40">
+                        <img
+                          src={careerData?.thumbnail}
+                          className="w-full h-full object-cover"
+                          alt="career highlight thumbnail"
+                        />
+                      </div>
+                    )}
                     <span
                       onClick={() => setShowUpload(true)}
                       className="w-6 bg-white cursor-pointer h-6 flex justify-center items-center rounded-full text-lg text-black"
@@ -2002,7 +2077,15 @@ export const CareerHighlight: React.FC<{
                   </div>
                 ) : (
                   <div className="md:px-2 relative flex gap-3 items-start">
-                    <FileUpload>
+                    <FileUpload
+                      acceptedFiles={["image/png", "image/jpeg", "image/jpg"]}
+                      onSuccess={(url) => {
+                        setCareerData((data: any) => ({
+                          ...data,
+                          thumbnail: url,
+                        }));
+                      }}
+                    >
                       <p className="font-bold text-neutral-700 text-center text-lg pt-4">
                         Drag & drop your image here
                       </p>
@@ -2204,63 +2287,143 @@ export const CareerHighlight: React.FC<{
                   </div>
                 </div>
               </div>
-              <div className="relative mb-6 max-w-[280px]">
-                <Dropdown2
-                  buttonContent={
-                    <span className="flex cursor-pointer max-w-[160px] text-[15px] text-primary border border-primary rounded-full w-auto py-1.5 px-4 items-center gap-2">
-                      <BsPlus size={22} /> Add Media
-                    </span>
-                  }
-                >
-                  <div
-                    onClick={() => {
-                      setSelectedCareer((data: any) => ({
-                        ...data,
-                        attachments: { type: "link", link: "" },
-                      }));
-                      setShowMediaForm(false);
-                      setShowLinkForm(true);
-                    }}
-                    className="flex gap-1.5 items-start px-3 text-sm py-1.5 mt-1.5 cursor-pointer hover:bg-primary/5 hover:text-primary"
-                  >
-                    <span>
-                      <HiMiniLink className="mt-1" />{" "}
-                    </span>
-                    <div>
-                      <p className="text-sm font-medium text-black">
-                        Add a Link
-                      </p>
-                      <p className="text-xs font-normal text-zinc-500">
-                        Attach a link to a video, website or articles.
-                      </p>
+              {!showPicker ? (
+                <div>
+                  <div className="flex w-full justify-end items-center"></div>
+                  <div className="mt-2 mb-3">
+                    <p className="text-base font-semibold text-zinc-600 mb-1">
+                      Attachment
+                    </p>
+                    <div className="flex gap-3 items-start">
+                      <div>
+                        {selectedCareer?.attachments?.type === "link" && (
+                          <div>
+                            <a
+                              href={selectedCareer?.attachments?.link}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              Follow this link to view more details:{" "}
+                              <span className="text-blue-500 hover:underline">
+                                {selectedCareer?.attachments?.link}
+                              </span>
+                            </a>
+                          </div>
+                        )}
+                        {selectedCareer?.attachments?.type === "image" && (
+                          <div className="h-50 w-full max-w-[280px] pt-3">
+                            <img
+                              src={selectedCareer?.attachments?.link}
+                              alt="career highlight image"
+                              className="object-cover w-full h-full rounded-md"
+                            />
+                          </div>
+                        )}
+                        {selectedCareer?.attachments?.type === "video" && (
+                          <div className="h-50 w-full max-w-[280px] pt-3">
+                            <video
+                              src={selectedCareer?.attachments?.link}
+                              className="object-cover w-full h-full rounded-md"
+                              controls
+                            />
+                          </div>
+                        )}
+                      </div>
+                      <span
+                        onClick={() => setShowPicker(true)}
+                        className="w-8 bg-white cursor-pointer h-8 flex justify-center items-center rounded-full text-lg text-black"
+                      >
+                        <LuPencil />
+                      </span>
                     </div>
                   </div>
+                </div>
+              ) : (
+                <div className="flex justify-between items-start gap-6">
+                  <div className="relative mb-6 max-w-[280px]">
+                    <Dropdown2
+                      buttonContent={
+                        <span className="flex cursor-pointer max-w-[160px] text-[15px] text-primary border border-primary rounded-full w-auto py-1.5 px-4 items-center gap-2">
+                          <BsPlus size={22} /> Add Media
+                        </span>
+                      }
+                    >
+                      <div
+                        onClick={() => {
+                          setShowMediaForm(false);
+                          setShowLinkForm(true);
+                        }}
+                        className="flex gap-1.5 items-start px-3 text-sm py-1.5 mt-1.5 cursor-pointer hover:bg-primary/5 hover:text-primary"
+                      >
+                        <span>
+                          <HiMiniLink className="mt-1" />{" "}
+                        </span>
+                        <div>
+                          <p className="text-sm font-medium text-black">
+                            Add a Link
+                          </p>
+                          <p className="text-xs font-normal text-zinc-500">
+                            Attach a link to a video, website or articles.
+                          </p>
+                        </div>
+                      </div>
 
-                  <div
-                    onClick={() => {
-                      setShowLinkForm(false);
-                      setShowMediaForm(true);
-                    }}
-                    className="flex gap-1.5 items-start px-3 text-sm py-1.5 cursor-pointer hover:bg-primary/5 hover:text-primary"
-                  >
-                    <span>
-                      <BiImageAdd className="mt-1" />{" "}
-                    </span>
-                    <div>
-                      <p className="text-sm font-medium text-black">
-                        Add Media
-                      </p>
-                      <p className="text-xs font-normal text-zinc-500">
-                        Upload pictures, presentations, or documents
-                      </p>
-                    </div>
+                      <div
+                        onClick={() => {
+                          setShowLinkForm(false);
+                          setShowMediaForm(true);
+                        }}
+                        className="flex gap-1.5 items-start px-3 text-sm py-1.5 cursor-pointer hover:bg-primary/5 hover:text-primary"
+                      >
+                        <span>
+                          <BiImageAdd className="mt-1" />{" "}
+                        </span>
+                        <div>
+                          <p className="text-sm font-medium text-black">
+                            Add Media
+                          </p>
+                          <p className="text-xs font-normal text-zinc-500">
+                            Upload pictures, presentations, or documents
+                          </p>
+                        </div>
+                      </div>
+                    </Dropdown2>
                   </div>
-                </Dropdown2>
-              </div>
+                  {selectedCareer?.attachments?.link && (
+                    <button
+                      onClick={() => setShowPicker(false)}
+                      className="mb-3 rounded-full px-4 py-1 text-primary border border-primary hover:bg-primary hover:text-white bg-transparent"
+                    >
+                      Show Media
+                    </button>
+                  )}
+                </div>
+              )}
 
               {showMediaForm && (
                 <div className="md:px-2 relative flex gap-3 items-start mb-6">
-                  <FileUpload>
+                  <FileUpload
+                    acceptedFiles={[
+                      "image/png",
+                      "image/jpeg",
+                      "image/jpg",
+                      "video/mp4",
+                      "video/mpeg",
+                    ]}
+                    onSuccess={(url, fileType) => {
+                      if (fileType.startsWith("video/")) {
+                        setSelectedCareer((data: any) => ({
+                          ...data,
+                          attachments: { type: "video", link: url },
+                        }));
+                      } else {
+                        setSelectedCareer((data: any) => ({
+                          ...data,
+                          attachments: { type: "image", link: url },
+                        }));
+                      }
+                    }}
+                  >
                     <p className="font-bold text-neutral-700 text-center text-lg pt-4">
                       Drag & drop your file here
                     </p>
@@ -2315,6 +2478,7 @@ export const CareerHighlight: React.FC<{
                             ...data,
                             attachments: {
                               ...data?.attachments,
+                              type: "link",
                               link: e.target.value,
                             },
                           }))
@@ -2325,7 +2489,10 @@ export const CareerHighlight: React.FC<{
                     </div>
                   </div>
                   <span
-                    onClick={() => setShowLinkForm(false)}
+                    onClick={() => {
+                      setShowLinkForm(false);
+                      setShowPicker(false);
+                    }}
                     className="w-6 text-zinc-400 cursor-pointer h-6 flex justify-center items-center rounded-full text-lg"
                   >
                     <BsXCircleFill size={22} />
@@ -2336,9 +2503,20 @@ export const CareerHighlight: React.FC<{
                 <p className="font-semibold text-black mb-2 px-2">Thumbnail</p>
                 {!showUpload ? (
                   <div className="flex gap-3 items-start md:px-2">
-                    <div className="w-[240px] border border-stroke rounded-xl text-primary bg-[#EFF6FFCC] h-40 flex justify-center items-center">
-                      <FaImage size={40} />
-                    </div>
+                    {!selectedCareer?.thumbnail ? (
+                      <div className="w-[240px] border border-stroke rounded-xl text-primary bg-[#EFF6FFCC] h-40 flex justify-center items-center">
+                        <FaImage size={40} />
+                      </div>
+                    ) : (
+                      <div className="w-full max-w-[300px] h-40">
+                        <img
+                          src={selectedCareer?.thumbnail}
+                          className="w-full h-full object-cover"
+                          alt="career highlight thumbnail"
+                        />
+                      </div>
+                    )}
+
                     <span
                       onClick={() => setShowUpload(true)}
                       className="w-6 bg-white cursor-pointer h-6 flex justify-center items-center rounded-full text-lg text-black"
@@ -2348,7 +2526,15 @@ export const CareerHighlight: React.FC<{
                   </div>
                 ) : (
                   <div className="md:px-2 relative flex gap-3 items-start">
-                    <FileUpload>
+                    <FileUpload
+                      acceptedFiles={["image/png", "image/jpeg", "image/jpg"]}
+                      onSuccess={(url) => {
+                        setCareerData((data: any) => ({
+                          ...data,
+                          thumbnail: url,
+                        }));
+                      }}
+                    >
                       <p className="font-bold text-neutral-700 text-center text-lg pt-4">
                         Drag & drop your image here
                       </p>

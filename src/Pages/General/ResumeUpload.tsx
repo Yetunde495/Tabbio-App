@@ -1,15 +1,15 @@
 import { useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { motion } from "framer-motion";
-import { BsCloudUpload, BsFillTrash3Fill} from "react-icons/bs";
+import { BsCloudUpload, BsFillTrash3Fill } from "react-icons/bs";
 import { MdOutlineFileUpload } from "react-icons/md";
 import { cn } from "../../lib/utils";
 import { useApp } from "../../context/AppContext";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Button from "../../components/Button";
 import { FiUpload } from "react-icons/fi";
 import { ParseCV } from "../../services/profileServices";
+import { uploadFile } from "../../services/authServices";
 
 const mainVariant = {
   initial: {
@@ -27,15 +27,15 @@ export const UploadResume = ({
   onChange,
   acceptedFiles,
   maxWidth,
-  onSuccess
+  onSuccess,
 }: {
   onChange?: (files: File[]) => void;
   acceptedFiles?: string[];
   supportedFormat?: string;
   maxWidth?: string;
-  onSuccess?: (response:any) => void;
+  onSuccess?: (response: any) => void;
 }) => {
-  const { } = useApp();
+  const {} = useApp();
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -52,16 +52,20 @@ export const UploadResume = ({
     // Return the updated files list
   };
 
- 
-
   const onProceed = async () => {
     const formData = new FormData();
-    formData.append("document", files[0])
+    formData.append("document", files[0]);
     try {
       setLoading(true);
-     const id = toast.loading("Processing your document, please wait...");
+      const id = toast.loading("Processing your document, please wait...");
       const resp = await ParseCV(formData);
-      toast.update(id, { render: "Your Resume was successfully processed", type: "success", isLoading: false, closeButton: true, autoClose:3000 });
+      toast.update(id, {
+        render: "Your Resume was successfully processed",
+        type: "success",
+        isLoading: false,
+        closeButton: true,
+        autoClose: 3000,
+      });
       onSuccess && onSuccess(resp);
     } catch (err: any) {
       toast.error(err?.message || "Request Failed");
@@ -247,18 +251,18 @@ export const UploadResume = ({
 
 export const FileUpload = ({
   onChange,
+  onSuccess,
   acceptedFiles,
   maxWidth,
-  children
+  children,
 }: {
   onChange?: (files: File[]) => void;
+  onSuccess: (url: string, fileType: any) => void;
   acceptedFiles?: string[];
   supportedFormat?: string;
   maxWidth?: string;
   children?: React.ReactNode;
 }) => {
-  const { user } = useApp();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -278,13 +282,26 @@ export const FileUpload = ({
   const onProceed = async () => {
     try {
       setLoading(true);
-      if (user) {
-        onChange && onChange(files);
-      } else {
-        navigate("/live-resume");
-      }
+      setLoading(true);
+
+      const formData = new FormData();
+      formData.append("file", files[0]);
+
+      setLoading(true);
+      const id = toast.loading("Uploading your file, please wait...");
+      const resp = await uploadFile(formData);
+      toast.update(id, {
+        render: "Your file was successfully uploaded",
+        type: "success",
+        isLoading: false,
+        closeButton: true,
+        autoClose: 3000,
+      });
+      onSuccess(resp?.data?.url || "", files[0].type);
     } catch (err: any) {
       toast.error(err?.message || "Request Failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -446,7 +463,7 @@ export const FileUpload = ({
                   onProceed();
                 }}
               >
-                {loading ? "Processing" : "Proceed"}
+                {loading ? "Loading..." : "Proceed"}
               </Button>
             </div>
           )}
@@ -460,13 +477,13 @@ export const ResumeUpload = ({
   onChange,
   acceptedFiles,
   maxWidth,
-  onSuccess
+  onSuccess,
 }: {
   onChange?: (files: File[]) => void;
   acceptedFiles?: string[];
   supportedFormat?: string;
   maxWidth?: string;
-  onSuccess?: (response:any) => void;
+  onSuccess?: (response: any) => void;
 }) => {
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
@@ -483,16 +500,21 @@ export const ResumeUpload = ({
 
     // Return the updated files list
   };
-  
 
   const onProceed = async () => {
     const formData = new FormData();
-    formData.append("document", files[0])
+    formData.append("document", files[0]);
     try {
       setLoading(true);
-     const id = toast.loading("Processing your resume, please wait...");
+      const id = toast.loading("Processing your resume, please wait...");
       const resp = await ParseCV(formData);
-      toast.update(id, { render: "Your Resume was successfully processed", type: "success", isLoading: false, closeButton: true, autoClose:3000 });
+      toast.update(id, {
+        render: "Your Resume was successfully processed",
+        type: "success",
+        isLoading: false,
+        closeButton: true,
+        autoClose: 3000,
+      });
       onSuccess && onSuccess(resp);
     } catch (err: any) {
       toast.error(err?.message || "Request Failed");

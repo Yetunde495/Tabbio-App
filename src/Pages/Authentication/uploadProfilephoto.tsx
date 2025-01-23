@@ -2,7 +2,7 @@ import Avatar from "../../components/Avatar2";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import getUserInitials from "../../lib/utils/getUserInitials";
-import { uploadPhoto } from "../../services/authServices";
+import { uploadFile } from "../../services/authServices";
 import defaultPfp from "../../assets/images/default-pfp.png";
 import { BiLoaderAlt } from "react-icons/bi";
 import { MdOutlineFileUpload } from "react-icons/md";
@@ -45,7 +45,7 @@ const UploadProfilePhoto: React.FC<UploadProfilePhotoProps> = ({
 
         try {
           setLoading(true);
-          const resp = await uploadPhoto(formData);
+          const resp = await uploadFile(formData);
           if (resp) {
             toast.success(resp.message);
             setLogoUrl(resp?.url);
@@ -117,7 +117,7 @@ export const UploadUserPhoto: React.FC<UploadProfilePhotoProps> = ({
 
         try {
           setLoading(true);
-          const resp = await uploadPhoto(formData);
+          const resp = await uploadFile(formData);
           if (resp) {
             toast.success(resp.message);
             setLogoUrl(resp?.url);
@@ -194,7 +194,7 @@ export const UploadResumePhoto: React.FC<UploadProfilePhotoProps> = ({
 
         try {
           setLoading(true);
-          const resp = await uploadPhoto(formData);
+          const resp = await uploadFile(formData);
           if (resp) {
             toast.success(resp.message);
             setLogoUrl(resp?.url);
@@ -275,7 +275,7 @@ export const UpdateProfilePhoto: React.FC<UploadProfilePhotoProps> = ({
 
         try {
           setLoading(true);
-          const resp = await uploadPhoto(formData);
+          const resp = await uploadFile(formData);
           if (resp) {
             toast.success(resp.message);
             setLogoUrl(resp?.url);

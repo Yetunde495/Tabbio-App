@@ -95,9 +95,9 @@ export const ResetPassword = async (data:any) => {
   return response?.data;
 };
 
-export const uploadPhoto = async (data: any) => {
+export const uploadFile = async (data: any) => {
     const response: any = await axios
-      .post(`/upload/pfp`, data, {
+      .post(`/profile/upload_file`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

@@ -386,7 +386,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                   <div className="flex flex-col gap-4">
                     {resumeData?.education.map((item: any, _index: number) => (
                       <div
-                        key={item.id}
+                        key={item?._id}
                         className={`item px-2 relative  text-black w-full py-1 `}
                         draggable="true"
                       >
@@ -395,13 +395,19 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                           <div className="w-full">
                             <div className="flex gap-6 w-full items-start">
                               <p className={`w-full text-base text-black px-2`}>
-                                {item?.school}
+                                {item?.institution}
                               </p>
                               <div className="ml-auto">
                                 <span
                                   className={`text-sm text-right font-medium text-black  px-2`}
                                 >
-                                  {item?.year}
+                                  {item?.startDate &&
+                                    formatMonthYear(item?.startDate)}
+                                  -
+                                  {item?.active
+                                    ? "Present"
+                                    : item?.endDate &&
+                                      formatMonthYear(item?.endDate)}
                                 </span>
                               </div>
                             </div>
@@ -648,7 +654,10 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
             {/* Internships */}
           </div>
         ) : (
-          <div style={{ fontFamily: resumeData?.style?.fontFamily || "" }} className="bg-white p-8 w-full overflow-x-auto custom-scrollbar">
+          <div
+            style={{ fontFamily: resumeData?.style?.fontFamily || "" }}
+            className="bg-white p-8 w-full overflow-x-auto custom-scrollbar"
+          >
             <div className="w-full  mb-15">
               <div
                 style={{

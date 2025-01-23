@@ -9,6 +9,7 @@ import { FaCircle, FaCircleMinus, FaRegCircle } from "react-icons/fa6";
 import { RiExpandUpDownLine } from "react-icons/ri";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { formatMonthYear } from "../../lib/utils/formatters";
+import { generateUniqueId } from "../../lib/utils";
 
 type EditingState = {
   email: boolean;
@@ -670,15 +671,27 @@ export const AtsExperience: React.FC<{
                         placeholder="Company Name"
                         value={item?.company}
                         onChange={(e) =>
-                          handleInputChange(item?._id, "company", e.target.value)
+                          handleInputChange(
+                            item?._id,
+                            "company",
+                            e.target.value
+                          )
                         }
                       />
                       <input
                         className={`border-none text-sm min-w-[200px] text-right font-medium focus:outline-none bg-white text-black placeholder:text-black focus:bg-zinc-100 px-2`}
                         placeholder="From - Until"
-                        value={formatMonthYear(item?.startDate) + " - " + formatMonthYear(item?.endDate)}
+                        value={
+                          formatMonthYear(item?.startDate) +
+                          " - " +
+                          formatMonthYear(item?.endDate)
+                        }
                         onChange={(e) =>
-                          handleInputChange(item?._id, "duration", e.target.value)
+                          handleInputChange(
+                            item?._id,
+                            "duration",
+                            e.target.value
+                          )
                         }
                       />
                     </div>
@@ -1572,7 +1585,11 @@ export const AtsProjects: React.FC<{
                       "Provide a brief description of the project, its purpose, and key technologies used."
                     }
                     onChange={(e) =>
-                      handleInputChange(item?._id, "description", e.target.value)
+                      handleInputChange(
+                        item?._id,
+                        "description",
+                        e.target.value
+                      )
                     }
                     onBlur={() => setEditingItemId(null)}
                     autoFocus
@@ -1924,7 +1941,11 @@ export const AtsCareerHighlight: React.FC<{
                       "Provide a brief description of the project, its purpose, and key technologies used."
                     }
                     onChange={(e) =>
-                      handleInputChange(item?._id, "description", e.target.value)
+                      handleInputChange(
+                        item?._id,
+                        "description",
+                        e.target.value
+                      )
                     }
                     onBlur={() => setEditingItemId(null)}
                     autoFocus
@@ -2304,7 +2325,11 @@ export const Ats: React.FC<{
                       "Provide a brief description of the project, its purpose, and key technologies used."
                     }
                     onChange={(e) =>
-                      handleInputChange(item?._id, "description", e.target.value)
+                      handleInputChange(
+                        item?._id,
+                        "description",
+                        e.target.value
+                      )
                     }
                     onBlur={() => setEditingItemId(null)}
                     autoFocus
@@ -2522,7 +2547,7 @@ export const AtsEducation: React.FC<{
   const [currentItem, setCurrentItem] = useState<any>(null);
 
   useEffect(() => {
-    if (resumeData?.workExperience?.length > 0) {
+    if (resumeData?.education?.length > 0) {
       setItems(resumeData?.education);
     } else {
       setItems([
@@ -2717,7 +2742,11 @@ export const AtsEducation: React.FC<{
                           autoFocus
                           onBlur={() => setEditingSchoolId(null)}
                           onChange={(e) =>
-                            handleInputChange(item?._id, "school", e.target.value)
+                            handleInputChange(
+                              item?._id,
+                              "school",
+                              e.target.value
+                            )
                           }
                         />
                       ) : (
@@ -2741,7 +2770,11 @@ export const AtsEducation: React.FC<{
                           autoFocus
                           onBlur={() => setEditingDegreeId(null)}
                           onChange={(e) =>
-                            handleInputChange(item?._id, "degree", e.target.value)
+                            handleInputChange(
+                              item?._id,
+                              "degree",
+                              e.target.value
+                            )
                           }
                         />
                       ) : (
@@ -2767,7 +2800,8 @@ export const AtsEducation: React.FC<{
                 </div>
 
                 <div className="py-2">
-                  {hoveredItemId === item?._id && editingInfoId === item?._id ? (
+                  {hoveredItemId === item?._id &&
+                  editingInfoId === item?._id ? (
                     <div>
                       <textarea
                         className={`border-none bg-white focus:bg-zinc-100 focus:ring-0 focus:outline-none px-3 font-medium text-black text-base placeholder:text-black w-full`}
@@ -2828,6 +2862,294 @@ export const AtsEducation: React.FC<{
                       value={item?.degree}
                       onChange={(e) =>
                         handleInputChange(item?._id, "degree", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export const AtsCertifications: React.FC<{
+  resumeData: any;
+  setResumeData: React.Dispatch<React.SetStateAction<any | null>>;
+}> = ({ resumeData, setResumeData }) => {
+  const [hoveredItemId, setHoveredItemId] = useState<number | null>(null);
+  const [editingSchoolId, setEditingSchoolId] = useState<number | null>(null);
+  const [editingDegreeId, setEditingDegreeId] = useState<number | null>(null);
+  const [items, setItems] = useState<any[]>(resumeData?.certifications);
+  const [draggingItem, setDraggingItem] = useState<any | null>(null);
+
+  useEffect(() => {
+    if (resumeData?.certifications?.length > 0) {
+      setItems(resumeData?.certifications);
+    } else {
+      setItems([
+        {
+          _id: generateUniqueId(),
+          institution: "Name of Organization",
+          name: "NAME OF CERTIFICATION",
+          date: "From-to",
+        },
+        {
+          _id: generateUniqueId(),
+          institution: "Name of Organization",
+          name: "NAME OF CERTIFICATION",
+          date: "From-to",
+        },
+      ]);
+    }
+  }, [resumeData?.certifications]);
+
+  const handleDragStart = (
+    e: React.DragEvent<HTMLDivElement | HTMLButtonElement>,
+    item: any
+  ) => {
+    setDraggingItem(item);
+    e.dataTransfer.setData("text/plain", "");
+  };
+
+  const handleDragEnd = () => {
+    setDraggingItem(null);
+  };
+
+  const handleDragOver = (
+    e: React.DragEvent<HTMLDivElement | HTMLButtonElement>
+  ) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (
+    _e: React.DragEvent<HTMLDivElement | HTMLButtonElement>,
+    targetItem: any
+  ) => {
+    if (!draggingItem) return;
+
+    const currentIndex = items.indexOf(draggingItem);
+    const targetIndex = items.indexOf(targetItem);
+
+    if (currentIndex !== -1 && targetIndex !== -1) {
+      const updatedItems = [...items];
+      updatedItems.splice(currentIndex, 1);
+      updatedItems.splice(targetIndex, 0, draggingItem);
+
+      //   const reorderedItems = updatedItems.map((item, index) => ({
+      //     ...item,
+      //     position: index + 1
+      // }));
+
+      setItems(updatedItems);
+      setResumeData(() => ({
+        ...resumeData,
+        certifications: updatedItems,
+      }));
+    }
+  };
+  const handleRemove = (id: number) => {
+    const updatedItems = items.filter((item) => item?._id !== id);
+    setItems(updatedItems);
+    setResumeData(() => ({
+      ...resumeData,
+      certifications: updatedItems,
+    }));
+  };
+
+  // Handler to add new education
+  const addExperience = () => {
+    const newEducation = {
+      _id: generateUniqueId(),
+      institution: "Name of Organization",
+      name: "NAME OF CERTIFICATION",
+      date: "From-to",
+    };
+    setResumeData(() => ({
+      ...resumeData,
+      certifications: [...resumeData?.certifications, newEducation],
+    }));
+  };
+
+  // Handle input change for specific item
+  const handleInputChange = (id: number, field: string, value: string) => {
+    const updatedItems = items.map((item) =>
+      item?._id === id ? { ...item, [field]: value } : item
+    );
+    setItems(updatedItems);
+    setResumeData((prev: any) => ({
+      ...prev,
+      certifications: updatedItems,
+    }));
+  };
+
+  return (
+    <div>
+      {resumeData?.template === "professional" ? (
+        <h6
+          className="font-semibold text-lg uppercase border-b-2 ml-3 py-1 mb-2 w-full"
+          style={{
+            color: resumeData?.style?.primaryColor,
+            borderColor: resumeData?.style?.primaryColor,
+          }}
+        >
+          Certifications{" "}
+        </h6>
+      ) : (
+        <h6
+          className="font-semibold text-lg uppercase pl-4.5 mb-3"
+          style={{ color: resumeData?.style?.primaryColor }}
+        >
+          Certifications
+        </h6>
+      )}
+      <div className="flex flex-col gap-4">
+        {items.map((item, _index) => (
+          <div
+            key={item?._id}
+            onMouseEnter={() => setHoveredItemId(item?._id)} // Set hovered item id
+            onMouseLeave={() => setHoveredItemId(null)}
+            className={`item ${
+              item?._id === draggingItem?._id ? "shadow-3" : ""
+            } hover:border border-stroke rounded-md border-spacing-1 px-2 relative  text-black w-full py-1 `}
+            draggable="true"
+            onDragStart={(e) => handleDragStart(e, item)}
+            onDrop={(e) => handleDrop(e, item)}
+            onDragEnd={handleDragEnd}
+            onDragOver={handleDragOver}
+            // onClick={() => setCurrentItem(item)}
+          >
+            {hoveredItemId === item?._id && (
+              <div className="flex w-full gap-1 justify-end -mt-6">
+                <div className="bg-white flex gap-1 items-center">
+                  <button
+                    onClick={addExperience}
+                    className="h-8 w-8 flex justify-center items-center border-none text-primary/90 hover:text-primary text-2xl"
+                  >
+                    <BsPlusCircleFill />
+                  </button>
+                  {resumeData?.certifications?.length > 1 && (
+                    <button
+                      onClick={() => {
+                        handleRemove(item?._id);
+                      }}
+                      className="h-8 w-8 flex justify-center items-center border-none text-primary/90 hover:text-primary text-2xl"
+                    >
+                      <FaCircleMinus />
+                    </button>
+                  )}
+                  {resumeData?.certifications?.length > 1 && (
+                    <button className=" h-6 w-6 flex justify-center items-center rounded-full border-none text-white bg-primary cursor-grab">
+                      <RiExpandUpDownLine />
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+            {resumeData?.template === "professional" ? (
+              <div className="w-full py-2 ml-3 pr-1">
+                <div className="flex justify-between gap-6 items-center">
+                  <div className="flex items-center gap-2 divide-x divide-zinc-600">
+                    <div>
+                      {hoveredItemId === item?._id &&
+                      editingSchoolId === item?._id ? (
+                        <input
+                          className={`border-none w-full uppercase text-base bg-white text-black focus:outline-none focus:bg-zinc-100 px-2`}
+                          placeholder="Institution"
+                          value={item?.institution}
+                          autoFocus
+                          onBlur={() => setEditingSchoolId(null)}
+                          onChange={(e) =>
+                            handleInputChange(
+                              item?._id,
+                              "institution",
+                              e.target.value
+                            )
+                          }
+                        />
+                      ) : (
+                        <span
+                          onClick={() => setEditingSchoolId(item?._id)}
+                          className="text-base uppercase font-semibold text-zinc-800"
+                        >
+                          {item?.institution}
+                        </span>
+                      )}
+                    </div>
+
+                    <span className="font-semibold uppercase hidden">|</span>
+                    <div className="pl-2">
+                      {hoveredItemId === item?._id &&
+                      editingDegreeId === item?._id ? (
+                        <input
+                          className={`border-none w-full text-base uppercase font-semibold bg-white text-zinc-800 focus:outline-none placeholder:text-zinc-800 focus:bg-zinc-100 px-2`}
+                          placeholder="NAME"
+                          value={item?.name}
+                          autoFocus
+                          onBlur={() => setEditingDegreeId(null)}
+                          onChange={(e) =>
+                            handleInputChange(item?._id, "name", e.target.value)
+                          }
+                        />
+                      ) : (
+                        <span
+                          onClick={() => setEditingDegreeId(item?._id)}
+                          className="text-base uppercase font-semibold text-zinc-800"
+                        >
+                          {item?.name}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="ml-auto">
+                    <input
+                      className={`border-none text-sm text-right w-[50px] font-medium bg-white text-black placeholder:text-black focus:outline-none focus:bg-zinc-100 px-2`}
+                      placeholder="Enter Year (yyyy)"
+                      value={item?.date}
+                      onChange={(e) =>
+                        handleInputChange(item?._id, "date", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="w-full flex items-start py-2 ml-3 pr-1">
+                <FaCircle size={6} className="rounded-full mt-2" />
+                <div className="w-full">
+                  <div className="flex gap-6 w-full items-start">
+                    <input
+                      className={`border-none w-full focus:max-w-[300px] text-base bg-white text-black focus:outline-none focus:bg-zinc-100 px-2`}
+                      placeholder="Institution"
+                      value={item?.institution}
+                      onChange={(e) =>
+                        handleInputChange(
+                          item?._id,
+                          "institution",
+                          e.target.value
+                        )
+                      }
+                    />
+                    <div className="ml-auto">
+                      <input
+                        className={`border-none text-sm text-right w-[50px] font-medium bg-white text-black placeholder:text-black focus:outline-none focus:bg-zinc-100 px-2`}
+                        placeholder="Enter Year (yyyy)"
+                        value={item?.date}
+                        onChange={(e) =>
+                          handleInputChange(item?._id, "date", e.target.value)
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className="">
+                    <input
+                      className={`border-none w-full text-base uppercase font-semibold bg-white text-zinc-800 focus:outline-none placeholder:text-zinc-800 focus:bg-zinc-100 px-2`}
+                      placeholder="NAME"
+                      value={item?.date}
+                      onChange={(e) =>
+                        handleInputChange(item?._id, "date", e.target.value)
                       }
                     />
                   </div>
@@ -3044,7 +3366,11 @@ export const AtsTrainings: React.FC<{
                         autoFocus
                         onBlur={() => setEditingDegreeId(null)}
                         onChange={(e) =>
-                          handleInputChange(item?._id, "platform", e.target.value)
+                          handleInputChange(
+                            item?._id,
+                            "platform",
+                            e.target.value
+                          )
                         }
                       />
                     ) : (

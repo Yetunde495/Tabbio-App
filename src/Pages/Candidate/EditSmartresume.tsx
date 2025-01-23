@@ -30,6 +30,7 @@ import { TbWorld } from "react-icons/tb";
 import {
   AreasOfExpertise,
   AtsCareerHighlight,
+  AtsCertifications,
   AtsEducation,
   AtsExperience,
   AtsInternships,
@@ -176,6 +177,7 @@ const EditSmartResume: React.FC = () => {
     const resp = await getProfileResume(profileId)
     console.log(resp)
     setResumeData(resp?.data?.resume)
+    setConfig(resp?.data?.resume?.config)
    } catch (err:any) {
      toast.error(err?.message || 'Request Failed! Please try again')
    } finally {
@@ -615,7 +617,7 @@ const EditSmartResume: React.FC = () => {
                     </style>
                   </div>
 
-                  {config.about && (
+                  {config?.professionalSummary && (
                     <div className="border-b pb-2 border-stroke mb-6">
                       <CareerSummary
                         resumeData={resumeData}
@@ -656,7 +658,7 @@ const EditSmartResume: React.FC = () => {
                       />
                     </div>
                   )}
-                  {config.experience && (
+                  {config.workExperience && (
                     <div className="border-b py-9 border-stroke mb-4">
                       <AtsExperience
                         resumeData={resumeData}
@@ -667,6 +669,14 @@ const EditSmartResume: React.FC = () => {
                   {config.internships && (
                     <div className="border-b py-9 border-stroke mb-4">
                       <AtsInternships
+                        resumeData={resumeData}
+                        setResumeData={setResumeData}
+                      />
+                    </div>
+                  )}
+                   {config?.certifications && (
+                    <div className="border-b py-9 border-stroke mb-4">
+                      <AtsCertifications
                         resumeData={resumeData}
                         setResumeData={setResumeData}
                       />
@@ -812,7 +822,7 @@ const EditSmartResume: React.FC = () => {
                       config={config}
                     />
                   </div>
-                  {config.about && (
+                  {config?.professionalSummary && (
                     <div className="mb-4">
                       <CareerSummary
                         resumeData={resumeData}
@@ -836,7 +846,7 @@ const EditSmartResume: React.FC = () => {
                       />
                     </div>
                   )}
-                  {config?.experience && (
+                  {config?.workExperience && (
                     <div className="py-5  mb-4">
                       <AtsExperience
                         resumeData={resumeData}
@@ -847,6 +857,14 @@ const EditSmartResume: React.FC = () => {
                   {config?.education && (
                     <div className="py-6">
                       <AtsEducation
+                        resumeData={resumeData}
+                        setResumeData={setResumeData}
+                      />
+                    </div>
+                  )}
+                   {config?.certifications && (
+                    <div className="py-6">
+                      <AtsCertifications
                         resumeData={resumeData}
                         setResumeData={setResumeData}
                       />
