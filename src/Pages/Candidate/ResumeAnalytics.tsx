@@ -12,7 +12,6 @@ import Table from "../../components/table";
 import { TableLoader } from "../../components/Loader";
 import TablePagination from "../../components/table/TablePagination";
 import { paginate } from "../../lib/utils";
-import { analyticsData } from "../../data/mockData";
 import { formatDateString } from "../../lib/utils/formatters";
 import { FaRegCalendar, FaRegClock } from "react-icons/fa6";
 import { LuBuilding2 } from "react-icons/lu";
@@ -33,7 +32,7 @@ const ResumeAnalytics: React.FC<ResumeAnalyticsProps> = ({ show, onHide }) => {
   const { user } = useApp();
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(7);
-  const [allViews, setAllViews] = useState<any[]>(analyticsData);
+  const [allViews, setAllViews] = useState<any[]>([]);
   const [date, setDate] = useState("");
 
   const { data, isLoading } = useQuery(
@@ -43,7 +42,7 @@ const ResumeAnalytics: React.FC<ResumeAnalyticsProps> = ({ show, onHide }) => {
       keepPreviousData: true,
       enabled: !!user?._id,
       onSuccess: (data: any) => {
-        setAllViews(data?.data?.recentActivities);
+        setAllViews(data?.data?.performance?.recentActivities);
       },
       onError: (err: any) => {
         toast(
