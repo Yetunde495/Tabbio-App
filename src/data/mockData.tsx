@@ -184,6 +184,210 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
   ],
 };
 
+export const mockResData = {
+  "name": "John Doe",
+  "language": "English",
+  "role": "Frontend Developer",
+  "email": "john.doe@email.com",
+  "phone": "(123) 456-7890",
+  "linkedIn": "https://linkedin.com/in/johndoe",
+  "website": "https://johndoe.dev",
+  "location": "New York, USA",
+  "template" : "professional",
+  "style" : {
+    "fontFamily": "Times New Roman",
+    "primaryColor": "#007CFF",
+    "fontSize": "medium"
+  },
+  "professionalSummary": "Creative and detail-oriented Frontend Developer with 5+ years of experience designing and implementing responsive, user-friendly web applications. Proficient in JavaScript, React, and TypeScript, with expertise in modern frontend development practices and tools. Strong focus on accessibility, performance, and delivering seamless user experiences.",
+  "skills": [
+    {
+      "name": "Languages",
+      "items": ["JavaScript (ES6+)", "TypeScript", "HTML", "CSS (SASS/LESS)"]
+    },
+    {
+      "name": "Frameworks & Libraries",
+      "items": ["React.js", "Redux", "Tailwind CSS", "Next.js"]
+    },
+    {
+      "name": "Tools",
+      "items": ["Git", "Webpack", "Vite", "Figma", "Firebase", "Docker"]
+    },
+    {
+      "name": "Testing",
+      "items": ["Jest", "Cypress", "React Testing Library"]
+    }
+  ],
+  "education": [
+    {
+      "_id": "edu1",
+      "degree": "Bachelor of Science in Computer Science",
+      "institution": "University of California, Los Angeles (UCLA)",
+      "startDate": "2015-09-01",
+      "endDate": "2019-06-01",
+      "description": "Focused on software engineering, algorithms, and web development.",
+      "active": false
+    }
+  ],
+  "certifications": [
+    {
+      "_id": "cert1",
+      "name": "Certified React Developer",
+      "institution": "Meta",
+      "date": "2022-10-01"
+    },
+    {
+      "_id": "cert2",
+      "name": "JavaScript Algorithms and Data Structures",
+      "institution": "freeCodeCamp",
+      "date": "2021-03-01"
+    }
+  ],
+  "workExperience": [
+    {
+      "_id": "work1",
+      "title": "Frontend Developer",
+      "company": "TechSoft Inc.",
+      "startDate": "2019-07-01",
+      "endDate": "Present",
+      "description": "Developing and maintaining web applications.",
+      "keyAchievements": [
+        "Redesigned the company website, resulting in a 40% increase in user engagement.",
+        "Implemented performance optimizations, reducing page load times by 25%."
+      ],
+      "skills": ["React.js", "TypeScript", "Redux", "CSS"],
+      "active": true
+    }
+  ],
+  "internships": [
+    {
+      "_id": "intern1",
+      "title": "Frontend Intern",
+      "company": "StartTech Labs",
+      "startDate": "2018-06-01",
+      "endDate": "2018-08-01",
+      "description": "Assisted in the development of a React-based dashboard for client analytics.",
+      "keyAchievements": ["Built reusable components to speed up development."],
+      "skills": ["React.js", "JavaScript", "HTML", "CSS"],
+      "active": false
+    }
+  ],
+  "volunteerExperience": [
+    {
+      "_id": "vol1",
+      "title": "Web Developer Volunteer",
+      "company": "Open Source Contributions",
+      "startDate": "2020-01-01",
+      "endDate": "2021-12-01",
+      "description": "Contributed to open-source projects to improve accessibility and usability.",
+      "keyAchievements": ["Enhanced UI/UX for multiple projects."],
+      "skills": ["React.js", "JavaScript", "Accessibility"],
+      "active": false
+    }
+  ],
+  "projects": [
+    {
+      "_id": "proj1",
+      "name": "Portfolio Website",
+      "description": "Developed a personal portfolio website to showcase projects and skills.",
+      "technology": "React.js, Tailwind CSS, TypeScript",
+      "githubLink": "https://github.com/johndoe/portfolio"
+    },
+    {
+      "_id": "proj2",
+      "name": "E-Commerce Platform",
+      "description": "Built a scalable e-commerce platform with React and Redux.",
+      "technology": "React.js, Redux, Firebase",
+      "githubLink": "https://github.com/johndoe/e-commerce"
+    }
+  ],
+  "relevantCourses": ["Advanced JavaScript", "Web Accessibility Fundamentals", "Frontend Performance Optimization"],
+  "trainings": [
+    {
+      "_id": "training1",
+      "degree": "Agile Development and Scrum",
+      "institution": "Scrum Alliance",
+      "startDate": "2020-01-01",
+      "endDate": "2021-12-01",
+      "description": "Completed training on Agile methodologies and Scrum practices for software teams."
+    },
+    {
+      "_id": "training2",
+      "degree": "Performance Optimization for Web Apps",
+      "institution": "Pluralsight",
+      "startDate": "2020-01-01",
+      "endDate": "2021-12-01",
+      "description": "Learned strategies to optimize performance in modern web applications."
+    }
+  ],
+  "memberships": [
+    {
+      "_id": "membership1",
+      "name": "Member",
+      "organization": "Interaction Design Association (IxDA)",
+      "startDate": "2020-01-01",
+      "endDate": "Present"
+    },
+    {
+      "_id": "membership2",
+      "name": "Member",
+      "organization": "Frontend Masters Community",
+      "startDate": "2021-05-01",
+      "endDate": "Present"
+    }
+  ],
+  "areaOfExpertise": ["Frontend Development", "Responsive Web Design", "UI/UX"],
+  "careerHighlights": [
+    {
+      "_id": "highlight1",
+      "title": "Company Website Redesign",
+      "description": "Redesigned the company website, increasing engagement by 40%.",
+      "thumbnail": "https://example.com/image.png",
+      "skills": ["React.js", "CSS", "User Experience"],
+      "attachments": {
+        "type": "image",
+        "link": "https://example.com/website-redesign"
+      }
+    }
+  ],
+  "references": [
+    {
+      "_id": "ref1",
+      "name": "Jane Smith",
+      "title": "Senior Software Engineer",
+      "company": "TechSoft Inc.",
+      "email": "jane.smith@techsoft.com",
+      "phone": "(987) 654-3210",
+      "relationship": "Manager"
+    }
+  ],
+  "hobbies": ["Photography", "Traveling", "Reading"],
+  "config": {
+    "location": true,
+    "role": true,
+    "workExperience": true,
+    "professionalSummary": true,
+    "email": true,
+    "phone": true,
+    "relevantCourses" : true,
+    "skills": true,
+    "links": true,
+    "volunteerExperience": true,
+    "careerHighlights": true,
+    "internships": true,
+    "education": true,
+    "memberships": true,
+    "references": true,
+    "certifications": true,
+    "trainings": true,
+    "areaOfExpertise": true,
+    "isLive": true,
+    "lastUpdate": true,
+    "showTabbioLink": false
+  }
+}
+
+
 export const mockEmptyResume = {
   name: "Your Name",
   role: "Professional Role",

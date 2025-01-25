@@ -208,18 +208,18 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                               <div className="flex gap-6 w-full items-start">
                                 <p
                                   style={{ fontSize: fontSize }}
-                                  className={`w-full text-base text-black px-2`}
+                                  className={`text-base text-black px-2`}
                                 >
                                   {item?.institution}
                                 </p>
                                 <div className="ml-auto">
                                   {item?.date && (
-                                    <span
+                                    <p
                                       className={`text-sm text-right font-medium text-black  px-2`}
                                       style={{ fontSize: fontSizeSm }}
                                     >
                                       {formatMonthYear(item?.date)}
-                                    </span>
+                                    </p>
                                   )}
                                 </div>
                               </div>

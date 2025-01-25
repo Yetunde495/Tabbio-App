@@ -7,6 +7,7 @@ import OnboardCandidate from "../Authentication/OnboardCandidate";
 import { useApp } from "../../context/AppContext";
 import EmptyImg from "../../assets/svg/empty-animate.svg";
 import { useNavigate } from "react-router-dom";
+import { mockResData } from "../../data/mockData";
 
 const LiveResume: React.FC = () => {
   const { parsedResume } = useApp();
@@ -14,16 +15,21 @@ const LiveResume: React.FC = () => {
   const [inputValue, setInputValue] = useState("");
   const [onboardModal, setOnboardModal] = useState(false);
   const [showMobileLink, setShow] = useState(false);
+  const [resumeData, setResumeData] = useState<any>(null)
 
   useEffect(() => {
     if (parsedResume) {
+      setResumeData(parsedResume)
       setInputValue(parsedResume?.name);
+    } else {
+      setResumeData(mockResData)
+      setInputValue(resumeData?.name);
     }
   }, [parsedResume]);
   return (
     <section>
       <Navbar />
-      {parsedResume ? (
+      {resumeData ? (
         <div className="w-full grid xl:grid-cols-4 grid-cols-1 lg:px-12 md:px-4 px-3 gap-5 py-12">
           <div className="col-span-3">
             <div className="flex gap-3 items-center justify-between my-3 w-full">
@@ -31,6 +37,17 @@ const LiveResume: React.FC = () => {
                 <h1 className="text-xl font-semibold text-zinc-700">
                   Live Resume
                 </h1>
+                <button
+                  className="flex gap-1 bg-primary rounded-md font-medium text-white px-5 py-2 items-center hover:scale-x-105"
+                  onClick={() => {
+                    setResumeData({
+                      ...resumeData,
+                      template: resumeData?.template === "professional" ? "entry" : "professional"
+                    })
+                  }}
+                >
+                  Switch Template
+                </button>
               </div>
               <div className="flex items-center gap-3 pr-3">
                 <button
@@ -86,7 +103,7 @@ const LiveResume: React.FC = () => {
                 </div>
               </div>
             )}
-            <ResumePreview resumeData={parsedResume} />
+            <ResumePreview resumeData={resumeData} />
           </div>
           <div className="mt-13 xl:block hidden">
             {/* Resume Link */}
@@ -156,7 +173,7 @@ const LiveResume: React.FC = () => {
         <OnboardCandidate
           show={onboardModal}
           onHide={() => setOnboardModal(false)}
-          profileData={parsedResume}
+          profileData={resumeData}
         />
       )}
     </section>

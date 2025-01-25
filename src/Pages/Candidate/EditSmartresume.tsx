@@ -397,12 +397,12 @@ const EditSmartResume: React.FC = () => {
                         </li>
                         <li>
                           <Switch
-                            checked={config.linkedin}
-                            value={config.linkedin}
+                            checked={config.linkedIn}
+                            value={config.linkedIn}
                             label="Linkedin"
                             size="sm"
                             onChange={(val) => {
-                              setConfig((c: any) => ({ ...c, linkedin: val }));
+                              setConfig((c: any) => ({ ...c, linkedIn: val }));
                             }}
                           />
                         </li>
@@ -413,12 +413,12 @@ const EditSmartResume: React.FC = () => {
                       <ul className="space-y-2.5">
                         <li>
                           <Switch
-                            checked={config.about}
+                            checked={config.professionalSummary}
                             value={config.about}
                             label="Professional Summary"
                             size="sm"
                             onChange={(val) => {
-                              setConfig((c: any) => ({ ...c, about: val }));
+                              setConfig((c: any) => ({ ...c, professionalSummary: val }));
                             }}
                           />
                         </li>
@@ -435,14 +435,14 @@ const EditSmartResume: React.FC = () => {
                         </li>
                         <li>
                           <Switch
-                            checked={config.experience}
-                            value={config.experience}
+                            checked={config.workExperience}
+                            value={config.workExperience}
                             label="Work Experience"
                             size="sm"
                             onChange={(val) => {
                               setConfig((c: any) => ({
                                 ...c,
-                                experience: val,
+                                workExperience: val,
                               }));
                             }}
                           />
@@ -477,6 +477,17 @@ const EditSmartResume: React.FC = () => {
                             size="sm"
                             onChange={(val) => {
                               setConfig((c: any) => ({ ...c, projects: val }));
+                            }}
+                          />
+                        </li>
+                        <li>
+                          <Switch
+                            checked={config.certifications}
+                            value={config.certifications}
+                            label="Certifications"
+                            size="sm"
+                            onChange={(val) => {
+                              setConfig((c: any) => ({ ...c, certifications: val }));
                             }}
                           />
                         </li>
