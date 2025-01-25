@@ -8,7 +8,7 @@ import getUserInitials from "../../lib/utils/getUserInitials";
 import { FaImage, FaLinkedin, FaRegCalendar } from "react-icons/fa6";
 import { BsBookmarkPlus } from "react-icons/bs";
 import { TbMessage, TbWorld } from "react-icons/tb";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Dropdown2 } from "../../components/Dropdown";
 import { IoIosArrowDown, IoIosArrowUp, IoLogoWhatsapp } from "react-icons/io";
 import { LiaFileDownloadSolid } from "react-icons/lia";
@@ -23,15 +23,20 @@ import { getProfileByTabbiolink } from "../../services/profileServices";
 import { toast } from "react-toastify";
 import { PageLoader } from "../../components/Loader";
 import EmptyImg from "../../assets/svg/empty-animate.svg";
+import { formatMonthYear } from "../../lib/utils/formatters";
 
 const ProfilePreview: React.FC = () => {
   const { user } = useApp();
+  const navigate = useNavigate();
   const [profileData, setProfileData] = useState<any | null>(null);
   const [showCompetencies, setShowCompetencies] = useState(false);
   const [showAllCareer, setShowAllCareer] = useState(false);
   const [selectedCareer, setSelectedCareer] = useState<any>(null);
   const [careerModal, setCareerModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const technicalSkill = profileData?.skills.find(
+    (skill: any) => skill?.name === "technical"
+  );
 
   useMemo(async () => {
     if (user?.tabbioLink) {
@@ -39,7 +44,6 @@ const ProfilePreview: React.FC = () => {
         setLoading(true);
         const resp = await getProfileByTabbiolink(user?.tabbioLink);
         setProfileData(resp?.data?.profile);
-        console.log(resp.data?.profile);
       } catch (err: any) {
         if (err?.message !== "Profile not found") {
           toast.error(err?.message || "Request Failed");
@@ -61,7 +65,7 @@ const ProfilePreview: React.FC = () => {
                 <div className="flex items-center max-sm:flex-wrap max-sm:justify-between gap-3 text-sm max-sm:px-2">
                   <div>
                     <Avatar
-                      src={profileData?.photo_url || ""}
+                      src={profileData?.image || ""}
                       size="medium"
                       initials={getUserInitials(profileData?.name, "")}
                     />
@@ -91,24 +95,30 @@ const ProfilePreview: React.FC = () => {
                         </span>
                       )}
                       <span className="text-zinc-500">
-                        ({profileData?.relocation})
+                        (
+                        {profileData?.relocation
+                          ? "Open to relocate"
+                          : "Not open to relocate"}
+                        )
                       </span>
-                      <div className="flex gap-1 text-zinc-600 text-[13px] items-center">
-                        <LuBuilding2 />{" "}
-                        <ul className="flex gap-0.5">
-                          {profileData?.location_type?.map(
-                            (val: string, index: number) => (
-                              <li key={val}>
-                                {val}{" "}
-                                {profileData?.location_type?.length > 1 &&
-                                  index + 1 !==
-                                    profileData?.location_type?.length &&
-                                  "/"}
-                              </li>
-                            )
-                          )}
-                        </ul>
-                      </div>
+                      {profileData?.locationType?.length > 0 && (
+                        <div className="flex gap-1 text-zinc-600 text-[13px] items-center">
+                          <LuBuilding2 />{" "}
+                          <ul className="flex gap-0.5">
+                            {profileData?.locationType?.map(
+                              (val: string, index: number) => (
+                                <li key={val}>
+                                  {val}{" "}
+                                  {profileData?.locationType?.length > 1 &&
+                                    index + 1 !==
+                                      profileData?.locationType?.length &&
+                                    "/"}
+                                </li>
+                              )
+                            )}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -235,12 +245,23 @@ const ProfilePreview: React.FC = () => {
                   defaultOpen
                 >
                   <div className="">
-                    <ReadMore text={profileData?.professional_summary} />
+                    <ReadMore text={profileData?.professionalSummary} />
 
                     <div className="w-full flex gap-x-3 max-md:flex-wrap gap-y-2 items-center">
-                      <Pill>{8}+ Years of Experience</Pill>
-                      <Pill variant="primary">{"Senior"} Level</Pill>
-                      <Pill variant="none">{"Full Stack Development"}</Pill>
+                      {profileData?.yearsOfExperience && (
+                        <Pill>
+                          {profileData?.yearsOfExperience} Years of Experience
+                        </Pill>
+                      )}
+                      {profileData?.level && (
+                        <Pill variant="primary">
+                          {" "}
+                          {profileData?.level} Level
+                        </Pill>
+                      )}
+                      {profileData?.level && (
+                        <Pill variant="none"> {profileData?.majorSkill}</Pill>
+                      )}
                     </div>
 
                     <div className="mt-3 ">
@@ -259,458 +280,488 @@ const ProfilePreview: React.FC = () => {
                       </button>
                       {showCompetencies && (
                         <div className="py-2 border-t border-stroke w-full flex gap-2 items-center flex-wrap">
-                          <Pill>System Architecture</Pill>{" "}
-                          <Pill>Cloud Infrastructure</Pill>{" "}
-                          <Pill>Agile/Scrum</Pill> <Pill>DevOps</Pill>{" "}
-                          <Pill>API Design</Pill>{" "}
-                          <Pill>Performance Optimization</Pill>
+                          {technicalSkill?.items?.map(
+                            (val: string, index: number) => (
+                              <Pill key={index}>{val}</Pill>
+                            )
+                          )}
                         </div>
                       )}
                     </div>
                   </div>
                 </Accordion2>
-                <Accordion2
-                  title={
-                    <h6 className="text-lg font-medium text-zinc-800">
-                      Career Highlights
-                    </h6>
-                  }
-                  defaultOpen
-                  border={false}
-                >
-                  <div className="">
-                    <div className="grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-3">
-                      {profileData?.career_highlights &&
-                        (showAllCareer
-                          ? profileData.career_highlights
-                          : profileData.career_highlights.slice(0, 3)
-                        ).map((item: any, index: number) => (
-                          <div
-                            key={index}
-                            onClick={() => setSelectedCareer(item)}
-                            className="border border-stroke hover:shadow-md cursor-pointer rounded-lg shadow-sm bg-white p-3"
-                          >
-                            {!item?.thumbnail && (
-                              <div className="w-full text-primary bg-[#EFF6FFCC] h-40 flex justify-center items-center">
-                                <FaImage size={40} />
-                              </div>
-                            )}
-                            <div className="flex justify-between items-start mb-3 pt-2">
-                              <div>
-                                <h6 className="text-base font-medium text-zinc-800 mb-0">
-                                  {item?.title}
-                                </h6>
-                              </div>
-                            </div>
-
-                            <div>
-                              <p className="font-normal text-sm text-zinc-500 pb-4">
-                                {item?.description}
-                              </p>
-                            </div>
-
-                            <div className="w-full flex item-center justify-center border-t border-stroke pt-4">
-                              <button
-                                onClick={() => setCareerModal(true)}
-                                className=" text-blue-600 hover:scale-95 delay-100"
-                              >
-                                View Details
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-
-                    <div className="py-5 w-full flex justify-center items-center">
-                      {profileData?.career_highlights.length > 3 && (
-                        <button
-                          onClick={() => setShowAllCareer(!showAllCareer)}
-                          className="text-primary flex gap-1.5 items-center py-3 text-lg"
-                        >
-                          {showAllCareer ? "See Less" : "Show More"}
-                          <span>
-                            {!showAllCareer ? (
-                              <IoIosArrowDown />
-                            ) : (
-                              <IoIosArrowUp />
-                            )}
-                          </span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </Accordion2>
-                <Accordion2
-                  title={
-                    <h6 className="text-lg font-medium text-zinc-800">
-                      Work Experience
-                    </h6>
-                  }
-                  defaultOpen
-                  border={false}
-                >
-                  <div className="">
-                    <div className="flex flex-col gap-3">
-                      {profileData?.work_experience.map(
-                        (item: any, index: number) => (
-                          <div
-                            key={index}
-                            className="border border-stroke rounded-lg shadow-sm bg-white p-3"
-                          >
-                            <div className="flex justify-between items-start mb-3">
-                              <div>
-                                <h6 className="md:text-lg text-base font-medium text-zinc-800 mb-0">
-                                  {item?.position}
-                                </h6>
-                                <p className=" text-primary max-md:text-sm">
-                                  {item?.company}
-                                </p>
-                              </div>
-                              <div className="flex items-center">
-                                <p className="text-xs text-zinc-500 lg:mr-4">
-                                  {item?.start_year}-
-                                  {item?.end_year ===
-                                  new Date().getFullYear().toString()
-                                    ? "Present"
-                                    : item?.end_year}
-                                </p>
-                              </div>
-                            </div>
-
-                            <div>
-                              <p className="font-normal text-sm text-zinc-500">
-                                {item?.description}
-                              </p>
-                            </div>
-
-                            <div className="my-4">
-                              <p className="text-zinc-800 max-md:text-sm text-base font-medium mb-1">
-                                Key Achievements:
-                              </p>
-                              <ItemList items={item?.key_achievments} />
-                            </div>
-
-                            <div className="mb-4">
-                              <div className="py-2 border-t border-stroke w-full flex gap-2 items-center flex-wrap">
-                                {item?.skills?.map((val: string) => (
-                                  <Pill key={val}>{val}</Pill>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      )}
-                    </div>
-                  </div>
-                </Accordion2>
-                <Accordion2
-                  title={
-                    <h6 className="text-lg font-medium text-zinc-800">
-                      Volunteer Experience
-                    </h6>
-                  }
-                  defaultOpen
-                  border={false}
-                >
-                  <div className="">
-                    <div className="flex flex-col gap-3">
-                      {profileData?.volunteer_experience.map(
-                        (item: any, index: number) => (
-                          <div
-                            key={index}
-                            className="border border-stroke rounded-lg shadow-sm bg-white p-3"
-                          >
-                            <div className="flex justify-between items-start mb-3">
-                              <div>
-                                <h6 className="md:text-lg text-base font-medium text-zinc-800 mb-0">
-                                  {item?.position}
-                                </h6>
-                                <p className=" text-primary max-md:text-sm">
-                                  {item?.company}
-                                </p>
-                              </div>
-                              <div className="flex items-center">
-                                <p className="text-xs text-zinc-500 lg:mr-4">
-                                  {item?.start_year}-
-                                  {item?.end_year ===
-                                  new Date().getFullYear().toString()
-                                    ? "Present"
-                                    : item?.end_year}
-                                </p>
-                              </div>
-                            </div>
-
-                            <div>
-                              <p className="font-normal text-sm text-zinc-500">
-                                {item?.description}
-                              </p>
-                            </div>
-
-                            <div className="my-4">
-                              <p className="text-zinc-800 max-md:text-sm text-base font-medium mb-1">
-                                Key Achievements:
-                              </p>
-                              <ItemList items={item?.key_achievments} />
-                            </div>
-
-                            <div className="mb-4">
-                              <div className="py-2 border-t border-stroke w-full flex gap-2 items-center flex-wrap">
-                                {item?.skills?.map(
-                                  (val: string, idx: number) => (
-                                    <Pill key={idx}>{val}</Pill>
-                                  )
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      )}
-                    </div>
-                  </div>
-                </Accordion2>
-                <Accordion2
-                  title={
-                    <h6 className="text-lg font-medium text-zinc-800">
-                      Internships
-                    </h6>
-                  }
-                  defaultOpen
-                  border={false}
-                >
-                  <div className="">
-                    <div className="flex flex-col gap-3">
-                      {profileData?.internships?.map(
-                        (item: any, index: number) => (
-                          <div
-                            key={index}
-                            className="border border-stroke rounded-lg shadow-sm bg-white p-3"
-                          >
-                            <div className="flex justify-between items-start mb-3">
-                              <div>
-                                <h6 className="md:text-lg text-base font-medium text-zinc-800 mb-0">
-                                  {item?.position}
-                                </h6>
-                                <p className=" text-primary max-md:text-sm">
-                                  {item?.company}
-                                </p>
-                              </div>
-                              <div className="flex items-center">
-                                <p className="text-xs text-zinc-500 lg:mr-4">
-                                  {item?.start_year}-
-                                  {item?.end_year ===
-                                  new Date().getFullYear().toString()
-                                    ? "Present"
-                                    : item?.end_year}
-                                </p>
-                              </div>
-                            </div>
-
-                            <div>
-                              <p className="font-normal text-sm text-zinc-500">
-                                {item?.description}
-                              </p>
-                            </div>
-
-                            <div className="my-4">
-                              <p className="text-zinc-800 max-md:text-sm text-base font-medium mb-1">
-                                Key Achievements:
-                              </p>
-                              <ItemList items={item?.key_achievments} />
-                            </div>
-
-                            <div className="mb-4">
-                              <div className="py-2 border-t border-stroke w-full flex gap-2 items-center flex-wrap">
-                                {item?.skills?.map(
-                                  (val: string, idx: number) => (
-                                    <Pill key={idx}>{val}</Pill>
-                                  )
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      )}
-                    </div>
-                  </div>
-                </Accordion2>
-                <Accordion2
-                  title={
-                    <h6 className="text-lg font-medium text-zinc-800">
-                      Education
-                    </h6>
-                  }
-                  defaultOpen
-                  border={false}
-                >
-                  <div className="">
-                    <div className="flex flex-col gap-3">
-                      {profileData?.education?.map(
-                        (item: any, index: number) => (
-                          <div
-                            key={index}
-                            className="border border-stroke rounded-lg shadow-sm bg-white p-3"
-                          >
-                            <div className="flex justify-between items-start mb-3">
-                              <div>
-                                <h6 className="md:text-lg text-base font-medium text-zinc-800 mb-0">
-                                  {item?.degree}
-                                </h6>
-                                <p className=" text-primary max-md:text-sm">
-                                  {item?.school}
-                                </p>
-                              </div>
-                              <div className="flex items-center">
-                                <p className="text-xs text-zinc-500 lg:mr-4">
-                                  {item?.start_year}-
-                                  {item?.active ? "Present" : item?.end_year}
-                                </p>
-                              </div>
-                            </div>
-
-                            <div>
-                              <p className="font-normal text-sm text-zinc-500">
-                                {item?.description}
-                              </p>
-                            </div>
-                          </div>
-                        )
-                      )}
-                    </div>
-                  </div>
-                </Accordion2>
-                <Accordion2
-                  title={
-                    <h6 className="text-lg font-medium text-zinc-800">
-                      Certifications and Trainings
-                    </h6>
-                  }
-                  defaultOpen
-                  border={false}
-                >
-                  <div className="">
-                    <div className="flex flex-col gap-3">
-                      {profileData?.certifications?.map(
-                        (item: any, index: number) => (
-                          <div
-                            key={index}
-                            className="border border-stroke rounded-lg shadow-sm bg-white p-3"
-                          >
-                            <div className="flex justify-between items-start mb-3">
-                              <div>
-                                <h6 className="text-base font-medium text-zinc-800 mb-0">
-                                  {item?.title}
-                                </h6>
-                                <p className=" text-primary max-md:text-sm">
-                                  {item?.platform}
-                                </p>
-                              </div>
-                              <div className="flex items-center">
-                                <p className="text-xs text-zinc-500 lg:mr-4">
-                                  {item?.date}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      )}
-                    </div>
-                  </div>
-                </Accordion2>
-                <Accordion2
-                  title={
-                    <h6 className="text-lg font-medium text-zinc-800">
-                      Professional Reference
-                    </h6>
-                  }
-                  defaultOpen
-                  border={false}
-                >
-                  <div className="">
-                    <div className="flex 2xl:flex-row flex-col w-full gap-4">
-                      {profileData?.professional_reference?.map(
-                        (item: any, index: number) => (
-                          <div
-                            key={index}
-                            className="border border-stroke h-full rounded-lg shadow-sm bg-white p-3"
-                          >
-                            <div className="flex w-full items-start gap-4">
-                              <span className="text-zinc-500 text-lg mt-2">
-                                {" "}
-                                <FaRegUserCircle size={18} />
-                              </span>
-                              <div className="flex w-full justify-between items-start mb-3">
-                                <div>
-                                  <h6 className="md:text-lg text-base font-medium text-zinc-800 mb-0">
-                                    {item?.name}
-                                  </h6>
-                                  <p className=" text-primary max-md:text-sm mb-2">
-                                    {item?.role}
-                                  </p>
-                                  <p className=" text-zinc-500 max-md:text-sm mb-1">
-                                    {item?.company}
-                                  </p>
-                                  <p className=" text-zinc-500 max-md:text-sm">
-                                    Relationship: {item?.relationship}
-                                  </p>
-                                  <p className="text-zinc-500 max-md:text-sm mt-2.5">
-                                    Contact Information:{" "}
-                                    {item?.email && (
-                                      <span>(E)- {item?.email}</span>
-                                    )}
-                                    {item?.phone && (
-                                      <span className="ml-2">
-                                        (P)- {item?.phone}
-                                      </span>
-                                    )}
-                                  </p>
+                {profileData?.config?.careerHighlights && (
+                  <Accordion2
+                    title={
+                      <h6 className="text-lg font-medium text-zinc-800">
+                        Career Highlights
+                      </h6>
+                    }
+                    defaultOpen
+                    border={false}
+                  >
+                    <div className="">
+                      <div className="grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-3">
+                        {profileData?.careerHighlights &&
+                          (showAllCareer
+                            ? profileData.careerHighlights
+                            : profileData.careerHighlights.slice(0, 3)
+                          ).map((item: any, index: number) => (
+                            <div
+                              key={index}
+                              onClick={() => setSelectedCareer(item)}
+                              className="border border-stroke hover:shadow-md cursor-pointer rounded-lg shadow-sm bg-white p-3"
+                            >
+                              {!item?.thumbnail && (
+                                <div className="w-full text-primary bg-[#EFF6FFCC] h-40 flex justify-center items-center">
+                                  <FaImage size={40} />
                                 </div>
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      )}
-                    </div>
-                  </div>
-                </Accordion2>
-                <Accordion2
-                  title={
-                    <h6 className="text-lg font-medium text-zinc-800">
-                      Membership & Affiliation
-                    </h6>
-                  }
-                  defaultOpen
-                  border={false}
-                >
-                  <div className="">
-                    <div className="flex 2xl:flex-row flex-col w-full gap-4">
-                      {profileData?.memberships?.map(
-                        (item: any, index: number) => (
-                          <div
-                            key={index}
-                            className="border border-stroke h-full rounded-lg shadow-sm bg-white p-3"
-                          >
-                            <div className="flex w-full items-start gap-4">
-                              <span className="text-zinc-500 text-lg mt-2">
-                                {" "}
-                                <FaRegUserCircle size={18} />
-                              </span>
-                              <div className="flex w-full justify-between items-start mb-3">
+                              )}
+                              <div className="flex justify-between items-start mb-3 pt-2">
                                 <div>
-                                  <h6 className="text-base break-words font-medium text-zinc-800 mb-0">
+                                  <h6 className="text-base font-medium text-zinc-800 mb-0">
                                     {item?.title}
                                   </h6>
-                                  <p className=" text-primary max-md:text-sm mb-2">
-                                    {item?.role}
+                                </div>
+                              </div>
+
+                              <div>
+                                <p className="font-normal text-sm text-zinc-500 pb-4">
+                                  {item?.description}
+                                </p>
+                              </div>
+
+                              <div className="w-full flex item-center justify-center border-t border-stroke pt-4">
+                                <button
+                                  onClick={() => setCareerModal(true)}
+                                  className=" text-blue-600 hover:scale-95 delay-100"
+                                >
+                                  View Details
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+
+                      <div className="py-5 w-full flex justify-center items-center">
+                        {profileData?.careerHighlights.length > 3 && (
+                          <button
+                            onClick={() => setShowAllCareer(!showAllCareer)}
+                            className="text-primary flex gap-1.5 items-center py-3 text-lg"
+                          >
+                            {showAllCareer ? "See Less" : "Show More"}
+                            <span>
+                              {!showAllCareer ? (
+                                <IoIosArrowDown />
+                              ) : (
+                                <IoIosArrowUp />
+                              )}
+                            </span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </Accordion2>
+                )}
+                {profileData?.config?.workExperience && (
+                  <Accordion2
+                    title={
+                      <h6 className="text-lg font-medium text-zinc-800">
+                        Work Experience
+                      </h6>
+                    }
+                    defaultOpen
+                    border={false}
+                  >
+                    <div className="">
+                      <div className="flex flex-col gap-3">
+                        {profileData?.workExperience.map(
+                          (item: any, index: number) => (
+                            <div
+                              key={index}
+                              className="border border-stroke rounded-lg shadow-sm bg-white p-3"
+                            >
+                              <div className="flex justify-between items-start mb-3">
+                                <div>
+                                  <h6 className="md:text-lg text-base font-medium text-zinc-800 mb-0">
+                                    {item?.title}
+                                  </h6>
+                                  <p className=" text-primary max-md:text-sm">
+                                    {item?.company}
+                                  </p>
+                                </div>
+                                <div className="flex items-center">
+                                  <p className="text-xs text-zinc-500 lg:mr-4">
+                                    {item?.startDate &&
+                                      formatMonthYear(item?.startDate)}
+                                    -
+                                    {item?.active
+                                      ? "Present"
+                                      : item?.endDate &&
+                                        formatMonthYear(item?.endDate)}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div>
+                                <p className="font-normal text-sm text-zinc-500">
+                                  {item?.description}
+                                </p>
+                              </div>
+
+                              <div className="my-4">
+                                <p className="text-zinc-800 max-md:text-sm text-base font-medium mb-1">
+                                  Key Achievements:
+                                </p>
+                                <ItemList items={item?.keyAchievements} />
+                              </div>
+
+                              <div className="mb-4">
+                                <div className="py-2 border-t border-stroke w-full flex gap-2 items-center flex-wrap">
+                                  {item?.skills?.map((val: string) => (
+                                    <Pill key={val}>{val}</Pill>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  </Accordion2>
+                )}
+                {profileData?.config?.volunteerExperience && (
+                  <Accordion2
+                    title={
+                      <h6 className="text-lg font-medium text-zinc-800">
+                        Volunteer Experience
+                      </h6>
+                    }
+                    defaultOpen
+                    border={false}
+                  >
+                    <div className="">
+                      <div className="flex flex-col gap-3">
+                        {profileData?.volunteerExperience.map(
+                          (item: any, index: number) => (
+                            <div
+                              key={index}
+                              className="border border-stroke rounded-lg shadow-sm bg-white p-3"
+                            >
+                              <div className="flex justify-between items-start mb-3">
+                                <div>
+                                  <h6 className="md:text-lg text-base font-medium text-zinc-800 mb-0">
+                                    {item?.title}
+                                  </h6>
+                                  <p className=" text-primary max-md:text-sm">
+                                    {item?.company}
+                                  </p>
+                                </div>
+                                <div className="flex items-center">
+                                  <p className="text-xs text-zinc-500 lg:mr-4">
+                                    {item?.startDate &&
+                                      formatMonthYear(item?.startDate)}{" "}
+                                    -{" "}
+                                    {item?.endDate &&
+                                      formatMonthYear(item?.endDate)}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div>
+                                <p className="font-normal text-sm text-zinc-500">
+                                  {item?.description}
+                                </p>
+                              </div>
+
+                              <div className="my-4">
+                                <p className="text-zinc-800 max-md:text-sm text-base font-medium mb-1">
+                                  Key Achievements:
+                                </p>
+                                <ItemList items={item?.keyAchievements} />
+                              </div>
+
+                              <div className="mb-4">
+                                <div className="py-2 border-t border-stroke w-full flex gap-2 items-center flex-wrap">
+                                  {item?.skills?.map(
+                                    (val: string, idx: number) => (
+                                      <Pill key={idx}>{val}</Pill>
+                                    )
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  </Accordion2>
+                )}
+                {profileData?.config?.internships && (
+                  <Accordion2
+                    title={
+                      <h6 className="text-lg font-medium text-zinc-800">
+                        Internships
+                      </h6>
+                    }
+                    defaultOpen
+                    border={false}
+                  >
+                    <div className="">
+                      <div className="flex flex-col gap-3">
+                        {profileData?.internships?.map(
+                          (item: any, index: number) => (
+                            <div
+                              key={index}
+                              className="border border-stroke rounded-lg shadow-sm bg-white p-3"
+                            >
+                              <div className="flex justify-between items-start mb-3">
+                                <div>
+                                  <h6 className="md:text-lg text-base font-medium text-zinc-800 mb-0">
+                                    {item?.title}
+                                  </h6>
+                                  <p className=" text-primary max-md:text-sm">
+                                    {item?.company}
+                                  </p>
+                                </div>
+                                <div className="flex items-center">
+                                  <p className="text-xs text-zinc-500 lg:mr-4">
+                                    {item?.startDate &&
+                                      formatMonthYear(item?.startDate)}
+                                    -
+                                    {item?.active
+                                      ? "Present"
+                                      : item?.endDate &&
+                                        formatMonthYear(item?.endDate)}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div>
+                                <p className="font-normal text-sm text-zinc-500">
+                                  {item?.description}
+                                </p>
+                              </div>
+
+                              <div className="my-4">
+                                <p className="text-zinc-800 max-md:text-sm text-base font-medium mb-1">
+                                  Key Achievements:
+                                </p>
+                                <ItemList items={item?.keyAchievements} />
+                              </div>
+
+                              <div className="mb-4">
+                                <div className="py-2 border-t border-stroke w-full flex gap-2 items-center flex-wrap">
+                                  {item?.skills?.map(
+                                    (val: string, idx: number) => (
+                                      <Pill key={idx}>{val}</Pill>
+                                    )
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  </Accordion2>
+                )}
+                {profileData?.config?.education && (
+                  <Accordion2
+                    title={
+                      <h6 className="text-lg font-medium text-zinc-800">
+                        Education
+                      </h6>
+                    }
+                    defaultOpen
+                    border={false}
+                  >
+                    <div className="">
+                      <div className="flex flex-col gap-3">
+                        {profileData?.education?.map(
+                          (item: any, index: number) => (
+                            <div
+                              key={index}
+                              className="border border-stroke rounded-lg shadow-sm bg-white p-3"
+                            >
+                              <div className="flex justify-between items-start mb-3">
+                                <div>
+                                  <h6 className="md:text-lg text-base font-medium text-zinc-800 mb-0">
+                                    {item?.degree}
+                                  </h6>
+                                  <p className=" text-primary max-md:text-sm">
+                                    {item?.institution}
+                                  </p>
+                                </div>
+                                <div className="flex items-center">
+                                  <p className="text-xs text-zinc-500 lg:mr-4">
+                                    {item?.startDate &&
+                                      formatMonthYear(item?.startDate)}
+                                    -
+                                    {item?.active
+                                      ? "Present"
+                                      : item?.endDate &&
+                                        formatMonthYear(item?.endDate)}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div>
+                                <p className="font-normal text-sm text-zinc-500">
+                                  {item?.description}
+                                </p>
+                              </div>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  </Accordion2>
+                )}
+                {profileData?.config?.certifications && (
+                  <Accordion2
+                    title={
+                      <h6 className="text-lg font-medium text-zinc-800">
+                        Certifications and Trainings
+                      </h6>
+                    }
+                    defaultOpen
+                    border={false}
+                  >
+                    <div className="">
+                      <div className="flex flex-col gap-3">
+                        {profileData?.certifications?.map(
+                          (item: any, index: number) => (
+                            <div
+                              key={index}
+                              className="border border-stroke rounded-lg shadow-sm bg-white p-3"
+                            >
+                              <div className="flex justify-between items-start mb-3">
+                                <div>
+                                  <h6 className="text-base font-medium text-zinc-800 mb-0">
+                                    {item?.name}
+                                  </h6>
+                                  <p className=" text-primary max-md:text-sm">
+                                    {item?.institution}
+                                  </p>
+                                </div>
+                                <div className="flex items-center">
+                                  <p className="text-xs text-zinc-500 lg:mr-4">
+                                    {formatMonthYear(item?.date)}
                                   </p>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        )
-                      )}
+                          )
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </Accordion2>
+                  </Accordion2>
+                )}
+                {profileData?.config?.references && (
+                  <Accordion2
+                    title={
+                      <h6 className="text-lg font-medium text-zinc-800">
+                        Professional Reference
+                      </h6>
+                    }
+                    defaultOpen
+                    border={false}
+                  >
+                    <div className="">
+                      <div className="flex 2xl:flex-row flex-col w-full gap-4">
+                        {profileData?.references?.map(
+                          (item: any, index: number) => (
+                            <div
+                              key={index}
+                              className="border border-stroke h-full rounded-lg shadow-sm bg-white p-3"
+                            >
+                              <div className="flex w-full items-start gap-4">
+                                <span className="text-zinc-500 text-lg mt-2">
+                                  {" "}
+                                  <FaRegUserCircle size={18} />
+                                </span>
+                                <div className="flex w-full justify-between items-start mb-3">
+                                  <div>
+                                    <h6 className="md:text-lg text-base font-medium text-zinc-800 mb-0">
+                                      {item?.name}
+                                    </h6>
+                                    <p className=" text-primary max-md:text-sm mb-2">
+                                      {item?.title}
+                                    </p>
+                                    <p className=" text-zinc-500 max-md:text-sm mb-1">
+                                      {item?.company}
+                                    </p>
+                                    <p className=" text-zinc-500 max-md:text-sm">
+                                      Relationship: {item?.relationship}
+                                    </p>
+                                    <p className="text-zinc-500 max-md:text-sm mt-2.5">
+                                      Contact Information:{" "}
+                                      {item?.email && (
+                                        <span>(E)- {item?.email}</span>
+                                      )}
+                                      {item?.phone && (
+                                        <span className="ml-2">
+                                          (P)- {item?.phone}
+                                        </span>
+                                      )}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  </Accordion2>
+                )}
+                {profileData?.config?.memberships && (
+                  <Accordion2
+                    title={
+                      <h6 className="text-lg font-medium text-zinc-800">
+                        Membership & Affiliation
+                      </h6>
+                    }
+                    defaultOpen
+                    border={false}
+                  >
+                    <div className="">
+                      <div className="flex 2xl:flex-row flex-col w-full gap-4">
+                        {profileData?.memberships?.map(
+                          (item: any, index: number) => (
+                            <div
+                              key={index}
+                              className="border border-stroke h-full rounded-lg shadow-sm bg-white p-3"
+                            >
+                              <div className="flex w-full items-start gap-4">
+                                <span className="text-zinc-500 text-lg mt-2">
+                                  {" "}
+                                  <FaRegUserCircle size={18} />
+                                </span>
+                                <div className="flex w-full justify-between items-start mb-3">
+                                  <div>
+                                    <h6 className="text-base break-words font-medium text-zinc-800 mb-0">
+                                      {item?.title}
+                                    </h6>
+                                    <p className=" text-primary max-md:text-sm mb-2">
+                                      {item?.role}
+                                    </p>
+                                  </div>
+                                  <div className="flex items-center">
+                                    <p className="text-xs text-zinc-500 lg:mr-4">
+                                      {formatMonthYear(item?.date)}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  </Accordion2>
+                )}
               </div>
             </div>
           </section>
@@ -753,7 +804,7 @@ const ProfilePreview: React.FC = () => {
                 )}
               </div>
 
-              {selectedCareer?.attachment && (
+              {selectedCareer?.attachments?.link && (
                 <div>
                   <div className="mt-6">
                     <p className="text-base font-semibold text-zinc-600 mb-1">
@@ -799,16 +850,22 @@ const ProfilePreview: React.FC = () => {
         </Fragment>
       ) : (
         <div className="h-screen flex w-full justify-center text-center items-center">
-          <div className="flex flex-col justify-center bg-white px-3 py-9 rounded-[32px] shadow-xl xl:max-w-[75%] items-center">
-            <img src={EmptyImg} alt="" className="max-w-[300px] mb-6" />
+          <div className="flex flex-col w-full bg-white shadow-xl px-3 py-9 rounded-md xl:max-w-[75%] items-center">
+            <img src={EmptyImg} alt="" className="max-w-[300px]" />
             <h2 className="text-2xl font-outfit font-bold text-zinc-800 mb-3">
-              No Data Found!
+              Resume Data Unavailable!
             </h2>
-            <p className="text-zinc-600 font-normal px-3 mb-9">
-              We could not find any data for this user. This could be a network
-              error, or their data is no longer on our database <br /> Please,
-              try again in some minutes
+            <p className="text-zinc-600 font-normal px-3 mb-4">
+              This could be a network error <br /> Please, try again in some
+              minutes
             </p>
+
+            <button
+              onClick={() => navigate(-1)}
+              className="px-5 xl:w-[300px] py-2.5 font-medium rounded-md bg-primary text-white hover:scale-105 duration-200 mb-9"
+            >
+              Go Back
+            </button>
           </div>
         </div>
       )}

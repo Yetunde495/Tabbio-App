@@ -18,6 +18,11 @@ import { FaRegCalendar, FaRegClock } from "react-icons/fa6";
 import { LuBuilding2 } from "react-icons/lu";
 import { MdShare } from "react-icons/md";
 import { IoMdArrowDropdown } from "react-icons/io";
+import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
+import { getProfileAnalytics } from "../../services/profileServices";
+import { useApp } from "../../context/AppContext";
+import Notification from "../../components/Notification";
 
 type ResumeAnalyticsProps = {
   show?: boolean;
@@ -25,11 +30,54 @@ type ResumeAnalyticsProps = {
 };
 
 const ResumeAnalytics: React.FC<ResumeAnalyticsProps> = ({ show, onHide }) => {
+  const { user } = useApp();
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(7);
-  const [allViews, _setAllViews] = useState<any[]>(analyticsData);
+  const [allViews, setAllViews] = useState<any[]>(analyticsData);
+  const [date, setDate] = useState("");
 
-  const pagination = paginate(5, Number(page), Number(itemsPerPage));
+  const { data, isLoading } = useQuery(
+    ["PROFILE ANALYTICS", page, itemsPerPage, date],
+    getProfileAnalytics,
+    {
+      keepPreviousData: true,
+      enabled: !!user?._id,
+      onSuccess: (data: any) => {
+        setAllViews(data?.data?.recentActivities);
+      },
+      onError: (err: any) => {
+        toast(
+          <Notification variant="error" title="Request Failed!">
+            {err.message}
+          </Notification>,
+          {
+            type: "error",
+            hideProgressBar: true,
+            toastId: Date.now() + "@USER_FILTER_ERROR",
+          }
+        );
+      },
+    }
+  );
+
+  const pagination = paginate(
+    data?.total || 0,
+    Number(page),
+    Number(itemsPerPage)
+  );
+
+  const formatDate = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const getDateFromToday = (days: number): string => {
+    const date = new Date();
+    date.setDate(date.getDate() - days);
+    return formatDate(date);
+  };
 
   if (!show) {
     return null;
@@ -95,9 +143,12 @@ const ResumeAnalytics: React.FC<ResumeAnalyticsProps> = ({ show, onHide }) => {
                   Total Views
                 </p>
                 <p className="my-3 text-zinc-950 text-lg font-semibold">
-                  1, 247
+                  {data?.data?.performance?.totalViews || 0}
                 </p>
-                <p className="text-primary">+12% this week</p>
+                <p className="text-primary">
+                  +{data?.data?.performance?.weeklyGrowth?.views || 0}% this
+                  week
+                </p>
               </div>
               <div className="p-3 bg-primary/5 border border-stroke rounded-2xl">
                 <p className="flex items-center gap-2">
@@ -107,9 +158,12 @@ const ResumeAnalytics: React.FC<ResumeAnalyticsProps> = ({ show, onHide }) => {
                   Total Downloads
                 </p>
                 <p className="my-3 text-zinc-950 text-lg font-semibold">
-                  1, 247
+                  {data?.data?.performance?.totalDownloads || 0}
                 </p>
-                <p className="text-primary">+12% this week</p>
+                <p className="text-primary">
+                  +{data?.data?.performance?.weeklyGrowth?.downloads || 0}% this
+                  week
+                </p>
               </div>
               <div className="p-3 bg-primary/5 border border-stroke rounded-2xl">
                 <p className="flex items-center gap-2">
@@ -119,9 +173,12 @@ const ResumeAnalytics: React.FC<ResumeAnalyticsProps> = ({ show, onHide }) => {
                   Total Shares
                 </p>
                 <p className="my-3 text-zinc-950 text-lg font-semibold">
-                  1, 247
+                  {data?.data?.performance?.totalShares || 0}
                 </p>
-                <p className="text-primary">+12% this week</p>
+                <p className="text-primary">
+                  +{data?.data?.performance?.weeklyGrowth?.shares || 0}% this
+                  week
+                </p>
               </div>
               <div className="p-3 bg-primary/5 border border-stroke rounded-2xl">
                 <p className="flex items-center gap-2">
@@ -131,14 +188,17 @@ const ResumeAnalytics: React.FC<ResumeAnalyticsProps> = ({ show, onHide }) => {
                   Total Saves
                 </p>
                 <p className="my-3 text-zinc-950 text-lg font-semibold">
-                  1, 247
+                  {data?.data?.performance?.totalSaves || 0}
                 </p>
-                <p className="text-primary">+12% this week</p>
+                <p className="text-primary">
+                  +{data?.data?.performance?.weeklyGrowth?.saves || 0}% this
+                  week
+                </p>
               </div>
             </div>
 
             <div className="mt-10">
-              {false ? (
+              {isLoading ? (
                 <TableLoader />
               ) : allViews?.length > 0 ? (
                 <>
@@ -148,15 +208,22 @@ const ResumeAnalytics: React.FC<ResumeAnalyticsProps> = ({ show, onHide }) => {
                     </span>
                     <div className="relative z-20 w-[90%] bg-transparent dark:bg-form-input">
                       <select
-                        onChange={() => {}}
+                        onChange={(e) => {
+                          setDate(e.target.value);
+                        }}
                         className="relative z-20 w-full px-2 appearance-none
                      bg-transparent outline-none text-zinc-700
                     transition  border-none font-medium
                     bg-white"
                       >
                         <option value={""}>All</option>
-                        <option>Last 7 days</option>
-                        <option>Last 30 days</option>
+                        <option value={getDateFromToday(7)}>Last 7 days</option>
+                        <option value={getDateFromToday(15)}>
+                          Last 15 days
+                        </option>
+                        <option value={getDateFromToday(30)}>
+                          Last 30 days
+                        </option>
                       </select>
                       <span className="absolute top-1/2  cursor-pointer pointer-events-none right-2 z-30 -translate-y-1/2">
                         <IoMdArrowDropdown />
@@ -184,7 +251,7 @@ const ResumeAnalytics: React.FC<ResumeAnalyticsProps> = ({ show, onHide }) => {
                               </span>
                               <div>
                                 <p className=" text-zinc-500">
-                                  {data?.name || "Anonymous"}
+                                  {data?.company || "Anonymous"}
                                 </p>
                               </div>
                             </div>
@@ -232,7 +299,7 @@ const ResumeAnalytics: React.FC<ResumeAnalyticsProps> = ({ show, onHide }) => {
                     allViews?.length === 0
                   }
                 >
-                  No Data found
+                  No Profile Actions Data found
                 </Table.NoData>
               )}
             </div>

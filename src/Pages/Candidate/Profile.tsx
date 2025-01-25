@@ -162,8 +162,8 @@ const SmartResumeSettings: React.FC<{
                   </span>
                 ) : (
                   <Switch
-                    value={profileData?.isLive}
-                    checked={profileData?.isLive}
+                    value={profileData?.config?.isLive}
+                    checked={profileData?.config?.isLive}
                     onChange={(value) => {
                       handleUpdateProfile({
                         config: {

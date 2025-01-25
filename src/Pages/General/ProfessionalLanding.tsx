@@ -29,7 +29,7 @@ import { useApp } from "../../context/AppContext";
 
 const ProfessionalLandingpage: React.FC = () => {
   const navigate = useNavigate();
-  const {setParsedResume} = useApp()
+  const { setParsedResume } = useApp();
   const [colorMode, setColorMode] = useColorMode();
   const [hasEntered, setHasEntered] = useState(false);
 
@@ -76,8 +76,20 @@ const ProfessionalLandingpage: React.FC = () => {
             onChange={() => {}}
             maxWidth="max-w-[800px]"
             onSuccess={(response) => {
-              setParsedResume(response?.data?.profile)
-              navigate("/live-resume")
+              if (response?.data?.profile?.template) {
+                setParsedResume(response?.data?.profile);
+              } else {
+                setParsedResume({
+                  ...response?.data?.profile,
+                  template: "professional",
+                  style: {
+                    fontFamily: "Times New Roman",
+                    primaryColor: "#0077B5",
+                    fontSize: "medium",
+                  },
+                });
+              }
+              navigate("/live-resume");
             }}
           />
         </div>

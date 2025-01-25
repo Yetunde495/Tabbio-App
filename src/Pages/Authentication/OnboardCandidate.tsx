@@ -3,23 +3,34 @@ import Modal from "../../components/modal";
 import { FormProvider, useForm } from "react-hook-form";
 import { AutoInput } from "../../components/form/customInput";
 import { PasswordInput } from "../../components/form";
-import { FcGoogle } from "react-icons/fc";
-import { BsLinkedin, BsPatchCheckFill } from "react-icons/bs";
+import { BsPatchCheckFill } from "react-icons/bs";
 import { toast } from "react-toastify";
 import logo from "../../assets/brand/logo-1.svg";
 import { MdOutlineEmail } from "react-icons/md";
 import { formatEmail } from "../../lib/utils/formatters";
 import classNames from "classnames";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import {
+  registerUser,
+  sendOtp,
+  verifyEmailOtp,
+} from "../../services/authServices";
+import { useApp } from "../../context/AppContext";
+import { SaveProfile } from "../../services/profileServices";
 
-const OnboardCandidate: React.FC<{ show:boolean, onHide: () => void }> = ({ show, onHide }) => {
+const OnboardCandidate: React.FC<{
+  show: boolean;
+  onHide: () => void;
+  profileData: any;
+}> = ({ show, onHide, profileData }) => {
   const [showSignup, setShowSignup] = useState(true);
+  const navigate = useNavigate();
+  const { signIn } = useApp();
+
   const [isLoading, setIsLoading] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState<boolean | null>(null);
   const [confirmPassword, setConfirmPassword] = useState(false);
   const [email, setEmail] = useState("");
-  //   const [success, setSuccess] = useState(false);
-
   const [showVerify, setShowVerify] = useState(false);
 
   const methods = useForm<any>();
@@ -33,8 +44,6 @@ const OnboardCandidate: React.FC<{ show:boolean, onHide: () => void }> = ({ show
   const [isValid, setIsValid] = useState(true);
   const [loading, setLoading] = useState(false);
   const [isSuccess, setSuccess] = useState<boolean>(false);
-
-  
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -69,8 +78,19 @@ const OnboardCandidate: React.FC<{ show:boolean, onHide: () => void }> = ({ show
       }
     );
 
+  const sendOTP = async () => {
+    setIsLoading(true);
+    try {
+      await sendOtp();
+      setShowVerify(true);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const onSubmit = async (data: any) => {
-    if (data.password === data.confirm_password) {
+    if (data.password === data.confirmPassword) {
       setConfirmPassword(true);
       setIsConfirmed(true);
     } else if (!confirmPassword) {
@@ -84,45 +104,54 @@ const OnboardCandidate: React.FC<{ show:boolean, onHide: () => void }> = ({ show
       console.log("Validation errors:", errors);
       return;
     }
-
+    setIsLoading(true);
     try {
-      setIsLoading(true);
+      const resp = await registerUser(data);
+      signIn({
+        email: data?.email,
+        token: resp?.token,
+        user_id: resp?.data?.user?.id,
+        ...resp?.data?.user,
+      });
       setEmail(data?.email || "");
       setShowSignup(false);
-      setShowVerify(true);
+      sendOTP();
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error(err.message || "Request Failed! Try again");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const SendOTP = async () => {
-    setIsLoading(true);
+  const handleCreateProfile = async () => {
+    const toastId = toast.loading("Setting up your Profile...");
+    setLoading(true);
+    setSuccess(true);
     try {
-      // const response = await sendResetOtp({
-      //   email: email,
-      // });
-      // toast.success(response?.message);
-      setSuccess(true);
+      await SaveProfile(profileData);
+      toast.update(toastId, {
+        render: "Your Professional Profile has been setup successfully",
+        type: "success",
+        isLoading: false,
+        closeButton: true,
+        autoClose: 3000,
+      });
     } catch (err: any) {
-      toast.error(err.message);
+      toast.dismiss(toastId);
+      toast.error(err?.message || "Request Failed");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   const handleVerifyOtp = async () => {
     setLoading(true);
-    // const data = {
-    //   to: email,
-    //   otp_code: otpValue,
-    // };
     try {
-      // const response = await verifyResetOtp(data);
-      // toast.success("Account verification Successfull!");
-      setShowVerify(false)
-      setSuccess(true)
+      await verifyEmailOtp({
+        pin: otpValue,
+      });
+      setShowVerify(false);
+      handleCreateProfile();
     } catch (err: any) {
       setIsValid(false);
       toast.error(err.message);
@@ -130,6 +159,7 @@ const OnboardCandidate: React.FC<{ show:boolean, onHide: () => void }> = ({ show
       setLoading(false);
     }
   };
+
   return (
     <Modal
       show={show}
@@ -147,7 +177,6 @@ const OnboardCandidate: React.FC<{ show:boolean, onHide: () => void }> = ({ show
             <h1 className="lg:text-[32px] text-center text-zinc-900 mb-6 font-medium sm:text-[30px] text-[20px] dark:text-white leading-[38px]">
               Create an account
             </h1>
-            
           </div>
           <div className="w-full flex justify-center items-center">
             <div className="w-full">
@@ -158,7 +187,7 @@ const OnboardCandidate: React.FC<{ show:boolean, onHide: () => void }> = ({ show
                       <div className="grid gap-6">
                         <AutoInput
                           label="First Name"
-                          name="first_name"
+                          name="firstName"
                           placeholder="Enter first name"
                           rules={{
                             required: "First name is required",
@@ -172,7 +201,7 @@ const OnboardCandidate: React.FC<{ show:boolean, onHide: () => void }> = ({ show
 
                         <AutoInput
                           label="Last Name"
-                          name="last_name"
+                          name="lastName"
                           placeholder="Enter last name"
                           rules={{
                             required: "Last name is required",
@@ -209,7 +238,7 @@ const OnboardCandidate: React.FC<{ show:boolean, onHide: () => void }> = ({ show
                         <div className="space-y-2 flex flex-col">
                           <PasswordInput
                             label="Confirm Password"
-                            name="confirm_password"
+                            name="confirmPassword"
                             placeholder="Enter Password"
                             togglePassword={togglePassword}
                             onTogglePassword={setTogglePassword}
@@ -238,43 +267,6 @@ const OnboardCandidate: React.FC<{ show:boolean, onHide: () => void }> = ({ show
                 </form>
               </FormProvider>
             </div>
-          </div>
-           <div className="my-6 text-center flex flex-col w-full justify-center  items-center space-y-6">
-            <div className="flex items-center mt-1 w-full">
-              <hr className="border-t-2  w-[30%] border-zinc-300" />
-              <span className="mx-2 text-base text-center rounded-md py-1 px-2 text-zinc-400">
-                or continue with
-              </span>
-              <hr className="border-t-2  w-[30%] border-zinc-300" />
-            </div>
-            <div className="flex w-full items-center justify-center gap-5">
-              <button
-                className="bg-transparent flex items-center justify-center gap-3 rounded-full hover:border-primary border border-slate-300 w-[200px] py-2 px-8"
-                onClick={() => {}}
-                disabled={isLoading}
-              >
-                <FcGoogle size={20} />
-                {isLoading ? "Signing in..." : "Google"}
-              </button>
-
-              <button
-                className="bg-transparent flex items-center justify-center gap-3 rounded-full border border-slate-300 hover:border-primary w-[200px] py-2 px-8"
-                onClick={() => {}}
-                disabled={isLoading}
-              >
-                <BsLinkedin className="text-primary" size={20} />
-                {isLoading ? "Signing in..." : "Linkedin"}
-              </button>
-            </div>
-
-            <p className="text-center text-zinc-800 mt-4 dark:text-slate-100">
-              Already have an account?{" "}
-              <span>
-                <Link to="/signin" className="text-primary hover:opacity-95">
-                  Sign In
-                </Link>
-              </span>
-            </p>
           </div>
         </div>
       )}
@@ -333,7 +325,7 @@ const OnboardCandidate: React.FC<{ show:boolean, onHide: () => void }> = ({ show
                   <span
                     className="text-primary hover:opacity-95 cursor-pointer ml-1"
                     onClick={() => {
-                      SendOTP();
+                      sendOTP();
                     }}
                   >
                     {isLoading ? "Resending" : "Click to resend"}{" "}
@@ -346,20 +338,36 @@ const OnboardCandidate: React.FC<{ show:boolean, onHide: () => void }> = ({ show
       )}
 
       {isSuccess && (
-         <div className="flex w-full flex-col justify-center items-center">
-        <h1 className="text-3xl font-semibold text-center mb-2">
-          Successfull!
-         </h1>
-         <BsPatchCheckFill
-           size={58}
-           className="mb-4 text-primary text-lg animate-pulse"
-         />
-      
-         <p className="text-zinc-600 font-normal text-center pb-6 lg:px-6">
-           Your account has been successfully verified. Please, wait while we create your unique link. <br />
-           
-         </p>
-       </div>
+        <div className="flex w-full flex-col justify-center items-center">
+          <h1 className="text-3xl font-semibold text-center mb-2">
+            Successfull!
+          </h1>
+          <BsPatchCheckFill
+            size={58}
+            className="mb-4 text-primary text-lg animate-pulse"
+          />
+
+          {loading ? (
+            <p className="text-zinc-600 font-normal text-center pb-6 lg:px-6">
+              Your account has been successfully verified. Please, wait while we
+              setup your professional profile and create your unique link.{" "}
+              <br />
+            </p>
+          ) : (
+            <p className="text-zinc-600 font-normal text-center pb-6 lg:px-6">
+              Successful! Please, sign in to access your profile <br />
+            </p>
+          )}
+
+          <div className="w-full flex justify-center items-center">
+            <button
+              onClick={() => navigate("/signin")}
+              className="bg-primary px-6 py-2.5 rounded-md hover:scale-105 duration-200 text-white font-medium text-lg"
+            >
+              Go to Signin
+            </button>
+          </div>
+        </div>
       )}
     </Modal>
   );

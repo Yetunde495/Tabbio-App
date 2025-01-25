@@ -12,8 +12,8 @@
   "dependencies": {
     "@fileforge/react-print": "^0.1.150",
     "@react-pdf/renderer": "^4.1.5",
-    "@tanstack/react-query": "^5.61.3",
-    "@tanstack/react-query-devtools": "^5.61.3",
+    "@tanstack/react-query": "^4.36.1",
+    "@tanstack/react-query-devtools": "^4.36.1",
     "@types/google-map-react": "^2.1.10",
     "@types/react-datepicker": "^7.0.0",
     "@uiw/react-color": "^2.3.2",

@@ -237,7 +237,7 @@ const EditSmartResume: React.FC = () => {
                     }}
                   >
                     <option value={`Arial`}>Arial</option>
-                    <option value={`Times `}>Times New Roman</option>
+                    <option value={`Times New Roman`}>Times New Roman</option>
                     <option value={`Georgia`}>Georgia</option>
                     <option value={`Calibri`}>Calibri</option>
                     <option value={`Helvetica`}>Helvetica</option>
@@ -983,7 +983,7 @@ const EditSmartResume: React.FC = () => {
                 </div>
 
                 <div className="my-12">
-                  <FileUpload>
+                  <FileUpload onSuccess={(_url) => {}}>
                     <p className="font-bold text-neutral-700 text-center text-lg pt-4">
                       Drag & drop your resume here
                     </p>

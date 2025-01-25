@@ -31,7 +31,10 @@ import TabbioIcon from "../../assets/svg/t-icon.svg";
 import Alert from "../../components/Alert";
 import ProfilePicture from "../PageComponents/ProfilePhoto";
 import { formatMonthYear } from "../../lib/utils/formatters";
-import { updateProfile } from "../../services/profileServices";
+import {
+  generateProfileSummary,
+  updateProfile,
+} from "../../services/profileServices";
 import { toast } from "react-toastify";
 import { RiLoader3Fill } from "react-icons/ri";
 import { Switch } from "../../components/form/Switch";
@@ -445,6 +448,7 @@ export const ProfileSummary: React.FC<{
   setResumeData: React.Dispatch<React.SetStateAction<any | null>>;
 }> = ({ resumeData, setResumeData }) => {
   const [bio, setBio] = useState(resumeData?.professionalSummary);
+  const [aiLoading, setAiLoading] = useState(false);
   const [editBioMode, setEditBioMode] = useState(false);
   const [showCompetencies, setShowCompetencies] = useState(false);
   const [experience, setExperience] = useState(
@@ -497,6 +501,21 @@ export const ProfileSummary: React.FC<{
       toast.error(err?.message || "Request Failed");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGenerateSummary = async () => {
+    setAiLoading(true);
+    try {
+      const resp = await generateProfileSummary({
+        currentSummary: resumeData?.professionalSummary,
+        role: resumeData?.role,
+      });
+      setBio(resp?.data?.summary);
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    } finally {
+      setAiLoading(false);
     }
   };
 
@@ -581,11 +600,17 @@ export const ProfileSummary: React.FC<{
                 />
                 <div className="px-4 pb-1 pt-3 border-t border-stroke">
                   {" "}
-                  <button className="relative inline-flex items-center justify-center text-sm p-[2px] mb-2 me-2 overflow-hidden font-medium rounded-full group bg-gradient-to-br from-[#2563EB] to-[#9333EA] group-hover:from-[#9333EA] group-hover:to-[#2563EB] hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800">
+                  <button
+                    disabled={aiLoading}
+                    onClick={() => {
+                      handleGenerateSummary();
+                    }}
+                    className="relative inline-flex items-center justify-center disabled:bg-opacity-40 text-sm p-[2px] mb-2 me-2 overflow-hidden font-medium rounded-full group bg-gradient-to-br from-[#2563EB] to-[#9333EA] group-hover:from-[#9333EA] group-hover:to-[#2563EB] hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800"
+                  >
                     <span className="relative px-3 py-1 transition-all ease-in duration-75 bg-white rounded-full group-hover:bg-opacity-0">
                       <p className="text-center text-xs gap-1 items-center bg-gradient-to-r group-hover:text-white from-[#2563EB] text-transparent bg-clip-text to-[#9333EA] inline-flex">
                         <HiOutlineSparkles className="text-primary group-hover:text-white" />{" "}
-                        WRITING ASSISTANT
+                        {aiLoading ? "LOADING..." : "WRITING ASSISTANT"}
                       </p>
                     </span>
                   </button>
@@ -5181,65 +5206,63 @@ export const ProfessionalReference: React.FC<{
         </button>
       </div>
       <div className="flex 2xl:flex-row flex-col w-full gap-4">
-        {profileData?.professional_reference?.map(
-          (item: any, index: number) => (
-            <div
-              key={index}
-              onClick={() => {
-                setSelectedItem(item);
-              }}
-              className="border border-stroke h-full rounded-lg shadow-sm bg-white p-3"
-            >
-              <div className="flex w-full items-start gap-4">
-                <span className="text-zinc-500 text-lg mt-2">
-                  {" "}
-                  <FaRegUserCircle size={18} />
-                </span>
-                <div className="flex w-full justify-between items-start mb-3">
-                  <div>
-                    <h6 className="text-base max-sm:text-[15px] font-medium text-zinc-800 mb-0">
-                      {item?.name}
-                    </h6>
-                    <p className=" text-primary max-md:text-sm mb-2">
-                      {item?.title}
-                    </p>
-                    <p className=" text-zinc-500 max-md:text-sm mb-1">
-                      {item?.company}
-                    </p>
-                    <p className=" text-zinc-500 max-md:text-sm">
-                      Relationship: {item?.relationship}
-                    </p>
-                    <p className="text-zinc-500 max-md:text-sm mt-2.5">
-                      Contact Information:{" "}
-                      {item?.email && <span>(E)- {item?.email}</span>}
-                      {item?.phone && (
-                        <span className="ml-2">(P)- {item?.phone}</span>
-                      )}
-                    </p>
-                  </div>
-                  <div className="flex items-center">
-                    <button
-                      onClick={() => {
-                        setDeleteModal(true);
-                      }}
-                      className="hover:bg-danger/10 hover:text-danger text-zinc-500 rounded-full h-8 w-8 flex items-center justify-center"
-                    >
-                      <BsTrash size={14} />
-                    </button>
-                    <button
-                      onClick={() => {
-                        setEditModal(true);
-                      }}
-                      className="hover:bg-primary/10 hover:text-primary rounded-full text-zinc-500 h-8 w-8 flex items-center justify-center"
-                    >
-                      <LuPencil size={14} />
-                    </button>
-                  </div>
+        {profileData?.references?.map((item: any, index: number) => (
+          <div
+            key={index}
+            onClick={() => {
+              setSelectedItem(item);
+            }}
+            className="border border-stroke h-full rounded-lg shadow-sm bg-white p-3"
+          >
+            <div className="flex w-full items-start gap-4">
+              <span className="text-zinc-500 text-lg mt-2">
+                {" "}
+                <FaRegUserCircle size={18} />
+              </span>
+              <div className="flex w-full justify-between items-start mb-3">
+                <div>
+                  <h6 className="text-base max-sm:text-[15px] font-medium text-zinc-800 mb-0">
+                    {item?.name}
+                  </h6>
+                  <p className=" text-primary max-md:text-sm mb-2">
+                    {item?.title}
+                  </p>
+                  <p className=" text-zinc-500 max-md:text-sm mb-1">
+                    {item?.company}
+                  </p>
+                  <p className=" text-zinc-500 max-md:text-sm">
+                    Relationship: {item?.relationship}
+                  </p>
+                  <p className="text-zinc-500 max-md:text-sm mt-2.5">
+                    Contact Information:{" "}
+                    {item?.email && <span>(E)- {item?.email}</span>}
+                    {item?.phone && (
+                      <span className="ml-2">(P)- {item?.phone}</span>
+                    )}
+                  </p>
+                </div>
+                <div className="flex items-center">
+                  <button
+                    onClick={() => {
+                      setDeleteModal(true);
+                    }}
+                    className="hover:bg-danger/10 hover:text-danger text-zinc-500 rounded-full h-8 w-8 flex items-center justify-center"
+                  >
+                    <BsTrash size={14} />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditModal(true);
+                    }}
+                    className="hover:bg-primary/10 hover:text-primary rounded-full text-zinc-500 h-8 w-8 flex items-center justify-center"
+                  >
+                    <LuPencil size={14} />
+                  </button>
                 </div>
               </div>
             </div>
-          )
-        )}
+          </div>
+        ))}
       </div>
 
       <Modal
@@ -5690,6 +5713,9 @@ export const Memberships: React.FC<{
                   </p>
                 </div>
                 <div className="flex items-center">
+                  <p className="text-xs text-zinc-500 lg:mr-4">
+                    {formatMonthYear(item?.date)}
+                  </p>
                   <button
                     onClick={() => {
                       setDeleteModal(true);

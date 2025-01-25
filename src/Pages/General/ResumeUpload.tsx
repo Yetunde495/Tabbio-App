@@ -55,9 +55,9 @@ export const UploadResume = ({
   const onProceed = async () => {
     const formData = new FormData();
     formData.append("document", files[0]);
+    const id = toast.loading("Processing your document, please wait...");
     try {
       setLoading(true);
-      const id = toast.loading("Processing your document, please wait...");
       const resp = await ParseCV(formData);
       toast.update(id, {
         render: "Your Resume was successfully processed",
@@ -69,6 +69,7 @@ export const UploadResume = ({
       onSuccess && onSuccess(resp);
     } catch (err: any) {
       toast.error(err?.message || "Request Failed");
+      toast.dismiss(id)
       setFiles([]);
     } finally {
       setLoading(false);
