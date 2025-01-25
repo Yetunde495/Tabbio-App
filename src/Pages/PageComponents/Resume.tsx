@@ -1,4 +1,4 @@
-import { FaCircle} from "react-icons/fa6";
+import { FaCircle } from "react-icons/fa6";
 import { formatMonthYear } from "../../lib/utils/formatters";
 
 const fontSizeMap = {
@@ -15,16 +15,19 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
   resumeData,
 }) => {
   const fontSize =
-  fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
-  "16px";
+    fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "16px";
   const fontSizeSm =
-  fontSizeSmMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
-  "14px";
+    fontSizeSmMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "14px";
   return (
     <section className="w-full bg-white">
       <div className="min-w-[800px] w-full">
         {resumeData?.template !== "entry" ? (
-          <div className="bg-white  py-8 px-6 w-full overflow-x-auto custom-scrollbar">
+          <div
+            style={{ fontFamily: resumeData?.style?.fontFamily || "" }}
+            className="bg-white  py-8 px-6 w-full overflow-x-auto custom-scrollbar"
+          >
             <div className="flex flex-col w-full justify-center items-center  mb-8 border-b pb-2 border-stroke">
               <h1
                 className={`text-center px-3 font-medium text-[40px]`}
@@ -52,7 +55,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                       <div
                         key={field}
                         className="flex gap-1 items-center px-2"
-                        style={{fontSize:fontSizeSm}}
+                        style={{ fontSize: fontSizeSm }}
                       >
                         <span className="font-semibold">
                           {field.charAt(0).toUpperCase()}:
@@ -75,7 +78,10 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                 >
                   PROFESSIONAL SUMMARY
                 </h6>
-                <p style={{fontSize:fontSize}} className={`font-medium text-black text-base w-full`}>
+                <p
+                  style={{ fontSize: fontSize }}
+                  className={`font-medium text-black text-base w-full`}
+                >
                   {resumeData?.professionalSummary}
                 </p>
               </div>
@@ -102,7 +108,10 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                           className={`item  relative  text-zinc-800 py-0`}
                         >
                           <div className="py-1 rounded-md">
-                            <span style={{fontSize:fontSizeSm}} className="px-1.5 text-[15px] font-medium">
+                            <span
+                              style={{ fontSize: fontSizeSm }}
+                              className="px-1.5 text-[15px] font-medium"
+                            >
                               {item}
                             </span>
                           </div>
@@ -136,13 +145,16 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                           <FaCircle size={6} className="rounded-full mt-2" />
                           <div className="w-full">
                             <div className="flex gap-6 w-full items-start">
-                              <p style={{fontSize:fontSize}} className={`text-base text-black px-2`}>
+                              <p
+                                style={{ fontSize: fontSize }}
+                                className={`text-base text-black px-2`}
+                              >
                                 {item?.institution}
                               </p>
                               <div className="ml-auto">
                                 <p
                                   className={`text-sm text-right font-medium text-black  px-2`}
-                                  style={{fontSize:fontSizeSm}}
+                                  style={{ fontSize: fontSizeSm }}
                                 >
                                   {item?.startDate &&
                                     formatMonthYear(item?.startDate)}
@@ -157,7 +169,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                             <div className="">
                               <p
                                 className={`w-full text-base uppercase font-semibold text-zinc-800 px-2`}
-                                style={{fontSize:fontSizeSm}}
+                                style={{ fontSize: fontSizeSm }}
                               >
                                 {item?.degree}
                               </p>
@@ -183,42 +195,47 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                     Certifications
                   </h6>
                   <div className="flex flex-col gap-4">
-                    {resumeData?.certifications?.map((item: any, _index: number) => (
-                      <div
-                        key={item?._id}
-                        className={`item px-2 relative  text-black w-full py-1 `}
-                        draggable="true"
-                      >
-                        <div className="w-full flex items-start py-2 ml-3 pr-1">
-                          <FaCircle size={6} className="rounded-full mt-2" />
-                          <div className="w-full">
-                            <div className="flex gap-6 w-full items-start">
-                              <p style={{fontSize:fontSize}} className={`w-full text-base text-black px-2`}>
-                                {item?.institution}
-                              </p>
-                              <div className="ml-auto">
-                                {item?.date && (
-                                  <span
-                                    className={`text-sm text-right font-medium text-black  px-2`}
-                                    style={{fontSize:fontSizeSm}}
-                                  >
-                                    {formatMonthYear(item?.date)}
-                                  </span>
-                                )}
+                    {resumeData?.certifications?.map(
+                      (item: any, _index: number) => (
+                        <div
+                          key={item?._id}
+                          className={`item px-2 relative  text-black w-full py-1 `}
+                          draggable="true"
+                        >
+                          <div className="w-full flex items-start py-2 ml-3 pr-1">
+                            <FaCircle size={6} className="rounded-full mt-2" />
+                            <div className="w-full">
+                              <div className="flex gap-6 w-full items-start">
+                                <p
+                                  style={{ fontSize: fontSize }}
+                                  className={`w-full text-base text-black px-2`}
+                                >
+                                  {item?.institution}
+                                </p>
+                                <div className="ml-auto">
+                                  {item?.date && (
+                                    <span
+                                      className={`text-sm text-right font-medium text-black  px-2`}
+                                      style={{ fontSize: fontSizeSm }}
+                                    >
+                                      {formatMonthYear(item?.date)}
+                                    </span>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                            <div className="">
-                              <p
-                                className={`w-full text-base uppercase font-semibold text-zinc-800 px-2`}
-                                style={{fontSize:fontSize}}
-                              >
-                                {item?.name}
-                              </p>
+                              <div className="">
+                                <p
+                                  className={`w-full text-base uppercase font-semibold text-zinc-800 px-2`}
+                                  style={{ fontSize: fontSize }}
+                                >
+                                  {item?.name}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      )
+                    )}
                   </div>
                 </div>
               </div>
@@ -246,7 +263,10 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                           className={`item relative  text-zinc-800 py-0`}
                         >
                           <div className="py-1">
-                            <span style={{fontSize:fontSize}} className="px-1 text-base font-medium">
+                            <span
+                              style={{ fontSize: fontSize }}
+                              className="px-1 text-base font-medium"
+                            >
                               {item}
                             </span>
                           </div>
@@ -281,17 +301,23 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                         <div className="flex w-full justify-between items-start">
                           <p
                             className={`text-base font-semibold text-black px-2 mb-2`}
-                            style={{fontSize:fontSize}}
+                            style={{ fontSize: fontSize }}
                           >
                             {item?.name}
                           </p>
-                          <p className={`text-sm font-medium text-black px-2`} style={{fontSize:fontSizeSm}}>
+                          <p
+                            className={`text-sm font-medium text-black px-2`}
+                            style={{ fontSize: fontSizeSm }}
+                          >
                             {item?.technology}
                           </p>
                         </div>
 
                         <div className="flex items-center ml-[3px]">
-                          <p style={{fontSize:fontSize}} className="px-1.5 text-[15px] font-medium">
+                          <p
+                            style={{ fontSize: fontSize }}
+                            className="px-1.5 text-[15px] font-medium"
+                          >
                             {item?.description}
                           </p>
                         </div>
@@ -301,7 +327,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                             <div className="flex">
                               <a
                                 className="px-1.5 text-[15px] cursor-pointer text-blue-600 font-medium"
-                                style={{fontSize:fontSize}}
+                                style={{ fontSize: fontSize }}
                                 href={item?.link || ""}
                                 target="_blank"
                               >
@@ -331,61 +357,68 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                 </div>
 
                 <div className="flex flex-col gap-9">
-                  {resumeData?.workExperience?.map((item: any, _index: number) => (
-                    <div
-                      key={item.id}
-                      className={`item px-2 relative  text-black w-full py-1 `}
-                    >
-                      <div className="w-full">
-                        <div className="flex w-full justify-between items-start">
-                          <p
-                            className={`text-base font-semibold text-black px-2 mb-2`}
-                            style={{fontSize:fontSize}}
-                          >
-                            {item?.company}
-                          </p>
-                          <p className={`text-sm font-medium text-black px-2`} style={{fontSize:fontSizeSm}}>
-                           
-                            {item?.startDate &&
-                                  formatMonthYear(item?.startDate)}
-                                -
-                                {item?.active
-                                  ? "Present"
-                                  : item?.endDate &&
-                                    formatMonthYear(item?.endDate)}
-                          </p>
-                        </div>
+                  {resumeData?.workExperience?.map(
+                    (item: any, _index: number) => (
+                      <div
+                        key={item.id}
+                        className={`item px-2 relative  text-black w-full py-1 `}
+                      >
+                        <div className="w-full">
+                          <div className="flex w-full justify-between items-start">
+                            <p
+                              className={`text-base font-semibold text-black px-2 mb-2`}
+                              style={{ fontSize: fontSize }}
+                            >
+                              {item?.company}
+                            </p>
+                            <p
+                              className={`text-sm font-medium text-black px-2`}
+                              style={{ fontSize: fontSizeSm }}
+                            >
+                              {item?.startDate &&
+                                formatMonthYear(item?.startDate)}
+                              -
+                              {item?.active
+                                ? "Present"
+                                : item?.endDate &&
+                                  formatMonthYear(item?.endDate)}
+                            </p>
+                          </div>
 
-                        <div className="flex items-center mb-2 ml-[3px">
-                          <p
-                            className={`text-base uppercase font-semibold text-zinc-700 px-2`}
-                            style={{fontSize:fontSize}}
-                          >
-                            {item?.title}
-                          </p>
-                        </div>
+                          <div className="flex items-center mb-2 ml-[3px">
+                            <p
+                              className={`text-base uppercase font-semibold text-zinc-700 px-2`}
+                              style={{ fontSize: fontSize }}
+                            >
+                              {item?.title}
+                            </p>
+                          </div>
 
-                        <div>
-                          <ul style={{fontSize:fontSizeSm}} className="text-sm w-full font-normal space-y-2 px-2.5">
-                            {item?.keyAchievements?.map(
-                              (achievement: string, index: number) => (
-                                <li
-                                  className="flex w-full items-center max-sm:items-start gap-1"
-                                  key={index}
-                                >
-                                  <FaCircle
-                                    size={6}
-                                    className="rounded-full max-sm:mt-2"
-                                  />
-                                  {achievement}{" "}
-                                </li>
-                              )
-                            )}
-                          </ul>
+                          <div>
+                            <ul
+                              style={{ fontSize: fontSizeSm }}
+                              className="text-sm w-full font-normal space-y-2 px-2.5"
+                            >
+                              {item?.keyAchievements?.map(
+                                (achievement: string, index: number) => (
+                                  <li
+                                    className="flex w-full items-center max-sm:items-start gap-1"
+                                    key={index}
+                                  >
+                                    <FaCircle
+                                      size={6}
+                                      className="rounded-full max-sm:mt-2"
+                                    />
+                                    {achievement}{" "}
+                                  </li>
+                                )
+                              )}
+                            </ul>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  )}
                 </div>
               </div>
             )}
@@ -415,13 +448,13 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                             <div className="flex w-full justify-between items-start">
                               <p
                                 className={`text-base font-semibold text-black px-2 mb-2`}
-                                style={{fontSize:fontSize}}
+                                style={{ fontSize: fontSize }}
                               >
                                 {item?.company}
                               </p>
                               <p
                                 className={`text-sm font-medium text-black px-2`}
-                                style={{fontSize:fontSizeSm}}
+                                style={{ fontSize: fontSizeSm }}
                               >
                                 {item?.startDate &&
                                   formatMonthYear(item?.startDate)}
@@ -436,14 +469,17 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                             <div className="flex items-center mb-2 ml-[3px">
                               <p
                                 className={`text-base uppercase font-semibold text-zinc-700 px-2`}
-                                style={{fontSize:fontSize}}
+                                style={{ fontSize: fontSize }}
                               >
                                 {item?.title}
                               </p>
                             </div>
 
                             <div>
-                              <ul style={{fontSize:fontSizeSm}} className="text-sm w-full font-normal space-y-2 px-2.5">
+                              <ul
+                                style={{ fontSize: fontSizeSm }}
+                                className="text-sm w-full font-normal space-y-2 px-2.5"
+                              >
                                 {item?.keyAchievements?.map(
                                   (achievement: string, index: number) => (
                                     <li
@@ -494,13 +530,13 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                             <div className="flex w-full justify-between items-start">
                               <p
                                 className={`text-base font-semibold text-black px-2 mb-2`}
-                                style={{fontSize:fontSize}}
+                                style={{ fontSize: fontSize }}
                               >
                                 {item?.company}
                               </p>
                               <p
                                 className={`text-sm font-medium text-black px-2`}
-                                style={{fontSize:fontSizeSm}}
+                                style={{ fontSize: fontSizeSm }}
                               >
                                 {item?.startDate &&
                                   formatMonthYear(item?.startDate)}
@@ -515,14 +551,17 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                             <div className="flex items-center mb-2 ml-[3px">
                               <p
                                 className={`text-base uppercase font-semibold text-zinc-700 px-2`}
-                                style={{fontSize:fontSize}}
+                                style={{ fontSize: fontSize }}
                               >
                                 {item?.title}
                               </p>
                             </div>
 
                             <div>
-                              <ul style={{fontSize:fontSizeSm}} className="text-sm w-full font-normal space-y-2 px-2.5">
+                              <ul
+                                style={{ fontSize: fontSizeSm }}
+                                className="text-sm w-full font-normal space-y-2 px-2.5"
+                              >
                                 {item?.keyAchievements?.map(
                                   (achievement: string, index: number) => (
                                     <li
@@ -547,7 +586,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                 </div>
               </div>
             )}
-              {/* Volunteer Experience */}
+            {/* Volunteer Experience */}
           </div>
         ) : (
           <div
@@ -585,10 +624,10 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                       <div
                         key={field}
                         className="flex gap-1 items-center text-sm px-2"
-                        style={{fontSize:fontSizeSm}}
+                        style={{ fontSize: fontSizeSm }}
                       >
                         <span className="font-semibold">
-                        {field.charAt(0).toUpperCase() + field.slice(1)}:
+                          {field.charAt(0).toUpperCase() + field.slice(1)}:
                         </span>
 
                         <span className="text-sm">
@@ -610,7 +649,10 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                 >
                   PROFESSIONAL SUMMARY
                 </h6>
-                <p style={{fontSize:fontSize}} className=" px-3 font-medium text-black text-base">
+                <p
+                  style={{ fontSize: fontSize }}
+                  className=" px-3 font-medium text-black text-base"
+                >
                   {resumeData?.professionalSummary}
                 </p>
               </div>
@@ -634,7 +676,10 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                     >
                       <div className="py-1 rounded-md flex flex-col mb-1">
                         <div className="">
-                          <span style={{fontSize:fontSize}} className="italic underline text-base text-zinc-500 underline-offset-2 cursor-pointer font-medium">
+                          <span
+                            style={{ fontSize: fontSize }}
+                            className="italic underline text-base text-zinc-500 underline-offset-2 cursor-pointer font-medium"
+                          >
                             {item.name}
                           </span>
                         </div>
@@ -643,7 +688,10 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                           {item.items?.map(
                             (skillItem: string, skillIndex: number) => (
                               <li key={skillIndex}>
-                                <span style={{fontSize:fontSize}} className="text-[15px] font-medium">
+                                <span
+                                  style={{ fontSize: fontSize }}
+                                  className="text-[15px] font-medium"
+                                >
                                   {skillItem}{" "}
                                   {item?.items?.length > 1 &&
                                     skillIndex + 1 !== item?.items?.length &&
@@ -683,30 +731,35 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                           <div className="flex w-full">
                             <p
                               className={`text-base font-semibold text-black px-2 mb-2`}
-                              style={{fontSize:fontSize}}
+                              style={{ fontSize: fontSize }}
                             >
                               {item?.title}
                             </p>
                           </div>
 
                           <div className="flex items-center ml-[3px]">
-                            <p className="px-1.5 text-[15px] font-medium" style={{fontSize:fontSize}}>
+                            <p
+                              className="px-1.5 text-[15px] font-medium"
+                              style={{ fontSize: fontSize }}
+                            >
                               {item?.description || ""}
                             </p>
                           </div>
 
-                          {item?.link && <div className={`pb-1 pt-3 border-stroke`}>
-                            <div className="flex">
-                              <a
-                                className="px-1.5 text-[15px] cursor-text text-blue-600 font-medium"
-                                style={{fontSize:fontSizeSm}}
-                                href={item?.link}
-                                target="_blank"
-                              >
-                                {item?.link || ""}
-                              </a>
+                          {item?.link && (
+                            <div className={`pb-1 pt-3 border-stroke`}>
+                              <div className="flex">
+                                <a
+                                  className="px-1.5 text-[15px] cursor-text text-blue-600 font-medium"
+                                  style={{ fontSize: fontSizeSm }}
+                                  href={item?.link}
+                                  target="_blank"
+                                >
+                                  {item?.link || ""}
+                                </a>
+                              </div>
                             </div>
-                          </div>}
+                          )}
                         </div>
                       </div>
                     )
@@ -921,40 +974,42 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                   CERTIFICATIONS
                 </h6>
                 <div className="flex flex-col gap-2.5">
-                  {resumeData?.certifications?.map((item: any, _index: number) => (
-                    <div
-                      key={item._id}
-                      className={`item px-2 relative  text-black w-full py-1 `}
-                    >
-                      <div className="w-full py-2 ml-3 pr-1">
-                        <div className="flex justify-between gap-6 items-center">
-                          <div className="flex items-center gap-2 divide-x divide-zinc-600">
-                            <div>
-                              <span className="text-base font-semibold text-zinc-800">
-                                {item?.name}
-                              </span>
-                            </div>
+                  {resumeData?.certifications?.map(
+                    (item: any, _index: number) => (
+                      <div
+                        key={item._id}
+                        className={`item px-2 relative  text-black w-full py-1 `}
+                      >
+                        <div className="w-full py-2 ml-3 pr-1">
+                          <div className="flex justify-between gap-6 items-center">
+                            <div className="flex items-center gap-2 divide-x divide-zinc-600">
+                              <div>
+                                <span className="text-base font-semibold text-zinc-800">
+                                  {item?.name}
+                                </span>
+                              </div>
 
-                            <span className="font-semibold hidden">|</span>
-                            <div className="pl-2">
-                              <span className="text-base font-semibold text-zinc-800">
-                                {item?.institution}
-                              </span>
+                              <span className="font-semibold hidden">|</span>
+                              <div className="pl-2">
+                                <span className="text-base font-semibold text-zinc-800">
+                                  {item?.institution}
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                          <div className="ml-auto">
-                            {item?.date && (
-                              <span
-                                className={`text-sm text-right font-medium text-black px-2`}
-                              >
-                                {formatMonthYear(item?.date)}
-                              </span>
-                            )}
+                            <div className="ml-auto">
+                              {item?.date && (
+                                <span
+                                  className={`text-sm text-right font-medium text-black px-2`}
+                                >
+                                  {formatMonthYear(item?.date)}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  )}
                 </div>
               </div>
             )}
