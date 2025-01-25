@@ -2,14 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import Button, { GradientButton } from "../../components/Button";
 import Modal from "../../components/modal";
 import FieldInput from "../../components/form/Input";
-import { Select4 } from "../../components/form/Select";
+// import { Select4 } from "../../components/form/Select";
 import { TextArea } from "../../components/form";
 import { BsPlusCircleFill } from "react-icons/bs";
-import { FaCircle, FaCircleMinus, FaRegCircle } from "react-icons/fa6";
-import { RiExpandUpDownLine } from "react-icons/ri";
+import { FaCheck, FaCircle, FaCircleMinus, FaRegCircle } from "react-icons/fa6";
+import { RiExpandUpDownLine, RiRobot2Line } from "react-icons/ri";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { formatMonthYear } from "../../lib/utils/formatters";
 import { generateUniqueId } from "../../lib/utils";
+import { generateProfileSummary } from "../../services/profileServices";
+import { toast } from "react-toastify";
 
 type EditingState = {
   email: boolean;
@@ -32,6 +34,16 @@ interface SkillProps {
   _id: number;
   value: string;
 }
+const fontSizeMap = {
+  small: "14px",
+  medium: "16px",
+  large: "18px",
+};
+const fontSizeSmMap = {
+  small: "13px",
+  medium: "14px",
+  large: "15px",
+};
 
 const mockExperiences = [
   "Developed user-friendly web interfaces using HTML, CSS, and JavaScript.",
@@ -61,7 +73,13 @@ export const CareerSummary: React.FC<{
 }> = ({ resumeData, setResumeData }) => {
   const [showButton, setShowButton] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [role, setRole] = useState("");
+  const [aiSummary, setAiSummary] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fontSize =
+    fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "16px";
 
   const autoResizeTextarea = () => {
     const textarea = textareaRef.current;
@@ -70,6 +88,21 @@ export const CareerSummary: React.FC<{
       textarea.style.height = "auto";
       // Set the height based on the scroll height (content height)
       textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  };
+
+  const handleGenerateSummary = async () => {
+    setAiLoading(true);
+    try {
+      const resp = await generateProfileSummary({
+        currentSummary: resumeData?.professionalSummary,
+        role: resumeData?.role,
+      });
+      setAiSummary(resp?.data?.summary);
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    } finally {
+      setAiLoading(false);
     }
   };
 
@@ -110,7 +143,7 @@ export const CareerSummary: React.FC<{
         PROFESSIONAL SUMMARY
       </h6>
       <textarea
-        className={`border-none bg-white focus:bg-zinc-100 focus:ring-0 focus:outline-none px-3 font-medium text-black text-base placeholder:text-black w-full`}
+        className={`border-none bg-white focus:bg-zinc-100 focus:ring-0 focus:outline-none px-3 font-medium text-black placeholder:text-black w-full`}
         placeholder="Enter your professional summary"
         value={
           resumeData?.professionalSummary ||
@@ -130,11 +163,15 @@ If you don’t have much work experience as a recent grad, a strong summary stat
           overflow: "hidden",
           resize: "none",
           width: "100%",
+          fontSize: fontSize,
         }}
       />
       <Modal
         show={showModal}
-        onHide={() => setShowModal(false)}
+        onHide={() => {
+          setRole("")
+          setAiSummary("")
+          setShowModal(false)}}
         props={{ roundedMd: true }}
         size="w-full lg:max-w-[600px]"
       >
@@ -145,38 +182,57 @@ If you don’t have much work experience as a recent grad, a strong summary stat
           <p className=" text-zinc-600">Career Summary</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 mb-5">
+        <div className="grid grid-cols-1 gap-3 mb-7.5">
           <FieldInput
             label="Role"
             size="small"
+            value={role}
             placeholder="E.g UI/UX Designer"
-            onChange={(val) => console.log(val)}
+            onChange={(val) => setRole(val)}
             id="role"
           />
-          <Select4 label="Level of Experience">
-            <option>Beginner</option>
-            <option>Intermediate</option>
-            <option>Expert</option>
-          </Select4>
         </div>
 
-        <div className="mb-7.5">
-          <TextArea
-            value=""
-            onChange={(val) => console.log(val)}
-            label="Extra Information"
-            name="extra-info"
-            placeholder="Enter any specific details you want to include. E.g skills, industry"
-          />
-        </div>
+        {aiSummary && (
+          <div className="mb-7.5">
+            <TextArea
+              value={aiSummary}
+              onChange={(val) => setAiSummary(val)}
+              label="Extra Information"
+              name="extra-info"
+              placeholder="Enter any specific details you want to include. E.g skills, industry"
+            />
+          </div>
+        )}
 
-        <div className="flex gap-3 justify-center items-center">
-          <GradientButton
-            text="Generate Career Summary"
-            className=""
-            props={{ padding: "py-2.5 px-9" }}
-            onClick={() => {}}
-          />
+        <div className="flex flex-col gap-3 justify-center items-center">
+          <Button
+            onClick={() => {
+              handleGenerateSummary();
+            }}
+            disabled={aiLoading}
+            width="w-[80%]"
+          >
+            <RiRobot2Line /> {aiLoading ? "Loading..." : "Generate Summary"}
+          </Button>
+          {aiSummary && (
+            <button
+              className="flex w-[80%] text-lg font-medium justify-center py-2 rounded-md px-6 items-center gap-2 text-primary bg-primary/15 hover:bg-primary/20 border-none"
+              disabled={aiLoading}
+              onClick={() => {
+                setResumeData((resumeData: any) => ({
+                  ...resumeData,
+                  professionalSummary: aiSummary,
+                }));
+                setRole("")
+                setAiSummary("")
+                setShowModal(false);
+              }}
+            >
+              <FaCheck />
+              Apply AI Summary
+            </button>
+          )}
         </div>
       </Modal>
     </div>
@@ -217,6 +273,11 @@ export const ContactInfo: React.FC<{
       [name]: value,
     }));
   };
+
+  const fontSize =
+    fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "14px";
+
   return (
     <div className="w-full max-w-[90%] py-3">
       <div
@@ -227,7 +288,11 @@ export const ContactInfo: React.FC<{
         {["email", "phone", "address", "linkedin", "website"]
           .filter((field) => config[field as keyof typeof config])
           .map((field) => (
-            <div key={field} className="flex gap-1 items-center text-sm px-2">
+            <div
+              key={field}
+              style={{ fontSize }}
+              className="flex gap-1 items-center px-2"
+            >
               <span className="font-semibold">
                 {resumeData?.template === "professional"
                   ? field.charAt(0).toUpperCase() + field.slice(1)
@@ -236,7 +301,7 @@ export const ContactInfo: React.FC<{
               </span>
               {isEditing[field as keyof EditingState] ? (
                 <input
-                  className={`border-none max-w-[100px] text-sm bg-zinc-100 text-black placeholder:text-black focus:bg-zinc-100 focus:ring-0 focus:outline-none px-2`}
+                  className={`border-none max-w-[100px] bg-zinc-100 text-black placeholder:text-black focus:bg-zinc-100 focus:ring-0 focus:outline-none px-2`}
                   placeholder={`Enter ${
                     field.charAt(0).toUpperCase() + field.slice(1)
                   }`}
@@ -245,9 +310,14 @@ export const ContactInfo: React.FC<{
                   autoFocus
                   onChange={handleInputChange}
                   onBlur={() => handleBlur(field)}
+                  style={{ fontSize }}
                 />
               ) : (
-                <span className="text-sm" onClick={() => handleEdit(field)}>
+                <span
+                  style={{ fontSize }}
+                  className=""
+                  onClick={() => handleEdit(field)}
+                >
                   {resumeData[field] ||
                     `Enter ${field.charAt(0).toUpperCase() + field.slice(1)}`}
                 </span>
@@ -261,9 +331,10 @@ export const ContactInfo: React.FC<{
           <div className="flex gap-1 items-center">
             <span>Email</span>
             <input
-              className={`border-none w-[80px] text-sm bg-white text-black placeholder:text-black focus:bg-zinc-100 focus:ring-0 focus:outline-none px-2`}
+              className={`border-none w-[80px] bg-white text-black placeholder:text-black focus:bg-zinc-100 focus:ring-0 focus:outline-none px-2`}
               placeholder="Enter Email"
               value={resumeData?.email}
+              style={{ fontSize }}
               onChange={(e) =>
                 setResumeData((resumeData: any) => ({
                   ...resumeData,
@@ -280,8 +351,9 @@ export const ContactInfo: React.FC<{
           >
             <span>Phone</span>
             <input
-              className={`border-none w-[80px] text-sm bg-white text-black placeholder:text-black focus:bg-zinc-100 focus:ring-0 focus:outline-none px-2`}
+              className={`border-none w-[80px] bg-white text-black placeholder:text-black focus:bg-zinc-100 focus:ring-0 focus:outline-none px-2`}
               placeholder="Enter Phone number"
+              style={{ fontSize }}
               value={resumeData?.phone_number}
               onChange={(e) =>
                 setResumeData((resumeData: any) => ({
@@ -296,9 +368,10 @@ export const ContactInfo: React.FC<{
           <div className="flex gap-1 items-center w-[100px]">
             <span>Address</span>
             <input
-              className={`border-none text-sm focus:ring-0 focus:outline-none bg-white text-black placeholder:text-black focus:bg-zinc-100 px-2`}
+              className={`border-none focus:ring-0 focus:outline-none bg-white text-black placeholder:text-black focus:bg-zinc-100 px-2`}
               placeholder="Enter Location"
               value={resumeData?.location}
+              style={{ fontSize }}
               onChange={(e) =>
                 setResumeData((resumeData: any) => ({
                   ...resumeData,
@@ -312,8 +385,9 @@ export const ContactInfo: React.FC<{
           <div className="flex gap-1 items-center w-[100px]">
             <span>Website</span>
             <input
-              className={`border-none text-sm bg-white text-black placeholder:text-black focus:bg-zinc-100 focus:ring-0 focus:outline-none px-2`}
+              className={`border-none bg-white text-black placeholder:text-black focus:bg-zinc-100 focus:ring-0 focus:outline-none px-2`}
               placeholder="Enter URL"
+              style={{ fontSize }}
               value={resumeData?.url}
               onChange={(e) =>
                 setResumeData((resumeData: any) => ({
@@ -328,9 +402,10 @@ export const ContactInfo: React.FC<{
           <div className="flex gap-1 items-center w-[100px]">
             <span>Linkedin</span>
             <input
-              className={`border-none text-sm bg-white text-black placeholder:text-black focus:bg-zinc-100 focus:ring-0 focus:outline-none px-2`}
+              className={`border-none bg-white text-black placeholder:text-black focus:bg-zinc-100 focus:ring-0 focus:outline-none px-2`}
               placeholder="Enter URL"
-              value={resumeData?.linkedin_url}
+              value={resumeData?.linkedIn}
+              style={{ fontSize }}
               onChange={(e) =>
                 setResumeData((resumeData: any) => ({
                   ...resumeData,
@@ -355,6 +430,13 @@ export const AtsExperience: React.FC<{
   const [currentItem, setCurrentItem] = useState<any>(null);
   const [role, setRole] = useState("");
   const [AiDescriptions, setAiDescriptions] = useState<string[]>([]);
+  const fontSize =
+    fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "16px";
+  const fontSizeSm =
+    fontSizeSmMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "14px";
+
   const [selectedDescriptions, setSelectedDescriptions] = useState<string[]>(
     []
   );
@@ -602,9 +684,10 @@ export const AtsExperience: React.FC<{
                   <div className="w-full my-1.5">
                     <div className="flex w-full justify-between items-start">
                       <input
-                        className={`border-none text-base font-semibold bg-white text-black dynamic-input-2 focus:outline-none focus:bg-zinc-100 px-2 mb-2`}
+                        className={`border-none font-semibold bg-white text-black dynamic-input-2 focus:outline-none focus:bg-zinc-100 px-2 mb-2`}
                         placeholder="Company Name"
                         value={item?.company}
+                        style={{ fontSize }}
                         onChange={(e) =>
                           handleInputChange(item._id, "company", e.target.value)
                         }
@@ -613,7 +696,8 @@ export const AtsExperience: React.FC<{
                         {hoveredItemId === item?._id &&
                         editingPositionId === item?._id ? (
                           <input
-                            className={`border-none text-base uppercase font-semibold focus:outline-none bg-white text-zinc-700 placeholder:text-zinc-700 focus:bg-zinc-100 px-2`}
+                            className={`border-none uppercase font-semibold focus:outline-none bg-white text-zinc-700 placeholder:text-zinc-700 focus:bg-zinc-100 px-2`}
+                            style={{ fontSize }}
                             placeholder="POSITION"
                             value={item?.title}
                             autoFocus
@@ -629,7 +713,8 @@ export const AtsExperience: React.FC<{
                         ) : (
                           <span
                             onClick={() => setEditingPositionId(item._id)}
-                            className="text-base cursor-text uppercase font-semibold text-zinc-700"
+                            style={{ fontSize }}
+                            className="cursor-text uppercase font-semibold text-zinc-700"
                           >
                             {item?.title}
                           </span>
@@ -639,7 +724,8 @@ export const AtsExperience: React.FC<{
                         {hoveredItemId === item?._id &&
                         editingDurationId === item?._id ? (
                           <input
-                            className={`border-none text-sm font-medium focus:outline-none bg-white text-black placeholder:text-black focus:bg-zinc-100 px-2`}
+                            className={`border-none font-medium focus:outline-none bg-white text-black placeholder:text-black focus:bg-zinc-100 px-2`}
+                            style={{ fontSize: fontSizeSm }}
                             placeholder="From - Until"
                             value={item?.duration}
                             autoFocus
@@ -655,7 +741,8 @@ export const AtsExperience: React.FC<{
                         ) : (
                           <span
                             onClick={() => setEditingDurationId(item?._id)}
-                            className="text-sm cursor-text font-medium"
+                            style={{ fontSize: fontSizeSm }}
+                            className="cursor-text font-medium"
                           >
                             {item?.duration}
                           </span>
@@ -667,8 +754,9 @@ export const AtsExperience: React.FC<{
                   <div className="w-full">
                     <div className="flex w-full justify-between items-start">
                       <input
-                        className={`border-none text-base font-semibold bg-white text-black dynamic-input-2 focus:outline-none focus:bg-zinc-100 px-2 mb-2`}
+                        className={`border-none font-semibold bg-white text-black dynamic-input-2 focus:outline-none focus:bg-zinc-100 px-2 mb-2`}
                         placeholder="Company Name"
+                        style={{ fontSize }}
                         value={item?.company}
                         onChange={(e) =>
                           handleInputChange(
@@ -679,8 +767,9 @@ export const AtsExperience: React.FC<{
                         }
                       />
                       <input
-                        className={`border-none text-sm min-w-[200px] text-right font-medium focus:outline-none bg-white text-black placeholder:text-black focus:bg-zinc-100 px-2`}
+                        className={`border-none min-w-[200px] text-right font-medium focus:outline-none bg-white text-black placeholder:text-black focus:bg-zinc-100 px-2`}
                         placeholder="From - Until"
+                        style={{ fontSize: fontSizeSm }}
                         value={
                           formatMonthYear(item?.startDate) +
                           " - " +
@@ -698,8 +787,9 @@ export const AtsExperience: React.FC<{
 
                     <div className="flex items-center mb-2 ml-[3px">
                       <input
-                        className={`border-none text-base w-full focus:max-w-[400px] uppercase font-semibold focus:outline-none bg-white text-zinc-700 placeholder:text-zinc-700 focus:bg-zinc-100 px-2`}
+                        className={`border-none w-full focus:max-w-[400px] uppercase font-semibold focus:outline-none bg-white text-zinc-700 placeholder:text-zinc-700 focus:bg-zinc-100 px-2`}
                         placeholder="POSITION"
+                        style={{ fontSize }}
                         value={item?.title}
                         onChange={(e) =>
                           handleInputChange(item._id, "title", e.target.value)
@@ -714,7 +804,7 @@ export const AtsExperience: React.FC<{
                 <div className="flex items-center ml-[3px] mb-4">
                   {editingDescId === item._id ? (
                     <textarea
-                      className={`border-none bg-white focus:bg-zinc-100 focus:ring-0 focus:outline-none px-3 font-medium text-black text-base placeholder:text-black w-full`}
+                      className={`border-none bg-white focus:bg-zinc-100 focus:ring-0 focus:outline-none px-3 font-medium text-black placeholder:text-black w-full`}
                       placeholder="Enter project summary"
                       value={
                         item?.description ||
@@ -735,12 +825,14 @@ export const AtsExperience: React.FC<{
                         overflow: "hidden",
                         resize: "none",
                         width: "100%",
+                        fontSize: fontSize,
                       }}
                     />
                   ) : (
                     <p
-                      className="px-1.5 text-[15px] cursor-text font-medium"
+                      className="px-1.5 cursor-text font-medium"
                       onClick={() => setEditingDescId(item._id)}
+                      style={{ fontSize }}
                     >
                       {item?.description ||
                         "Write details of short overview of the job here. Use bullet point to summaries your key achievement."}
@@ -750,7 +842,10 @@ export const AtsExperience: React.FC<{
               )}
 
               <div>
-                <ul className="text-sm w-full font-normal space-y-2 px-2.5">
+                <ul
+                  className=" w-full font-normal space-y-2 px-2.5"
+                  style={{ fontSize: fontSizeSm }}
+                >
                   {item?.keyAchievements.map(
                     (achievement: string, index: number) => (
                       <li

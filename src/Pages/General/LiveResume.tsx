@@ -17,7 +17,6 @@ const LiveResume: React.FC = () => {
 
   useEffect(() => {
     if (parsedResume) {
-      console.log(parsedResume);
       setInputValue(parsedResume?.name);
     }
   }, [parsedResume]);

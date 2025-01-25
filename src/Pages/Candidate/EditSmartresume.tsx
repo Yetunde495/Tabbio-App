@@ -11,7 +11,6 @@ import {
 import { Menu, MenuItem } from "../../AnimatedUi/AnimatedNav";
 import { HiOutlineTemplate } from "react-icons/hi";
 import { Icons } from "../../components/icons";
-import { DropdownSelect } from "../../components/form/customDropdown";
 import {
   FaArrowRightLong,
   FaCheck,
@@ -54,20 +53,7 @@ import { PageLoader } from "../../components/Loader";
 import { getProfileResume } from "../../services/resumeServices";
 import { toast } from "react-toastify";
 
-const sizes = [
-  {
-    label: "Small",
-    value: "small",
-  },
-  {
-    label: "Medium",
-    value: "medium",
-  },
-  {
-    label: "Large",
-    value: "large",
-  },
-];
+
 
 const primaryColors = ["#0077B5", "#CC0074", "#FF7D00", "#00C196", "#000000"];
 
@@ -224,7 +210,9 @@ const EditSmartResume: React.FC = () => {
                   onClick={(e) => e.stopPropagation()}
                   className="flex flex-col space-y-4 text-sm w-[300px]"
                 >
-                  <select
+                  <div>
+                    <label htmlFor="fontFamily" className="font-semibold mb-[0.5rem] text-zinc-700">Font</label>
+                    <select
                     className="border border-stroke rounded-md p-2 text-sm w-full focus:outline-none focus:border-primary"
                     onChange={(e) => {
                       setResumeData((resumeData: any) => ({
@@ -235,6 +223,7 @@ const EditSmartResume: React.FC = () => {
                         },
                       }));
                     }}
+                    name="fontFamily"
                   >
                     <option value={`Arial`}>Arial</option>
                     <option value={`Times New Roman`}>Times New Roman</option>
@@ -242,15 +231,30 @@ const EditSmartResume: React.FC = () => {
                     <option value={`Calibri`}>Calibri</option>
                     <option value={`Helvetica`}>Helvetica</option>
                   </select>
-                  <DropdownSelect
-                    label="Size"
-                    placeholder="Select size..."
-                    options={sizes}
-                    onSelect={(val) => {
-                      console.log(val);
+                  </div>
+                 
+                  <div>
+                    <label htmlFor="fontSize" className="font-semibold mb-[0.5rem] text-zinc-700">Size</label>
+                    <select
+                    className="border border-stroke rounded-md p-2 text-sm w-full focus:outline-none focus:border-primary"
+                    onChange={(e) => {
+                      setResumeData((resumeData: any) => ({
+                        ...resumeData,
+                        style: {
+                          ...resumeData.style,
+                          fontSize: e.target.value,
+                        },
+                      }));
                     }}
-                    defaultValue={{ label: "Medium", value: "medium" }}
-                  />
+                    name="fontSize"
+                  >
+                    <option value={`medium`}>Medium</option>
+                    <option value={`large`}>Large</option>
+                    <option value={`small`}>Small</option>
+                  </select>
+                  </div>
+                  
+                  
                 </div>
               </MenuItem>
 
