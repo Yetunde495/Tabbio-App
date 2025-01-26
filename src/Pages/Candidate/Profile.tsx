@@ -924,8 +924,10 @@ const SmartResumeSettings: React.FC<{
 };
 
 const ShareCV: React.FC = () => {
-  const [url] = useState("https://freecodecamp.org");
+  const {user} = useApp();
   const [buttonText, setButtonText] = useState("Copy");
+
+  const url = `http://tabbio-app.vercel.app/profile/${user?.tabbioLink}`
 
   const handleCopy = () => {
     navigator.clipboard.writeText(url).then(() => {
@@ -993,7 +995,7 @@ const ShareCV: React.FC = () => {
           type="text"
           readOnly
           className="flex-1 max-sm:w-[75%] text-gray-700 rounded-l-lg focus:outline-none bg-white focus-within:ring-0 border-none focus:border-none"
-          value="https://yourpal.ai/hello/542566252"
+          value={user?.tabbioLink}
         />
         <button
           className="text-zinc-900 hover:scale-105 px-4 py-1.5 font-medium ml-2"

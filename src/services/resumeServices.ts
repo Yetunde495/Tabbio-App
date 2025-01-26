@@ -12,3 +12,17 @@ export const getProfileResume = async (id: string | undefined) => {
     }
     return response?.data;
   };
+
+  
+  export const generateExperienceData = async (data: any) => {
+    const response: any = await axios
+      .post(`/profile/experience_assistant`, data)
+      .catch((e) => ({ error: e }));
+    //check error
+    if (response && response?.error) {
+      const err = response?.error?.response;
+      const msg = err?.data?.message || err?.status;
+      throw new Error(msg || response?.error?.message);
+    }
+    return response?.data;
+  };

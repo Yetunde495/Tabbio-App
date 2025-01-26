@@ -42,7 +42,7 @@ const ResumeAnalytics: React.FC<ResumeAnalyticsProps> = ({ show, onHide }) => {
       keepPreviousData: true,
       enabled: !!user?._id,
       onSuccess: (data: any) => {
-        setAllViews(data?.data?.performance?.recentActivities);
+        setAllViews(data?.data?.performance?.recentActivities?.data);
       },
       onError: (err: any) => {
         toast(
@@ -60,7 +60,7 @@ const ResumeAnalytics: React.FC<ResumeAnalyticsProps> = ({ show, onHide }) => {
   );
 
   const pagination = paginate(
-    data?.total || 0,
+    data?.totalPages || 0,
     Number(page),
     Number(itemsPerPage)
   );
@@ -201,7 +201,7 @@ const ResumeAnalytics: React.FC<ResumeAnalyticsProps> = ({ show, onHide }) => {
                 <TableLoader />
               ) : allViews?.length > 0 ? (
                 <>
-                  <div className="border w-[200px] mb-4 border-stroke px-2.5 py-2 bg-white focus:border-primary flex items-center gap-1 rounded-xl">
+                  <div className="border w-[200px] mb-4 border-stroke px-2.5 py-1 bg-white focus:border-primary flex items-center gap-1 rounded-xl">
                     <span className="w-[10%]">
                       <FaRegCalendar className="text-primary" />
                     </span>
@@ -210,7 +210,7 @@ const ResumeAnalytics: React.FC<ResumeAnalyticsProps> = ({ show, onHide }) => {
                         onChange={(e) => {
                           setDate(e.target.value);
                         }}
-                        className="relative z-20 w-full px-2 appearance-none
+                        className="relative z-20 w-full px-2 focus:outline-none appearance-none focus:ring-0
                      bg-transparent outline-none text-zinc-700
                     transition  border-none font-medium
                     bg-white"
@@ -224,7 +224,7 @@ const ResumeAnalytics: React.FC<ResumeAnalyticsProps> = ({ show, onHide }) => {
                           Last 30 days
                         </option>
                       </select>
-                      <span className="absolute top-1/2  cursor-pointer pointer-events-none right-2 z-30 -translate-y-1/2">
+                      <span className="absolute top-1/2 hidden  cursor-pointer pointer-events-none right-2 z-30 -translate-y-1/2">
                         <IoMdArrowDropdown />
                       </span>
                     </div>

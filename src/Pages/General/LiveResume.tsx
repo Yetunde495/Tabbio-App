@@ -7,7 +7,7 @@ import OnboardCandidate from "../Authentication/OnboardCandidate";
 import { useApp } from "../../context/AppContext";
 import EmptyImg from "../../assets/svg/empty-animate.svg";
 import { useNavigate } from "react-router-dom";
-import { mockResData } from "../../data/mockData";
+// import { mockResData } from "../../data/mockData";
 
 const LiveResume: React.FC = () => {
   const { parsedResume } = useApp();
@@ -21,10 +21,11 @@ const LiveResume: React.FC = () => {
     if (parsedResume) {
       setResumeData(parsedResume)
       setInputValue(parsedResume?.name);
-    } else {
-      setResumeData(mockResData)
-      setInputValue(resumeData?.name);
     }
+    // } else {
+    //   setResumeData(mockResData)
+    //   setInputValue(resumeData?.name);
+    // }
   }, [parsedResume]);
   return (
     <section>
@@ -38,7 +39,7 @@ const LiveResume: React.FC = () => {
                   Live Resume
                 </h1>
                 <button
-                  className="flex gap-1 bg-primary rounded-md font-medium text-white px-5 py-2 items-center hover:scale-x-105"
+                  className="gap-1 bg-primary hidden rounded-md font-medium text-white px-5 py-2 items-center hover:scale-x-105"
                   onClick={() => {
                     setResumeData({
                       ...resumeData,

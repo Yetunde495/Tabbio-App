@@ -36,6 +36,7 @@ import {
   AtsProjects,
   AtsSkills,
   AtsTrainings,
+  AtsVolunteerExperience,
   CareerSummary,
   ContactInfo,
   RelevantCourses,
@@ -397,12 +398,12 @@ const EditSmartResume: React.FC = () => {
                         </li>
                         <li>
                           <Switch
-                            checked={config.linkedIn}
-                            value={config.linkedIn}
+                            checked={config.linkedin}
+                            value={config.linkedin}
                             label="Linkedin"
                             size="sm"
                             onChange={(val) => {
-                              setConfig((c: any) => ({ ...c, linkedIn: val }));
+                              setConfig((c: any) => ({ ...c, linkedin: val }));
                             }}
                           />
                         </li>
@@ -413,8 +414,8 @@ const EditSmartResume: React.FC = () => {
                       <ul className="space-y-2.5">
                         <li>
                           <Switch
-                            checked={config.professionalSummary}
-                            value={config.about}
+                            checked={config}
+                            value={config.professionalSummary}
                             label="Professional Summary"
                             size="sm"
                             onChange={(val) => {
@@ -449,12 +450,34 @@ const EditSmartResume: React.FC = () => {
                         </li>
                         <li>
                           <Switch
+                            checked={config.certifications}
+                            value={config.certifications}
+                            label="Certifications"
+                            size="sm"
+                            onChange={(val) => {
+                              setConfig((c: any) => ({ ...c, certifications: val }));
+                            }}
+                          />
+                        </li>
+                        <li>
+                          <Switch
                             checked={config.education}
                             value={config.education}
                             label="Education"
                             size="sm"
                             onChange={(val) => {
                               setConfig((c: any) => ({ ...c, education: val }));
+                            }}
+                          />
+                        </li>
+                        <li>
+                          <Switch
+                            checked={config.volunteerExperience}
+                            value={config.volunteerExperience}
+                            label="Volunteer Experience"
+                            size="sm"
+                            onChange={(val) => {
+                              setConfig((c: any) => ({ ...c, volunteerExperience: val }));
                             }}
                           />
                         </li>
@@ -471,6 +494,17 @@ const EditSmartResume: React.FC = () => {
                         </li>
                         <li>
                           <Switch
+                            checked={config.courses}
+                            value={config.courses}
+                            label="Relevant Courses"
+                            size="sm"
+                            onChange={(val) => {
+                              setConfig((c: any) => ({ ...c, courses: val }));
+                            }}
+                          />
+                        </li>
+                        <li>
+                          <Switch
                             checked={config.projects}
                             value={config.projects}
                             label="Projects"
@@ -482,12 +516,12 @@ const EditSmartResume: React.FC = () => {
                         </li>
                         <li>
                           <Switch
-                            checked={config.certifications}
-                            value={config.certifications}
-                            label="Certifications"
+                            checked={config.trainings}
+                            value={config.trainings}
+                            label="Trainings"
                             size="sm"
                             onChange={(val) => {
-                              setConfig((c: any) => ({ ...c, certifications: val }));
+                              setConfig((c: any) => ({ ...c, trainings: val }));
                             }}
                           />
                         </li>
@@ -552,7 +586,7 @@ const EditSmartResume: React.FC = () => {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => {
-                  console.log(resumeData);
+                  navigate(-1)
                 }}
                 className="flex items-center font-medium mb-3 gap-3 text-lg"
               >
@@ -560,13 +594,8 @@ const EditSmartResume: React.FC = () => {
               </button>
               <button
                 onClick={() => {
-                  setResumeData((resumeData: any) => ({
-                    ...resumeData,
-                    template:
-                      resumeData?.template === "entry"
-                        ? "professional"
-                        : "entry",
-                  }));
+                  console.log(resumeData);
+                      console.log(customSections);
                 }}
                 className="px-4 py-2 md:px-5 flex bg-primary text-white items-center font-medium rounded-lg mb-3 gap-3"
               >
@@ -660,6 +689,14 @@ const EditSmartResume: React.FC = () => {
                   {config.courses && (
                     <div className="border-b border-stroke py-6">
                       <RelevantCourses
+                        resumeData={resumeData}
+                        setResumeData={setResumeData}
+                      />
+                    </div>
+                  )}
+                   {config?.volunteerExperience && (
+                    <div className="py-6">
+                      <AtsVolunteerExperience
                         resumeData={resumeData}
                         setResumeData={setResumeData}
                       />
@@ -877,6 +914,14 @@ const EditSmartResume: React.FC = () => {
                       />
                     </div>
                   )}
+                   {config?.volunteerExperience && (
+                    <div className="py-6">
+                      <AtsVolunteerExperience
+                        resumeData={resumeData}
+                        setResumeData={setResumeData}
+                      />
+                    </div>
+                  )}
                    {config?.certifications && (
                     <div className="py-6">
                       <AtsCertifications
@@ -934,7 +979,9 @@ const EditSmartResume: React.FC = () => {
                 <div className="p-3 flex flex-col space-y-3">
                   <button
                     onClick={() => {
-                      navigate(-1);
+                      // navigate(-1);
+                      console.log(resumeData);
+                      console.log(customSections);
                     }}
                     className="px-6 py-2.5 bg-primary hover:opacity-90 text-white w-full font-medium text-lg rounded-lg"
                   >

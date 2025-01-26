@@ -62,7 +62,7 @@ const SmartResume: React.FC = () => {
     if (tabbioLink) {
       try {
         setLoading(true);
-        const resp = await getProfileByTabbiolink(`tabbio.link/${tabbioLink}`);
+        const resp = await getProfileByTabbiolink(`${tabbioLink}`);
         setProfileData(resp?.data?.profile);
         handleProfileActions({
           userId: resp?.data?.profile?.user,
