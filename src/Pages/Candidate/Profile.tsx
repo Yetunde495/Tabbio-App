@@ -1032,8 +1032,7 @@ const Profile: React.FC = () => {
         autoClose: 3000,
       });
       setActive(true);
-      //
-      console.log(resp?.data?.profile);
+      // console.log(resp?.data?.profile);
     } catch (err: any) {
       toast.dismiss(toastId);
       toast.error(err?.message || "Request Failed");

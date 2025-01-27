@@ -32,7 +32,7 @@ type EditingState = {
 // }
 
 interface SkillProps {
-  _id: number;
+  _id: number | string;
   value: string;
 }
 const fontSizeMap = {
@@ -68,7 +68,7 @@ const exampleSkills = [
 
 const mockArray = ["Git", "Javascript", "Bootstrap", "FIGMA", "HTML", "CSS"];
 
-// 
+//
 export const CareerSummary: React.FC<{
   resumeData: any;
   setResumeData: React.Dispatch<React.SetStateAction<any | null>>;
@@ -422,7 +422,7 @@ export const ContactInfo: React.FC<{
     </div>
   );
 };
-// 
+//
 export const AtsExperience: React.FC<{
   resumeData: any;
   setResumeData: React.Dispatch<React.SetStateAction<any | null>>;
@@ -1126,8 +1126,20 @@ export const AtsInternships: React.FC<{
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [items, setItems] = useState<any[]>(resumeData?.internships);
   const [currentItem, setCurrentItem] = useState<any>(null);
-  const [role, setRole] = useState("");
+  const [aiFormdata, setAiFormData] = useState({
+    jobRole: "",
+    workSummary: "",
+    experienceLevel: "",
+  });
   const [AiDescriptions, setAiDescriptions] = useState<string[]>([]);
+  const [aiLoading, setAiLoading] = useState(false);
+  const fontSize =
+    fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "16px";
+  const fontSizeSm =
+    fontSizeSmMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "14px";
+
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [newAchievement, setNewAchievement] = useState("");
 
@@ -1139,21 +1151,10 @@ export const AtsInternships: React.FC<{
     } else {
       setItems([
         {
-          id: 1,
-          position: "",
-          company: "",
-          description: "",
-          duration: "From-to",
-          keyAchievements: [
-            "Key Responsibilities: Use bullet points to describe your tasks, focusing on those most relevant to the job applying for.",
-            "Achievements: Highlight quantifiable results, such as system improvements, successful implementations reductions",
-          ],
-        },
-        {
-          id: 1,
-          position: "",
-          company: "",
-          description: "",
+          _id: generateUniqueId(),
+          position: "POSITION TITLE",
+          company: "NAME OF ORGANIZATION",
+          description: "a short description",
           duration: "From-to",
           keyAchievements: [
             "Key Responsibilities: Use bullet points to describe your tasks, focusing on those most relevant to the job applying for.",
@@ -1216,12 +1217,15 @@ export const AtsInternships: React.FC<{
   // Handler to add new experience
   const addExperience = () => {
     const newExperience = {
-      id: resumeData?.workExperience.length + 1,
-      position: "",
-      company: "",
-      description: "",
-      duration: "",
-      keyAchievements: [],
+      _id: generateUniqueId(),
+      position: "POSITION TITLE",
+      company: "NAME OF ORGANIZATION",
+      description: "a short description",
+      duration: "From-to",
+      keyAchievements: [
+        "Key Responsibilities: Use bullet points to describe your tasks, focusing on those most relevant to the job applying for.",
+        "Achievements: Highlight quantifiable results, such as system improvements, successful implementations reductions",
+      ],
     };
     setItems([...items, newExperience]);
     setResumeData(() => ({
@@ -1231,6 +1235,17 @@ export const AtsInternships: React.FC<{
   };
   const [showModal, setShowModal] = useState(false);
 
+  const handleGenerateSummary = async () => {
+    setAiLoading(true);
+    try {
+      const resp = await generateExperienceData(aiFormdata);
+      setAiDescriptions(resp?.data?.points?.bulletPoints);
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    } finally {
+      setAiLoading(false);
+    }
+  };
   const applyAiList = () => {
     // Append the formatted items to the existing description
     const updatedItems = items.map((item) =>
@@ -1248,6 +1263,12 @@ export const AtsInternships: React.FC<{
     }));
     setAiDescriptions([]);
     setSelectedItems([]);
+    setAiFormData({
+      jobRole: "",
+      workSummary: "",
+      experienceLevel: "",
+    });
+    setShowModal(false);
   };
 
   // Handle input change for specific item
@@ -1341,17 +1362,19 @@ export const AtsInternships: React.FC<{
             <div className="w-full">
               <div className="flex w-full justify-between items-start">
                 <input
-                  className={`border-none text-base font-semibold bg-white text-black dynamic-input-2 focus:outline-none focus:bg-zinc-100 px-2 mb-2`}
+                  className={`border-none text-base w-full focus:w-auto font-semibold bg-white text-black dynamic-input-2 focus:outline-none focus:bg-zinc-100 px-2 mb-2`}
                   placeholder="Company Name"
                   value={item?.company}
+                  style={{ fontSize }}
                   onChange={(e) =>
                     handleInputChange(item?._id, "company", e.target.value)
                   }
                 />
                 <input
-                  className={`border-none text-sm font-medium focus:outline-none bg-white text-black placeholder:text-black focus:bg-zinc-100 px-2`}
+                  className={`border-none text-sm w-auto text-right font-medium focus:outline-none bg-white text-black placeholder:text-black focus:bg-zinc-100 px-2`}
                   placeholder="From - Until"
                   value={item.duration}
+                  style={{ fontSize: fontSizeSm }}
                   onChange={(e) =>
                     handleInputChange(item?._id, "duration", e.target.value)
                   }
@@ -1363,6 +1386,7 @@ export const AtsInternships: React.FC<{
                   className={`border-none text-base w-full focus:min-w-[300px] uppercase font-semibold focus:outline-none bg-white text-zinc-700 placeholder:text-zinc-700 focus:bg-zinc-100 px-2`}
                   placeholder="POSITION"
                   value={item?.title}
+                  style={{ fontSize }}
                   onChange={(e) =>
                     handleInputChange(item?._id, "title", e.target.value)
                   }
@@ -1370,7 +1394,10 @@ export const AtsInternships: React.FC<{
               </div>
 
               <div>
-                <ul className="text-sm w-full font-normal space-y-2 px-2.5">
+                <ul
+                  style={{ fontSize: fontSizeSm }}
+                  className="text-sm w-full font-normal space-y-2 px-2.5"
+                >
                   {item?.keyAchievements.map(
                     (achievement: string, index: number) => (
                       <li
@@ -1395,7 +1422,7 @@ export const AtsInternships: React.FC<{
                             );
                             setResumeData((prev: any) => ({
                               ...prev,
-                              experience: updatedItems,
+                              internships: updatedItems,
                             }));
                           }}
                           className={`${
@@ -1440,7 +1467,7 @@ export const AtsInternships: React.FC<{
                         setItems(updatedItems);
                         setResumeData((prev: any) => ({
                           ...prev,
-                          experience: updatedItems,
+                          internships: updatedItems,
                         }));
                         setNewAchievement("");
                       }}
@@ -1460,6 +1487,11 @@ export const AtsInternships: React.FC<{
         show={showModal}
         onHide={() => {
           setAiDescriptions([]);
+          setAiFormData({
+            jobRole: "",
+            workSummary: "",
+            experienceLevel: "",
+          });
           setSelectedItems([]);
           setShowModal(false);
         }}
@@ -1472,25 +1504,87 @@ export const AtsInternships: React.FC<{
           </h1>
           <p className=" text-zinc-600">Internship/Volunteer Achievements</p>
         </div>
-
-        <div className="mb-5">
-          <FieldInput
-            label="Role"
-            size="small"
-            value={role}
-            placeholder="Enter your role for key achievement suggestions"
-            onChange={(val) => setRole(val)}
-            id="role"
-          />
+        <div className="mb-7.5">
+          <FormGroup>
+            <div className="mb-4">
+              <FieldInput
+                label="Role"
+                size="small"
+                value={aiFormdata?.jobRole}
+                placeholder="Enter your role for bullet point suggestions"
+                onChange={(val) => {
+                  setAiFormData((prev: any) => ({
+                    ...prev,
+                    jobRole: val,
+                  }));
+                }}
+                id="role"
+              />
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="level"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Level
+              </label>
+              <select
+                id="level"
+                value={aiFormdata?.experienceLevel}
+                onChange={(e) => {
+                  setAiFormData((prev: any) => ({
+                    ...prev,
+                    experienceLevel: e.target.value,
+                  }));
+                }}
+                className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              >
+                <option value={aiFormdata?.experienceLevel}>
+                  {aiFormdata?.experienceLevel ||
+                    "Select your Level of Expertise"}
+                </option>
+                <option>Beginner</option>
+                <option>Intermediate</option>
+                <option>Expert</option>
+              </select>
+            </div>
+          </FormGroup>
+          <div className="w-full mb-5">
+            <label
+              className="mb-[0.7rem] block text-sm font-normal text-zinc-800 dark:text-white"
+              htmlFor="description"
+            >
+              Description (optional)
+            </label>
+            <div className="relative rounded-lg border border-stroke">
+              <textarea
+                className={`
+                     w-full 
+                     py-3 pl-4.5 pr-4.5 text-zinc-800 font-normal border-none rounded-lg
+                     focus:border-primary/50 focus-visible:outline-none custom-scrollbar
+                     dark:border-strokedark dark:bg-meta-4
+                     dark:text-white dark:focus:border-primary `}
+                name={`Description`}
+                placeholder="Enter a short description"
+                value={aiFormdata?.workSummary}
+                onChange={(e) =>
+                  setAiFormData((data: any) => ({
+                    ...data,
+                    workSummary: e.target.value,
+                  }))
+                }
+              />
+            </div>
+          </div>
         </div>
 
         {AiDescriptions?.length > 0 && (
           <div className="mb-4">
             <h6 className="font-medium text-black mb-[0.4rem]">
-              Select the items you want to apply
+              Select the bullet points you want to apply
             </h6>
             <div className="h-[40vh] overflow-y-auto no-scrollbar">
-              <ul className="border rounded-md border-stroke px-2 py-2 space-y-2 list-disc list-outside">
+              <ul className="border rounded-lg border-stroke px-2 py-2 space-y-2 list-disc list-outside">
                 {AiDescriptions.map((val, index) => (
                   <div
                     key={index}
@@ -1524,14 +1618,16 @@ export const AtsInternships: React.FC<{
         )}
 
         <div className="flex flex-col gap-3 justify-center items-center">
-          <GradientButton
-            text="Generate Bullet Points"
-            className="w-[80%]"
-            props={{ padding: "py-2.5 px-9" }}
+          <Button
             onClick={() => {
-              setAiDescriptions(mockExperiences);
+              handleGenerateSummary();
             }}
-          />
+            disabled={aiLoading}
+            width="w-[80%]"
+          >
+            <RiRobot2Line />{" "}
+            {aiLoading ? "Loading..." : "Generate Bullet Points"}
+          </Button>
           {selectedItems.length > 0 && (
             <Button
               rounded
@@ -1541,7 +1637,7 @@ export const AtsInternships: React.FC<{
               }}
               width="[80%]"
             >
-              Apply Selected Descriptions
+              Apply Selected Items
             </Button>
           )}
         </div>
@@ -1558,9 +1654,20 @@ export const AtsVolunteerExperience: React.FC<{
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [items, setItems] = useState<any[]>(resumeData?.volunteerExperience);
   const [currentItem, setCurrentItem] = useState<any>(null);
-  const [role, setRole] = useState("");
-  const [AiDescriptions, setAiDescriptions] = useState<string[]>([]);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [aiFormdata, setAiFormData] = useState({
+    jobRole: "",
+    workSummary: "",
+    experienceLevel: "",
+  });
+  const [AiDescriptions, setAiDescriptions] = useState<string[]>([]);
+  const [aiLoading, setAiLoading] = useState(false);
+  const fontSize =
+    fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "16px";
+  const fontSizeSm =
+    fontSizeSmMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "14px";
   const [newAchievement, setNewAchievement] = useState("");
 
   const [draggingItem, setDraggingItem] = useState<any | null>(null);
@@ -1579,23 +1686,10 @@ export const AtsVolunteerExperience: React.FC<{
     } else {
       setItems([
         {
-          id: generateUniqueId(),
-          title: "",
-          company: "",
-          description: "",
-          startDate: "",
-          endDate: "",
-          duration: "From-to",
-          keyAchievements: [
-            "Key Responsibilities: Use bullet points to describe your tasks, focusing on those most relevant to the job applying for.",
-            "Achievements: Highlight quantifiable results, such as system improvements, successful implementations reductions",
-          ],
-        },
-        {
-          id: generateUniqueId(),
-          title: "",
-          company: "",
-          description: "",
+          _id: generateUniqueId(),
+          title: "POSITION TITLE",
+          company: "NAME OF ORGANIZATION",
+          description: "Enter a short desc",
           startDate: "",
           endDate: "",
           duration: "From-to",
@@ -1694,6 +1788,24 @@ export const AtsVolunteerExperience: React.FC<{
     }));
     setAiDescriptions([]);
     setSelectedItems([]);
+    setAiFormData({
+      jobRole: "",
+      workSummary: "",
+      experienceLevel: "",
+    });
+    setShowModal(false);
+  };
+
+  const handleGenerateSummary = async () => {
+    setAiLoading(true);
+    try {
+      const resp = await generateExperienceData(aiFormdata);
+      setAiDescriptions(resp?.data?.points?.bulletPoints);
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    } finally {
+      setAiLoading(false);
+    }
   };
 
   // Handle input change for specific item
@@ -1802,6 +1914,7 @@ export const AtsVolunteerExperience: React.FC<{
                   className={`border-none text-base font-semibold bg-white text-black dynamic-input-2 focus:outline-none focus:bg-zinc-100 px-2 mb-2`}
                   placeholder="Company Name"
                   value={item?.company}
+                  style={{ fontSize }}
                   onChange={(e) =>
                     handleInputChange(item?._id, "company", e.target.value)
                   }
@@ -1810,6 +1923,7 @@ export const AtsVolunteerExperience: React.FC<{
                   className={`border-none text-sm font-medium focus:outline-none bg-white text-black placeholder:text-black focus:bg-zinc-100 px-2`}
                   placeholder="From - Until"
                   value={item?.duration}
+                  style={{ fontSize: fontSizeSm }}
                   onChange={(e) =>
                     handleInputChange(item?._id, "duration", e.target.value)
                   }
@@ -1821,6 +1935,7 @@ export const AtsVolunteerExperience: React.FC<{
                   className={`border-none text-base w-full focus:min-w-[300px] uppercase font-semibold focus:outline-none bg-white text-zinc-700 placeholder:text-zinc-700 focus:bg-zinc-100 px-2`}
                   placeholder="POSITION"
                   value={item?.title}
+                  style={{ fontSize }}
                   onChange={(e) =>
                     handleInputChange(item?._id, "title", e.target.value)
                   }
@@ -1828,7 +1943,10 @@ export const AtsVolunteerExperience: React.FC<{
               </div>
 
               <div>
-                <ul className="text-sm w-full font-normal space-y-2 px-2.5">
+                <ul
+                  style={{ fontSize: fontSizeSm }}
+                  className="text-sm w-full font-normal space-y-2 px-2.5"
+                >
                   {item?.keyAchievements.map(
                     (achievement: string, index: number) => (
                       <li
@@ -1898,7 +2016,7 @@ export const AtsVolunteerExperience: React.FC<{
                         setItems(updatedItems);
                         setResumeData((prev: any) => ({
                           ...prev,
-                          experience: updatedItems,
+                          volunteerExperience: updatedItems,
                         }));
                         setNewAchievement("");
                       }}
@@ -1918,6 +2036,11 @@ export const AtsVolunteerExperience: React.FC<{
         show={showModal}
         onHide={() => {
           setAiDescriptions([]);
+          setAiFormData({
+            jobRole: "",
+            workSummary: "",
+            experienceLevel: "",
+          });
           setSelectedItems([]);
           setShowModal(false);
         }}
@@ -1930,25 +2053,87 @@ export const AtsVolunteerExperience: React.FC<{
           </h1>
           <p className=" text-zinc-600">Internship/Volunteer Achievements</p>
         </div>
-
-        <div className="mb-5">
-          <FieldInput
-            label="Role"
-            size="small"
-            value={role}
-            placeholder="Enter your role for key achievement suggestions"
-            onChange={(val) => setRole(val)}
-            id="role"
-          />
+        <div className="mb-7.5">
+          <FormGroup>
+            <div className="mb-4">
+              <FieldInput
+                label="Role"
+                size="small"
+                value={aiFormdata?.jobRole}
+                placeholder="Enter your role for bullet point suggestions"
+                onChange={(val) => {
+                  setAiFormData((prev: any) => ({
+                    ...prev,
+                    jobRole: val,
+                  }));
+                }}
+                id="role"
+              />
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="level"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Level
+              </label>
+              <select
+                id="level"
+                value={aiFormdata?.experienceLevel}
+                onChange={(e) => {
+                  setAiFormData((prev: any) => ({
+                    ...prev,
+                    experienceLevel: e.target.value,
+                  }));
+                }}
+                className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              >
+                <option value={aiFormdata?.experienceLevel}>
+                  {aiFormdata?.experienceLevel ||
+                    "Select your Level of Expertise"}
+                </option>
+                <option>Beginner</option>
+                <option>Intermediate</option>
+                <option>Expert</option>
+              </select>
+            </div>
+          </FormGroup>
+          <div className="w-full mb-5">
+            <label
+              className="mb-[0.7rem] block text-sm font-normal text-zinc-800 dark:text-white"
+              htmlFor="description"
+            >
+              Description (optional)
+            </label>
+            <div className="relative rounded-lg border border-stroke">
+              <textarea
+                className={`
+                     w-full 
+                     py-3 pl-4.5 pr-4.5 text-zinc-800 font-normal border-none rounded-lg
+                     focus:border-primary/50 focus-visible:outline-none custom-scrollbar
+                     dark:border-strokedark dark:bg-meta-4
+                     dark:text-white dark:focus:border-primary `}
+                name={`Description`}
+                placeholder="Enter a short description"
+                value={aiFormdata?.workSummary}
+                onChange={(e) =>
+                  setAiFormData((data: any) => ({
+                    ...data,
+                    workSummary: e.target.value,
+                  }))
+                }
+              />
+            </div>
+          </div>
         </div>
 
         {AiDescriptions?.length > 0 && (
           <div className="mb-4">
             <h6 className="font-medium text-black mb-[0.4rem]">
-              Select the items you want to apply
+              Select the bullet points you want to apply
             </h6>
             <div className="h-[40vh] overflow-y-auto no-scrollbar">
-              <ul className="border rounded-md border-stroke px-2 py-2 space-y-2 list-disc list-outside">
+              <ul className="border rounded-lg border-stroke px-2 py-2 space-y-2 list-disc list-outside">
                 {AiDescriptions.map((val, index) => (
                   <div
                     key={index}
@@ -1982,14 +2167,16 @@ export const AtsVolunteerExperience: React.FC<{
         )}
 
         <div className="flex flex-col gap-3 justify-center items-center">
-          <GradientButton
-            text="Generate Bullet Points"
-            className="w-[80%]"
-            props={{ padding: "py-2.5 px-9" }}
+          <Button
             onClick={() => {
-              setAiDescriptions(mockExperiences);
+              handleGenerateSummary();
             }}
-          />
+            disabled={aiLoading}
+            width="w-[80%]"
+          >
+            <RiRobot2Line />{" "}
+            {aiLoading ? "Loading..." : "Generate Bullet Points"}
+          </Button>
           {selectedItems.length > 0 && (
             <Button
               rounded
@@ -1999,7 +2186,7 @@ export const AtsVolunteerExperience: React.FC<{
               }}
               width="[80%]"
             >
-              Apply Selected Descriptions
+              Apply Selected Items
             </Button>
           )}
         </div>
@@ -2017,9 +2204,12 @@ export const AtsProjects: React.FC<{
   const [items, setItems] = useState<any[]>(resumeData?.projects);
   const [currentItem, setCurrentItem] = useState<any>(null);
   const [editingItemId, setEditingItemId] = useState<number | null>(null);
-
-  const [overview, setOverview] = useState("");
-
+  const fontSize =
+    fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "16px";
+  const fontSizeSm =
+    fontSizeSmMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "14px";
   const [draggingItem, setDraggingItem] = useState<any | null>(null);
 
   useEffect(() => {
@@ -2028,14 +2218,7 @@ export const AtsProjects: React.FC<{
     } else {
       setItems([
         {
-          _id: 1,
-          name: "",
-          technology: "",
-          description: "",
-          link: "",
-        },
-        {
-          _id: 2,
+          _id: generateUniqueId(),
           name: "",
           technology: "",
           description: "",
@@ -2097,7 +2280,7 @@ export const AtsProjects: React.FC<{
   // Handler to add new experience
   const addProject = () => {
     const newProject = {
-      _id: resumeData?.projects?.length + 1,
+      _id: generateUniqueId(),
       name: "",
       technology: "",
       description: "",
@@ -2109,7 +2292,6 @@ export const AtsProjects: React.FC<{
       projects: [...resumeData?.projects, newProject],
     }));
   };
-  const [showModal, setShowModal] = useState(false);
 
   // Handle input change for specific item
   const handleInputChange = (id: number, field: string, value: string) => {
@@ -2167,13 +2349,6 @@ export const AtsProjects: React.FC<{
             {hoveredItemId === item?._id && (
               <div className="flex w-full gap-1 justify-end -mt-5">
                 <div className="bg-white flex gap-1 items-center">
-                  <GradientButton
-                    text="WRITING ASSISTANT"
-                    className=""
-                    onClick={() => {
-                      setShowModal(true);
-                    }}
-                  />
                   <button
                     onClick={addProject}
                     className="h-8 w-8 flex justify-center items-center border-none text-primary/90 hover:text-primary text-2xl"
@@ -2205,6 +2380,7 @@ export const AtsProjects: React.FC<{
                   className={`border-none text-base font-semibold bg-white text-black dynamic-input-2 focus:outline-none focus:bg-zinc-100 px-2 mb-2`}
                   placeholder="Project Title"
                   value={item?.name}
+                  style={{ fontSize }}
                   onChange={(e) =>
                     handleInputChange(item?._id, "name", e.target.value)
                   }
@@ -2213,6 +2389,7 @@ export const AtsProjects: React.FC<{
                   className={`border-none text-sm font-medium focus:outline-none bg-white text-black placeholder:text-black focus:bg-zinc-100 px-2`}
                   placeholder="Enter Technology/skill used for this project"
                   value={item?.technology}
+                  style={{ fontSize: fontSizeSm }}
                   onChange={(e) =>
                     handleInputChange(item?._id, "duration", e.target.value)
                   }
@@ -2243,12 +2420,14 @@ export const AtsProjects: React.FC<{
                       overflow: "hidden",
                       resize: "none",
                       width: "100%",
+                      fontSize: fontSize,
                     }}
                   />
                 ) : (
                   <p
                     className="px-1.5 text-[15px] cursor-pointer font-medium"
                     onClick={() => setEditingItemId(item?._id)}
+                    style={{ fontSize }}
                   >
                     {item?.description ||
                       "Provide a brief description of the project, its purpose, and key technologies used."}
@@ -2268,6 +2447,7 @@ export const AtsProjects: React.FC<{
                       onChange={(e) =>
                         handleInputChange(item?._id, "link", e.target.value)
                       }
+                      style={{ fontSize: fontSizeSm }}
                       placeholder="Enter link to this project"
                       className="flex-1 max-sm:w-[75%] rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
@@ -2277,15 +2457,16 @@ export const AtsProjects: React.FC<{
                         <a
                           className="px-1.5 text-[15px] cursor-pointer text-blue-600 font-medium"
                           onClick={() => setEditingItemId(item?._id)}
-                          href={item?.link || ""}
-                          target="_blank"
+                          href={""}
+                          // target="_blank"
+                          style={{ fontSize: fontSize }}
                         >
-                          {item?.link ||
-                            "Attach a github or website link to this project"}
+                          {item?.link}
                         </a>
                       ) : (
                         <span
                           onClick={() => setEditingItemId(item?._id)}
+                          style={{ fontSize: fontSize }}
                           className="px-1.5 text-[15px] cursor-text text-blue-600 font-medium"
                         >
                           Attach a github or website link to this project
@@ -2299,72 +2480,6 @@ export const AtsProjects: React.FC<{
           </div>
         ))}
       </div>
-
-      <Modal
-        show={showModal}
-        onHide={() => {
-          setOverview("");
-          setShowModal(false);
-        }}
-        props={{ roundedMd: true }}
-        size="w-full lg:max-w-[600px]"
-      >
-        <div className="mb-7.5 text-center">
-          <h1 className="font-outfit font-medium text-2xl">
-            AI Writing Assistant
-          </h1>
-          <p className=" text-zinc-600">Project Overview</p>
-        </div>
-
-        <div className="mb-7.5">
-          <FieldInput
-            label="Name"
-            size="small"
-            placeholder="Enter name of project"
-            onChange={(val) => {
-              console.log(val);
-            }}
-            id="role"
-          />
-        </div>
-
-        {overview && (
-          <div className="mb-7.5">
-            <TextArea
-              value={overview}
-              onChange={(val) => setOverview(val)}
-              label="AI Project Overview"
-              disabled
-              name="extra-info"
-              placeholder=""
-            />
-          </div>
-        )}
-
-        <div className="flex flex-col gap-3 justify-end items-center">
-          <GradientButton
-            text="Generate Project Overview"
-            className="w-[80%]"
-            props={{ padding: "py-2.5 px-9" }}
-            onClick={() => {
-              setOverview("This is a test overview lorem ipsum dolor sit amet");
-            }}
-          />
-          {overview && (
-            <Button
-              rounded
-              onClick={() => {
-                handleInputChange(currentItem?._id, "description", overview);
-                setOverview("");
-                setShowModal(false);
-              }}
-              width="[80%]"
-            >
-              Apply AI Overview
-            </Button>
-          )}
-        </div>
-      </Modal>
     </div>
   );
 };
@@ -2379,8 +2494,12 @@ export const AtsCareerHighlight: React.FC<{
   const [currentItem, setCurrentItem] = useState<any>(null);
   const [editingItemId, setEditingItemId] = useState<number | null>(null);
 
-  const [overview, setOverview] = useState("");
-
+  const fontSize =
+    fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "16px";
+  const fontSizeSm =
+    fontSizeSmMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "14px";
   const [draggingItem, setDraggingItem] = useState<any | null>(null);
 
   useEffect(() => {
@@ -2389,15 +2508,17 @@ export const AtsCareerHighlight: React.FC<{
     } else {
       setItems([
         {
-          _id: 1,
-          name: "",
+          _id: generateUniqueId(),
+          title: "",
+          skills: [],
           technology: "",
           description: "",
           link: "",
         },
         {
-          _id: 2,
-          name: "",
+          _id: generateUniqueId(),
+          title: "",
+          skills: [],
           technology: "",
           description: "",
           link: "",
@@ -2442,7 +2563,7 @@ export const AtsCareerHighlight: React.FC<{
       setItems(updatedItems);
       setResumeData(() => ({
         ...resumeData,
-        projects: updatedItems,
+        careerHighlights: updatedItems,
       }));
     }
   };
@@ -2451,26 +2572,26 @@ export const AtsCareerHighlight: React.FC<{
     setItems(updatedItems);
     setResumeData(() => ({
       ...resumeData,
-      projects: updatedItems,
+      careerHighlights: updatedItems,
     }));
   };
 
   // Handler to add new experience
   const addHighlight = () => {
-    const newProject = {
-      _id: resumeData?.projects?.length + 1,
+    const newCareer = {
+      _id: generateUniqueId(),
       name: "",
       technology: "",
       description: "",
       link: "",
+      skills: [],
     };
-    setItems([...items, newProject]);
+    setItems([...items, newCareer]);
     setResumeData(() => ({
       ...resumeData,
-      projects: [...resumeData?.projects, newProject],
+      careerHighlights: [...resumeData?.careerHighlights, newCareer],
     }));
   };
-  const [showModal, setShowModal] = useState(false);
 
   // Handle input change for specific item
   const handleInputChange = (id: number, field: string, value: string) => {
@@ -2480,7 +2601,7 @@ export const AtsCareerHighlight: React.FC<{
     setItems(updatedItems);
     setResumeData((prev: any) => ({
       ...prev,
-      projects: updatedItems,
+      careerHighlights: updatedItems,
     }));
   };
 
@@ -2531,13 +2652,6 @@ export const AtsCareerHighlight: React.FC<{
             {hoveredItemId === item?._id && (
               <div className="flex w-full gap-1 justify-end -mt-5">
                 <div className="bg-white flex gap-1 items-center">
-                  <GradientButton
-                    text="WRITING ASSISTANT"
-                    className=""
-                    onClick={() => {
-                      setShowModal(true);
-                    }}
-                  />
                   <button
                     onClick={addHighlight}
                     className="h-8 w-8 flex justify-center items-center border-none text-primary/90 hover:text-primary text-2xl"
@@ -2569,6 +2683,7 @@ export const AtsCareerHighlight: React.FC<{
                   className={`border-none text-base font-semibold bg-white text-black dynamic-input-2 focus:outline-none focus:bg-zinc-100 px-2 mb-2`}
                   placeholder="Highlight Name"
                   value={item?.title}
+                  style={{ fontSize }}
                   onChange={(e) =>
                     handleInputChange(item?._id, "title", e.target.value)
                   }
@@ -2599,12 +2714,14 @@ export const AtsCareerHighlight: React.FC<{
                       overflow: "hidden",
                       resize: "none",
                       width: "100%",
+                      fontSize: fontSize,
                     }}
                   />
                 ) : (
                   <p
                     className="px-1.5 text-[15px] cursor-text font-medium"
                     onClick={() => setEditingItemId(item?._id)}
+                    style={{ fontSize }}
                   >
                     {item?.description ||
                       "Provide a brief description of the project, its purpose, and key technologies used."}
@@ -2624,6 +2741,7 @@ export const AtsCareerHighlight: React.FC<{
                       onChange={(e) =>
                         handleInputChange(item?._id, "link", e.target.value)
                       }
+                      style={{ fontSize: fontSizeSm }}
                       placeholder="Enter link to this project"
                       className="flex-1 max-sm:w-[75%] rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
@@ -2632,7 +2750,7 @@ export const AtsCareerHighlight: React.FC<{
                       className="px-1.5 text-[15px] cursor-text text-blue-600 font-medium"
                       onClick={() => setEditingItemId(item?._id)}
                       href={""}
-                      target="_blank"
+                      style={{ fontSize: fontSizeSm }}
                     >
                       {item?.link ||
                         "Attach a github or website link to this highlight"}
@@ -2644,72 +2762,6 @@ export const AtsCareerHighlight: React.FC<{
           </div>
         ))}
       </div>
-
-      <Modal
-        show={showModal}
-        onHide={() => {
-          setOverview("");
-          setShowModal(false);
-        }}
-        props={{ roundedMd: true }}
-        size="w-full lg:max-w-[600px]"
-      >
-        <div className="mb-7.5 text-center">
-          <h1 className="font-outfit font-medium text-2xl">
-            AI Writing Assistant
-          </h1>
-          <p className=" text-zinc-600">Project Overview</p>
-        </div>
-
-        <div className="mb-7.5">
-          <FieldInput
-            label="Name"
-            size="small"
-            placeholder="Enter name of project"
-            onChange={(val) => {
-              console.log(val);
-            }}
-            id="role"
-          />
-        </div>
-
-        {overview && (
-          <div className="mb-7.5">
-            <TextArea
-              value={overview}
-              onChange={(val) => setOverview(val)}
-              label="AI Project Overview"
-              disabled
-              name="extra-info"
-              placeholder=""
-            />
-          </div>
-        )}
-
-        <div className="flex flex-col gap-3 justify-end items-center">
-          <GradientButton
-            text="Generate Project Overview"
-            className="w-[80%]"
-            props={{ padding: "py-2.5 px-9" }}
-            onClick={() => {
-              setOverview("This is a test overview lorem ipsum dolor sit amet");
-            }}
-          />
-          {overview && (
-            <Button
-              rounded
-              onClick={() => {
-                handleInputChange(currentItem?._id, "description", overview);
-                setOverview("");
-                setShowModal(false);
-              }}
-              width="[80%]"
-            >
-              Apply AI Overview
-            </Button>
-          )}
-        </div>
-      </Modal>
     </div>
   );
 };
@@ -3189,6 +3241,12 @@ export const AtsEducation: React.FC<{
   const [draggingItem, setDraggingItem] = useState<any | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [currentItem, setCurrentItem] = useState<any>(null);
+  const fontSize =
+    fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "16px";
+  const fontSizeSm =
+    fontSizeSmMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "14px";
 
   useEffect(() => {
     if (resumeData?.education?.length > 0) {
@@ -3196,7 +3254,7 @@ export const AtsEducation: React.FC<{
     } else {
       setItems([
         {
-          _id: 1,
+          _id: generateUniqueId(),
           institution: "Name of Univerity/Organization",
           degree: "DEGREE TYPE / MAJOR",
           startDate: "",
@@ -3205,17 +3263,6 @@ export const AtsEducation: React.FC<{
           year: "",
           description:
             "Consider listing course titles (not numbers), details of coursework and special projects, or academic accomplishments that show you’re ready to excel in your new industry.",
-        },
-        {
-          _id: 2,
-          institution: "Name of Univerity/Organization",
-          degree: "DEGREE TYPE / MAJOR",
-          startDate: "",
-          endDate: "",
-          year: "",
-          duration: "From-to",
-          description:
-            "You can also list organizations, clubs, teams etc. that show off additional interpersonal and leadership skills.",
         },
       ]);
     }
@@ -3392,6 +3439,7 @@ export const AtsEducation: React.FC<{
                           className={`border-none w-full uppercase text-base bg-white text-black focus:outline-none focus:bg-zinc-100 px-2`}
                           placeholder="Institution"
                           value={item?.institution}
+                          style={{ fontSize }}
                           autoFocus
                           onBlur={() => setEditingSchoolId(null)}
                           onChange={(e) =>
@@ -3406,6 +3454,7 @@ export const AtsEducation: React.FC<{
                         <span
                           onClick={() => setEditingSchoolId(item?._id)}
                           className="text-base uppercase font-semibold text-zinc-800"
+                          style={{ fontSize }}
                         >
                           {item?.institution}
                         </span>
@@ -3420,6 +3469,7 @@ export const AtsEducation: React.FC<{
                           className={`border-none w-full text-base uppercase font-semibold bg-white text-zinc-800 focus:outline-none placeholder:text-zinc-800 focus:bg-zinc-100 px-2`}
                           placeholder="DEGREE"
                           value={item?.degree}
+                          style={{ fontSize }}
                           autoFocus
                           onBlur={() => setEditingDegreeId(null)}
                           onChange={(e) =>
@@ -3434,6 +3484,7 @@ export const AtsEducation: React.FC<{
                         <span
                           onClick={() => setEditingDegreeId(item?._id)}
                           className="text-base uppercase font-semibold text-zinc-800"
+                          style={{ fontSize }}
                         >
                           {item?.degree}
                         </span>
@@ -3445,6 +3496,7 @@ export const AtsEducation: React.FC<{
                       className={`border-none text-sm text-right w-[50px] font-medium bg-white text-black placeholder:text-black focus:outline-none focus:bg-zinc-100 px-2`}
                       placeholder="Enter Year (yyyy)"
                       value={item?.year}
+                      style={{ fontSize: fontSizeSm }}
                       onChange={(e) =>
                         handleInputChange(item?._id, "year", e.target.value)
                       }
@@ -3475,6 +3527,7 @@ export const AtsEducation: React.FC<{
                           overflow: "hidden",
                           resize: "none",
                           width: "100%",
+                          fontSize: fontSize,
                         }}
                       />
                     </div>
@@ -3482,6 +3535,7 @@ export const AtsEducation: React.FC<{
                     <span
                       onClick={() => setEditingInfoId(item?._id)}
                       className="text-[15px]  cursor-text font-medium"
+                      style={{ fontSize: fontSize }}
                     >
                       {item?.description}
                     </span>
@@ -3497,6 +3551,7 @@ export const AtsEducation: React.FC<{
                       className={`border-none w-full focus:max-w-[300px] text-base bg-white text-black focus:outline-none focus:bg-zinc-100 px-2`}
                       placeholder="Institution"
                       value={item?.institution}
+                      style={{ fontSize: fontSize }}
                       onChange={(e) =>
                         handleInputChange(
                           item?._id,
@@ -3510,6 +3565,7 @@ export const AtsEducation: React.FC<{
                         className={`border-none text-sm text-right w-[50px] font-medium bg-white text-black placeholder:text-black focus:outline-none focus:bg-zinc-100 px-2`}
                         placeholder="Enter Year (yyyy)"
                         value={item?.year}
+                        style={{ fontSize: fontSizeSm }}
                         onChange={(e) =>
                           handleInputChange(item?._id, "year", e.target.value)
                         }
@@ -3521,6 +3577,7 @@ export const AtsEducation: React.FC<{
                       className={`border-none w-full text-base uppercase font-semibold bg-white text-zinc-800 focus:outline-none placeholder:text-zinc-800 focus:bg-zinc-100 px-2`}
                       placeholder="DEGREE"
                       value={item?.degree}
+                      style={{ fontSize: fontSizeSm }}
                       onChange={(e) =>
                         handleInputChange(item?._id, "degree", e.target.value)
                       }
@@ -3545,13 +3602,19 @@ export const AtsCertifications: React.FC<{
   const [editingDegreeId, setEditingDegreeId] = useState<number | null>(null);
   const [items, setItems] = useState<any[]>(resumeData?.certifications);
   const [draggingItem, setDraggingItem] = useState<any | null>(null);
+  const fontSize =
+    fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "16px";
+  const fontSizeSm =
+    fontSizeSmMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "14px";
 
   useEffect(() => {
     if (resumeData?.certifications?.length > 0) {
       const formattedCertifications = resumeData?.certifications?.map(
         (certification: any) => ({
           ...certification,
-          date: formatMonthYear(certification.date),
+          date: certification?.date ? formatMonthYear(certification?.date) : "",
         })
       );
       setItems(formattedCertifications);
@@ -3628,7 +3691,7 @@ export const AtsCertifications: React.FC<{
 
   // Handler to add new education
   const addExperience = () => {
-    const newEducation = {
+    const newCertification = {
       _id: generateUniqueId(),
       institution: "Name of Organization",
       name: "NAME OF CERTIFICATION",
@@ -3636,7 +3699,7 @@ export const AtsCertifications: React.FC<{
     };
     setResumeData(() => ({
       ...resumeData,
-      certifications: [...resumeData?.certifications, newEducation],
+      certifications: [...resumeData?.certifications, newCertification],
     }));
   };
 
@@ -3727,6 +3790,7 @@ export const AtsCertifications: React.FC<{
                           placeholder="Institution"
                           value={item?.institution}
                           autoFocus
+                          style={{ fontSize }}
                           onBlur={() => setEditingSchoolId(null)}
                           onChange={(e) =>
                             handleInputChange(
@@ -3740,6 +3804,7 @@ export const AtsCertifications: React.FC<{
                         <span
                           onClick={() => setEditingSchoolId(item?._id)}
                           className="text-base uppercase font-semibold text-zinc-800"
+                          style={{ fontSize }}
                         >
                           {item?.institution}
                         </span>
@@ -3756,6 +3821,7 @@ export const AtsCertifications: React.FC<{
                           value={item?.name}
                           autoFocus
                           onBlur={() => setEditingDegreeId(null)}
+                          style={{ fontSize }}
                           onChange={(e) =>
                             handleInputChange(item?._id, "name", e.target.value)
                           }
@@ -3764,6 +3830,7 @@ export const AtsCertifications: React.FC<{
                         <span
                           onClick={() => setEditingDegreeId(item?._id)}
                           className="text-base uppercase font-semibold text-zinc-800"
+                          style={{ fontSize }}
                         >
                           {item?.name}
                         </span>
@@ -3775,6 +3842,7 @@ export const AtsCertifications: React.FC<{
                       className={`border-none text-sm text-right w-full font-medium bg-white text-black placeholder:text-black focus:outline-none focus:bg-zinc-100 px-2`}
                       placeholder="Enter date (yyyy-mm)"
                       value={item?.date}
+                      style={{ fontSize: fontSizeSm }}
                       onChange={(e) =>
                         handleInputChange(item?._id, "date", e.target.value)
                       }
@@ -3791,6 +3859,7 @@ export const AtsCertifications: React.FC<{
                       className={`border-none w-full focus:max-w-[300px] text-base bg-white text-black focus:outline-none focus:bg-zinc-100 px-2`}
                       placeholder="Institution"
                       value={item?.institution}
+                      style={{ fontSize: fontSize }}
                       onChange={(e) =>
                         handleInputChange(
                           item?._id,
@@ -3803,6 +3872,7 @@ export const AtsCertifications: React.FC<{
                       <input
                         className={`border-none text-sm text-right w-full font-medium bg-white text-black placeholder:text-black focus:outline-none focus:bg-zinc-100 px-2`}
                         placeholder="Enter date (yyyy-mm)"
+                        style={{ fontSize: fontSizeSm }}
                         value={item?.date}
                         onChange={(e) =>
                           handleInputChange(item?._id, "date", e.target.value)
@@ -3815,6 +3885,7 @@ export const AtsCertifications: React.FC<{
                       className={`border-none w-full text-base uppercase font-semibold bg-white text-zinc-800 focus:outline-none placeholder:text-zinc-800 focus:bg-zinc-100 px-2`}
                       placeholder="NAME"
                       value={item?.name}
+                      style={{ fontSize: fontSize }}
                       onChange={(e) =>
                         handleInputChange(item?._id, "name", e.target.value)
                       }
@@ -3840,6 +3911,12 @@ export const AtsTrainings: React.FC<{
   const [items, setItems] = useState<any[]>(resumeData?.trainings);
   const [draggingItem, setDraggingItem] = useState<any | null>(null);
   const [_currentItem, setCurrentItem] = useState<any>(null);
+  const fontSize =
+    fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "16px";
+  const fontSizeSm =
+    fontSizeSmMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "14px";
 
   useEffect(() => {
     if (resumeData?.trainings?.length > 0) {
@@ -3862,7 +3939,7 @@ export const AtsTrainings: React.FC<{
           description: "",
           startDate: "",
           endDate: "",
-          year: "yyy",
+          year: "yyyy",
         },
       ]);
     }
@@ -3930,7 +4007,7 @@ export const AtsTrainings: React.FC<{
       description: "",
       startDate: "",
       endDate: "",
-      year: "",
+      year: "year",
     };
     setResumeData(() => ({
       ...resumeData,
@@ -4016,6 +4093,7 @@ export const AtsTrainings: React.FC<{
                         placeholder="Cert/Training Name"
                         value={item?.degree}
                         autoFocus
+                        style={{ fontSize }}
                         onBlur={() => setEditingSchoolId(null)}
                         onChange={(e) =>
                           handleInputChange(item?._id, "degree", e.target.value)
@@ -4025,8 +4103,9 @@ export const AtsTrainings: React.FC<{
                       <span
                         onClick={() => setEditingSchoolId(item?._id)}
                         className="text-base font-semibold text-zinc-800"
+                        style={{ fontSize }}
                       >
-                        {item?.title}
+                        {item?.degree}
                       </span>
                     )}
                   </div>
@@ -4041,6 +4120,7 @@ export const AtsTrainings: React.FC<{
                         value={item?.platform}
                         autoFocus
                         onBlur={() => setEditingDegreeId(null)}
+                        style={{ fontSize }}
                         onChange={(e) =>
                           handleInputChange(
                             item?._id,
@@ -4053,6 +4133,7 @@ export const AtsTrainings: React.FC<{
                       <span
                         onClick={() => setEditingDegreeId(item?._id)}
                         className="text-base text-zinc-800"
+                        style={{ fontSize }}
                       >
                         {item?.institution}
                       </span>
@@ -4064,6 +4145,7 @@ export const AtsTrainings: React.FC<{
                     className={`border-none text-sm text-right w-[50px] font-medium bg-white text-black placeholder:text-black focus:outline-none focus:bg-zinc-100 px-2`}
                     placeholder="yyyy"
                     value={item?.year}
+                    style={{ fontSize: fontSizeSm }}
                     onChange={(e) =>
                       handleInputChange(item?._id, "year", e.target.value)
                     }
@@ -4082,7 +4164,9 @@ export const AtsSkills: React.FC<{
   resumeData: any;
   setResumeData: React.Dispatch<React.SetStateAction<any | null>>;
 }> = ({ resumeData, setResumeData }) => {
-  const [hoveredItemId, setHoveredItemId] = useState<number | null>(null);
+  const [hoveredItemId, setHoveredItemId] = useState<number | null | string>(
+    null
+  );
   const [role, setRole] = useState("");
   const [showButon, setShowButton] = useState(false);
   const [currentItem, setCurrentItem] = useState<any>(null);
@@ -4094,23 +4178,26 @@ export const AtsSkills: React.FC<{
     { name: string; items: string[] }[]
   >([]);
   const [editingSkill, setEditingSkill] = useState<{
-    itemId: number;
+    itemId: number | string;
     skillIndex: number;
   } | null>(null);
   const [editingName, setEditingName] = useState<{
-    itemId: number;
+    itemId: number | string;
     nameIndex: number;
   } | null>(null);
   const [items, setItems] = useState<
-    { _id: number; name: string; items: string[] }[]
+    { _id: string | number; name: string; items: string[] }[]
   >(
-    resumeData?.skills.map((val: any, index: number) => ({
-      _id: index + 1,
+    resumeData?.skills.map((val: any) => ({
+      _id: val?.id,
       name: val.name,
       items: val.items,
     }))
   );
   const [draggingItem, setDraggingItem] = useState<any | null>(null);
+  const fontSize =
+    fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "16px";
   const [showModal, setShowModal] = useState(false);
 
   const applyAiList = () => {
@@ -4125,8 +4212,8 @@ export const AtsSkills: React.FC<{
   useEffect(() => {
     if (resumeData?.skills?.length > 0) {
       setItems(
-        resumeData?.skills.map((val: any, index: number) => ({
-          _id: index + 1,
+        resumeData?.skills.map((val: any) => ({
+          _id: val?._id,
           name: val.name,
           items: val.items,
         }))
@@ -4134,7 +4221,7 @@ export const AtsSkills: React.FC<{
     } else {
       setItems([
         {
-          _id: 1,
+          _id: generateUniqueId(),
           name: "Name of Skill (Ex: Soft Skill)",
           items: [
             "Mention the skill then briefly add some context to it",
@@ -4142,7 +4229,7 @@ export const AtsSkills: React.FC<{
           ],
         },
         {
-          _id: 2,
+          _id: generateUniqueId(),
           name: "Name of Skill (Ex: Hard Skills)",
           items: [
             "Mention the skill then briefly add some context to it",
@@ -4150,7 +4237,7 @@ export const AtsSkills: React.FC<{
           ],
         },
         {
-          _id: 3,
+          _id: generateUniqueId(),
           name: "Name of Skill (Ex: Technical Skills)",
           items: [
             "Mention the skill then briefly add some context to it",
@@ -4197,32 +4284,34 @@ export const AtsSkills: React.FC<{
       setResumeData(() => ({
         ...resumeData,
         skills: updatedItems.map((item: any) => ({
+          _id: item?._id,
           name: item.name,
           items: item.items,
         })),
       }));
     }
   };
-  const handleRemove = (id: number) => {
+  const handleRemove = (id: number | string) => {
     const updatedItems = items.filter((item) => item?._id !== id);
     setItems(updatedItems);
     setResumeData(() => ({
       ...resumeData,
       skills: updatedItems.map((item: any) => ({
+        _id: item?._id,
         name: item.name,
         items: item.items,
       })),
     }));
   };
 
-  // Handler to add new education
+  // Handler to add new skill
   const addSkill = () => {
     setResumeData(() => ({
       ...resumeData,
       skills: [
         ...resumeData?.skills,
         {
-          _id: items?.length + 1,
+          _id: generateUniqueId(),
           name: "Name of Skill (Ex: Soft Skill)",
           items: [
             "Mention the skill then briefly add some context to it",
@@ -4234,7 +4323,11 @@ export const AtsSkills: React.FC<{
   };
 
   // Handle input change for specific item
-  const handleInputChange = (id: number, field: string, value: string) => {
+  const handleInputChange = (
+    id: number | string,
+    field: string,
+    value: string
+  ) => {
     const updatedItems = items.map((item) =>
       item?._id === id ? { ...item, [field]: value } : item
     );
@@ -4242,6 +4335,7 @@ export const AtsSkills: React.FC<{
     setResumeData((prev: any) => ({
       ...prev,
       skills: updatedItems.map((item: any) => ({
+        _id: item?._id,
         name: item.name,
         items: item.items,
       })),
@@ -4322,23 +4416,26 @@ export const AtsSkills: React.FC<{
               )}
               <div className="">
                 {editingName?.itemId === item?._id &&
-                editingName.nameIndex === index ? (
+                editingName?.nameIndex === index ? (
                   <input
                     className={`border-none italic border-b text-base bg-white focus:outline-none text-black placeholder:text-black focus:bg-zinc-100 px-2`}
                     placeholder="Enter Skill Title"
                     value={item.name}
                     autoFocus
                     onBlur={() => setEditingName(null)}
+                    style={{ fontSize }}
                     onChange={(e) =>
                       handleInputChange(item?._id, "name", e.target.value)
                     }
                   />
                 ) : (
                   <span
-                    onClick={() =>
+                    onClick={() => {
                       setEditingName({ itemId: item?._id, nameIndex: index })
-                    }
-                    className="italic underline text-base text-zinc-500 underline-offset-2 cursor-pointer font-medium"
+                      console.log(items)
+                    }}
+                    className="italic underline text-base text-zinc-500 underline-offset-2 cursor-text font-medium"
+                    style={{ fontSize }}
                   >
                     {item.name}
                   </span>
@@ -4349,18 +4446,20 @@ export const AtsSkills: React.FC<{
                 {item.items.map((skillItem: string, skillIndex: number) => (
                   <li key={skillIndex}>
                     {editingSkill?.itemId === item?._id &&
-                    editingSkill.skillIndex === skillIndex ? (
+                    editingSkill?.skillIndex === skillIndex ? (
                       <input
                         className={`border-none text-base bg-white focus:outline-none text-black placeholder:text-black focus:bg-zinc-100 px-2`}
                         placeholder="Enter Skill Item"
                         value={skillItem}
                         autoFocus={true}
+                        style={{ fontSize }}
                         onBlur={() => setEditingSkill(null)}
                         onChange={(e) => {
                           const updatedItems = items.map((itm) =>
                             itm?._id === item?._id
                               ? {
                                   ...itm,
+                                  _id: item?._id,
                                   items: itm.items.map((i, idx) =>
                                     idx === skillIndex ? e.target.value : i
                                   ),
@@ -4370,10 +4469,7 @@ export const AtsSkills: React.FC<{
                           setItems(updatedItems);
                           setResumeData((prev: any) => ({
                             ...prev,
-                            skills: updatedItems.map((itm: any) => ({
-                              name: itm.name,
-                              items: itm.items,
-                            })),
+                            skills: updatedItems
                           }));
                         }}
                       />
@@ -4382,7 +4478,8 @@ export const AtsSkills: React.FC<{
                         onClick={() =>
                           setEditingSkill({ itemId: item?._id, skillIndex })
                         }
-                        className="text-[15px] cursor-pointer font-medium"
+                        className="text-[15px] cursor-text font-medium"
+                        style={{ fontSize }}
                       >
                         {skillItem}{" "}
                         {item?.items?.length > 1 &&
@@ -4422,7 +4519,7 @@ export const AtsSkills: React.FC<{
                         : item.items;
                       const updatedItems = items.map((item) =>
                         item?._id === currentItem?._id
-                          ? { ...item, ["items"]: newItem }
+                          ? { ...item, _id: item?._id, ["items"]: newItem }
                           : item
                       );
                       setItems(updatedItems);
@@ -4543,16 +4640,23 @@ export const AreasOfExpertise: React.FC<{
   resumeData: any;
   setResumeData: React.Dispatch<React.SetStateAction<any | null>>;
 }> = ({ resumeData, setResumeData }) => {
-  const [hoveredItemId, setHoveredItemId] = useState<number | null>(null);
+  const [hoveredItemId, setHoveredItemId] = useState<number | string | null>(
+    null
+  );
   const [role, setRole] = useState("");
   const [showButon, setShowButton] = useState(false);
   const [AiSkills, setAiSkills] = useState<string[]>([]);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
-  const [editingItemId, setEditingItemId] = useState<number | null>(null);
+  const [editingItemId, setEditingItemId] = useState<number | null | string>(
+    null
+  );
+  const fontSize =
+    fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "16px";
 
   const [items, setItems] = useState<SkillProps[]>(
     resumeData?.areaOfExpertise.map((val: string) => ({
-      _id: resumeData?.areaOfExpertise?.length + 1,
+      _id: generateUniqueId(),
       value: val,
     }))
   );
@@ -4573,23 +4677,23 @@ export const AreasOfExpertise: React.FC<{
   useEffect(() => {
     if (resumeData?.areaOfExpertise?.length > 0) {
       setItems(
-        resumeData?.areaOfExpertise.map((val: string, index: number) => ({
-          _id: index + 1,
+        resumeData?.areaOfExpertise.map((val: string) => ({
+          _id: generateUniqueId(),
           value: val,
         }))
       );
     } else {
       setItems([
         {
-          _id: 1,
+          _id: generateUniqueId(),
           value: "Add Area of Expertise",
         },
         {
-          _id: 2,
+          _id: generateUniqueId(),
           value: "Add Area of Expertise",
         },
         {
-          _id: 2,
+          _id: generateUniqueId(),
           value: "Add Area of Expertise",
         },
       ]);
@@ -4635,7 +4739,7 @@ export const AreasOfExpertise: React.FC<{
       }));
     }
   };
-  const handleRemove = (id: number) => {
+  const handleRemove = (id: number | string) => {
     const updatedItems = items.filter((item) => item?._id !== id);
     setItems(updatedItems);
     setResumeData(() => ({
@@ -4653,7 +4757,11 @@ export const AreasOfExpertise: React.FC<{
   };
 
   // Handle input change for specific item
-  const handleInputChange = (id: number, field: string, value: string) => {
+  const handleInputChange = (
+    id: number | string,
+    field: string,
+    value: string
+  ) => {
     const updatedItems = items.map((item) =>
       item?._id === id ? { ...item, [field]: value } : item
     );
@@ -4737,6 +4845,7 @@ export const AreasOfExpertise: React.FC<{
                 <input
                   className={`border-none bg-white w-full focus:outline-none text-black placeholder:text-black focus:bg-zinc-100 px-2`}
                   placeholder="Enter area of expertise"
+                  style={{ fontSize }}
                   value={item.value}
                   onChange={(e) =>
                     handleInputChange(item?._id, "value", e.target.value)
@@ -4748,6 +4857,7 @@ export const AreasOfExpertise: React.FC<{
                 <span
                   className="text-[15px] cursor-pointer font-medium"
                   onClick={() => setEditingItemId(item?._id)}
+                  style={{ fontSize }}
                 >
                   {item.value || "Enter area of expertise"}{" "}
                   {items?.length > 1 && index + 1 !== items?.length && "|"}
@@ -4857,32 +4967,22 @@ export const RelevantCourses: React.FC<{
   resumeData: any;
   setResumeData: React.Dispatch<React.SetStateAction<any | null>>;
 }> = ({ resumeData, setResumeData }) => {
-  const [hoveredItemId, setHoveredItemId] = useState<number | null>(null);
-  const [role, setRole] = useState("");
-  const [showButon, setShowButton] = useState(false);
-  const [AiSkills, setAiSkills] = useState<string[]>([]);
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
-  const [editingItemId, setEditingItemId] = useState<number | null>(null);
-
+  const [hoveredItemId, setHoveredItemId] = useState<number | string | null>(
+    null
+  );
+  const [editingItemId, setEditingItemId] = useState<number | string | null>(
+    null
+  );
+  const fontSize =
+    fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "16px";
   const [items, setItems] = useState<SkillProps[]>(
     resumeData?.relevantCourses.map((val: string) => ({
-      _id: resumeData?.relevantCourses?.length + 1,
+      _id: generateUniqueId(),
       value: val,
     }))
   );
   const [draggingItem, setDraggingItem] = useState<any | null>(null);
-  const [showModal, setShowModal] = useState(false);
-
-  const applyAiList = () => {
-    setResumeData((prev: any) => ({
-      ...prev,
-      relevantCourses: [
-        ...new Set([...resumeData?.relevantCourses, ...selectedSkills]),
-      ],
-    }));
-    setAiSkills([]);
-    setSelectedSkills([]);
-  };
 
   useEffect(() => {
     if (resumeData?.relevantCourses?.length > 0) {
@@ -4895,11 +4995,11 @@ export const RelevantCourses: React.FC<{
     } else {
       setItems([
         {
-          _id: 1,
+          _id: generateUniqueId(),
           value: `List courses that are relevant to the job you're applying for`,
         },
         {
-          _id: 2,
+          _id: generateUniqueId(),
           value: `Use Course titles rather than course numbers`,
         },
       ]);
@@ -4945,7 +5045,7 @@ export const RelevantCourses: React.FC<{
       }));
     }
   };
-  const handleRemove = (id: number) => {
+  const handleRemove = (id: number | string) => {
     const updatedItems = items.filter((item) => item?._id !== id);
     setItems(updatedItems);
     setResumeData(() => ({
@@ -4963,7 +5063,11 @@ export const RelevantCourses: React.FC<{
   };
 
   // Handle input change for specific item
-  const handleInputChange = (id: number, field: string, value: string) => {
+  const handleInputChange = (
+    id: number | string,
+    field: string,
+    value: string
+  ) => {
     const updatedItems = items.map((item) =>
       item?._id === id ? { ...item, [field]: value } : item
     );
@@ -4974,11 +5078,7 @@ export const RelevantCourses: React.FC<{
     }));
   };
   return (
-    <div
-      className="hover:border border-dashed rounded-md border-spacing-1 px-2 py-3"
-      onMouseEnter={() => setShowButton(true)}
-      onMouseLeave={() => setShowButton(false)}
-    >
+    <div className="hover:border border-dashed rounded-md border-spacing-1 px-2 py-3">
       <div className="w-full flex justify-between">
         <h6
           className="font-semibold mb-2 px-3 text-lg uppercase"
@@ -4986,17 +5086,6 @@ export const RelevantCourses: React.FC<{
         >
           RELEVANT COURSES
         </h6>
-        {showButon && (
-          <div className="-mt-5">
-            <GradientButton
-              text="WRITING ASSISTANT"
-              className=""
-              onClick={() => {
-                setShowModal(true);
-              }}
-            />
-          </div>
-        )}
       </div>
 
       <ul className="grid grid-cols-3 items-center gap-3 px-2">
@@ -5053,11 +5142,13 @@ export const RelevantCourses: React.FC<{
                   }
                   onBlur={() => setEditingItemId(null)}
                   autoFocus
+                  style={{ fontSize }}
                 />
               ) : (
                 <span
                   className="px-1 text-base font-medium"
                   onClick={() => setEditingItemId(item?._id)}
+                  style={{ fontSize }}
                 >
                   {item.value || "Enter relevant course"}
                 </span>
@@ -5066,98 +5157,6 @@ export const RelevantCourses: React.FC<{
           </li>
         ))}
       </ul>
-      <Modal
-        show={showModal}
-        onHide={() => {
-          setAiSkills([]);
-          setSelectedSkills([]);
-          setShowModal(false);
-        }}
-        props={{ roundedMd: true }}
-        size="w-full lg:max-w-[600px]"
-      >
-        <div className="mb-7.5 text-center">
-          <h1 className="font-outfit font-medium text-2xl">
-            AI Writing Assistant
-          </h1>
-          <p className=" text-zinc-600">Relevant Courses</p>
-        </div>
-
-        <div className="mb-5">
-          <FieldInput
-            label="Role"
-            size="small"
-            value={role}
-            placeholder="Enter your role to generate a list of tailored relevant courses"
-            onChange={(val) => setRole(val)}
-            id="role"
-          />
-        </div>
-
-        {AiSkills?.length > 0 && (
-          <div className="mb-4">
-            <h6 className="font-medium text-black mb-[0.4rem]">
-              Select the courses you want to apply
-            </h6>
-            <div className="h-[40vh] overflow-y-auto no-scrollbar">
-              <ul className="border rounded-md border-stroke px-2 py-2 space-y-2 list-disc list-outside">
-                {AiSkills.map((val, index) => (
-                  <div
-                    key={index}
-                    className={`bg-gray dark:text-white flex gap-3 items-center rounded w-full p-2.5 mb-2 cursor-pointer ${
-                      selectedSkills?.includes(val)
-                        ? "border border-primary"
-                        : ""
-                    }`}
-                    onClick={() => {
-                      setSelectedSkills(
-                        selectedSkills.includes(val)
-                          ? selectedSkills.filter(
-                              (item: string) => item !== val
-                            )
-                          : [...selectedSkills, val]
-                      );
-                    }}
-                  >
-                    <div>
-                      {selectedSkills.includes(val) ? (
-                        <FaRegCheckCircle className="text-primary" />
-                      ) : (
-                        <FaRegCircle />
-                      )}
-                    </div>
-
-                    {val}
-                  </div>
-                ))}
-              </ul>
-            </div>
-          </div>
-        )}
-
-        <div className="flex flex-col gap-3 justify-center items-center">
-          <GradientButton
-            text="Generate Bullet Points"
-            className="w-[80%]"
-            props={{ padding: "py-2.5 px-9" }}
-            onClick={() => {
-              setAiSkills(mockArray);
-            }}
-          />
-          {selectedSkills.length > 0 && (
-            <Button
-              rounded
-              onClick={() => {
-                applyAiList();
-                setShowModal(false);
-              }}
-              width="[80%]"
-            >
-              Apply Selected Skills
-            </Button>
-          )}
-        </div>
-      </Modal>
     </div>
   );
 };
