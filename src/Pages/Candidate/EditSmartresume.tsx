@@ -643,7 +643,7 @@ const EditSmartResume: React.FC = () => {
 
                 <div
                   onClick={() => setScoreModal(true)}
-                  className="hidden gap-1 cursor-pointer max-sm:hidden text-sm max-sm:text-[10px] items-center"
+                  className="flex gap-1 cursor-pointer max-sm:hidden text-sm max-sm:text-[10px] items-center"
                 >
                   <span>
                     <ProgressBar2 percent={50} />
@@ -654,7 +654,7 @@ const EditSmartResume: React.FC = () => {
                 {/* Color Picker */}
               </Menu>
 
-              <div className="sm:ml-auto hidden items-center gap-2">
+              <div className="sm:ml-auto flex items-center gap-2">
                 <div
                   onClick={() => setScoreModal(true)}
                   className="flex gap-1 cursor-pointer sm:hidden text-sm max-sm:text-[10px] items-center"
@@ -669,7 +669,7 @@ const EditSmartResume: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setNewCvModal(true)}
-                  className="flex items-center gap-2 max-sm:text-xs p-1 hover:scale-105 duration-150 text-zinc-700"
+                  className="hidden items-center gap-2 max-sm:text-xs p-1 hover:scale-105 duration-150 text-zinc-700"
                 >
                   Create New <LuExternalLink />
                 </button>
@@ -1251,6 +1251,7 @@ const EditSmartResume: React.FC = () => {
             <ResumeAiScore
               show={scoreModal}
               onHide={() => setScoreModal(false)}
+              resumeData={resumeData}
             />
           )}
         </section>

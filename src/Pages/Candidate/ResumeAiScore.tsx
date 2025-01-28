@@ -3,10 +3,13 @@ import ReactDOM from "react-dom";
 import { HiOutlineTemplate } from "react-icons/hi";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
+import { toast } from "react-toastify";
+import { analyzeResume } from "../../services/resumeServices";
 
 type Props = {
   show?: boolean;
   onHide: () => void;
+  resumeData: any
 };
 const sampleData = {
   status: "success",
@@ -41,7 +44,7 @@ const sampleData = {
     },
   },
 };
-const ResumeAiScore: React.FC<Props> = ({ show, onHide }) => {
+const ResumeAiScore: React.FC<Props> = ({ show, onHide, resumeData }) => {
   const [activeTab, setActiveTab] = useState<
     "content" | "format" | "optimization" | "bestPractices" | "applicationReady"
   >("content");
@@ -76,6 +79,23 @@ const ResumeAiScore: React.FC<Props> = ({ show, onHide }) => {
       icon: <IoDocumentTextOutline />,
     },
   ]);
+
+  const [_loading, setLoading] = useState(true);
+  
+    const handleAnalyzeResume = async () => {
+      try {
+        const resp = await analyzeResume({
+          resumeId: resumeData?._id
+        }, resumeData?._id);
+        console.log(resp)
+       
+        // console.log(resp?.data?.profile);
+      } catch (err: any) {
+        toast.error(err?.message || "Request Failed");
+      } finally {
+        setLoading(false)
+      }
+    };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -140,6 +160,7 @@ const ResumeAiScore: React.FC<Props> = ({ show, onHide }) => {
       }));
       setTabs(updatedTabs);
     }
+    handleAnalyzeResume()
   }, []);
 
   if (!show) {

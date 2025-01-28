@@ -27,9 +27,48 @@ export const getProfileResume = async (id: string | undefined) => {
     return response?.data;
   };
 
+  export const generateResumeSkills = async (data: any) => {
+    const response: any = await axios
+      .post(`/resumes/skills_autocomplete`, data)
+      .catch((e) => ({ error: e }));
+    //check error
+    if (response && response?.error) {
+      const err = response?.error?.response;
+      const msg = err?.data?.message || err?.status;
+      throw new Error(msg || response?.error?.message);
+    }
+    return response?.data;
+  };
+
+  
+  export const generateAreasOfExpertise = async (data: any) => {
+    const response: any = await axios
+      .post(`/resumes/area_of_expertise_autocomplete`, data)
+      .catch((e) => ({ error: e }));
+    //check error
+    if (response && response?.error) {
+      const err = response?.error?.response;
+      const msg = err?.data?.message || err?.status;
+      throw new Error(msg || response?.error?.message);
+    }
+    return response?.data;
+  };
+
   export const updateResume = async (id: string | undefined, data:any) => {
     const response: any = await axios
       .patch(`/resumes/${id}`, data)
+      .catch((e) => ({ error: e }));
+    //check error
+    if (response && response?.error) {
+      const err = response?.error?.response;
+      const msg = err?.data?.message || err?.status;
+      throw new Error(msg || response?.error?.message);
+    }
+    return response?.data;
+  };
+  export const analyzeResume = async (data: any, id?: string | undefined) => {
+    const response: any = await axios
+      .post(`/resumes/analyze_resume?${id}`, data)
       .catch((e) => ({ error: e }));
     //check error
     if (response && response?.error) {

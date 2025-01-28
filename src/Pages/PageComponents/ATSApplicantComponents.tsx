@@ -12,7 +12,11 @@ import { formatMonthYear } from "../../lib/utils/formatters";
 import { generateUniqueId } from "../../lib/utils";
 import { generateProfileSummary } from "../../services/profileServices";
 import { toast } from "react-toastify";
-import { generateExperienceData } from "../../services/resumeServices";
+import {
+  generateAreasOfExpertise,
+  generateExperienceData,
+  generateResumeSkills,
+} from "../../services/resumeServices";
 
 type EditingState = {
   email: boolean;
@@ -54,19 +58,6 @@ const mockExperiences = [
   "Utilized version control systems such as Git to manage source code and collaborate with team members.",
   "Employed frameworks like React and Vue.js for building interactive web applications.",
 ];
-
-const exampleSkills = [
-  {
-    name: "technical skills",
-    items: ["Development"],
-  },
-  {
-    name: "hard skills",
-    items: ["Patience", "Communiation"],
-  },
-];
-
-const mockArray = ["Git", "Javascript", "Bootstrap", "FIGMA", "HTML", "CSS"];
 
 //
 export const CareerSummary: React.FC<{
@@ -4168,15 +4159,11 @@ export const AtsSkills: React.FC<{
     null
   );
   const [role, setRole] = useState("");
-  const [showButon, setShowButton] = useState(false);
+  const [skillType, setSkillType] = useState("");
   const [currentItem, setCurrentItem] = useState<any>(null);
-  const [AiSkills, setAiSkills] = useState<{ name: string; items: string[] }[]>(
-    []
-  );
+  const [AiSkills, setAiSkills] = useState<string[]>([]);
   const [newSkill, setNewSkill] = useState("");
-  const [selectedSkills, setSelectedSkills] = useState<
-    { name: string; items: string[] }[]
-  >([]);
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [editingSkill, setEditingSkill] = useState<{
     itemId: number | string;
     skillIndex: number;
@@ -4199,11 +4186,16 @@ export const AtsSkills: React.FC<{
     fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
     "16px";
   const [showModal, setShowModal] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
 
   const applyAiList = () => {
     setResumeData((prev: any) => ({
       ...prev,
-      skills: [...prev.skills, ...selectedSkills],
+      skills: prev.skills.map((skill: any) =>
+        skill._id === currentItem?._id
+          ? { ...skill, items: selectedSkills }
+          : skill
+      ),
     }));
     setAiSkills([]);
     setSelectedSkills([]);
@@ -4322,6 +4314,21 @@ export const AtsSkills: React.FC<{
     }));
   };
 
+  const handleGenerateSkills = async () => {
+    setAiLoading(true);
+    try {
+      const resp = await generateResumeSkills({
+        skillType: skillType,
+        role: role,
+      });
+      setAiSkills(resp?.data?.skills);
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   // Handle input change for specific item
   const handleInputChange = (
     id: number | string,
@@ -4341,12 +4348,24 @@ export const AtsSkills: React.FC<{
       })),
     }));
   };
+
+  const removeSkillItem = (itemId: string | number, skillIndex: number) => {
+    const updatedItems = items.map((itm) =>
+      itm?._id === itemId
+        ? {
+            ...itm,
+            items: itm.items.filter((_, idx) => idx !== skillIndex),
+          }
+        : itm
+    );
+    setItems(updatedItems);
+    setResumeData((prev: any) => ({
+      ...prev,
+      skills: updatedItems,
+    }));
+  };
   return (
-    <div
-      className="hover:border border-dashed rounded-md border-spacing-1 px-2 py-3"
-      onMouseEnter={() => setShowButton(true)}
-      onMouseLeave={() => setShowButton(false)}
-    >
+    <div className="hover:border border-dashed rounded-md border-spacing-1 px-2 py-3">
       <div className="w-full relative flex justify-between  mb-2.5">
         <h6
           className="font-semibold text-lg uppercase border-b-2 ml-3 py-1 w-full"
@@ -4357,17 +4376,6 @@ export const AtsSkills: React.FC<{
         >
           Key Skills
         </h6>
-        {showButon && (
-          <div className="absolute right-4 -top-6">
-            <GradientButton
-              text="WRITING ASSISTANT"
-              className=""
-              onClick={() => {
-                setShowModal(true);
-              }}
-            />
-          </div>
-        )}
       </div>
 
       <ul className="gap-3 px-1.5">
@@ -4390,6 +4398,13 @@ export const AtsSkills: React.FC<{
               {hoveredItemId === item?._id && (
                 <div className="flex w-full gap-1 justify-end -mt-4 ">
                   <div className="flex gap-1 items-center bg-white z-0">
+                    <GradientButton
+                      text="WRITING ASSISTANT"
+                      className=""
+                      onClick={() => {
+                        setShowModal(true);
+                      }}
+                    />
                     <button
                       onClick={addSkill}
                       className="h-6 w-6 flex justify-center items-center border-none text-primary/90 hover:text-primary text-xl"
@@ -4431,8 +4446,8 @@ export const AtsSkills: React.FC<{
                 ) : (
                   <span
                     onClick={() => {
-                      setEditingName({ itemId: item?._id, nameIndex: index })
-                      console.log(items)
+                      setEditingName({ itemId: item?._id, nameIndex: index });
+                      console.log(items);
                     }}
                     className="italic underline text-base text-zinc-500 underline-offset-2 cursor-text font-medium"
                     style={{ fontSize }}
@@ -4469,7 +4484,7 @@ export const AtsSkills: React.FC<{
                           setItems(updatedItems);
                           setResumeData((prev: any) => ({
                             ...prev,
-                            skills: updatedItems
+                            skills: updatedItems,
                           }));
                         }}
                       />
@@ -4481,7 +4496,19 @@ export const AtsSkills: React.FC<{
                         className="text-[15px] cursor-text font-medium"
                         style={{ fontSize }}
                       >
-                        {skillItem}{" "}
+                        {" "}
+                        <span className="group">
+                          {" "}
+                          {skillItem}{" "}
+                          <button
+                            onClick={() =>
+                              removeSkillItem(item?._id, skillIndex)
+                            }
+                            className="mx-2 hidden group-hover:inline-flex text-zinc-500 hover:text-red-700"
+                          >
+                            x
+                          </button>
+                        </span>
                         {item?.items?.length > 1 &&
                           skillIndex + 1 !== item?.items?.length &&
                           "|"}
@@ -4558,6 +4585,17 @@ export const AtsSkills: React.FC<{
 
         <div className="mb-5">
           <FieldInput
+            label="Skill Type"
+            size="small"
+            value={skillType}
+            placeholder="Enter type of skill (Ex:Soft skills)"
+            onChange={(val) => setSkillType(val)}
+            id="skillType"
+          />
+        </div>
+
+        <div className="mb-5">
+          <FieldInput
             label="Role"
             size="small"
             value={role}
@@ -4584,10 +4622,8 @@ export const AtsSkills: React.FC<{
                     }`}
                     onClick={() => {
                       setSelectedSkills(
-                        selectedSkills.some((skill) => skill?.name === val.name)
-                          ? selectedSkills.filter(
-                              (skill) => skill?.name !== val.name
-                            )
+                        selectedSkills.some((skill) => skill === val)
+                          ? selectedSkills.filter((skill) => skill !== val)
                           : [...selectedSkills, val]
                       );
                     }}
@@ -4600,7 +4636,7 @@ export const AtsSkills: React.FC<{
                       )}
                     </div>
                     <div>
-                      <strong>{val.name}:</strong> {val.items.join(", ")}
+                      <strong>{val}</strong>
                     </div>
                   </div>
                 ))}
@@ -4608,16 +4644,16 @@ export const AtsSkills: React.FC<{
             </div>
           </div>
         )}
-
         <div className="flex flex-col gap-3 justify-center items-center">
-          <GradientButton
-            text="Generate Bullet Points"
-            className="w-[80%]"
-            props={{ padding: "py-2.5 px-9" }}
+          <Button
             onClick={() => {
-              setAiSkills(exampleSkills);
+              handleGenerateSkills();
             }}
-          />
+            disabled={aiLoading}
+            width="w-[80%]"
+          >
+            <RiRobot2Line /> {aiLoading ? "Loading..." : "Generate Skills"}
+          </Button>
           {selectedSkills.length > 0 && (
             <Button
               rounded
@@ -4627,7 +4663,7 @@ export const AtsSkills: React.FC<{
               }}
               width="[80%]"
             >
-              Apply Selected Skills
+              Apply Selected Items
             </Button>
           )}
         </div>
@@ -4662,6 +4698,7 @@ export const AreasOfExpertise: React.FC<{
   );
   const [draggingItem, setDraggingItem] = useState<any | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
 
   const applyAiList = () => {
     setResumeData((prev: any) => ({
@@ -4754,6 +4791,20 @@ export const AreasOfExpertise: React.FC<{
       ...resumeData,
       areaOfExpertise: [...resumeData?.areaOfExpertise, ""],
     }));
+  };
+
+  const GenerateAreasOfExpertise = async () => {
+    setAiLoading(true);
+    try {
+      const resp = await generateAreasOfExpertise({
+        role: role,
+      });
+      setAiSkills(resp?.data?.areasOfExpertise);
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    } finally {
+      setAiLoading(false);
+    }
   };
 
   // Handle input change for specific item
@@ -4937,14 +4988,16 @@ export const AreasOfExpertise: React.FC<{
         )}
 
         <div className="flex flex-col gap-3 justify-center items-center">
-          <GradientButton
-            text="Generate Bullet Points"
-            className="w-[80%]"
-            props={{ padding: "py-2.5 px-9" }}
+          <Button
             onClick={() => {
-              setAiSkills(mockArray);
+              GenerateAreasOfExpertise();
             }}
-          />
+            disabled={aiLoading}
+            width="w-[80%]"
+          >
+            <RiRobot2Line />{" "}
+            {aiLoading ? "Loading..." : "Generate Areas of Expertise"}
+          </Button>
           {selectedSkills.length > 0 && (
             <Button
               rounded
@@ -4954,7 +5007,7 @@ export const AreasOfExpertise: React.FC<{
               }}
               width="[80%]"
             >
-              Apply Selected Skills
+              Apply Selected Items
             </Button>
           )}
         </div>
