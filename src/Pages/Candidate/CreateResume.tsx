@@ -1239,7 +1239,7 @@ const CreateLiveResume: React.FC = () => {
                 </div>
 
                 <div className="my-12">
-                  <FileUpload>
+                  <FileUpload onSuccess={() => {}}>
                     <p className="font-bold text-neutral-700 text-center text-lg pt-4">
                       Drag & drop your resume here
                     </p>

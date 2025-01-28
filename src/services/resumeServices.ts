@@ -68,7 +68,7 @@ export const getProfileResume = async (id: string | undefined) => {
   };
   export const analyzeResume = async (data: any, id?: string | undefined) => {
     const response: any = await axios
-      .post(`/resumes/analyze_resume?${id}`, data)
+      .post(`/resumes/analyze_resume?resumeId=${id}`, data)
       .catch((e) => ({ error: e }));
     //check error
     if (response && response?.error) {

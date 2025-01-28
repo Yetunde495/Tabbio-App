@@ -52,11 +52,11 @@ const Signin: React.FC = () => {
         ...response?.data?.user,
         category: "Candidate",
       });
-      // if (response?.data?.user?.verified) {
+      if (response?.data?.user?.verified) {
         navigate(`/app/candidate/profile`);
-      // } else {
-      //   sendOTP();
-      // }
+      } else {
+        sendOTP();
+      }
     } catch (err: any) {
       toast.error(err.message);
     } finally {
