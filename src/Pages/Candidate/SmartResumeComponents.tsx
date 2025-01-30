@@ -107,7 +107,7 @@ export const BasicDetails: React.FC<{
   };
   return (
     <div>
-      <div className="flex md:flex-row flex-col gap-x-6 items-center gap-y-6 mb-8">
+      <div className="flex md:flex-row flex-col gap-x-6 items-center gap-y-2 mb-8">
         <div>
           <ProfilePicture
             name={profileData?.name}
@@ -120,15 +120,15 @@ export const BasicDetails: React.FC<{
           />
         </div>
         <div>
-          <div className="my-2">
+          <div className="my-2 max-sm:my-0">
             <h1
-              className={`font-semibold text-xl sm:text-2xl md:text-3xl mb-1 flex gap-4 items-center`}
+              className={`font-semibold max-sm:text-center max-sm:gap-2 max-sm:justify-center max-sm:w-full text-xl sm:text-2xl md:text-3xl mb-1 flex gap-4 items-center`}
             >
               {profileData?.name}{" "}
               <BsPatchCheck size={16} className="text-primary mt-0.5" />
             </h1>
             {profileData?.config?.role && (
-              <h6 className={`text-base text-zinc-600 uppercase`}>
+              <h6 className={`text-base text-zinc-600 max-sm:text-center uppercase`}>
                 {profileData?.role}
               </h6>
             )}

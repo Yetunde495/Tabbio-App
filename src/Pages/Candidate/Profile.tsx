@@ -985,7 +985,7 @@ const Profile: React.FC = () => {
             {active ? (
               <div className="w-full flex xl:flex-row flex-col gap-5">
                 <div className="xl:min-w-[68%]">
-                  <section className="bg-white flex flex-col space-y-10 px-6 max-sm:px-2.5 py-5 w-full h-full ">
+                  <section className="bg-white flex flex-col space-y-10 px-6 max-sm:px-2.5 py-5 max-sm:py-3 w-full h-full ">
                     <BasicDetails setProfileData={setProfileData} profileData={profileData} />
                     {profileData?.config?.professionalSummary && (
                       <ProfileSummary
