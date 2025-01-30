@@ -205,7 +205,7 @@ const EditSmartResume: React.FC = () => {
         <PageLoader />
       ) : (
         <section className="w-full">
-          <div className="bg-zinc-50/90 lg:px-9 md:px-6 px-2 py-3 mb-6 w-full">
+          <div className="bg-zinc-50/90 lg:px-9 md:px-6 px-2 py-3 mb-6 mt-3 w-full">
             <div className="flex max-sm:flex-col gap-3 gap-y-1.5 sm:items-center relative w-full z-99">
               <Menu setActive={setActive}>
                 <MenuItem

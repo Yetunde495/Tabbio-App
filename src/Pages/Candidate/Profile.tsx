@@ -8,32 +8,22 @@ import { CiEdit } from "react-icons/ci";
 import {
   BsCopy,
   BsDatabaseGear,
-  BsEye,
   BsPlusLg,
-  BsTwitterX,
-  BsWhatsapp,
 } from "react-icons/bs";
 import {
   MdInsertLink,
   MdKeyboardDoubleArrowLeft,
   // MdOutlineShield,
-  MdShare,
 } from "react-icons/md";
 import Drawer from "../../components/Drawer";
 import Button from "../../components/Button";
 import {
   FaCheck,
-  FaCircle,
-  FaFacebookF,
-  FaLinkedinIn,
   FaRegCalendar,
 } from "react-icons/fa6";
-import { AiOutlineBarChart } from "react-icons/ai";
 import {
   LuBriefcase,
-  LuClock,
   LuContact,
-  LuExternalLink,
   LuPencil,
 } from "react-icons/lu";
 import { CgFileDocument } from "react-icons/cg";
@@ -41,9 +31,6 @@ import { useNavigate } from "react-router-dom";
 import { FiExternalLink } from "react-icons/fi";
 import { SlSettings } from "react-icons/sl";
 import { TbCopy, TbWorld } from "react-icons/tb";
-import ResumeAnalytics from "./ResumeAnalytics";
-import { UpgradeCandidateSubscription } from "../PageComponents/UpgradeSubscriptionModal";
-import { FcReddit } from "react-icons/fc";
 import { mockProfileData } from "../../data/mockData";
 import {
   BasicDetails,
@@ -58,7 +45,6 @@ import {
   WorkExperience,
 } from "./SmartResumeComponents";
 import { IoDocumentTextOutline } from "react-icons/io5";
-import { truncateString } from "../../lib/utils/formatters";
 import {
   getUserProfile,
   SaveProfile,
@@ -75,9 +61,9 @@ const SmartResumeSettings: React.FC<{
   const { user, updateUser } = useApp();
   const [editLink, setEditLink] = useState(false);
   const navigate = useNavigate();
-  const prefix = "tabbio.link/";
+  const prefix = "tabbio.link-";
   const [inputValue, setInputValue] = useState(
-    `${user?.tabbioLink}` || "tabbio.link/"
+    `${user?.tabbioLink}` || "tabbio.link-"
   );
   const [linkModal, setLinkModal] = useState(false);
   const [contactPrivacyModal, setContactPrivacyModal] = useState(false);
@@ -240,7 +226,8 @@ const SmartResumeSettings: React.FC<{
                 className={` outline-none w-full px-2 bg-white ml-1 border border-slate-300 rounded-lg py-2 focus:border-primary`}
               />
               <button
-                className="bg-primary px-6 py-2.5 rounded-md text-white hover:scale-95 w-full font-medium"
+                className="bg-primary disabled:bg-opacity-50 px-6 py-2.5 rounded-md text-white hover:scale-95 w-full font-medium"
+                disabled={loading || inputValue === "tabbio.link-"}
                 onClick={() => {
                   handleUpdateLink({
                     tabbioLink: inputValue
@@ -248,7 +235,16 @@ const SmartResumeSettings: React.FC<{
                 
                 }}
               >
-                Save
+                {loading ? 'Loading...' : 'Save'}
+              </button>
+              <button
+                className="bg-transparent px-6 py-2.5 rounded-md border text-zinc-800 border-zinc-500 hover:scale-95 w-full font-medium"
+                onClick={() => {
+                  setInputValue(user?.tabbioLink)
+                 setEditLink(false)
+                }}
+              >
+                Cancel
               </button>
             </div>
           </div>
@@ -923,90 +919,7 @@ const SmartResumeSettings: React.FC<{
   );
 };
 
-const ShareCV: React.FC = () => {
-  const {user} = useApp();
-  const [buttonText, setButtonText] = useState("Copy");
 
-  const url = `http://tabbio-app.vercel.app/profile/${user?.tabbioLink}`
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(url).then(() => {
-      setButtonText("Copied!");
-      setTimeout(() => {
-        setButtonText("Copy");
-      }, 3000);
-    });
-  };
-  const text = "Check this out!";
-  const title = "Check this out!";
-
-  return (
-    <div className="bg-white pb-6">
-      <div className="flex items-center gap-4 mb-7">
-        <a
-          href={`https://www.linkedin.com/shareArticle?mini=true&url=${url}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-blue-700 text-white rounded-full p-2 hover:bg-blue-900"
-          aria-label="Share on LinkedIn"
-        >
-          <FaLinkedinIn size={22} />
-        </a>
-        <a
-          href={`https://www.facebook.com/sharer/sharer.php?u=${url}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-blue-600 text-white rounded-full p-2 hover:bg-blue-800"
-          aria-label="Share on Facebook Messenger"
-        >
-          <FaFacebookF size={22} />
-        </a>
-        <a
-          href={`https://twitter.com/messages/compose?text=${text}%20${url}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-black text-white rounded-full p-2 hover:bg-zinc-800"
-          aria-label="Share on X (Twitter)"
-        >
-          <BsTwitterX size={20} />
-        </a>
-        <a
-          href={`https://api.whatsapp.com/send?text=${text}%20${url}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-green-500 text-white rounded-full p-2 hover:bg-green-700"
-          aria-label="Share on WhatsApp"
-        >
-          <BsWhatsapp size={22} />
-        </a>
-
-        <a
-          href={`https://www.reddit.com/submit?url=${url}&title=${title}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-orange-500 text-white rounded-full p-2 hover:bg-orange-700"
-          aria-label="Share on Reddit"
-        >
-          <FcReddit size={22} />
-        </a>
-      </div>
-      <div className="flex items-center border bg-neutral-300 border-stroke rounded-lg">
-        <input
-          type="text"
-          readOnly
-          className="flex-1 max-sm:w-[75%] text-gray-700 rounded-l-lg focus:outline-none bg-white focus-within:ring-0 border-none focus:border-none"
-          value={user?.tabbioLink}
-        />
-        <button
-          className="text-zinc-900 hover:scale-105 px-4 py-1.5 font-medium ml-2"
-          onClick={handleCopy}
-        >
-          {buttonText}
-        </button>
-      </div>
-    </div>
-  );
-};
 
 const Profile: React.FC = () => {
   const { user } = useApp();
@@ -1014,9 +927,6 @@ const Profile: React.FC = () => {
   const [active, setActive] = useState(false);
   const [profileData, setProfileData] = useState<any | null>(null);
   const [showDrawer, setShowDrawer] = useState(false);
-  const [showAnalytics, setShowAnalytics] = useState(false);
-  const [upgradeModal, setUpgradeModal] = useState(false);
-  const [shareModal, setShareModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleCreateProfile = async (data: any) => {
@@ -1032,7 +942,7 @@ const Profile: React.FC = () => {
         autoClose: 3000,
       });
       setActive(true);
-      // console.log(resp?.data?.profile);
+      console.log(resp?.data?.profile);
     } catch (err: any) {
       toast.dismiss(toastId);
       toast.error(err?.message || "Request Failed");
@@ -1046,7 +956,7 @@ const Profile: React.FC = () => {
         const resp = await getUserProfile();
         setProfileData(resp?.data?.profile);
         setActive(true);
-        console.log(resp.data?.profile);
+        // console.log(resp.data?.profile);
       } catch (err: any) {
         if (err?.message !== "Profile not found") {
           toast.error(err?.message || "Request Failed");
@@ -1062,75 +972,7 @@ const Profile: React.FC = () => {
         <PageLoader />
       ) : (
         <section className="">
-          <div className="bg-gradient-to-r from-[#F9FAFBCC] to-[#FFFFFF66] border border-[#F3F4F6] py-2.5 px-4.5 text-sm flex flex-wrap sm:gap-2 lg:items-center justify-between gap-3">
-            <div className="flex items-center gap-4 max-sm:justify-between">
-              <div className="flex items-center gap-1">
-                <FaCircle size={10} className="text-green-500 max-lg:hidden" />
-                <span>{user?.plan || "Free Plan"}</span>
-                <button
-                  onClick={() => setUpgradeModal(true)}
-                  className="py-1 px-1.5 ml-1 text-xs hover:scale-x-105 text-white rounded-full bg-[#C89529]"
-                >
-                  Upgrade <span className="max-lg:hidden">to Premium</span>
-                </button>
-              </div>
-              <button
-                onClick={() => setShowAnalytics(true)}
-                className="flex max-sm:hidden items-center gap-1 hover:scale-x-105 duration-100"
-              >
-                <BsEye className="max-lg:hidden" />
-                <span className="max-md:hidden">
-                  {user?.plan || "10 profile views"}
-                </span>
-                <AiOutlineBarChart className="text-primary text-lg" />
-              </button>
-            </div>
-
-            <button
-              onClick={() => setShowAnalytics(true)}
-              className="flex sm:hidden items-center gap-1 hover:scale-x-105 duration-100"
-            >
-              <BsEye className="" />
-              <span className="">{user?.plan || "10 profile views"}</span>
-              <AiOutlineBarChart className="text-primary text-lg hidden" />
-            </button>
-
-            <div className="flex items-center  gap-4 max-sm:w-full max-sm:justify-between">
-              <div className="lg:flex hidden max-sm:flex items-center gap-1 text-zinc-400">
-                <LuClock className="max-sm:hidden" />
-                <span>{user?.plan || "Updated 1d ago"}</span>
-              </div>
-
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => navigate("preview-cv")}
-                  className="py-1 px-1.5 md:ml-1 max-md:pl-0 flex items-center gap-1 hover:scale-x-105"
-                >
-                  <FaCircle
-                    size={10}
-                    className="text-green-500 max-md:hidden"
-                  />
-                  <span className="max-md:hidden">
-                    {user?.tabbioLink}
-                  </span>{" "}
-                  <span className="md:hidden">
-                    {truncateString(
-                      user?.plan || "tabbio.com/ahmed-mohammed",
-                      10
-                    )}
-                  </span>{" "}
-                  <LuExternalLink size={14} className="" />
-                </button>
-
-                <button
-                  onClick={() => setShareModal(true)}
-                  className="py-1 px-1.5 md:ml-1 max-md:pl-0 flex items-center gap-1 hover:scale-x-105 "
-                >
-                  <MdShare /> <span className="">Share</span>
-                </button>
-              </div>
-            </div>
-          </div>
+        
           <div className="px-2 py-4 md:pl-8 md:pr-2">
             <div className="xl:hidden flex justify-end items-center">
               <button
@@ -1200,7 +1042,7 @@ const Profile: React.FC = () => {
                     <p className="text-neutral-500 mb-3">
                       Upload your existing resume or create a new one
                     </p>
-                    <div className="px-5 w-full">
+                    <div className="px-5 w-full mb-4">
                       <ResumeUpload
                         onSuccess={(response: any) => {
                           handleCreateProfile(response?.data?.profile);
@@ -1243,29 +1085,7 @@ const Profile: React.FC = () => {
             </Drawer>
           )}
 
-          {showAnalytics && (
-            <ResumeAnalytics
-              show={showAnalytics}
-              onHide={() => setShowAnalytics(false)}
-            />
-          )}
-          {upgradeModal && (
-            <UpgradeCandidateSubscription
-              show={upgradeModal}
-              onHide={() => {
-                setUpgradeModal(false);
-              }}
-            />
-          )}
-          {shareModal && (
-            <Modal
-              title="Share your CV"
-              show={shareModal}
-              onHide={() => setShareModal(false)}
-            >
-              <ShareCV />
-            </Modal>
-          )}
+        
         </section>
       )}
     </DefaultLayout>

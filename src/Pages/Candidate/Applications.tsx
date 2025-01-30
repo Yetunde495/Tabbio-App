@@ -1,5 +1,4 @@
 import {
-  FaCircle,
   FaCircleCheck,
   FaPlus,
   FaRegClock,
@@ -7,24 +6,21 @@ import {
 } from "react-icons/fa6";
 import { useApp } from "../../context/AppContext";
 import DefaultLayout from "../../layout/DefaultLayout";
-import { BsEye, BsSliders2Vertical } from "react-icons/bs";
-import { AiOutlineBarChart } from "react-icons/ai";
+import { BsSliders2Vertical } from "react-icons/bs";
 import { useState } from "react";
 import ResumeAnalytics from "./ResumeAnalytics";
 import {
   LuBriefcase,
   LuBuilding2,
-  LuClock,
-  LuExternalLink,
   LuPuzzle,
 } from "react-icons/lu";
-import { MdCancel, MdShare } from "react-icons/md";
+import { MdCancel } from "react-icons/md";
 import { TbSearch } from "react-icons/tb";
 import { RiAwardLine, RiRobot2Line } from "react-icons/ri";
 import { HiOutlineSparkles } from "react-icons/hi";
 import { mockApplicationData } from "../../data/mockData";
 import { IoDocumentTextOutline, IoLocationOutline } from "react-icons/io5";
-import { formatDateString, truncateString } from "../../lib/utils/formatters";
+import { formatDateString } from "../../lib/utils/formatters";
 import { paginate } from "../../lib/utils";
 import TablePagination from "../../components/table/TablePagination";
 import StaggeredDropDown, {
@@ -38,11 +34,10 @@ import AiMatchModal from "./AiMatch";
 import AdvancedSearchModal from "./AdvancedSearch";
 import CreateApplicationKit from "./CreateApplicationKit";
 import Tabs, { Tab } from "../../components/tabs";
-import { useNavigate } from "react-router-dom";
 
 const Applications: React.FC = () => {
-  const { user } = useApp();
-  const navigate = useNavigate();
+  const { } = useApp();
+  // const navigate = useNavigate();
   const [allApplications, _setAllApplications] =
     useState<any[]>(mockApplicationData);
   const [tab2, setTab2] = useState("All");
@@ -61,71 +56,7 @@ const Applications: React.FC = () => {
   return (
     <DefaultLayout>
       <section>
-      <div className="bg-gradient-to-r from-[#F9FAFBCC] to-[#FFFFFF66] border border-[#F3F4F6] py-2.5 px-4.5 text-sm flex flex-wrap sm:gap-2 lg:items-center justify-between gap-3">
-      <div className="flex items-center gap-4 max-md:justify-between max-md:w-full max-sm:w-auto">
-            <div className="flex items-center gap-1">
-              <FaCircle size={10} className="text-green-500 max-lg:hidden" />
-              <span>{user?.plan || "Free Plan"}</span>
-              <button className="py-1 px-1.5 ml-1 text-xs hover:scale-x-105 text-white rounded-full bg-[#C89529]">
-                Upgrade <span className="max-lg:hidden">to Premium</span>
-              </button>
-            </div>
-            <button
-              onClick={() => setShowAnalytics(true)}
-              className="flex max-sm:hidden items-center gap-1 hover:scale-x-105 duration-100"
-            >
-              <BsEye className="max-lg:hidden" />
-              <span className="max-sm:hidden">
-                {user?.plan || "10 profile views"}
-              </span>
-              <AiOutlineBarChart className="text-primary text-lg" />
-            </button>
-          </div>
-
-          <button
-            onClick={() => setShowAnalytics(true)}
-            className="flex sm:hidden items-center gap-1 hover:scale-x-105 duration-100"
-          >
-            <BsEye className="" />
-            <span className="">{user?.plan || "10 profile views"}</span>
-            <AiOutlineBarChart className="text-primary text-lg hidden" />
-          </button>
-
-          <div className="flex items-center max-sm:justify-between max-sm:w-full  gap-4">
-            <div className="sm:flex hidden items-center gap-1 text-zinc-300 hover:scale-x-105 duration-100">
-              <LuClock className="" />
-              <span>{user?.plan || "Updated 1d ago"}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => navigate("/app/candidate/profile/preview-cv")}
-                className="py-1 px-1.5 md:ml-1 max-md:pl-0 flex items-center gap-1 hover:scale-x-105"
-              >
-                <FaCircle size={10} className="text-green-500 max-md:hidden" />
-                <span className="max-md:hidden">
-                  {user?.plan || "tabbio.com/name"}
-                </span>{" "}
-                <span className="md:hidden">
-                  {truncateString(
-                    user?.plan || "tabbio.com/ahmed-mohammed",
-                    10
-                  )}
-                </span>{" "}
-                <LuExternalLink size={14} className="" />
-              </button>
-              <button className="py-1 px-1.5 md:ml-1 max-md:pl-0 flex items-center gap-1 hover:scale-x-105 ">
-                <MdShare /> <span className="">Share</span>
-              </button>
-            </div>
-            <button
-              onClick={() => navigate("/app/candidate/profile")}
-              className="text-primary hover:scale-x-105 inline-flex items-center gap-1.5"
-            >
-              <span className="">View Profile</span>{" "}
-              <LuExternalLink size={14} className="" />
-            </button>
-          </div>
-        </div>
+      
 
         <div className="md:px-8 px-3 py-4">
           <div className="mb-5">

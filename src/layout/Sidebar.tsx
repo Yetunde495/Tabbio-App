@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useApp } from "../context/AppContext";
 import logo1 from "../assets/brand/logo-1.svg";
 import Modal from "../components/modal";
-import { IoBuildOutline, IoDocumentTextOutline } from "react-icons/io5";
+import { IoBuildOutline } from "react-icons/io5";
 import {
   iconVariants,
   itemVariants,
@@ -16,7 +16,7 @@ import {
   IoIosArrowForward,
   IoIosArrowUp,
 } from "react-icons/io";
-import { LuBriefcase, LuLogOut, LuUsers } from "react-icons/lu";
+import { LuBriefcase, LuLogOut } from "react-icons/lu";
 import icon from "../assets/svg/t-icon.svg";
 import ExtensionModal from "../Pages/PageComponents/ExtensionModal";
 import DropdownUser from "./DropdownUser";
@@ -108,10 +108,12 @@ const Sidebar = ({
               
            lg:block hidden`}
         />
-           {/* <!-- User Area --> */}
-           <div className="lg:hidden block"><DropdownUser /></div>
-          
-          {/* <!-- User Area --> */}
+        {/* <!-- User Area --> */}
+        <div className="lg:hidden block">
+          <DropdownUser />
+        </div>
+
+        {/* <!-- User Area --> */}
       </div>
       {/* <!-- SIDEBAR HEADER --> */}
 
@@ -120,50 +122,42 @@ const Sidebar = ({
         <nav className={`p-2 ${sidebarOpen ? "px-0" : "px-2"}`}>
           <Fragment>
             <ul className="gap-4 sm:mb-1 flex flex-col ">
-              <li>
-                <NavLink
-                  to={
-                    category === "Candidate"
-                      ? `/app/candidate/profile`
-                      : `/app/business/portal`
-                  }
-                  className={`group relative flex items-center gap-1 max-lg:mx-2 font-medium rounded-lg  ${
-                    !sidebarOpen ? "px-4 py-2" : "pl-5 py-2"
-                  } font-medium duration-300 ease-in-out  ${
-                    pathname.includes(
-                      category === "Candidate"
-                        ? `/app/candidate/profile`
-                        : `/app/company/portal`
-                    )
-                      ? ` text-primary
-                                 bg-primary/15
-                                   hover:text-white hover:bg-primary
-                                   dark:text-white `
-                      : `text-[#4d4d4d] hover:bg-primary/15 hover:text-primary `
-                  }`}
-                >
-                  {category === "Candidate" ? (
-                    <span className={``}>
-                      <IoDocumentTextOutline size={20} />{" "}
-                    </span>
-                  ) : (
-                    <span> <LuUsers size={20} />{" "}</span>
-                  )}
-                  {category === "Candidate" ? "Profile" : "Portal"}
-                </NavLink>
-              </li>
+             
               {category === "Candidate" && (
                 <li>
+                  <p
+                    className={`relative uppercase w-full items-center text-sm font-medium duration-300  py-2 
+                       text-zinc-400 mb-1`}
+                  >
+                    CAREER TOOLS
+                  </p>
                   <motion.div
                     animate={open ? "open" : "closed"}
                     className="relative"
                   >
                     <button
-                      onClick={() => setOpen(!open)}
-                      className={`group relative flex w-full items-center gap-2.5 text-sm font-medium duration-300 rounded-xl ease-in-out  px-4 py-2 
+                      onClick={() => {
+                        setOpen(!open);
+                        navigate(`/app/candidate/applications`);
+                      }}
+                      className={`group relative flex w-full items-center hover:bg-primary/15 hover:text-primary font-medium whitespace-nowrap rounded-md gap-2.5 text-sm duration-300  ease-in-out  px-4 py-2 
+                        ${
+                          pathname.includes(`/app/candidate/applications`)
+                            ? ` text-primary
+                                       bg-primary/15
+                                         hover:text-white hover:bg-primary
+                                         dark:text-white `
+                            : `text-[#4d4d4d] hover:bg-primary/15 hover:text-primary `
+                        }
                        text-[#4d4d4d]`}
                     >
-                      <span className="uppercase">Career Tools</span>
+                      <span className="flex items-center gap-2 ">
+                        {" "}
+                        <span>
+                          <LuBriefcase />{" "}
+                        </span>{" "}
+                        Application
+                      </span>
                       <motion.span variants={iconVariants} className="ml-auto">
                         <span className="ml-auto text-lg">
                           {open ? <Icons.arrowUp /> : <Icons.next />}
@@ -179,23 +173,6 @@ const Sidebar = ({
                       }}
                       className="flex flex-col z-999 gap-2 ml-5 px-2 py-1 text-sm border-l-2 border-stroke overflow-hidden"
                     >
-                      <motion.li
-                        variants={itemVariants}
-                        onClick={() => navigate(`/app/candidate/applications`)}
-                        className={`flex items-center gap-2 py-2 px-1.5 hover:bg-primary/15 hover:text-primary font-medium whitespace-nowrap rounded-md    transition-colors cursor-pointer ${
-                          pathname.includes(`/app/candidate/applications`)
-                            ? ` text-primary
-                                       bg-primary/15
-                                         hover:text-white hover:bg-primary
-                                         dark:text-white `
-                            : `text-[#4d4d4d] hover:bg-primary/15 hover:text-primary `
-                        }`}
-                      >
-                        <span>
-                          <LuBriefcase />{" "}
-                        </span>{" "}
-                        <span>Application</span>
-                      </motion.li>
                       <motion.li
                         variants={itemVariants}
                         onClick={() =>
