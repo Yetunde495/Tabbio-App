@@ -8,6 +8,9 @@ import { useApp } from "../../context/AppContext";
 import EmptyImg from "../../assets/svg/empty-animate.svg";
 import { useNavigate } from "react-router-dom";
 import { mockResData } from "../../data/mockData";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import Professional from "../../components/PDFTemplates/Professional";
+import ProfessionalPDF from "../../components/PDFTemplates/ProfessionalPDF";
 
 const LiveResume: React.FC = () => {
   const { parsedResume } = useApp();
@@ -15,14 +18,17 @@ const LiveResume: React.FC = () => {
   const [inputValue, setInputValue] = useState("");
   const [onboardModal, setOnboardModal] = useState(false);
   const [showMobileLink, setShow] = useState(false);
-  const [resumeData, setResumeData] = useState<any>(null)
+  const [resumeData, setResumeData] = useState<any>(null);
 
   useEffect(() => {
+    console.log("parsed resume name", parsedResume);
+    console.log("mock name", mockResData);
+    console.log("resume name", resumeData);
     if (parsedResume) {
-      setResumeData(parsedResume)
+      setResumeData(parsedResume);
       setInputValue(parsedResume?.name);
     } else {
-      setResumeData(mockResData)
+      setResumeData(mockResData);
       setInputValue(resumeData?.name);
     }
   }, [parsedResume]);
@@ -42,12 +48,37 @@ const LiveResume: React.FC = () => {
                   onClick={() => {
                     setResumeData({
                       ...resumeData,
-                      template: resumeData?.template === "professional" ? "entry" : "professional"
-                    })
+                      template:
+                        resumeData?.template === "professional"
+                          ? "entry"
+                          : "professional",
+                    });
                   }}
                 >
                   Switch Template
                 </button>
+                <div>
+                  <PDFDownloadLink
+                    document={<ProfessionalPDF data={resumeData} />}
+                    fileName={resumeData?.name}
+                  >
+                    <div className="flex gap-1 bg-primary rounded-md font-medium text-white px-5 py-2 items-center hover:scale-x-105">
+                      download
+                    </div>
+                  </PDFDownloadLink>
+                </div>
+                {/* <div> */}
+                {/*   {resumeData && ( // Only render when data exists */}
+                {/*     <PDFDownloadLink */}
+                {/*       document={<ProfessionalPDF resumeData={resumeData} />} */}
+                {/*       fileName={resumeData.name || "resume"} */}
+                {/*     > */}
+                {/*       <div className="cursor-pointer flex gap-1 bg-primary rounded-md font-medium text-white px-5 py-2 items-center hover:scale-x-105"> */}
+                {/*         Down */}
+                {/*       </div> */}
+                {/*     </PDFDownloadLink> */}
+                {/*   )} */}
+                {/* </div> */}
               </div>
               <div className="flex items-center gap-3 pr-3">
                 <button
@@ -167,7 +198,7 @@ const LiveResume: React.FC = () => {
             </button>
           </div>
         </div>
-      )} 
+      )}
 
       {onboardModal && (
         <OnboardCandidate

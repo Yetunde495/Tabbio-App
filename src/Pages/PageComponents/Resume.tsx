@@ -22,7 +22,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
     "14px";
   return (
     <section className="w-full bg-white">
-      <div className="min-w-[800px] w-full">
+      <div className="min-w-[800px] max-w-[1200px] w-full">
         {resumeData?.template !== "entry" ? (
           <div
             style={{ fontFamily: resumeData?.style?.fontFamily || "" }}
@@ -49,7 +49,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                       (field) =>
                         resumeData?.config[
                           field as keyof typeof resumeData.config
-                        ]
+                        ],
                     )
                     ?.map((field) => (
                       <div
@@ -116,7 +116,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                             </span>
                           </div>
                         </li>
-                      )
+                      ),
                     )}
                   </ul>
                 </div>
@@ -234,7 +234,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                             </div>
                           </div>
                         </div>
-                      )
+                      ),
                     )}
                   </div>
                 </div>
@@ -271,7 +271,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                             </span>
                           </div>
                         </li>
-                      )
+                      ),
                     )}
                   </ul>
                 </div>
@@ -411,13 +411,13 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                                     />
                                     {achievement}{" "}
                                   </li>
-                                )
+                                ),
                               )}
                             </ul>
                           </div>
                         </div>
                       </div>
-                    )
+                    ),
                   )}
                 </div>
               </div>
@@ -492,13 +492,13 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                                       />
                                       {achievement}{" "}
                                     </li>
-                                  )
+                                  ),
                                 )}
                               </ul>
                             </div>
                           </div>
                         </div>
-                      )
+                      ),
                     )}
                   </div>
                 </div>
@@ -574,13 +574,13 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                                       />
                                       {achievement}{" "}
                                     </li>
-                                  )
+                                  ),
                                 )}
                               </ul>
                             </div>
                           </div>
                         </div>
-                      )
+                      ),
                     )}
                   </div>
                 </div>
@@ -618,7 +618,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                       (field) =>
                         resumeData?.config[
                           field as keyof typeof resumeData.config
-                        ]
+                        ],
                     )
                     ?.map((field) => (
                       <div
@@ -698,7 +698,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                                     "|"}
                                 </span>
                               </li>
-                            )
+                            ),
                           )}
                         </ul>
                       </div>
@@ -762,7 +762,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                           )}
                         </div>
                       </div>
-                    )
+                    ),
                   )}
                 </div>
               </div>
@@ -837,13 +837,13 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                                     />
                                     {achievement}{" "}
                                   </li>
-                                )
+                                ),
                               )}
                             </ul>
                           </div>
                         </div>
                       </div>
-                    )
+                    ),
                   )}
                 </div>
               </div>
@@ -1008,7 +1008,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                           </div>
                         </div>
                       </div>
-                    )
+                    ),
                   )}
                 </div>
               </div>
