@@ -26,12 +26,15 @@ import { Ratings } from "../../components/Rating";
 import { BsBrowserChrome } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "../../context/AppContext";
+import { useTranslation } from "react-i18next";
 
 const ProfessionalLandingpage: React.FC = () => {
   const navigate = useNavigate();
   const { setParsedResume } = useApp();
   const [colorMode, setColorMode] = useColorMode();
   const [hasEntered, setHasEntered] = useState(false);
+    const { t } = useTranslation();
+  
 
   useEffect(() => {
     if (!hasEntered) {
@@ -52,22 +55,23 @@ const ProfessionalLandingpage: React.FC = () => {
         className="p-8 max-sm:px-4 md:py-22 text grid grid-cols-1 gap-12 xl:max-w-7xl 2xl:max-w-full 2xl:px-[12rem] w-full mx-auto"
       >
         <div className="text-center text-lg text-zinc-500">
-          <p className="text-red-600 bg-red-100/50 inline-flex rounded-full items-center px-4 py-2 mb-6 text-sm gap-2">
+          <p className="text-[#DC2626] bg-red-100/50 inline-flex rounded-full items-center px-4 py-2 mb-6 text-sm gap-2">
             <span>
               <MdOutlineShield />
             </span>
-            Tired of updating multiple resumes?
+            {t("landing1.cta")}
+            {/* Want to know why you are not getting callbacks? */}
           </p>
           <h1 className="text-center lg:text-6xl sm:text-5xl font-bold text-4xl text-slate-900 tracking-tight">
             Create your <br />
-            <span className="py-2 bg-gradient-to-r from-[#2563EB] text-transparent bg-clip-text to-[#9333EA] inline-block">
-              SmartResume™ in seconds
+            <span className="py-2 gradient-text text-transparent inline-block">
+            Smart CV in seconds
             </span>
           </h1>
-          <p className="mb-2">The only resume you'll ever need</p>
+          <p className="mb-2 text-black">Get your custom tabbio.com/YourName URL today for free.</p>
           <p>
-            Get 3x more interviews with a resume that automatically adapts to
-            each job posting.
+          Smart, Dynamic, Recruiter tools equipped CV <br />
+          Designed to help you stand out and land interviews faster
           </p>
         </div>
 
@@ -105,10 +109,11 @@ const ProfessionalLandingpage: React.FC = () => {
             <span>Get Started</span>
             <FaArrowRightLong className="group-hover:translate-x-1.5" />
           </Button>
-          <button className="hover:scale-105">Watch Demo</button>
+          <button className="hover:scale-105 bg-gradient-to-b from-[#3B82F60D] to-[#A855F70D] text-black py-3 px-8 rounded-md">Watch Demo</button>
         </div>
       </motion.section>
-      <div className="w-full  flex justify-center items-center  py-4 px-6">
+      <div className="w-full  flex flex-col justify-center items-center  py-4 px-6">
+        <h5 className="text-center text-[#6B7280] mb-1.5">TRUSTED BY TEAMS FROM WORLD'S LEADING COMPANIES</h5>
         <InfiniteMovingIcons
           items={brandIcons}
           direction="right"
@@ -151,14 +156,14 @@ const ProfessionalLandingpage: React.FC = () => {
               <div className="w-full">
                 <div className="mb-8">
                   <h1 className="font-bold text-center lg:text-3xl text-2xl">
-                    Unmatchable Features.{" "}
-                    <span className="bg-gradient-to-r from-[#2563EB] text-transparent bg-clip-text to-[#9333EA] inline-block">
+                  The Only CV You Need: Smart, Live, Dynamic.<br />{" "}
+                    <span className="gradient-text text-transparent inline-block">
                       Free Forever
                     </span>
                   </h1>
                 </div>
                 <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4 justify-center items-center w-full transition-all mx-auto duration-500 ease xs:gap-y-8 gap-x-6">
-                  <div className="border text-center border-stroke dark:border-strokedark hover:shadow-lg h-full rounded-xl w-full px-3 py-4 space-y-3 flex-col flex justify-center items-center">
+                  <div className="text-center shadow hover:shadow-lg h-full rounded-xl w-full px-3 py-4 space-y-3 flex-col flex justify-center items-center">
                     <span className="rounded-md p-2.5 bg-[#EFF6FF] text-slate-900">
                       <CgFileDocument size={20} />
                     </span>
@@ -169,7 +174,7 @@ const ProfessionalLandingpage: React.FC = () => {
                       Create your professional resume with our intuitive builder
                     </p>
                   </div>
-                  <div className="border text-center border-stroke dark:border-strokedark rounded-xl hover:shadow-lg h-full w-full px-3 py-4 space-y-3 flex-col flex justify-center items-center">
+                  <div className="text-center shadow rounded-xl hover:shadow-lg h-full w-full px-3 py-4 space-y-3 flex-col flex justify-center items-center">
                     <span className="rounded-md p-2.5 bg-[#EFF6FF] text-slate-900">
                       <MdOutlineShield size={20} />{" "}
                     </span>
@@ -180,7 +185,7 @@ const ProfessionalLandingpage: React.FC = () => {
                       Get your own you.tabbio.com domain
                     </p>
                   </div>
-                  <div className="border text-center border-stroke dark:border-strokedark rounded-xl hover:shadow-lg h-full w-full px-3 py-4 space-y-3 flex-col flex justify-center items-center">
+                  <div className="text-center shadow rounded-xl hover:shadow-lg h-full w-full px-3 py-4 space-y-3 flex-col flex justify-center items-center">
                     <span className="rounded-md p-2.5 bg-[#EFF6FF] text-slate-900">
                       <SiSimpleanalytics size={18} />
                     </span>
@@ -191,7 +196,7 @@ const ProfessionalLandingpage: React.FC = () => {
                       Track basic views and engagement
                     </p>
                   </div>
-                  <div className="border text-center border-stroke dark:border-strokedark rounded-xl hover:shadow-lg h-full w-full px-3 py-4 space-y-3 flex-col flex justify-center items-center">
+                  <div className="text-center shadow rounded-xl hover:shadow-lg h-full w-full px-3 py-4 space-y-3 flex-col flex justify-center items-center">
                     <span className="rounded-md p-2.5 bg-[#EFF6FF] text-slate-900">
                       <LuUsers size={20} />
                     </span>
@@ -231,20 +236,7 @@ const ProfessionalLandingpage: React.FC = () => {
               <motion.div
                 className="h-30 w-full"
                 initial={{ className: "hidden" }}
-                onViewportEnter={() => {
-                  if (typeof setColorMode === "function" && !hasEntered) {
-                    setHasEntered(true);
-                    setTimeout(() => {
-                      setColorMode("dark");
-                    }, 1000);
-                  }
-                }}
-                onViewportLeave={() => {
-                  if (typeof setColorMode === "function" && hasEntered) {
-                    setHasEntered(false);
-                    setColorMode("light");
-                  }
-                }}
+                
                 whileInView={{
                   className: " block",
                 }}
@@ -252,66 +244,66 @@ const ProfessionalLandingpage: React.FC = () => {
               <div className="w-full">
                 <div className="mb-8 md:mb-14">
                   <h1 className="font-bold text-center text-white lg:text-3xl text-2xl">
-                    Pro. For those who{" "}
-                    <span className="bg-gradient-to-r from-[#2563EB] text-transparent bg-clip-text to-[#9333EA] inline-block">
-                      want more
+                  Premium Tools to Tailor, <br /> Optimize, and Supercharge, {" "}<br />
+                    <span className="gradient-text text-transparent  inline-block">
+                    Your Job Search.
                     </span>
                   </h1>
                 </div>
                 <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4 justify-center items-center w-full transition-all mx-auto duration-500 ease xs:gap-y-8 lg:gap-x-3">
-                  <div className="text-center bg-[#1e293b] hover:bg-[#2e405c] h-full  rounded-md  w-full px-3 py-4 space-y-3 flex-col flex justify-center items-center">
-                    <span className="rounded-md p-2 bg-[#3B82F61A] text-primary">
-                      <BiBrain />
+                  <div className="text-center bg-[#1e293b] hover:bg-[#2e405c] h-full  rounded-md  w-full px-4 py-8 space-y-3 flex-col flex justify-center items-center">
+                    <span className="rounded-md p-2 bg-[#3B82F61A] text-white">
+                      <BiBrain size={24} />
                     </span>
                     <h1 className="text-white font-semibold text-lg">
-                      AI Resume Optimization
+                      Unlimited AI Tools
                     </h1>
-                    <p className="text-zinc-300">
-                      Get tailored suggestions for each job application
+                    <p className="text-[#9CA3AF]">
+                    Score and optimize your CV, gain detailed recommendations, and unlock exclusive job application perks.
                     </p>
                   </div>
-                  <div className="text-center bg-[#1e293b] hover:bg-[#2e405c] h-full  rounded-md  w-full px-3 py-4 space-y-3 flex-col flex justify-center items-center">
-                    <span className="rounded-md p-2 bg-[#3B82F61A] text-primary">
-                      <BsBrowserChrome />
+                  <div className="text-center bg-[#1e293b] hover:bg-[#2e405c] h-full  rounded-md  w-full px-4 py-8 space-y-3 flex-col flex justify-center items-center">
+                    <span className="rounded-md p-2 bg-[#3B82F61A] text-white">
+                      <BsBrowserChrome size={24} />
                     </span>
                     <h1 className="text-white font-semibold text-lg">
-                      One-Click Apply
+                    One-Click Application Kit
                     </h1>
-                    <p className="text-zinc-300">
-                      Apply anywhere with our browser extension
+                    <p className="text-[#9CA3AF]">
+                    Instantly tailor your CV, cover letter, company insights, and interview tips for any job description
                     </p>
                   </div>
-                  <div className="text-center bg-[#1e293b] hover:bg-[#2e405c] h-full  rounded-md  w-full px-3 py-4 space-y-3 flex-col flex justify-center items-center">
-                    <span className="rounded-md p-2 bg-[#3B82F61A] text-primary">
-                      <SiSimpleanalytics />
+                  <div className="text-center bg-[#1e293b] hover:bg-[#2e405c] h-full  rounded-md  w-full px-4 py-8 space-y-3 flex-col flex justify-center items-center">
+                    <span className="rounded-md p-2 bg-[#3B82F61A] text-white">
+                      <SiSimpleanalytics size={24} />
                     </span>
                     <h1 className="text-white font-semibold text-lg">
                       Advanced Analytics
                     </h1>
-                    <p className="text-zinc-300">
-                      Deep insights into resume performance
+                    <p className="text-[#9CA3AF]">
+                    Dive deep into your CV’s performance with recruiter behavior insights, view tracking, and engagement analysis.
                     </p>
                   </div>
-                  <div className="text-center bg-[#1e293b] hover:bg-[#2e405c] h-full  rounded-md  w-full px-3 py-4 space-y-3 flex-col flex justify-center items-center">
-                    <span className="rounded-md p-2 bg-[#3B82F61A] text-primary">
-                      <FaLock />
+                  <div className="text-center bg-[#1e293b] hover:bg-[#2e405c] h-full  rounded-md  w-full px-4 py-8 space-y-3 flex-col flex justify-center items-center">
+                    <span className="rounded-md p-2 bg-[#3B82F61A] text-white">
+                      <FaLock size={24} />
                     </span>
                     <h1 className="text-white font-semibold text-lg">
-                      Private Mode
+                    Browser Extension
                     </h1>
-                    <p className="text-zinc-300">
-                      Control who sees your resume
+                    <p className="text-[#9CA3AF]">
+                    Quickly tailor each application and apply directly to jobs from any job board
                     </p>
                   </div>
                 </div>
 
                 <div className="w-full flex justify-center items-center my-12">
-                  <Button size="lg" onClick={() => {}}>
-                    Upgrade to Pro{" "}
+                  <button className="text-white rounded-md bg-gradient-to-br hover:scale-105 from-[#3B82F61A] to-[#A855F71A] flex items-center gap-2 px-10 py-3.5" onClick={() => {}}>
+                    Upgrade to Premium{" "}
                     <span>
                       <IoFlashOutline size={18} />
                     </span>
-                  </Button>
+                  </button>
                 </div>
               </div>
             </motion.div>

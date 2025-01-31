@@ -7,6 +7,8 @@ import StaggeredDropDown, {
   AnimatedOption,
 } from "../AnimatedUi/staggeredDropdown";
 import { IoMdArrowDropdown } from "react-icons/io";
+import { useTranslation } from "react-i18next";
+import { TbWorld } from "react-icons/tb";
 
 type Position = {
   left: number;
@@ -17,6 +19,7 @@ type Position = {
 export default function Navbar() {
   const [navbar] = useState(false);
   const navigate = useNavigate();
+  const { i18n, t } = useTranslation();
   const location = useLocation();
   const { pathname } = location;
 
@@ -37,6 +40,10 @@ export default function Navbar() {
     } else {
       setScroll(false);
     }
+  };
+
+  const onChangeLang = (code: string) => {
+    i18n.changeLanguage(code);
   };
 
   useEffect(() => {
@@ -64,8 +71,6 @@ export default function Navbar() {
                 <Link to="/" className="max-sm:block max-sm:w-[65px]">
                   <img src={Logo} className="md:w-30" />
                 </Link>
-
-                
               </div>
             </div>
 
@@ -98,7 +103,7 @@ export default function Navbar() {
                   noBg={hover}
                 >
                   <div className="flex gap-1.5 items-center">
-                    <span className="">For Professionals</span>
+                    <span className="">{t("For Professionals ")}</span>
                   </div>
                 </SlideTab>
                 <SlideTab
@@ -151,12 +156,42 @@ export default function Navbar() {
                 className={`flex-1 justify-self-center pb-3 mt-3 md:block md:pb-0 md:mt-0 `}
               >
                 <ul className="items-center justify-center flex space-x-6 space-y-0">
-                  <li >
-                    <Link to="/signin">Sign in</Link>
+                  <div className="">
+                    <StaggeredDropDown
+                      buttonIcon={<></>}
+                      buttonText={
+                        <span className="text-zinc-500 flex items-center gap-1 uppercase text-[17px] font-medium">
+                          <TbWorld /> {i18n.language}
+                        </span>
+                      }
+                    >
+                      <AnimatedOption
+                        text="English"
+                        onClick={() => {
+                          onChangeLang("en");
+                        }}
+                      />
+
+                      <AnimatedOption
+                        text="Spanish"
+                        onClick={() => {
+                          onChangeLang("it");
+                        }}
+                      />
+                      <AnimatedOption
+                        text="Italian"
+                        onClick={() => {
+                          onChangeLang("es");
+                        }}
+                      />
+                    </StaggeredDropDown>
+                  </div>
+                  <li>
+                    <Link to="/signin">Sign In</Link>
                   </li>
                   <li className="max-md:hidden">
                     <Button onClick={() => navigate("/signup")}>
-                      Get Started
+                      {t("Get Started")}
                     </Button>
                   </li>
                 </ul>

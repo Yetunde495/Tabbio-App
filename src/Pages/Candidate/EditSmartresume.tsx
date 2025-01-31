@@ -16,6 +16,7 @@ import {
   FaCheck,
   FaCircle,
   FaPlus,
+  FaRegCircle,
   FaRegFile,
 } from "react-icons/fa6";
 import { IoMdColorFilter } from "react-icons/io";
@@ -645,9 +646,14 @@ const EditSmartResume: React.FC = () => {
                   onClick={() => setScoreModal(true)}
                   className="flex gap-1 cursor-pointer max-sm:hidden text-sm max-sm:text-[10px] items-center"
                 >
-                  <span>
-                    <ProgressBar2 percent={50} />
-                  </span>
+                  <div >
+                    {/* <ProgressBar2 percent={50} /> */}
+                    <div className="relative text-primary">
+                    <span><FaRegCircle size={30} /></span>
+                    <span className="text-[10px] absolute top-[5px] left-[3px]">50%</span>
+                    </div>
+                    
+                  </div>
                   <span>View my Tabbio Score</span>
                 </div>
 

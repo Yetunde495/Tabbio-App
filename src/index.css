@@ -55,6 +55,12 @@ body {
   width: 185px !important;
 }
 
+.gradient-text {
+  background: linear-gradient(125.5deg, #60BEE2 15.51%, #5E4D84 27.16%, #C05B95 38.82%, #8559AD 50.48%, #DCAF72 62.13%, #BE5AB6 73.79%, #8FC2DA 85.31%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
 @keyframes react-loading-skeleton {
   100% {
       transform: translateX(100%);

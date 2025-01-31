@@ -13,6 +13,7 @@ import "react-phone-number-input/style.css";
 import App from './App.tsx';
 
 const queryClient = new QueryClient();
+import "./i18n.ts";
 
 // @ts-ignore
 ReactDOM.createRoot(document.getElementById("root")!).render(

@@ -1,15 +1,11 @@
 import { useApp } from "../../context/AppContext";
 import DefaultLayout from "../../layout/DefaultLayout";
 import { ResumeUpload } from "../General/ResumeUpload";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Modal from "../../components/modal";
 import { Switch } from "../../components/form/Switch";
 import { CiEdit } from "react-icons/ci";
-import {
-  BsCopy,
-  BsDatabaseGear,
-  BsPlusLg,
-} from "react-icons/bs";
+import { BsCopy, BsDatabaseGear, BsPlusLg } from "react-icons/bs";
 import {
   MdInsertLink,
   MdKeyboardDoubleArrowLeft,
@@ -17,15 +13,8 @@ import {
 } from "react-icons/md";
 import Drawer from "../../components/Drawer";
 import Button from "../../components/Button";
-import {
-  FaCheck,
-  FaRegCalendar,
-} from "react-icons/fa6";
-import {
-  LuBriefcase,
-  LuContact,
-  LuPencil,
-} from "react-icons/lu";
+import { FaCheck, FaRegCalendar } from "react-icons/fa6";
+import { LuBriefcase, LuContact, LuPencil } from "react-icons/lu";
 import { CgFileDocument } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
 import { FiExternalLink } from "react-icons/fi";
@@ -53,6 +42,8 @@ import {
 import { toast } from "react-toastify";
 import { PageLoader } from "../../components/Loader";
 import { RiLoader3Fill } from "react-icons/ri";
+import { useQuery } from "@tanstack/react-query";
+import ErrorTimeoutImg from "../../assets/svg/gateway-error.svg";
 
 const SmartResumeSettings: React.FC<{
   profileData: any;
@@ -117,7 +108,7 @@ const SmartResumeSettings: React.FC<{
       toast.error(err?.message || "Request Failed");
     } finally {
       setLoading(false);
-      setEditLink(false)
+      setEditLink(false);
     }
   };
 
@@ -166,14 +157,19 @@ const SmartResumeSettings: React.FC<{
             <div className="bg-white flex items-center gap-1 py-2 px-2 rounded-md border border-slate-200 my-3">
               <div className="flex items-center gap-2 ">
                 <MdInsertLink className="text-primary" />
-                <span className="text-sm break-words w-[150px]">{user?.tabbioLink}</span>
+                <span className="text-sm break-words w-[150px]">
+                  {user?.tabbioLink}
+                </span>
               </div>
               <div className="flex items-center gap-2 ml-auto">
-                <button className="text-primary" onClick={() => {
+                <button
+                  className="text-primary"
+                  onClick={() => {
                     navigator.clipboard.writeText(user?.tabbioLink).then(() => {
                       alert("Tabbio link Copied!");
                     });
-                  }}>
+                  }}
+                >
                   <TbCopy />
                 </button>
                 <button
@@ -230,18 +226,17 @@ const SmartResumeSettings: React.FC<{
                 disabled={loading || inputValue === "tabbio.link-"}
                 onClick={() => {
                   handleUpdateLink({
-                    tabbioLink: inputValue
-                  })
-                
+                    tabbioLink: inputValue,
+                  });
                 }}
               >
-                {loading ? 'Loading...' : 'Save'}
+                {loading ? "Loading..." : "Save"}
               </button>
               <button
                 className="bg-transparent px-6 py-2.5 rounded-md border text-zinc-800 border-zinc-500 hover:scale-95 w-full font-medium"
                 onClick={() => {
-                  setInputValue(user?.tabbioLink)
-                 setEditLink(false)
+                  setInputValue(user?.tabbioLink);
+                  setEditLink(false);
                 }}
               >
                 Cancel
@@ -919,15 +914,12 @@ const SmartResumeSettings: React.FC<{
   );
 };
 
-
-
 const Profile: React.FC = () => {
   const { user } = useApp();
   const navigate = useNavigate();
   const [active, setActive] = useState(false);
   const [profileData, setProfileData] = useState<any | null>(null);
   const [showDrawer, setShowDrawer] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const handleCreateProfile = async (data: any) => {
     const toastId = toast.loading("Setting up your Profile...");
@@ -949,30 +941,49 @@ const Profile: React.FC = () => {
     }
   };
 
-  useMemo(async () => {
-    if (user) {
-      try {
-        setLoading(true);
-        const resp = await getUserProfile();
-        setProfileData(resp?.data?.profile);
+  const { isLoading, isError } = useQuery(
+    ["PROFESSIONAL_PROFILE", user?._id],
+    () => getUserProfile(),
+    {
+      enabled: !!user?.profile,
+      keepPreviousData: true,
+      onSuccess(data) {
+        setProfileData(data?.data?.profile);
         setActive(true);
-        // console.log(resp.data?.profile);
-      } catch (err: any) {
-        if (err?.message !== "Profile not found") {
-          toast.error(err?.message || "Request Failed");
-        }
-      } finally {
-        setLoading(false);
-      }
+      },
+      onError: (err: any) => {
+        toast.error(err.message || "Request Failed");
+      },
     }
-  }, [user]);
+  );
+
   return (
     <DefaultLayout>
-      {loading ? (
+      {isLoading ? (
         <PageLoader />
+      ) : isError ? (
+        <div className="h-screen flex w-full justify-center text-center items-center">
+          <div className="flex flex-col w-full bg-white shadow-xl px-3 py-9 rounded-md xl:max-w-[75%] items-center">
+            <img src={ErrorTimeoutImg} alt="" className="max-w-[300px]" />
+            <h2 className="text-2xl font-outfit font-bold text-zinc-800 mb-3">
+              An error occured!
+            </h2>
+            <p className="text-zinc-600 font-normal px-3 mb-4">
+              This could be a network error. Check your internet connection, and
+              refresh the page <br />
+              Contact the website administrator if the issue persists
+            </p>
+
+            <button
+              onClick={() => navigate(-1)}
+              className="px-5 xl:w-[300px] py-2.5 font-medium rounded-md bg-primary text-white hover:scale-105 duration-200 mb-9"
+            >
+              Go Back
+            </button>
+          </div>
+        </div>
       ) : (
         <section className="">
-        
           <div className="px-2 py-4 md:pl-8 md:pr-2">
             <div className="xl:hidden flex justify-end items-center">
               <button
@@ -986,7 +997,10 @@ const Profile: React.FC = () => {
               <div className="w-full flex xl:flex-row flex-col gap-5">
                 <div className="xl:min-w-[68%]">
                   <section className="bg-white flex flex-col space-y-10 px-6 max-sm:px-2.5 py-5 max-sm:py-3 w-full h-full ">
-                    <BasicDetails setProfileData={setProfileData} profileData={profileData} />
+                    <BasicDetails
+                      setProfileData={setProfileData}
+                      profileData={profileData}
+                    />
                     {profileData?.config?.professionalSummary && (
                       <ProfileSummary
                         resumeData={profileData}
@@ -994,31 +1008,55 @@ const Profile: React.FC = () => {
                       />
                     )}
                     {profileData?.config?.careerHighlights && (
-                      <CareerHighlight profileData={profileData} setProfileData={setProfileData} />
+                      <CareerHighlight
+                        profileData={profileData}
+                        setProfileData={setProfileData}
+                      />
                     )}
                     {profileData?.config?.workExperience && (
-                      <WorkExperience profileData={profileData} setProfileData={setProfileData} />
+                      <WorkExperience
+                        profileData={profileData}
+                        setProfileData={setProfileData}
+                      />
                     )}
                     {profileData?.config?.volunteerExperience && (
-                      <VolunteerExperience profileData={profileData} setProfileData={setProfileData} />
+                      <VolunteerExperience
+                        profileData={profileData}
+                        setProfileData={setProfileData}
+                      />
                     )}
 
                     {profileData?.config?.internships && (
-                      <Internships profileData={profileData} setProfileData={setProfileData} />
+                      <Internships
+                        profileData={profileData}
+                        setProfileData={setProfileData}
+                      />
                     )}
                     {profileData?.config?.education && (
-                      <Education profileData={profileData} setProfileData={setProfileData} />
+                      <Education
+                        profileData={profileData}
+                        setProfileData={setProfileData}
+                      />
                     )}
 
                     {profileData?.config?.certifications && (
-                      <Certifications profileData={profileData} setProfileData={setProfileData} />
+                      <Certifications
+                        profileData={profileData}
+                        setProfileData={setProfileData}
+                      />
                     )}
 
                     {profileData?.config?.memberships && (
-                      <Memberships profileData={profileData} setProfileData={setProfileData} />
+                      <Memberships
+                        profileData={profileData}
+                        setProfileData={setProfileData}
+                      />
                     )}
                     {profileData?.config?.references && (
-                      <ProfessionalReference profileData={profileData} setProfileData={setProfileData} />
+                      <ProfessionalReference
+                        profileData={profileData}
+                        setProfileData={setProfileData}
+                      />
                     )}
                   </section>
                 </div>
@@ -1084,8 +1122,6 @@ const Profile: React.FC = () => {
               </div>
             </Drawer>
           )}
-
-        
         </section>
       )}
     </DefaultLayout>
