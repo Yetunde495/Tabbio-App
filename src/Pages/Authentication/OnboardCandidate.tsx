@@ -17,6 +17,7 @@ import {
 } from "../../services/authServices";
 import { useApp } from "../../context/AppContext";
 import { SaveProfile } from "../../services/profileServices";
+import Button from "../../components/Button";
 
 const OnboardCandidate: React.FC<{
   show: boolean;
@@ -66,11 +67,23 @@ const OnboardCandidate: React.FC<{
     }
   };
 
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pasteData = e.clipboardData.getData("text");
+    const otpArray = pasteData.split("").slice(0, 6);
+    otpArray.forEach((char, index) => {
+      const syntheticEvent = {
+        target: { value: char },
+      } as React.ChangeEvent<HTMLInputElement>;
+      handleChange(syntheticEvent, index);
+    });
+  };
+
   const inputClasses = () =>
     classNames(
-      "border-b border-primary",
+      "border-b md:text-2xl text-xl text-primary font-bold border-primary border-0 ring-0",
       "p-3",
-      "w-12 focus:border-primary outline-none",
+      "w-12 focus:border-primary focus:border-b-2 focus:outline-none focus:ring-0 outline-none",
       "text-center",
       {
         "border-red-500": !isValid,
@@ -305,25 +318,31 @@ const OnboardCandidate: React.FC<{
                       type="text"
                       value={otpValue[index] || ""}
                       onChange={(e) => handleChange(e, index)}
+                      onPaste={(e) => handlePaste(e)}
                       className={inputClasses()}
                       maxLength={1}
                       ref={inputRefs[index]}
                     />
                   ))}
                 </div>
-                <button
-                  disabled={otpValue.length !== 6 || loading}
-                  onClick={() => {
-                    handleVerifyOtp();
-                  }}
-                  className="border-none rounded-full py-3 max-w-[80%] mt-9 mb-3 px-6 w-full text-white opacity-95 hover:opacity-100 bg-primary disabled:bg-primary/70"
-                >
-                  {loading ? "Verifying Otp" : "Verify"}
-                </button>
-                <p className="text-center text-black/75 dark:text-slate-100 my-4">
+
+                <div className="mt-9 mb-3 w-full">
+                  <Button
+                    disabled={otpValue.length !== 6 || loading}
+                    onClick={() => {
+                      handleVerifyOtp();
+                    }}
+                    width="w-full max-w-[80%]"
+                    rounded
+                  >
+                    {loading ? "Verifying Otp" : "Verify"}{" "}
+                  </Button>
+                </div>
+
+                <p className="text-center text-zinc-500 font-semibold my-5">
                   Didn’t receive the email?{" "}
                   <span
-                    className="text-primary hover:opacity-95 cursor-pointer ml-1"
+                    className="text-blue-500 hover:opacity-95 cursor-pointer ml-1"
                     onClick={() => {
                       sendOTP();
                     }}

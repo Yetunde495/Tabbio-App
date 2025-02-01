@@ -27,7 +27,7 @@ type EditingState = {
 };
 
 // interface EducationProps {
-//   _id: number;
+//   id: number;
 //   school: string;
 //   degree: string;
 //   duration: string;
@@ -36,7 +36,7 @@ type EditingState = {
 // }
 
 interface SkillProps {
-  _id: number | string;
+  id: number | string;
   value: string;
 }
 const fontSizeMap = {
@@ -457,7 +457,7 @@ export const AtsExperience: React.FC<{
     } else {
       setItems([
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           title: "",
           company: "",
           description:
@@ -472,7 +472,7 @@ export const AtsExperience: React.FC<{
           ],
         },
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           company: "",
           title: "",
           description: "",
@@ -529,7 +529,7 @@ export const AtsExperience: React.FC<{
     }
   };
   const handleRemove = (id: number) => {
-    const updatedItems = items.filter((item) => item?._id !== id);
+    const updatedItems = items.filter((item) => item?.id !== id);
     setItems(updatedItems);
     setResumeData(() => ({
       ...resumeData,
@@ -540,7 +540,7 @@ export const AtsExperience: React.FC<{
   // Handler to add new experience
   const addExperience = () => {
     const newExperience = {
-      _id: generateUniqueId(),
+      id: generateUniqueId(),
       title: "Position Title Here",
       company: "Company Name",
       description:
@@ -575,7 +575,7 @@ export const AtsExperience: React.FC<{
 
   const applyAiList = () => {
     const updatedItems = items.map((item) =>
-      item?._id === currentItem?._id
+      item?.id === currentItem?.id
         ? { ...item, ["keyAchievements"]: selectedDescriptions }
         : item
     );
@@ -597,7 +597,7 @@ export const AtsExperience: React.FC<{
   // Handle input change for specific item
   const handleInputChange = (id: number, field: string, value: string) => {
     const updatedItems = items.map((item) =>
-      item?._id === id ? { ...item, [field]: value } : item
+      item?.id === id ? { ...item, [field]: value } : item
     );
     setItems(updatedItems);
     setResumeData((prev: any) => ({
@@ -619,7 +619,7 @@ export const AtsExperience: React.FC<{
   // Update the height every time the content changes
   useEffect(() => {
     autoResizeTextarea();
-  }, [resumeData?.workExperience[currentItem?._id - 1]?.description]);
+  }, [resumeData?.workExperience?.[currentItem?.id - 1]?.description]);
   return (
     <div>
       <div className="flex mb-3 gap-3  justify-between items-center">
@@ -646,11 +646,11 @@ export const AtsExperience: React.FC<{
       <div className="flex flex-col gap-9">
         {items.map((item, _index) => (
           <div
-            key={item?._id}
-            onMouseEnter={() => setHoveredItemId(item?._id)} // Set hovered item id
+            key={item?.id}
+            onMouseEnter={() => setHoveredItemId(item?.id)} // Set hovered item id
             onMouseLeave={() => setHoveredItemId(null)}
             className={`item ${
-              item._id === draggingItem?._id ? "shadow-3" : ""
+              item.id === draggingItem?.id ? "shadow-3" : ""
             } hover:border border-stroke border-space rounded-md border-spacing-1 px-2 relative  text-black w-full py-1 `}
             draggable="true"
             onDragStart={(e) => handleDragStart(e, item)}
@@ -659,7 +659,7 @@ export const AtsExperience: React.FC<{
             onDragOver={handleDragOver}
             onClick={() => setCurrentItem(item)}
           >
-            {hoveredItemId === item?._id && (
+            {hoveredItemId === item?.id && (
               <div className="flex w-full gap-1 justify-end -mt-5">
                 <div className="bg-white flex gap-1 items-center">
                   <GradientButton
@@ -678,7 +678,7 @@ export const AtsExperience: React.FC<{
                   {items?.length > 1 && (
                     <button
                       onClick={() => {
-                        handleRemove(item?._id);
+                        handleRemove(item?.id);
                       }}
                       className="h-8 w-8 flex justify-center items-center border-none text-primary/90 hover:text-primary text-2xl"
                     >
@@ -705,12 +705,12 @@ export const AtsExperience: React.FC<{
                         value={item?.company}
                         style={{ fontSize }}
                         onChange={(e) =>
-                          handleInputChange(item._id, "company", e.target.value)
+                          handleInputChange(item.id, "company", e.target.value)
                         }
                       />
                       <div className="flex items-center gap-2 ml-auto">
-                        {hoveredItemId === item?._id &&
-                        editingPositionId === item?._id ? (
+                        {hoveredItemId === item?.id &&
+                        editingPositionId === item?.id ? (
                           <input
                             className={`border-none uppercase font-semibold focus:outline-none bg-white text-zinc-700 placeholder:text-zinc-700 focus:bg-zinc-100 px-2`}
                             style={{ fontSize }}
@@ -720,7 +720,7 @@ export const AtsExperience: React.FC<{
                             onBlur={() => setEditingPositionId(null)}
                             onChange={(e) =>
                               handleInputChange(
-                                item?._id,
+                                item?.id,
                                 "title",
                                 e.target.value
                               )
@@ -728,7 +728,7 @@ export const AtsExperience: React.FC<{
                           />
                         ) : (
                           <span
-                            onClick={() => setEditingPositionId(item._id)}
+                            onClick={() => setEditingPositionId(item.id)}
                             style={{ fontSize }}
                             className="cursor-text uppercase font-semibold text-zinc-700"
                           >
@@ -737,8 +737,8 @@ export const AtsExperience: React.FC<{
                         )}
 
                         <span>|</span>
-                        {hoveredItemId === item?._id &&
-                        editingDurationId === item?._id ? (
+                        {hoveredItemId === item?.id &&
+                        editingDurationId === item?.id ? (
                           <input
                             className={`border-none font-medium focus:outline-none bg-white text-black placeholder:text-black focus:bg-zinc-100 px-2`}
                             style={{ fontSize: fontSizeSm }}
@@ -748,7 +748,7 @@ export const AtsExperience: React.FC<{
                             onBlur={() => setEditingDurationId(null)}
                             onChange={(e) =>
                               handleInputChange(
-                                item._id,
+                                item.id,
                                 "duration",
                                 e.target.value
                               )
@@ -756,7 +756,7 @@ export const AtsExperience: React.FC<{
                           />
                         ) : (
                           <span
-                            onClick={() => setEditingDurationId(item?._id)}
+                            onClick={() => setEditingDurationId(item?.id)}
                             style={{ fontSize: fontSizeSm }}
                             className="cursor-text font-medium"
                           >
@@ -776,7 +776,7 @@ export const AtsExperience: React.FC<{
                         value={item?.company}
                         onChange={(e) =>
                           handleInputChange(
-                            item?._id,
+                            item?.id,
                             "company",
                             e.target.value
                           )
@@ -789,7 +789,7 @@ export const AtsExperience: React.FC<{
                         value={item?.duration}
                         onChange={(e) =>
                           handleInputChange(
-                            item?._id,
+                            item?.id,
                             "duration",
                             e.target.value
                           )
@@ -804,7 +804,7 @@ export const AtsExperience: React.FC<{
                         style={{ fontSize }}
                         value={item?.title}
                         onChange={(e) =>
-                          handleInputChange(item._id, "title", e.target.value)
+                          handleInputChange(item.id, "title", e.target.value)
                         }
                       />
                     </div>
@@ -814,7 +814,7 @@ export const AtsExperience: React.FC<{
 
               {resumeData?.template === "professional" && (
                 <div className="flex items-center ml-[3px] mb-4">
-                  {editingDescId === item._id ? (
+                  {editingDescId === item.id ? (
                     <textarea
                       className={`border-none bg-white focus:bg-zinc-100 focus:ring-0 focus:outline-none px-3 font-medium text-black placeholder:text-black w-full`}
                       placeholder="Enter project summary"
@@ -824,7 +824,7 @@ export const AtsExperience: React.FC<{
                       }
                       onChange={(e) =>
                         handleInputChange(
-                          item?._id,
+                          item?.id,
                           "description",
                           e.target.value
                         )
@@ -843,7 +843,7 @@ export const AtsExperience: React.FC<{
                   ) : (
                     <p
                       className="px-1.5 cursor-text font-medium"
-                      onClick={() => setEditingDescId(item._id)}
+                      onClick={() => setEditingDescId(item.id)}
                       style={{ fontSize }}
                     >
                       {item?.description ||
@@ -876,7 +876,7 @@ export const AtsExperience: React.FC<{
                               (item: string) => item !== achievement
                             );
                             const updatedItems = items.map((item) =>
-                              item?._id === currentItem?._id
+                              item?.id === currentItem?.id
                                 ? { ...item, ["keyAchievements"]: updatedItem }
                                 : item
                             );
@@ -886,7 +886,7 @@ export const AtsExperience: React.FC<{
                             }));
                           }}
                           className={`${
-                            hoveredItemId === item._id ? "block" : "hidden"
+                            hoveredItemId === item.id ? "block" : "hidden"
                           } ml-auto text-lg px-1.5 py-[1px] rounded-md hover:bg-red-600/10 text-zinc-600 hover:text-red-700`}
                         >
                           &times;
@@ -897,7 +897,7 @@ export const AtsExperience: React.FC<{
                 </ul>
                 <div
                   className={` ${
-                    hoveredItemId === item._id ? "block" : "hidden"
+                    hoveredItemId === item.id ? "block" : "hidden"
                   } pb-1 pt-3 border-t mt-3 border-stroke`}
                 >
                   <h6 className="font-semibold text-zinc-700 text-sm mb-[0.4rem] ml-0.5">
@@ -920,7 +920,7 @@ export const AtsExperience: React.FC<{
                             newAchievement,
                           ];
                         const updatedItems = items.map((item) =>
-                          item?._id === currentItem?._id
+                          item?.id === currentItem?.id
                             ? { ...item, ["keyAchievements"]: newItem }
                             : item
                         );
@@ -1142,7 +1142,7 @@ export const AtsInternships: React.FC<{
     } else {
       setItems([
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           position: "POSITION TITLE",
           company: "NAME OF ORGANIZATION",
           description: "a short description",
@@ -1197,7 +1197,7 @@ export const AtsInternships: React.FC<{
     }
   };
   const handleRemove = (id: number) => {
-    const updatedItems = items.filter((item) => item?._id !== id);
+    const updatedItems = items.filter((item) => item?.id !== id);
     setItems(updatedItems);
     setResumeData(() => ({
       ...resumeData,
@@ -1208,7 +1208,7 @@ export const AtsInternships: React.FC<{
   // Handler to add new experience
   const addExperience = () => {
     const newExperience = {
-      _id: generateUniqueId(),
+      id: generateUniqueId(),
       position: "POSITION TITLE",
       company: "NAME OF ORGANIZATION",
       description: "a short description",
@@ -1240,7 +1240,7 @@ export const AtsInternships: React.FC<{
   const applyAiList = () => {
     // Append the formatted items to the existing description
     const updatedItems = items.map((item) =>
-      item?._id === currentItem?._id
+      item?.id === currentItem?.id
         ? {
             ...item,
             ["keyAchievements"]: [...item?.keyAchievements, selectedItems],
@@ -1265,7 +1265,7 @@ export const AtsInternships: React.FC<{
   // Handle input change for specific item
   const handleInputChange = (id: number, field: string, value: string) => {
     const updatedItems = items.map((item) =>
-      item?._id === id ? { ...item, [field]: value } : item
+      item?.id === id ? { ...item, [field]: value } : item
     );
     setItems(updatedItems);
     setResumeData((prev: any) => ({
@@ -1287,7 +1287,7 @@ export const AtsInternships: React.FC<{
   // Update the height every time the content changes
   useEffect(() => {
     autoResizeTextarea();
-  }, [resumeData?.internships[currentItem?._id - 1]?.description]);
+  }, [resumeData?.internships[currentItem?.id - 1]?.description]);
   return (
     <div>
       <div className="flex mb-3 gap-3  justify-between items-center">
@@ -1302,11 +1302,11 @@ export const AtsInternships: React.FC<{
       <div className="flex flex-col gap-9">
         {items.map((item, _index) => (
           <div
-            key={item?._id}
-            onMouseEnter={() => setHoveredItemId(item?._id)} // Set hovered item id
+            key={item?.id}
+            onMouseEnter={() => setHoveredItemId(item?.id)} // Set hovered item id
             onMouseLeave={() => setHoveredItemId(null)}
             className={`item ${
-              item?._id === draggingItem?._id ? "shadow-3" : ""
+              item?.id === draggingItem?.id ? "shadow-3" : ""
             } hover:border border-stroke border-space rounded-md border-spacing-1 px-2 relative  text-black w-full py-1 `}
             draggable="true"
             onDragStart={(e) => handleDragStart(e, item)}
@@ -1315,7 +1315,7 @@ export const AtsInternships: React.FC<{
             onDragOver={handleDragOver}
             onClick={() => setCurrentItem(item)}
           >
-            {hoveredItemId === item?._id && (
+            {hoveredItemId === item?.id && (
               <div className="flex w-full gap-1 justify-end -mt-5">
                 <div className="bg-white flex gap-1 items-center">
                   <GradientButton
@@ -1334,7 +1334,7 @@ export const AtsInternships: React.FC<{
                   {items?.length > 1 && (
                     <button
                       onClick={() => {
-                        handleRemove(item?._id);
+                        handleRemove(item?.id);
                       }}
                       className="h-8 w-8 flex justify-center items-center border-none text-primary/90 hover:text-primary text-2xl"
                     >
@@ -1358,7 +1358,7 @@ export const AtsInternships: React.FC<{
                   value={item?.company}
                   style={{ fontSize }}
                   onChange={(e) =>
-                    handleInputChange(item?._id, "company", e.target.value)
+                    handleInputChange(item?.id, "company", e.target.value)
                   }
                 />
                 <input
@@ -1367,7 +1367,7 @@ export const AtsInternships: React.FC<{
                   value={item.duration}
                   style={{ fontSize: fontSizeSm }}
                   onChange={(e) =>
-                    handleInputChange(item?._id, "duration", e.target.value)
+                    handleInputChange(item?.id, "duration", e.target.value)
                   }
                 />
               </div>
@@ -1379,7 +1379,7 @@ export const AtsInternships: React.FC<{
                   value={item?.title}
                   style={{ fontSize }}
                   onChange={(e) =>
-                    handleInputChange(item?._id, "title", e.target.value)
+                    handleInputChange(item?.id, "title", e.target.value)
                   }
                 />
               </div>
@@ -1407,7 +1407,7 @@ export const AtsInternships: React.FC<{
                               (item: string) => item !== achievement
                             );
                             const updatedItems = items.map((item) =>
-                              item?._id === currentItem?._id
+                              item?.id === currentItem?.id
                                 ? { ...item, ["keyAchievements"]: updatedItem }
                                 : item
                             );
@@ -1417,7 +1417,7 @@ export const AtsInternships: React.FC<{
                             }));
                           }}
                           className={`${
-                            hoveredItemId === item?._id ? "block" : "hidden"
+                            hoveredItemId === item?.id ? "block" : "hidden"
                           } ml-auto text-lg px-1.5 py-[1px] rounded-md hover:bg-red-600/10 text-zinc-600 hover:text-red-700`}
                         >
                           &times;
@@ -1428,7 +1428,7 @@ export const AtsInternships: React.FC<{
                 </ul>
                 <div
                   className={` ${
-                    hoveredItemId === item?._id ? "block" : "hidden"
+                    hoveredItemId === item?.id ? "block" : "hidden"
                   } pb-1 pt-3 border-t mt-3 border-stroke`}
                 >
                   <h6 className="font-semibold text-zinc-700 text-sm mb-[0.4rem] ml-0.5">
@@ -1451,7 +1451,7 @@ export const AtsInternships: React.FC<{
                             newAchievement,
                           ];
                         const updatedItems = items.map((item) =>
-                          item?._id === currentItem?._id
+                          item?.id === currentItem?.id
                             ? { ...item, ["keyAchievements"]: newItem }
                             : item
                         );
@@ -1677,7 +1677,7 @@ export const AtsVolunteerExperience: React.FC<{
     } else {
       setItems([
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           title: "POSITION TITLE",
           company: "NAME OF ORGANIZATION",
           description: "Enter a short desc",
@@ -1734,7 +1734,7 @@ export const AtsVolunteerExperience: React.FC<{
     }
   };
   const handleRemove = (id: number) => {
-    const updatedItems = items.filter((item) => item?._id !== id);
+    const updatedItems = items.filter((item) => item?.id !== id);
     setItems(updatedItems);
     setResumeData(() => ({
       ...resumeData,
@@ -1745,7 +1745,7 @@ export const AtsVolunteerExperience: React.FC<{
   // Handler to add new experience
   const addExperience = () => {
     const newExperience = {
-      _id: generateUniqueId(),
+      id: generateUniqueId(),
       position: "",
       company: "",
       startDate: "",
@@ -1765,7 +1765,7 @@ export const AtsVolunteerExperience: React.FC<{
   const applyAiList = () => {
     // Append the formatted items to the existing description
     const updatedItems = items.map((item) =>
-      item?._id === currentItem?._id
+      item?.id === currentItem?.id
         ? {
             ...item,
             ["keyAchievements"]: [...item?.keyAchievements, selectedItems],
@@ -1802,7 +1802,7 @@ export const AtsVolunteerExperience: React.FC<{
   // Handle input change for specific item
   const handleInputChange = (id: number, field: string, value: string) => {
     const updatedItems = items.map((item) =>
-      item?._id === id ? { ...item, [field]: value } : item
+      item?.id === id ? { ...item, [field]: value } : item
     );
     setItems(updatedItems);
     setResumeData((prev: any) => ({
@@ -1824,7 +1824,7 @@ export const AtsVolunteerExperience: React.FC<{
   // Update the height every time the content changes
   useEffect(() => {
     autoResizeTextarea();
-  }, [resumeData?.volunteerExperience[currentItem?._id - 1]?.description]);
+  }, [resumeData?.volunteerExperience[currentItem?.id - 1]?.description]);
   return (
     <div>
       <div className="flex mb-3 gap-3  justify-between items-center">
@@ -1851,11 +1851,11 @@ export const AtsVolunteerExperience: React.FC<{
       <div className="flex flex-col gap-9">
         {items.map((item, _index) => (
           <div
-            key={item?._id}
-            onMouseEnter={() => setHoveredItemId(item?._id)} // Set hovered item id
+            key={item?.id}
+            onMouseEnter={() => setHoveredItemId(item?.id)} // Set hovered item id
             onMouseLeave={() => setHoveredItemId(null)}
             className={`item ${
-              item?._id === draggingItem?._id ? "shadow-3" : ""
+              item?.id === draggingItem?.id ? "shadow-3" : ""
             } hover:border border-stroke border-space rounded-md border-spacing-1 px-2 relative  text-black w-full py-1 `}
             draggable="true"
             onDragStart={(e) => handleDragStart(e, item)}
@@ -1864,7 +1864,7 @@ export const AtsVolunteerExperience: React.FC<{
             onDragOver={handleDragOver}
             onClick={() => setCurrentItem(item)}
           >
-            {hoveredItemId === item?._id && (
+            {hoveredItemId === item?.id && (
               <div className="flex w-full gap-1 justify-end -mt-5">
                 <div className="bg-white flex gap-1 items-center">
                   <GradientButton
@@ -1883,7 +1883,7 @@ export const AtsVolunteerExperience: React.FC<{
                   {items?.length > 1 && (
                     <button
                       onClick={() => {
-                        handleRemove(item?._id);
+                        handleRemove(item?.id);
                       }}
                       className="h-8 w-8 flex justify-center items-center border-none text-primary/90 hover:text-primary text-2xl"
                     >
@@ -1907,7 +1907,7 @@ export const AtsVolunteerExperience: React.FC<{
                   value={item?.company}
                   style={{ fontSize }}
                   onChange={(e) =>
-                    handleInputChange(item?._id, "company", e.target.value)
+                    handleInputChange(item?.id, "company", e.target.value)
                   }
                 />
                 <input
@@ -1916,7 +1916,7 @@ export const AtsVolunteerExperience: React.FC<{
                   value={item?.duration}
                   style={{ fontSize: fontSizeSm }}
                   onChange={(e) =>
-                    handleInputChange(item?._id, "duration", e.target.value)
+                    handleInputChange(item?.id, "duration", e.target.value)
                   }
                 />
               </div>
@@ -1928,7 +1928,7 @@ export const AtsVolunteerExperience: React.FC<{
                   value={item?.title}
                   style={{ fontSize }}
                   onChange={(e) =>
-                    handleInputChange(item?._id, "title", e.target.value)
+                    handleInputChange(item?.id, "title", e.target.value)
                   }
                 />
               </div>
@@ -1956,7 +1956,7 @@ export const AtsVolunteerExperience: React.FC<{
                               (item: string) => item !== achievement
                             );
                             const updatedItems = items.map((item) =>
-                              item?._id === currentItem?._id
+                              item?.id === currentItem?.id
                                 ? { ...item, ["keyAchievements"]: updatedItem }
                                 : item
                             );
@@ -1966,7 +1966,7 @@ export const AtsVolunteerExperience: React.FC<{
                             }));
                           }}
                           className={`${
-                            hoveredItemId === item?._id ? "block" : "hidden"
+                            hoveredItemId === item?.id ? "block" : "hidden"
                           } ml-auto text-lg px-1.5 py-[1px] rounded-md hover:bg-red-600/10 text-zinc-600 hover:text-red-700`}
                         >
                           &times;
@@ -1977,7 +1977,7 @@ export const AtsVolunteerExperience: React.FC<{
                 </ul>
                 <div
                   className={` ${
-                    hoveredItemId === item?._id ? "block" : "hidden"
+                    hoveredItemId === item?.id ? "block" : "hidden"
                   } pb-1 pt-3 border-t mt-3 border-stroke`}
                 >
                   <h6 className="font-semibold text-zinc-700 text-sm mb-[0.4rem] ml-0.5">
@@ -2000,7 +2000,7 @@ export const AtsVolunteerExperience: React.FC<{
                             newAchievement,
                           ];
                         const updatedItems = items.map((item) =>
-                          item?._id === currentItem?._id
+                          item?.id === currentItem?.id
                             ? { ...item, ["keyAchievements"]: newItem }
                             : item
                         );
@@ -2209,7 +2209,7 @@ export const AtsProjects: React.FC<{
     } else {
       setItems([
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           name: "",
           technology: "",
           description: "",
@@ -2260,7 +2260,7 @@ export const AtsProjects: React.FC<{
     }
   };
   const handleRemove = (id: number) => {
-    const updatedItems = items.filter((item) => item?._id !== id);
+    const updatedItems = items.filter((item) => item?.id !== id);
     setItems(updatedItems);
     setResumeData(() => ({
       ...resumeData,
@@ -2271,7 +2271,7 @@ export const AtsProjects: React.FC<{
   // Handler to add new experience
   const addProject = () => {
     const newProject = {
-      _id: generateUniqueId(),
+      id: generateUniqueId(),
       name: "",
       technology: "",
       description: "",
@@ -2287,7 +2287,7 @@ export const AtsProjects: React.FC<{
   // Handle input change for specific item
   const handleInputChange = (id: number, field: string, value: string) => {
     const updatedItems = items.map((item) =>
-      item?._id === id ? { ...item, [field]: value } : item
+      item?.id === id ? { ...item, [field]: value } : item
     );
     setItems(updatedItems);
     setResumeData((prev: any) => ({
@@ -2309,7 +2309,7 @@ export const AtsProjects: React.FC<{
   // Update the height every time the content changes
   useEffect(() => {
     autoResizeTextarea();
-  }, [resumeData?.projects[currentItem?._id - 1]?.description]);
+  }, [resumeData?.projects[currentItem?.id - 1]?.description]);
   return (
     <div>
       <div className="flex mb-3 gap-3  justify-between items-center">
@@ -2324,11 +2324,11 @@ export const AtsProjects: React.FC<{
       <div className="flex flex-col gap-9">
         {items.map((item, _index) => (
           <div
-            key={item?._id}
-            onMouseEnter={() => setHoveredItemId(item?._id)} // Set hovered item id
+            key={item?.id}
+            onMouseEnter={() => setHoveredItemId(item?.id)} // Set hovered item id
             onMouseLeave={() => setHoveredItemId(null)}
             className={`item ${
-              item?._id === draggingItem?._id ? "shadow-3" : ""
+              item?.id === draggingItem?.id ? "shadow-3" : ""
             } hover:border border-stroke hover:my-5 border-space rounded-md border-spacing-1 px-2 relative  text-black w-full py-1 `}
             draggable="true"
             onDragStart={(e) => handleDragStart(e, item)}
@@ -2337,7 +2337,7 @@ export const AtsProjects: React.FC<{
             onDragOver={handleDragOver}
             onClick={() => setCurrentItem(item)}
           >
-            {hoveredItemId === item?._id && (
+            {hoveredItemId === item?.id && (
               <div className="flex w-full gap-1 justify-end -mt-5">
                 <div className="bg-white flex gap-1 items-center">
                   <button
@@ -2349,7 +2349,7 @@ export const AtsProjects: React.FC<{
                   {items?.length > 1 && (
                     <button
                       onClick={() => {
-                        handleRemove(item?._id);
+                        handleRemove(item?.id);
                       }}
                       className="h-8 w-8 flex justify-center items-center border-none text-primary/90 hover:text-primary text-2xl"
                     >
@@ -2373,7 +2373,7 @@ export const AtsProjects: React.FC<{
                   value={item?.name}
                   style={{ fontSize }}
                   onChange={(e) =>
-                    handleInputChange(item?._id, "name", e.target.value)
+                    handleInputChange(item?.id, "name", e.target.value)
                   }
                 />
                 <input
@@ -2382,13 +2382,13 @@ export const AtsProjects: React.FC<{
                   value={item?.technology}
                   style={{ fontSize: fontSizeSm }}
                   onChange={(e) =>
-                    handleInputChange(item?._id, "duration", e.target.value)
+                    handleInputChange(item?.id, "duration", e.target.value)
                   }
                 />
               </div>
 
               <div className="flex items-center ml-[3px]">
-                {editingItemId === item?._id ? (
+                {editingItemId === item?.id ? (
                   <textarea
                     className={`border-none bg-white focus:bg-zinc-100 focus:ring-0 focus:outline-none px-3 font-medium text-black text-base placeholder:text-black w-full`}
                     placeholder="Enter project summary"
@@ -2398,7 +2398,7 @@ export const AtsProjects: React.FC<{
                     }
                     onChange={(e) =>
                       handleInputChange(
-                        item?._id,
+                        item?.id,
                         "description",
                         e.target.value
                       )
@@ -2417,7 +2417,7 @@ export const AtsProjects: React.FC<{
                 ) : (
                   <p
                     className="px-1.5 text-[15px] cursor-pointer font-medium"
-                    onClick={() => setEditingItemId(item?._id)}
+                    onClick={() => setEditingItemId(item?.id)}
                     style={{ fontSize }}
                   >
                     {item?.description ||
@@ -2428,7 +2428,7 @@ export const AtsProjects: React.FC<{
 
               <div className={`pb-1 pt-3 border-stroke`}>
                 <div className="flex">
-                  {editingItemId === item?._id ? (
+                  {editingItemId === item?.id ? (
                     <input
                       type="text"
                       value={
@@ -2436,7 +2436,7 @@ export const AtsProjects: React.FC<{
                         "Attach a github or website link to this project"
                       }
                       onChange={(e) =>
-                        handleInputChange(item?._id, "link", e.target.value)
+                        handleInputChange(item?.id, "link", e.target.value)
                       }
                       style={{ fontSize: fontSizeSm }}
                       placeholder="Enter link to this project"
@@ -2447,7 +2447,7 @@ export const AtsProjects: React.FC<{
                       {item?.link ? (
                         <a
                           className="px-1.5 text-[15px] cursor-pointer text-blue-600 font-medium"
-                          onClick={() => setEditingItemId(item?._id)}
+                          onClick={() => setEditingItemId(item?.id)}
                           href={""}
                           // target="_blank"
                           style={{ fontSize: fontSize }}
@@ -2456,7 +2456,7 @@ export const AtsProjects: React.FC<{
                         </a>
                       ) : (
                         <span
-                          onClick={() => setEditingItemId(item?._id)}
+                          onClick={() => setEditingItemId(item?.id)}
                           style={{ fontSize: fontSize }}
                           className="px-1.5 text-[15px] cursor-text text-blue-600 font-medium"
                         >
@@ -2499,7 +2499,7 @@ export const AtsCareerHighlight: React.FC<{
     } else {
       setItems([
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           title: "",
           skills: [],
           technology: "",
@@ -2507,7 +2507,7 @@ export const AtsCareerHighlight: React.FC<{
           link: "",
         },
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           title: "",
           skills: [],
           technology: "",
@@ -2559,7 +2559,7 @@ export const AtsCareerHighlight: React.FC<{
     }
   };
   const handleRemove = (id: number) => {
-    const updatedItems = items.filter((item) => item?._id !== id);
+    const updatedItems = items.filter((item) => item?.id !== id);
     setItems(updatedItems);
     setResumeData(() => ({
       ...resumeData,
@@ -2570,7 +2570,7 @@ export const AtsCareerHighlight: React.FC<{
   // Handler to add new experience
   const addHighlight = () => {
     const newCareer = {
-      _id: generateUniqueId(),
+      id: generateUniqueId(),
       name: "",
       technology: "",
       description: "",
@@ -2587,7 +2587,7 @@ export const AtsCareerHighlight: React.FC<{
   // Handle input change for specific item
   const handleInputChange = (id: number, field: string, value: string) => {
     const updatedItems = items.map((item) =>
-      item?._id === id ? { ...item, [field]: value } : item
+      item?.id === id ? { ...item, [field]: value } : item
     );
     setItems(updatedItems);
     setResumeData((prev: any) => ({
@@ -2609,7 +2609,7 @@ export const AtsCareerHighlight: React.FC<{
   // Update the height every time the content changes
   useEffect(() => {
     autoResizeTextarea();
-  }, [resumeData?.careerHighlights[currentItem?._id - 1]?.description]);
+  }, [resumeData?.careerHighlights?.[currentItem?.id - 1]?.description]);
   return (
     <div>
       <div className="flex mb-3 gap-3  justify-between items-center">
@@ -2627,11 +2627,11 @@ export const AtsCareerHighlight: React.FC<{
       <div className="flex flex-col gap-5">
         {items.map((item, _index) => (
           <div
-            key={item?._id}
-            onMouseEnter={() => setHoveredItemId(item?._id)} // Set hovered item id
+            key={item?.id}
+            onMouseEnter={() => setHoveredItemId(item?.id)} // Set hovered item id
             onMouseLeave={() => setHoveredItemId(null)}
             className={`item ${
-              item?._id === draggingItem?._id ? "shadow-3" : ""
+              item?.id === draggingItem?.id ? "shadow-3" : ""
             } hover:border border-stroke hover:my-5 border-space rounded-md border-spacing-1 px-2 relative  text-black w-full py-1 `}
             draggable="true"
             onDragStart={(e) => handleDragStart(e, item)}
@@ -2640,7 +2640,7 @@ export const AtsCareerHighlight: React.FC<{
             onDragOver={handleDragOver}
             onClick={() => setCurrentItem(item)}
           >
-            {hoveredItemId === item?._id && (
+            {hoveredItemId === item?.id && (
               <div className="flex w-full gap-1 justify-end -mt-5">
                 <div className="bg-white flex gap-1 items-center">
                   <button
@@ -2652,7 +2652,7 @@ export const AtsCareerHighlight: React.FC<{
                   {items?.length > 1 && (
                     <button
                       onClick={() => {
-                        handleRemove(item?._id);
+                        handleRemove(item?.id);
                       }}
                       className="h-8 w-8 flex justify-center items-center border-none text-primary/90 hover:text-primary text-2xl"
                     >
@@ -2676,13 +2676,13 @@ export const AtsCareerHighlight: React.FC<{
                   value={item?.title}
                   style={{ fontSize }}
                   onChange={(e) =>
-                    handleInputChange(item?._id, "title", e.target.value)
+                    handleInputChange(item?.id, "title", e.target.value)
                   }
                 />
               </div>
 
               <div className="flex items-center ml-[3px]">
-                {editingItemId === item?._id ? (
+                {editingItemId === item?.id ? (
                   <textarea
                     className={`border-none bg-white focus:bg-zinc-100 focus:ring-0 focus:outline-none px-3 font-medium text-black text-base placeholder:text-black w-full`}
                     placeholder="Enter project summary"
@@ -2692,7 +2692,7 @@ export const AtsCareerHighlight: React.FC<{
                     }
                     onChange={(e) =>
                       handleInputChange(
-                        item?._id,
+                        item?.id,
                         "description",
                         e.target.value
                       )
@@ -2711,7 +2711,7 @@ export const AtsCareerHighlight: React.FC<{
                 ) : (
                   <p
                     className="px-1.5 text-[15px] cursor-text font-medium"
-                    onClick={() => setEditingItemId(item?._id)}
+                    onClick={() => setEditingItemId(item?.id)}
                     style={{ fontSize }}
                   >
                     {item?.description ||
@@ -2722,7 +2722,7 @@ export const AtsCareerHighlight: React.FC<{
 
               <div className={`pb-1 pt-3 border-stroke`}>
                 <div className="flex">
-                  {editingItemId === item?._id ? (
+                  {editingItemId === item?.id ? (
                     <input
                       type="text"
                       value={
@@ -2730,7 +2730,7 @@ export const AtsCareerHighlight: React.FC<{
                         "Attach a github or website link to this project"
                       }
                       onChange={(e) =>
-                        handleInputChange(item?._id, "link", e.target.value)
+                        handleInputChange(item?.id, "link", e.target.value)
                       }
                       style={{ fontSize: fontSizeSm }}
                       placeholder="Enter link to this project"
@@ -2739,7 +2739,7 @@ export const AtsCareerHighlight: React.FC<{
                   ) : (
                     <a
                       className="px-1.5 text-[15px] cursor-text text-blue-600 font-medium"
-                      onClick={() => setEditingItemId(item?._id)}
+                      onClick={() => setEditingItemId(item?.id)}
                       href={""}
                       style={{ fontSize: fontSizeSm }}
                     >
@@ -2780,7 +2780,7 @@ export const Ats: React.FC<{
     } else {
       setItems([
         {
-          _id: 1,
+          id: 1,
           name: "",
           technology: "",
           description: "",
@@ -2791,7 +2791,7 @@ export const Ats: React.FC<{
           ],
         },
         {
-          _id: 2,
+          id: 2,
           name: "",
           technology: "",
           description: "",
@@ -2846,7 +2846,7 @@ export const Ats: React.FC<{
     }
   };
   const handleRemove = (id: number) => {
-    const updatedItems = items.filter((item) => item?._id !== id);
+    const updatedItems = items.filter((item) => item?.id !== id);
     setItems(updatedItems);
     setResumeData(() => ({
       ...resumeData,
@@ -2857,7 +2857,7 @@ export const Ats: React.FC<{
   // Handler to add new experience
   const addExperience = () => {
     const newExperience = {
-      _id: resumeData?.projects.length + 1,
+      id: resumeData?.projects.length + 1,
       name: "",
       technology: "",
       description: "",
@@ -2878,7 +2878,7 @@ export const Ats: React.FC<{
   const applyAiList = () => {
     // Append the formatted items to the existing description
     const updatedItems = items.map((item) =>
-      item?._id === currentItem?._id
+      item?.id === currentItem?.id
         ? {
             ...item,
             ["responsibilities"]: [...item?.responsibilities, ...selectedItems],
@@ -2897,7 +2897,7 @@ export const Ats: React.FC<{
   // Handle input change for specific item
   const handleInputChange = (id: number, field: string, value: string) => {
     const updatedItems = items.map((item) =>
-      item?._id === id ? { ...item, [field]: value } : item
+      item?.id === id ? { ...item, [field]: value } : item
     );
     setItems(updatedItems);
     setResumeData((prev: any) => ({
@@ -2919,7 +2919,7 @@ export const Ats: React.FC<{
   // Update the height every time the content changes
   useEffect(() => {
     autoResizeTextarea();
-  }, [resumeData?.projects[currentItem?._id - 1]?.description]);
+  }, [resumeData?.projects[currentItem?.id - 1]?.description]);
   return (
     <div>
       <div className="flex mb-3 gap-3  justify-between items-center">
@@ -2934,11 +2934,11 @@ export const Ats: React.FC<{
       <div className="flex flex-col gap-9">
         {items.map((item, _index) => (
           <div
-            key={item?._id}
-            onMouseEnter={() => setHoveredItemId(item?._id)} // Set hovered item id
+            key={item?.id}
+            onMouseEnter={() => setHoveredItemId(item?.id)} // Set hovered item id
             onMouseLeave={() => setHoveredItemId(null)}
             className={`item ${
-              item?._id === draggingItem?._id ? "shadow-3" : ""
+              item?.id === draggingItem?.id ? "shadow-3" : ""
             } hover:border border-stroke hover:my-5 border-space rounded-md border-spacing-1 px-2 relative  text-black w-full py-1 `}
             draggable="true"
             onDragStart={(e) => handleDragStart(e, item)}
@@ -2947,7 +2947,7 @@ export const Ats: React.FC<{
             onDragOver={handleDragOver}
             onClick={() => setCurrentItem(item)}
           >
-            {hoveredItemId === item?._id && (
+            {hoveredItemId === item?.id && (
               <div className="flex w-full gap-1 justify-end -mt-5">
                 <div className="bg-white flex gap-1 items-center">
                   <GradientButton
@@ -2966,7 +2966,7 @@ export const Ats: React.FC<{
                   {items?.length > 1 && (
                     <button
                       onClick={() => {
-                        handleRemove(item?._id);
+                        handleRemove(item?.id);
                       }}
                       className="h-8 w-8 flex justify-center items-center border-none text-primary/90 hover:text-primary text-2xl"
                     >
@@ -2989,7 +2989,7 @@ export const Ats: React.FC<{
                   placeholder="Project Title"
                   value={item?.name}
                   onChange={(e) =>
-                    handleInputChange(item?._id, "name", e.target.value)
+                    handleInputChange(item?.id, "name", e.target.value)
                   }
                 />
                 <input
@@ -2997,13 +2997,13 @@ export const Ats: React.FC<{
                   placeholder="Technology"
                   value={item?.technology}
                   onChange={(e) =>
-                    handleInputChange(item?._id, "duration", e.target.value)
+                    handleInputChange(item?.id, "duration", e.target.value)
                   }
                 />
               </div>
 
               <div className="flex items-center mb-5 ml-[3px]">
-                {editingItemId === item?._id ? (
+                {editingItemId === item?.id ? (
                   <textarea
                     className={`border-none bg-white focus:bg-zinc-100 focus:ring-0 focus:outline-none px-3 font-medium text-black text-base placeholder:text-black w-full`}
                     placeholder="Enter project summary"
@@ -3013,7 +3013,7 @@ export const Ats: React.FC<{
                     }
                     onChange={(e) =>
                       handleInputChange(
-                        item?._id,
+                        item?.id,
                         "description",
                         e.target.value
                       )
@@ -3031,7 +3031,7 @@ export const Ats: React.FC<{
                 ) : (
                   <p
                     className="px-1.5 text-[15px] cursor-pointer font-medium"
-                    onClick={() => setEditingItemId(item?._id)}
+                    onClick={() => setEditingItemId(item?.id)}
                   >
                     {item?.description ||
                       "Provide a brief description of the project, its purpose, and key technologies used."}
@@ -3059,7 +3059,7 @@ export const Ats: React.FC<{
                               (item: string) => item !== responsibility
                             );
                             const updatedItems = items.map((item) =>
-                              item?._id === currentItem?._id
+                              item?.id === currentItem?.id
                                 ? { ...item, ["responsibilities"]: updatedItem }
                                 : item
                             );
@@ -3069,7 +3069,7 @@ export const Ats: React.FC<{
                             }));
                           }}
                           className={`${
-                            hoveredItemId === item?._id ? "block" : "hidden"
+                            hoveredItemId === item?.id ? "block" : "hidden"
                           } ml-auto text-lg px-1.5 py-[1px] rounded-md hover:bg-red-600/10 text-zinc-600 hover:text-red-700`}
                         >
                           &times;
@@ -3080,7 +3080,7 @@ export const Ats: React.FC<{
                 </ul>
                 <div
                   className={` ${
-                    hoveredItemId === item?._id ? "block" : "hidden"
+                    hoveredItemId === item?.id ? "block" : "hidden"
                   } pb-1 pt-3 border-t mt-3 border-stroke`}
                 >
                   <h6 className="font-semibold text-zinc-700 text-sm mb-[0.4rem] ml-0.5">
@@ -3103,7 +3103,7 @@ export const Ats: React.FC<{
                             newAchievement,
                           ];
                         const updatedItems = items.map((item) =>
-                          item?._id === currentItem?._id
+                          item?.id === currentItem?.id
                             ? { ...item, ["keyAchievements"]: newItem }
                             : item
                         );
@@ -3245,7 +3245,7 @@ export const AtsEducation: React.FC<{
     } else {
       setItems([
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           institution: "Name of Univerity/Organization",
           degree: "DEGREE TYPE / MAJOR",
           startDate: "",
@@ -3304,7 +3304,7 @@ export const AtsEducation: React.FC<{
     }
   };
   const handleRemove = (id: number) => {
-    const updatedItems = items.filter((item) => item?._id !== id);
+    const updatedItems = items.filter((item) => item?.id !== id);
     setItems(updatedItems);
     setResumeData(() => ({
       ...resumeData,
@@ -3315,7 +3315,7 @@ export const AtsEducation: React.FC<{
   // Handler to add new education
   const addExperience = () => {
     const newEducation = {
-      _id: generateUniqueId(),
+      id: generateUniqueId(),
       degree: "DEGREE TYPE / MAJOR",
       institution: "NAME OF INSTITUTION",
       duration: "",
@@ -3334,7 +3334,7 @@ export const AtsEducation: React.FC<{
   // Handle input change for specific item
   const handleInputChange = (id: number, field: string, value: string) => {
     const updatedItems = items.map((item) =>
-      item?._id === id ? { ...item, [field]: value } : item
+      item?.id === id ? { ...item, [field]: value } : item
     );
     setItems(updatedItems);
     setResumeData((prev: any) => ({
@@ -3355,7 +3355,7 @@ export const AtsEducation: React.FC<{
   // Update the height every time the content changes
   useEffect(() => {
     autoResizeTextarea();
-  }, [resumeData?.education[currentItem?._id - 1]?.description]);
+  }, [resumeData?.education?.[currentItem?.id - 1]?.description]);
   return (
     <div>
       {resumeData?.template === "professional" ? (
@@ -3379,11 +3379,11 @@ export const AtsEducation: React.FC<{
       <div className="flex flex-col gap-4">
         {items.map((item, _index) => (
           <div
-            key={item?._id}
-            onMouseEnter={() => setHoveredItemId(item?._id)} // Set hovered item id
+            key={item?.id}
+            onMouseEnter={() => setHoveredItemId(item?.id)} // Set hovered item id
             onMouseLeave={() => setHoveredItemId(null)}
             className={`item ${
-              item?._id === draggingItem?._id ? "shadow-3" : ""
+              item?.id === draggingItem?.id ? "shadow-3" : ""
             } hover:border border-stroke rounded-md border-spacing-1 px-2 relative  text-black w-full py-1 `}
             draggable="true"
             onDragStart={(e) => handleDragStart(e, item)}
@@ -3392,7 +3392,7 @@ export const AtsEducation: React.FC<{
             onDragOver={handleDragOver}
             onClick={() => setCurrentItem(item)}
           >
-            {hoveredItemId === item?._id && (
+            {hoveredItemId === item?.id && (
               <div className="flex w-full gap-1 justify-end -mt-6">
                 <div className="bg-white flex gap-1 items-center">
                   <button
@@ -3404,7 +3404,7 @@ export const AtsEducation: React.FC<{
                   {resumeData?.education?.length > 1 && (
                     <button
                       onClick={() => {
-                        handleRemove(item?._id);
+                        handleRemove(item?.id);
                       }}
                       className="h-8 w-8 flex justify-center items-center border-none text-primary/90 hover:text-primary text-2xl"
                     >
@@ -3424,8 +3424,8 @@ export const AtsEducation: React.FC<{
                 <div className="flex justify-between gap-6 items-center">
                   <div className="flex items-center gap-2 divide-x divide-zinc-600">
                     <div>
-                      {hoveredItemId === item?._id &&
-                      editingSchoolId === item?._id ? (
+                      {hoveredItemId === item?.id &&
+                      editingSchoolId === item?.id ? (
                         <input
                           className={`border-none w-full uppercase text-base bg-white text-black focus:outline-none focus:bg-zinc-100 px-2`}
                           placeholder="Institution"
@@ -3435,7 +3435,7 @@ export const AtsEducation: React.FC<{
                           onBlur={() => setEditingSchoolId(null)}
                           onChange={(e) =>
                             handleInputChange(
-                              item?._id,
+                              item?.id,
                               "institution",
                               e.target.value
                             )
@@ -3443,7 +3443,7 @@ export const AtsEducation: React.FC<{
                         />
                       ) : (
                         <span
-                          onClick={() => setEditingSchoolId(item?._id)}
+                          onClick={() => setEditingSchoolId(item?.id)}
                           className="text-base uppercase font-semibold text-zinc-800"
                           style={{ fontSize }}
                         >
@@ -3454,8 +3454,8 @@ export const AtsEducation: React.FC<{
 
                     <span className="font-semibold uppercase hidden">|</span>
                     <div className="pl-2">
-                      {hoveredItemId === item?._id &&
-                      editingDegreeId === item?._id ? (
+                      {hoveredItemId === item?.id &&
+                      editingDegreeId === item?.id ? (
                         <input
                           className={`border-none w-full text-base uppercase font-semibold bg-white text-zinc-800 focus:outline-none placeholder:text-zinc-800 focus:bg-zinc-100 px-2`}
                           placeholder="DEGREE"
@@ -3465,7 +3465,7 @@ export const AtsEducation: React.FC<{
                           onBlur={() => setEditingDegreeId(null)}
                           onChange={(e) =>
                             handleInputChange(
-                              item?._id,
+                              item?.id,
                               "degree",
                               e.target.value
                             )
@@ -3473,7 +3473,7 @@ export const AtsEducation: React.FC<{
                         />
                       ) : (
                         <span
-                          onClick={() => setEditingDegreeId(item?._id)}
+                          onClick={() => setEditingDegreeId(item?.id)}
                           className="text-base uppercase font-semibold text-zinc-800"
                           style={{ fontSize }}
                         >
@@ -3489,15 +3489,15 @@ export const AtsEducation: React.FC<{
                       value={item?.year}
                       style={{ fontSize: fontSizeSm }}
                       onChange={(e) =>
-                        handleInputChange(item?._id, "year", e.target.value)
+                        handleInputChange(item?.id, "year", e.target.value)
                       }
                     />
                   </div>
                 </div>
 
                 <div className="py-2">
-                  {hoveredItemId === item?._id &&
-                  editingInfoId === item?._id ? (
+                  {hoveredItemId === item?.id &&
+                  editingInfoId === item?.id ? (
                     <div>
                       <textarea
                         className={`border-none bg-white focus:bg-zinc-100 focus:ring-0 focus:outline-none px-3 font-medium text-black text-base placeholder:text-black w-full`}
@@ -3505,7 +3505,7 @@ export const AtsEducation: React.FC<{
                         value={item?.description}
                         onChange={(e) =>
                           handleInputChange(
-                            item?._id,
+                            item?.id,
                             "description",
                             e.target.value
                           )
@@ -3524,7 +3524,7 @@ export const AtsEducation: React.FC<{
                     </div>
                   ) : (
                     <span
-                      onClick={() => setEditingInfoId(item?._id)}
+                      onClick={() => setEditingInfoId(item?.id)}
                       className="text-[15px]  cursor-text font-medium"
                       style={{ fontSize: fontSize }}
                     >
@@ -3545,7 +3545,7 @@ export const AtsEducation: React.FC<{
                       style={{ fontSize: fontSize }}
                       onChange={(e) =>
                         handleInputChange(
-                          item?._id,
+                          item?.id,
                           "institution",
                           e.target.value
                         )
@@ -3558,7 +3558,7 @@ export const AtsEducation: React.FC<{
                         value={item?.year}
                         style={{ fontSize: fontSizeSm }}
                         onChange={(e) =>
-                          handleInputChange(item?._id, "year", e.target.value)
+                          handleInputChange(item?.id, "year", e.target.value)
                         }
                       />
                     </div>
@@ -3570,7 +3570,7 @@ export const AtsEducation: React.FC<{
                       value={item?.degree}
                       style={{ fontSize: fontSizeSm }}
                       onChange={(e) =>
-                        handleInputChange(item?._id, "degree", e.target.value)
+                        handleInputChange(item?.id, "degree", e.target.value)
                       }
                     />
                   </div>
@@ -3612,13 +3612,13 @@ export const AtsCertifications: React.FC<{
     } else {
       setItems([
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           institution: "Name of Organization",
           name: "NAME OF CERTIFICATION",
           date: "Month Year",
         },
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           institution: "Name of Organization",
           name: "NAME OF CERTIFICATION",
           date: "Month Year",
@@ -3672,7 +3672,7 @@ export const AtsCertifications: React.FC<{
     }
   };
   const handleRemove = (id: number) => {
-    const updatedItems = items.filter((item) => item?._id !== id);
+    const updatedItems = items.filter((item) => item?.id !== id);
     setItems(updatedItems);
     setResumeData(() => ({
       ...resumeData,
@@ -3683,7 +3683,7 @@ export const AtsCertifications: React.FC<{
   // Handler to add new education
   const addExperience = () => {
     const newCertification = {
-      _id: generateUniqueId(),
+      id: generateUniqueId(),
       institution: "Name of Organization",
       name: "NAME OF CERTIFICATION",
       date: "Month Year",
@@ -3697,7 +3697,7 @@ export const AtsCertifications: React.FC<{
   // Handle input change for specific item
   const handleInputChange = (id: number, field: string, value: string) => {
     const updatedItems = items.map((item) =>
-      item?._id === id ? { ...item, [field]: value } : item
+      item?.id === id ? { ...item, [field]: value } : item
     );
     setItems(updatedItems);
     setResumeData((prev: any) => ({
@@ -3729,11 +3729,11 @@ export const AtsCertifications: React.FC<{
       <div className="flex flex-col gap-4">
         {items.map((item, _index) => (
           <div
-            key={item?._id}
-            onMouseEnter={() => setHoveredItemId(item?._id)} // Set hovered item id
+            key={item?.id}
+            onMouseEnter={() => setHoveredItemId(item?.id)} // Set hovered item id
             onMouseLeave={() => setHoveredItemId(null)}
             className={`item ${
-              item?._id === draggingItem?._id ? "shadow-3" : ""
+              item?.id === draggingItem?.id ? "shadow-3" : ""
             } hover:border border-stroke rounded-md border-spacing-1 px-2 relative  text-black w-full py-1 `}
             draggable="true"
             onDragStart={(e) => handleDragStart(e, item)}
@@ -3742,7 +3742,7 @@ export const AtsCertifications: React.FC<{
             onDragOver={handleDragOver}
             // onClick={() => setCurrentItem(item)}
           >
-            {hoveredItemId === item?._id && (
+            {hoveredItemId === item?.id && (
               <div className="flex w-full gap-1 justify-end -mt-6">
                 <div className="bg-white flex gap-1 items-center">
                   <button
@@ -3754,7 +3754,7 @@ export const AtsCertifications: React.FC<{
                   {resumeData?.certifications?.length > 1 && (
                     <button
                       onClick={() => {
-                        handleRemove(item?._id);
+                        handleRemove(item?.id);
                       }}
                       className="h-8 w-8 flex justify-center items-center border-none text-primary/90 hover:text-primary text-2xl"
                     >
@@ -3774,8 +3774,8 @@ export const AtsCertifications: React.FC<{
                 <div className="flex justify-between gap-6 items-center">
                   <div className="flex items-center gap-2 divide-x divide-zinc-600">
                     <div>
-                      {hoveredItemId === item?._id &&
-                      editingSchoolId === item?._id ? (
+                      {hoveredItemId === item?.id &&
+                      editingSchoolId === item?.id ? (
                         <input
                           className={`border-none w-full uppercase text-base bg-white text-black focus:outline-none focus:bg-zinc-100 px-2`}
                           placeholder="Institution"
@@ -3785,7 +3785,7 @@ export const AtsCertifications: React.FC<{
                           onBlur={() => setEditingSchoolId(null)}
                           onChange={(e) =>
                             handleInputChange(
-                              item?._id,
+                              item?.id,
                               "institution",
                               e.target.value
                             )
@@ -3793,7 +3793,7 @@ export const AtsCertifications: React.FC<{
                         />
                       ) : (
                         <span
-                          onClick={() => setEditingSchoolId(item?._id)}
+                          onClick={() => setEditingSchoolId(item?.id)}
                           className="text-base uppercase font-semibold text-zinc-800"
                           style={{ fontSize }}
                         >
@@ -3804,8 +3804,8 @@ export const AtsCertifications: React.FC<{
 
                     <span className="font-semibold uppercase hidden">|</span>
                     <div className="pl-2">
-                      {hoveredItemId === item?._id &&
-                      editingDegreeId === item?._id ? (
+                      {hoveredItemId === item?.id &&
+                      editingDegreeId === item?.id ? (
                         <input
                           className={`border-none w-full text-base uppercase font-semibold bg-white text-zinc-800 focus:outline-none placeholder:text-zinc-800 focus:bg-zinc-100 px-2`}
                           placeholder="NAME"
@@ -3814,12 +3814,12 @@ export const AtsCertifications: React.FC<{
                           onBlur={() => setEditingDegreeId(null)}
                           style={{ fontSize }}
                           onChange={(e) =>
-                            handleInputChange(item?._id, "name", e.target.value)
+                            handleInputChange(item?.id, "name", e.target.value)
                           }
                         />
                       ) : (
                         <span
-                          onClick={() => setEditingDegreeId(item?._id)}
+                          onClick={() => setEditingDegreeId(item?.id)}
                           className="text-base uppercase font-semibold text-zinc-800"
                           style={{ fontSize }}
                         >
@@ -3835,7 +3835,7 @@ export const AtsCertifications: React.FC<{
                       value={item?.date}
                       style={{ fontSize: fontSizeSm }}
                       onChange={(e) =>
-                        handleInputChange(item?._id, "date", e.target.value)
+                        handleInputChange(item?.id, "date", e.target.value)
                       }
                     />
                   </div>
@@ -3853,7 +3853,7 @@ export const AtsCertifications: React.FC<{
                       style={{ fontSize: fontSize }}
                       onChange={(e) =>
                         handleInputChange(
-                          item?._id,
+                          item?.id,
                           "institution",
                           e.target.value
                         )
@@ -3866,7 +3866,7 @@ export const AtsCertifications: React.FC<{
                         style={{ fontSize: fontSizeSm }}
                         value={item?.date}
                         onChange={(e) =>
-                          handleInputChange(item?._id, "date", e.target.value)
+                          handleInputChange(item?.id, "date", e.target.value)
                         }
                       />
                     </div>
@@ -3878,7 +3878,7 @@ export const AtsCertifications: React.FC<{
                       value={item?.name}
                       style={{ fontSize: fontSize }}
                       onChange={(e) =>
-                        handleInputChange(item?._id, "name", e.target.value)
+                        handleInputChange(item?.id, "name", e.target.value)
                       }
                     />
                   </div>
@@ -3915,7 +3915,7 @@ export const AtsTrainings: React.FC<{
     } else {
       setItems([
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           degree: "TITLE",
           institution: "NAME OF INSTITUTION",
           description: "",
@@ -3924,7 +3924,7 @@ export const AtsTrainings: React.FC<{
           year: "yyyy",
         },
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           title: "TITLE",
           platform: "NAME OF INSTITUTION",
           description: "",
@@ -3981,7 +3981,7 @@ export const AtsTrainings: React.FC<{
     }
   };
   const handleRemove = (id: number) => {
-    const updatedItems = items.filter((item) => item?._id !== id);
+    const updatedItems = items.filter((item) => item?.id !== id);
     setItems(updatedItems);
     setResumeData(() => ({
       ...resumeData,
@@ -3992,7 +3992,7 @@ export const AtsTrainings: React.FC<{
   // Handler to add new education
   const addExperience = () => {
     const newTraining = {
-      _id: generateUniqueId(),
+      id: generateUniqueId(),
       degree: "TITLE",
       institution: "NAME OF INSTITUTION",
       description: "",
@@ -4009,7 +4009,7 @@ export const AtsTrainings: React.FC<{
   // Handle input change for specific item
   const handleInputChange = (id: number, field: string, value: string) => {
     const updatedItems = items.map((item) =>
-      item?._id === id ? { ...item, [field]: value } : item
+      item?.id === id ? { ...item, [field]: value } : item
     );
     setItems(updatedItems);
     setResumeData((prev: any) => ({
@@ -4033,11 +4033,11 @@ export const AtsTrainings: React.FC<{
       <div className="flex flex-col gap-2.5">
         {items.map((item, _index) => (
           <div
-            key={item?._id}
-            onMouseEnter={() => setHoveredItemId(item?._id)} // Set hovered item id
+            key={item?.id}
+            onMouseEnter={() => setHoveredItemId(item?.id)} // Set hovered item id
             onMouseLeave={() => setHoveredItemId(null)}
             className={`item ${
-              item?._id === draggingItem?._id ? "shadow-3" : ""
+              item?.id === draggingItem?.id ? "shadow-3" : ""
             } hover:border border-stroke rounded-md border-spacing-1 px-2 relative  text-black w-full py-1 `}
             draggable="true"
             onDragStart={(e) => handleDragStart(e, item)}
@@ -4046,7 +4046,7 @@ export const AtsTrainings: React.FC<{
             onDragOver={handleDragOver}
             onClick={() => setCurrentItem(item)}
           >
-            {hoveredItemId === item?._id && (
+            {hoveredItemId === item?.id && (
               <div className="flex w-full gap-1 justify-end -mt-6">
                 <div className="bg-white flex gap-1 items-center">
                   <button
@@ -4058,7 +4058,7 @@ export const AtsTrainings: React.FC<{
                   {resumeData?.trainings?.length > 1 && (
                     <button
                       onClick={() => {
-                        handleRemove(item?._id);
+                        handleRemove(item?.id);
                       }}
                       className="h-8 w-8 flex justify-center items-center border-none text-primary/90 hover:text-primary text-2xl"
                     >
@@ -4077,8 +4077,8 @@ export const AtsTrainings: React.FC<{
               <div className="flex justify-between gap-6 items-center">
                 <div className="flex items-center gap-2 divide-x divide-zinc-600">
                   <div>
-                    {hoveredItemId === item?._id &&
-                    editingSchoolId === item?._id ? (
+                    {hoveredItemId === item?.id &&
+                    editingSchoolId === item?.id ? (
                       <input
                         className={`border-none w-full text-base bg-white text-black focus:outline-none focus:bg-zinc-100 px-2`}
                         placeholder="Cert/Training Name"
@@ -4087,12 +4087,12 @@ export const AtsTrainings: React.FC<{
                         style={{ fontSize }}
                         onBlur={() => setEditingSchoolId(null)}
                         onChange={(e) =>
-                          handleInputChange(item?._id, "degree", e.target.value)
+                          handleInputChange(item?.id, "degree", e.target.value)
                         }
                       />
                     ) : (
                       <span
-                        onClick={() => setEditingSchoolId(item?._id)}
+                        onClick={() => setEditingSchoolId(item?.id)}
                         className="text-base font-semibold text-zinc-800"
                         style={{ fontSize }}
                       >
@@ -4103,8 +4103,8 @@ export const AtsTrainings: React.FC<{
 
                   <span className="font-semibold hidden">|</span>
                   <div className="pl-2">
-                    {hoveredItemId === item?._id &&
-                    editingDegreeId === item?._id ? (
+                    {hoveredItemId === item?.id &&
+                    editingDegreeId === item?.id ? (
                       <input
                         className={`border-none w-full text-base bg-white text-zinc-800 focus:outline-none placeholder:text-zinc-800 focus:bg-zinc-100 px-2`}
                         placeholder="Platform / Institution"
@@ -4114,7 +4114,7 @@ export const AtsTrainings: React.FC<{
                         style={{ fontSize }}
                         onChange={(e) =>
                           handleInputChange(
-                            item?._id,
+                            item?.id,
                             "institution",
                             e.target.value
                           )
@@ -4122,7 +4122,7 @@ export const AtsTrainings: React.FC<{
                       />
                     ) : (
                       <span
-                        onClick={() => setEditingDegreeId(item?._id)}
+                        onClick={() => setEditingDegreeId(item?.id)}
                         className="text-base text-zinc-800"
                         style={{ fontSize }}
                       >
@@ -4138,7 +4138,7 @@ export const AtsTrainings: React.FC<{
                     value={item?.year}
                     style={{ fontSize: fontSizeSm }}
                     onChange={(e) =>
-                      handleInputChange(item?._id, "year", e.target.value)
+                      handleInputChange(item?.id, "year", e.target.value)
                     }
                   />
                 </div>
@@ -4173,10 +4173,10 @@ export const AtsSkills: React.FC<{
     nameIndex: number;
   } | null>(null);
   const [items, setItems] = useState<
-    { _id: string | number; name: string; items: string[] }[]
+    { id: string | number; name: string; items: string[] }[]
   >(
     resumeData?.skills.map((val: any) => ({
-      _id: val?.id,
+      id: val?.id,
       name: val.name,
       items: val.items,
     }))
@@ -4192,7 +4192,7 @@ export const AtsSkills: React.FC<{
     setResumeData((prev: any) => ({
       ...prev,
       skills: prev.skills.map((skill: any) =>
-        skill._id === currentItem?._id
+        skill.id === currentItem?.id
           ? { ...skill, items: selectedSkills }
           : skill
       ),
@@ -4205,7 +4205,7 @@ export const AtsSkills: React.FC<{
     if (resumeData?.skills?.length > 0) {
       setItems(
         resumeData?.skills.map((val: any) => ({
-          _id: val?._id,
+          id: val?.id,
           name: val.name,
           items: val.items,
         }))
@@ -4213,7 +4213,7 @@ export const AtsSkills: React.FC<{
     } else {
       setItems([
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           name: "Name of Skill (Ex: Soft Skill)",
           items: [
             "Mention the skill then briefly add some context to it",
@@ -4221,7 +4221,7 @@ export const AtsSkills: React.FC<{
           ],
         },
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           name: "Name of Skill (Ex: Hard Skills)",
           items: [
             "Mention the skill then briefly add some context to it",
@@ -4229,7 +4229,7 @@ export const AtsSkills: React.FC<{
           ],
         },
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           name: "Name of Skill (Ex: Technical Skills)",
           items: [
             "Mention the skill then briefly add some context to it",
@@ -4276,7 +4276,7 @@ export const AtsSkills: React.FC<{
       setResumeData(() => ({
         ...resumeData,
         skills: updatedItems.map((item: any) => ({
-          _id: item?._id,
+          id: item?.id,
           name: item.name,
           items: item.items,
         })),
@@ -4284,12 +4284,12 @@ export const AtsSkills: React.FC<{
     }
   };
   const handleRemove = (id: number | string) => {
-    const updatedItems = items.filter((item) => item?._id !== id);
+    const updatedItems = items.filter((item) => item?.id !== id);
     setItems(updatedItems);
     setResumeData(() => ({
       ...resumeData,
       skills: updatedItems.map((item: any) => ({
-        _id: item?._id,
+        id: item?.id,
         name: item.name,
         items: item.items,
       })),
@@ -4303,7 +4303,7 @@ export const AtsSkills: React.FC<{
       skills: [
         ...resumeData?.skills,
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           name: "Name of Skill (Ex: Soft Skill)",
           items: [
             "Mention the skill then briefly add some context to it",
@@ -4336,13 +4336,13 @@ export const AtsSkills: React.FC<{
     value: string
   ) => {
     const updatedItems = items.map((item) =>
-      item?._id === id ? { ...item, [field]: value } : item
+      item?.id === id ? { ...item, [field]: value } : item
     );
     setItems(updatedItems);
     setResumeData((prev: any) => ({
       ...prev,
       skills: updatedItems.map((item: any) => ({
-        _id: item?._id,
+        id: item?.id,
         name: item.name,
         items: item.items,
       })),
@@ -4351,7 +4351,7 @@ export const AtsSkills: React.FC<{
 
   const removeSkillItem = (itemId: string | number, skillIndex: number) => {
     const updatedItems = items.map((itm) =>
-      itm?._id === itemId
+      itm?.id === itemId
         ? {
             ...itm,
             items: itm.items.filter((_, idx) => idx !== skillIndex),
@@ -4382,11 +4382,11 @@ export const AtsSkills: React.FC<{
         {items.map((item, index) => (
           <li
             key={index}
-            onMouseEnter={() => setHoveredItemId(item?._id)} // Set hovered item id
+            onMouseEnter={() => setHoveredItemId(item?.id)} // Set hovered item id
             onMouseLeave={() => setHoveredItemId(null)}
             onClick={() => setCurrentItem(item)}
             className={`item ${
-              item?._id === draggingItem?._id ? "shadow-3" : ""
+              item?.id === draggingItem?.id ? "shadow-3" : ""
             } relative  text-zinc-800 py-0 px-1.5 hover:border hover:rounded-lg border-zinc-300`}
             draggable="true"
             onDragStart={(e) => handleDragStart(e, item)}
@@ -4395,7 +4395,7 @@ export const AtsSkills: React.FC<{
             onDragOver={handleDragOver}
           >
             <div className="py-1 rounded-md flex flex-col mb-1">
-              {hoveredItemId === item?._id && (
+              {hoveredItemId === item?.id && (
                 <div className="flex w-full gap-1 justify-end -mt-4 ">
                   <div className="flex gap-1 items-center bg-white z-0">
                     <GradientButton
@@ -4414,7 +4414,7 @@ export const AtsSkills: React.FC<{
                     {resumeData?.skills?.length > 1 && (
                       <button
                         onClick={() => {
-                          handleRemove(item?._id);
+                          handleRemove(item?.id);
                         }}
                         className="h-6 w-6 flex justify-center items-center border-none text-primary/90 hover:text-primary text-xl"
                       >
@@ -4430,7 +4430,7 @@ export const AtsSkills: React.FC<{
                 </div>
               )}
               <div className="">
-                {editingName?.itemId === item?._id &&
+                {editingName?.itemId === item?.id &&
                 editingName?.nameIndex === index ? (
                   <input
                     className={`border-none italic border-b text-base bg-white focus:outline-none text-black placeholder:text-black focus:bg-zinc-100 px-2`}
@@ -4440,13 +4440,13 @@ export const AtsSkills: React.FC<{
                     onBlur={() => setEditingName(null)}
                     style={{ fontSize }}
                     onChange={(e) =>
-                      handleInputChange(item?._id, "name", e.target.value)
+                      handleInputChange(item?.id, "name", e.target.value)
                     }
                   />
                 ) : (
                   <span
                     onClick={() => {
-                      setEditingName({ itemId: item?._id, nameIndex: index });
+                      setEditingName({ itemId: item?.id, nameIndex: index });
                       console.log(items);
                     }}
                     className="italic underline text-base text-zinc-500 underline-offset-2 cursor-text font-medium"
@@ -4460,7 +4460,7 @@ export const AtsSkills: React.FC<{
               <ul className="inline-flex items-center gap-2 flex-wrap">
                 {item.items.map((skillItem: string, skillIndex: number) => (
                   <li key={skillIndex}>
-                    {editingSkill?.itemId === item?._id &&
+                    {editingSkill?.itemId === item?.id &&
                     editingSkill?.skillIndex === skillIndex ? (
                       <input
                         className={`border-none text-base bg-white focus:outline-none text-black placeholder:text-black focus:bg-zinc-100 px-2`}
@@ -4471,10 +4471,10 @@ export const AtsSkills: React.FC<{
                         onBlur={() => setEditingSkill(null)}
                         onChange={(e) => {
                           const updatedItems = items.map((itm) =>
-                            itm?._id === item?._id
+                            itm?.id === item?.id
                               ? {
                                   ...itm,
-                                  _id: item?._id,
+                                  id: item?.id,
                                   items: itm.items.map((i, idx) =>
                                     idx === skillIndex ? e.target.value : i
                                   ),
@@ -4491,7 +4491,7 @@ export const AtsSkills: React.FC<{
                     ) : (
                       <span
                         onClick={() =>
-                          setEditingSkill({ itemId: item?._id, skillIndex })
+                          setEditingSkill({ itemId: item?.id, skillIndex })
                         }
                         className="text-[15px] cursor-text font-medium"
                         style={{ fontSize }}
@@ -4502,7 +4502,7 @@ export const AtsSkills: React.FC<{
                           {skillItem}{" "}
                           <button
                             onClick={() =>
-                              removeSkillItem(item?._id, skillIndex)
+                              removeSkillItem(item?.id, skillIndex)
                             }
                             className="mx-2 hidden group-hover:inline-flex text-zinc-500 hover:text-red-700"
                           >
@@ -4520,7 +4520,7 @@ export const AtsSkills: React.FC<{
 
               <div
                 className={` ${
-                  hoveredItemId === item?._id ? "block" : "hidden"
+                  hoveredItemId === item?.id ? "block" : "hidden"
                 } pb-1 pt-3 border-t mt-3 border-stroke`}
               >
                 <h6 className="font-semibold text-zinc-700 text-sm mb-[0.4rem] ml-0.5">
@@ -4545,8 +4545,8 @@ export const AtsSkills: React.FC<{
                           ]
                         : item.items;
                       const updatedItems = items.map((item) =>
-                        item?._id === currentItem?._id
-                          ? { ...item, _id: item?._id, ["items"]: newItem }
+                        item?.id === currentItem?.id
+                          ? { ...item, id: item?.id, ["items"]: newItem }
                           : item
                       );
                       setItems(updatedItems);
@@ -4692,7 +4692,7 @@ export const AreasOfExpertise: React.FC<{
 
   const [items, setItems] = useState<SkillProps[]>(
     resumeData?.areaOfExpertise.map((val: string) => ({
-      _id: generateUniqueId(),
+      id: generateUniqueId(),
       value: val,
     }))
   );
@@ -4715,22 +4715,22 @@ export const AreasOfExpertise: React.FC<{
     if (resumeData?.areaOfExpertise?.length > 0) {
       setItems(
         resumeData?.areaOfExpertise.map((val: string) => ({
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           value: val,
         }))
       );
     } else {
       setItems([
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           value: "Add Area of Expertise",
         },
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           value: "Add Area of Expertise",
         },
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           value: "Add Area of Expertise",
         },
       ]);
@@ -4777,7 +4777,7 @@ export const AreasOfExpertise: React.FC<{
     }
   };
   const handleRemove = (id: number | string) => {
-    const updatedItems = items.filter((item) => item?._id !== id);
+    const updatedItems = items.filter((item) => item?.id !== id);
     setItems(updatedItems);
     setResumeData(() => ({
       ...resumeData,
@@ -4793,13 +4793,13 @@ export const AreasOfExpertise: React.FC<{
     }));
   };
 
-  const GenerateAreasOfExpertise = async () => {
+  const GenerateareaOfExpertise = async () => {
     setAiLoading(true);
     try {
       const resp = await generateAreasOfExpertise({
         role: role,
       });
-      setAiSkills(resp?.data?.areasOfExpertise);
+      setAiSkills(resp?.data?.areaOfExpertise);
     } catch (err: any) {
       toast.error(err?.message || "Request Failed");
     } finally {
@@ -4814,7 +4814,7 @@ export const AreasOfExpertise: React.FC<{
     value: string
   ) => {
     const updatedItems = items.map((item) =>
-      item?._id === id ? { ...item, [field]: value } : item
+      item?.id === id ? { ...item, [field]: value } : item
     );
     setItems(updatedItems);
     setResumeData((prev: any) => ({
@@ -4852,10 +4852,10 @@ export const AreasOfExpertise: React.FC<{
         {items.map((item, index) => (
           <li
             key={index}
-            onMouseEnter={() => setHoveredItemId(item?._id)} // Set hovered item id
+            onMouseEnter={() => setHoveredItemId(item?.id)} // Set hovered item id
             onMouseLeave={() => setHoveredItemId(null)}
             className={`item ${
-              item?._id === draggingItem?._id ? "shadow-3" : ""
+              item?.id === draggingItem?.id ? "shadow-3" : ""
             } relative  text-zinc-800 py-0 hover:border hover:rounded-lg border-zinc-300`}
             draggable="true"
             onDragStart={(e) => handleDragStart(e, item)}
@@ -4864,7 +4864,7 @@ export const AreasOfExpertise: React.FC<{
             onDragOver={handleDragOver}
           >
             <div className="py-1 rounded-md">
-              {hoveredItemId === item?._id && (
+              {hoveredItemId === item?.id && (
                 <div className="flex w-full gap-1 justify-end -mt-4 ">
                   <div className="flex gap-1 items-center bg-white z-0">
                     <button
@@ -4876,7 +4876,7 @@ export const AreasOfExpertise: React.FC<{
                     {resumeData?.areaOfExpertise?.length > 1 && (
                       <button
                         onClick={() => {
-                          handleRemove(item?._id);
+                          handleRemove(item?.id);
                         }}
                         className="h-6 w-6 flex justify-center items-center border-none text-primary/90 hover:text-primary text-xl"
                       >
@@ -4892,14 +4892,14 @@ export const AreasOfExpertise: React.FC<{
                 </div>
               )}
 
-              {editingItemId === item?._id ? (
+              {editingItemId === item?.id ? (
                 <input
                   className={`border-none bg-white w-full focus:outline-none text-black placeholder:text-black focus:bg-zinc-100 px-2`}
                   placeholder="Enter area of expertise"
                   style={{ fontSize }}
                   value={item.value}
                   onChange={(e) =>
-                    handleInputChange(item?._id, "value", e.target.value)
+                    handleInputChange(item?.id, "value", e.target.value)
                   }
                   onBlur={() => setEditingItemId(null)}
                   autoFocus
@@ -4907,7 +4907,7 @@ export const AreasOfExpertise: React.FC<{
               ) : (
                 <span
                   className="text-[15px] cursor-pointer font-medium"
-                  onClick={() => setEditingItemId(item?._id)}
+                  onClick={() => setEditingItemId(item?.id)}
                   style={{ fontSize }}
                 >
                   {item.value || "Enter area of expertise"}{" "}
@@ -4990,7 +4990,7 @@ export const AreasOfExpertise: React.FC<{
         <div className="flex flex-col gap-3 justify-center items-center">
           <Button
             onClick={() => {
-              GenerateAreasOfExpertise();
+              GenerateareaOfExpertise();
             }}
             disabled={aiLoading}
             width="w-[80%]"
@@ -5031,7 +5031,7 @@ export const RelevantCourses: React.FC<{
     "16px";
   const [items, setItems] = useState<SkillProps[]>(
     resumeData?.relevantCourses.map((val: string) => ({
-      _id: generateUniqueId(),
+      id: generateUniqueId(),
       value: val,
     }))
   );
@@ -5041,18 +5041,18 @@ export const RelevantCourses: React.FC<{
     if (resumeData?.relevantCourses?.length > 0) {
       setItems(
         resumeData?.relevantCourses.map((val: any, index: number) => ({
-          _id: index + 1,
+          id: index + 1,
           value: val,
         }))
       );
     } else {
       setItems([
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           value: `List courses that are relevant to the job you're applying for`,
         },
         {
-          _id: generateUniqueId(),
+          id: generateUniqueId(),
           value: `Use Course titles rather than course numbers`,
         },
       ]);
@@ -5099,7 +5099,7 @@ export const RelevantCourses: React.FC<{
     }
   };
   const handleRemove = (id: number | string) => {
-    const updatedItems = items.filter((item) => item?._id !== id);
+    const updatedItems = items.filter((item) => item?.id !== id);
     setItems(updatedItems);
     setResumeData(() => ({
       ...resumeData,
@@ -5122,7 +5122,7 @@ export const RelevantCourses: React.FC<{
     value: string
   ) => {
     const updatedItems = items.map((item) =>
-      item?._id === id ? { ...item, [field]: value } : item
+      item?.id === id ? { ...item, [field]: value } : item
     );
     setItems(updatedItems);
     setResumeData((prev: any) => ({
@@ -5145,10 +5145,10 @@ export const RelevantCourses: React.FC<{
         {items.map((item, index) => (
           <li
             key={index}
-            onMouseEnter={() => setHoveredItemId(item?._id)} // Set hovered item id
+            onMouseEnter={() => setHoveredItemId(item?.id)} // Set hovered item id
             onMouseLeave={() => setHoveredItemId(null)}
             className={`item ${
-              item?._id === draggingItem?._id ? "shadow-3" : ""
+              item?.id === draggingItem?.id ? "shadow-3" : ""
             } relative  text-zinc-800 py-0 hover:border hover:rounded-lg border-zinc-300`}
             draggable="true"
             onDragStart={(e) => handleDragStart(e, item)}
@@ -5157,7 +5157,7 @@ export const RelevantCourses: React.FC<{
             onDragOver={handleDragOver}
           >
             <div className="py-1 rounded-md">
-              {hoveredItemId === item?._id && (
+              {hoveredItemId === item?.id && (
                 <div className="flex w-full gap-1 justify-end -mt-4 ">
                   <div className="flex gap-1 items-center bg-white z-0">
                     <button
@@ -5169,7 +5169,7 @@ export const RelevantCourses: React.FC<{
                     {resumeData?.relevantCourses?.length > 1 && (
                       <button
                         onClick={() => {
-                          handleRemove(item?._id);
+                          handleRemove(item?.id);
                         }}
                         className="h-6 w-6 flex justify-center items-center border-none text-primary/90 hover:text-primary text-xl"
                       >
@@ -5185,13 +5185,13 @@ export const RelevantCourses: React.FC<{
                 </div>
               )}
 
-              {editingItemId === item?._id ? (
+              {editingItemId === item?.id ? (
                 <input
                   className={`border-none bg-white w-full focus:outline-none text-black placeholder:text-black focus:bg-zinc-100 px-2`}
                   placeholder="Enter relevant course"
                   value={item.value}
                   onChange={(e) =>
-                    handleInputChange(item?._id, "value", e.target.value)
+                    handleInputChange(item?.id, "value", e.target.value)
                   }
                   onBlur={() => setEditingItemId(null)}
                   autoFocus
@@ -5200,7 +5200,7 @@ export const RelevantCourses: React.FC<{
               ) : (
                 <span
                   className="px-1 text-base font-medium"
-                  onClick={() => setEditingItemId(item?._id)}
+                  onClick={() => setEditingItemId(item?.id)}
                   style={{ fontSize }}
                 >
                   {item.value || "Enter relevant course"}

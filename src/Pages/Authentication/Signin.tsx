@@ -16,6 +16,7 @@ import { FcGoogle } from "react-icons/fc";
 import { TbLoader3 } from "react-icons/tb";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { sendOtp, signInUser } from "../../services/authServices";
+import Button from "../../components/Button";
 
 const Signin: React.FC = () => {
   const { signIn } = useApp();
@@ -132,10 +133,10 @@ const Signin: React.FC = () => {
                         rules={{ required: "Password is required" }}
                         extraLabel={
                           <Link
-                            className="text-primary text-sm font-cabin"
+                            className="text-primary font-cabin"
                             to="/forgot-password"
                           >
-                            Forgot password?
+                            Forgot password
                           </Link>
                         }
                       />
@@ -143,19 +144,19 @@ const Signin: React.FC = () => {
                   </div>
 
                   <div className="mt-6">
-                    <button
+                    <Button
                       type="submit"
-                      className="w-full py-3 px-6 rounded-lg flex group disabled:hover:scale-100 disabled:opacity-50 items-center gap-3 bg-gradient-to-r hover:bg-gradient-to-l hover:scale-95 duration-300 ease-in-out from-[#2563EB] to-[#9333EA] justify-center text-white border-none hover:opacity-95"
+                      width="w-full"
                       disabled={isLoading}
                       onClick={() => {}}
                     >
-                      {isLoading ? "Loading" : "Sign in"}
+                      {isLoading ? "Loading" : "Sign In"}
                       {isLoading ? (
                         <TbLoader3 size={20} className="animate-spin" />
                       ) : (
                         <FaArrowRightLong className="group-hover:translate-x-1.5" />
                       )}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -195,7 +196,7 @@ const Signin: React.FC = () => {
             <p className="text-center text-zinc-800 mt-4 dark:text-slate-100">
               Don't have an account?{" "}
               <span>
-                <Link to="/signup" className="text-primary hover:opacity-95">
+                <Link to="/signup" className="text-primary font-medium hover:opacity-95">
                   Sign Up
                 </Link>
               </span>

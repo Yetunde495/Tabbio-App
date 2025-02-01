@@ -363,7 +363,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
             <div className="flex items-center gap-1">
               <button
-                onClick={() => navigate("/app/candidate/applications/preview-cv")}
+                onClick={() => navigate("/app/candidate/profile/preview-cv")}
                 className="py-1 px-1.5 md:ml-1 max-md:pl-0 flex items-center gap-1 hover:scale-x-105"
               >
                 <FaCircle size={10} className="text-green-500 max-md:hidden" />

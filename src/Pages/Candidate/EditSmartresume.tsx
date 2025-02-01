@@ -16,7 +16,6 @@ import {
   FaCheck,
   FaCircle,
   FaPlus,
-  FaRegCircle,
   FaRegFile,
 } from "react-icons/fa6";
 import { IoMdColorFilter } from "react-icons/io";
@@ -55,6 +54,8 @@ import { PageLoader } from "../../components/Loader";
 import { getProfileResume, updateResume } from "../../services/resumeServices";
 import { toast } from "react-toastify";
 import { generateUniqueId } from "../../lib/utils";
+import Button from "../../components/Button";
+import TabbioScore from "../../components/tabbioScore";
 
 const primaryColors = ["#0077B5", "#CC0074", "#FF7D00", "#00C196", "#000000"];
 
@@ -642,22 +643,7 @@ const EditSmartResume: React.FC = () => {
                   </div>
                 </MenuItem>
 
-                <div
-                  onClick={() => setScoreModal(true)}
-                  className="flex gap-1 cursor-pointer max-sm:hidden text-sm max-sm:text-[10px] items-center"
-                >
-                  <div >
-                    {/* <ProgressBar2 percent={50} /> */}
-                    <div className="relative text-primary">
-                    <span><FaRegCircle size={30} /></span>
-                    <span className="text-[10px] absolute top-[5px] left-[3px]">50%</span>
-                    </div>
-                    
-                  </div>
-                  <span>View my Tabbio Score</span>
-                </div>
-
-                {/* Color Picker */}
+                <TabbioScore onClick={() => setScoreModal(true)} score={50} />
               </Menu>
 
               <div className="sm:ml-auto flex items-center gap-2">
@@ -684,14 +670,14 @@ const EditSmartResume: React.FC = () => {
           </div>
 
           <div className="px-2 py-4 md:pl-8 md:pr-2">
-            <div className="2xl:hidden lg:w-[90%] w-full flex justify-between gap-6 items-center">
+            <div className="2xl:hidden lg:w-[90%] w-full flex justify-between gap-6 mb-3 items-end">
               <p className="text-lg text-zinc-700 font-medium">Profile CV</p>
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => {
                     navigate(-1);
                   }}
-                  className="flex items-center font-medium mb-3 gap-3 text-lg"
+                  className="flex items-center font-medium gap-3 text-lg"
                 >
                   Exit
                 </button>
@@ -702,7 +688,8 @@ const EditSmartResume: React.FC = () => {
                     handleUpdateResume()
                   }}
                   disabled={updateLoading}
-                  className="px-4 py-2 md:px-5 flex bg-primary disabled:bg-opacity-50 text-white items-center font-medium rounded-lg mb-3 gap-3"
+                  className="px-4 py-2 md:px-5 flex rounded-md group text-lg disabled:hover:scale-100 max-sm:text-sm disabled:bg-opacity-60 items-center gap-3 bg-gradient-to-b hover:bg-gradient-to-t hover:scale-105 duration-300 ease-in-out from-[#5272EA] to-[#394FC0] justify-center text-white border-none"
+
                 >
                    {updateLoading ? 'Loading...' : 'Save Changes'}
                 </button>
@@ -1078,23 +1065,21 @@ const EditSmartResume: React.FC = () => {
               </div>
               <div className="max-2xl:hidden ml-auto">
                 <div className="bg-white w-full min-w-[319px] h-full">
-                  <div className="bg-zinc-50/90 flex font-medium items-center gap-1.5 py-2 px-3">
+                  <div className="bg-zinc-50/90 flex font-semibold text-lg text-zinc-800 items-center gap-1.5 py-2 px-3">
                     <BsPencil size={18} /> Customize Profile CV
                   </div>
                   <div className="p-3 flex flex-col space-y-3">
-                    <button
-                     
+                    <Button
                       onClick={() => {
                         // console.log(resumeData);
                         // console.log(customSections);
                         handleUpdateResume()
                       }}
                       disabled={updateLoading}
-                      className="px-6 py-2.5 bg-primary hover:opacity-90 text-white w-full font-medium text-lg rounded-lg"
+                      width="w-full"
                     >
                        {updateLoading ? 'Loading...' : 'Save Changes'}
-                    
-                    </button>
+                    </Button>
                     <button
                       onClick={() => {}}
                       className="w-full px-6 py-2.5 border hover:bg-zinc-100 border-stroke rounded-lg font-medium mb-3 text-lg"

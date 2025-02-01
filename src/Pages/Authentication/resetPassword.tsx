@@ -48,17 +48,27 @@ const ResetPassword: React.FC = () => {
     }
   };
 
-  const inputClasses = () =>
-    classNames(
-      "border-b border-primary",
-      "p-3",
-      "w-12 focus:border-primary outline-none",
-      "text-center",
-      {
-        "border-red-500": !isValid,
-        "border-primary": isValid,
-      }
-    );
+   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+      e.preventDefault();
+      const pasteData = e.clipboardData.getData('text');
+      const otpArray = pasteData.split('').slice(0, 6);
+      otpArray.forEach((char, index) => {
+        const syntheticEvent = { target: { value: char } } as React.ChangeEvent<HTMLInputElement>;
+        handleChange(syntheticEvent, index);
+      });
+    };
+  
+    const inputClasses = () =>
+      classNames(
+        "border-b md:text-2xl text-xl text-primary font-bold border-primary border-0 ring-0",
+        "p-3",
+        "w-12 focus:border-primary focus:border-b-2 focus:outline-none focus:ring-0 outline-none",
+        "text-center",
+        {
+          "border-red-500": !isValid,
+          "border-primary": isValid,
+        }
+      );
 
   const SendResetOTP = async () => {
     try {
@@ -170,6 +180,7 @@ const ResetPassword: React.FC = () => {
                     key={index}
                     type="text"
                     value={otpValue[index] || ""}
+                    onPaste={(e) => handlePaste(e)}
                     onChange={(e) => handleChange(e, index)}
                     className={inputClasses()}
                     maxLength={1}

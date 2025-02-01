@@ -22,6 +22,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getProfileAnalytics } from "../../services/profileServices";
 import { useApp } from "../../context/AppContext";
 import Notification from "../../components/Notification";
+import { TbLoader3 } from "react-icons/tb";
 
 type ResumeAnalyticsProps = {
   show?: boolean;
@@ -132,177 +133,194 @@ const ResumeAnalytics: React.FC<ResumeAnalyticsProps> = ({ show, onHide }) => {
           </div>
         </div>
         <div className="relative w-full max-h-[75vh] lg:max-h-[80vh] overflow-y-auto custom-scrollbar">
-          <div className="px-4 py-5 ">
-            <div className="grid lg:grid-cols-4 grid-cols-2 gap-3 items-center">
-              <div className="p-3 bg-primary/5 border border-stroke rounded-2xl">
-                <p className="flex items-center gap-2">
-                  <span>
-                    <BsEye size={18} className="text-primary" />
-                  </span>
-                  Total Views
-                </p>
-                <p className="my-3 text-zinc-950 text-lg font-semibold">
-                  {data?.data?.performance?.totalViews || 0}
-                </p>
-                <p className="text-primary">
-                  +{data?.data?.performance?.weeklyGrowth?.views || 0}% this
-                  week
-                </p>
+          {isLoading ? (
+            <div className="py-5">
+              <div className="flex items-center justify-center gap-2">
+                <span className="bg-primary rounded-full text-white w-14 h-14 flex items-center justify-center">
+                  <TbLoader3 size={28} className="animate-spin" />
+                </span>
               </div>
-              <div className="p-3 bg-primary/5 border border-stroke rounded-2xl">
-                <p className="flex items-center gap-2">
-                  <span>
-                    <AiOutlineDownload size={18} className="text-primary" />
-                  </span>
-                  Total Downloads
-                </p>
-                <p className="my-3 text-zinc-950 text-lg font-semibold">
-                  {data?.data?.performance?.totalDownloads || 0}
-                </p>
-                <p className="text-primary">
-                  +{data?.data?.performance?.weeklyGrowth?.downloads || 0}% this
-                  week
-                </p>
-              </div>
-              <div className="p-3 bg-primary/5 border border-stroke rounded-2xl">
-                <p className="flex items-center gap-2">
-                  <span>
-                    <MdShare size={18} className="text-primary" />
-                  </span>
-                  Total Shares
-                </p>
-                <p className="my-3 text-zinc-950 text-lg font-semibold">
-                  {data?.data?.performance?.totalShares || 0}
-                </p>
-                <p className="text-primary">
-                  +{data?.data?.performance?.weeklyGrowth?.shares || 0}% this
-                  week
-                </p>
-              </div>
-              <div className="p-3 bg-primary/5 border border-stroke rounded-2xl">
-                <p className="flex items-center gap-2">
-                  <span>
-                    <BsBookmarkPlus size={18} className="text-primary" />
-                  </span>
-                  Total Saves
-                </p>
-                <p className="my-3 text-zinc-950 text-lg font-semibold">
-                  {data?.data?.performance?.totalSaves || 0}
-                </p>
-                <p className="text-primary">
-                  +{data?.data?.performance?.weeklyGrowth?.saves || 0}% this
-                  week
-                </p>
+
+              <div className="my-8 text-center">
+                <h3 className="mb-1.5 text-lg font-semibold text-zinc-800">Fetching Analytics for your Professional Profile</h3>
+                <p>Please, wait while we load up analytics data</p>
               </div>
             </div>
-
-            <div className="mt-10">
-              {isLoading ? (
-                <TableLoader />
-              ) : allViews?.length > 0 ? (
-                <>
-                  <div className="border w-[200px] mb-4 border-stroke px-2.5 py-1 bg-white focus:border-primary flex items-center gap-1 rounded-xl">
-                    <span className="w-[10%]">
-                      <FaRegCalendar className="text-primary" />
+          ) : (
+            <div className="px-4 py-5 ">
+              <div className="grid lg:grid-cols-4 grid-cols-2 gap-3 items-center">
+                <div className="p-3 bg-primary/5 border border-stroke rounded-2xl">
+                  <p className="flex items-center gap-2">
+                    <span>
+                      <BsEye size={18} className="text-primary" />
                     </span>
-                    <div className="relative z-20 w-[90%] bg-transparent dark:bg-form-input">
-                      <select
-                        onChange={(e) => {
-                          setDate(e.target.value);
-                        }}
-                        className="relative z-20 w-full px-2 focus:outline-none appearance-none focus:ring-0
+                    Total Views
+                  </p>
+                  <p className="my-3 text-zinc-950 text-lg font-semibold">
+                    {data?.data?.performance?.totalViews || 0}
+                  </p>
+                  <p className="text-primary">
+                    +{data?.data?.performance?.weeklyGrowth?.views || 0}% this
+                    week
+                  </p>
+                </div>
+                <div className="p-3 bg-primary/5 border border-stroke rounded-2xl">
+                  <p className="flex items-center gap-2">
+                    <span>
+                      <AiOutlineDownload size={18} className="text-primary" />
+                    </span>
+                    Total Downloads
+                  </p>
+                  <p className="my-3 text-zinc-950 text-lg font-semibold">
+                    {data?.data?.performance?.totalDownloads || 0}
+                  </p>
+                  <p className="text-primary">
+                    +{data?.data?.performance?.weeklyGrowth?.downloads || 0}%
+                    this week
+                  </p>
+                </div>
+                <div className="p-3 bg-primary/5 border border-stroke rounded-2xl">
+                  <p className="flex items-center gap-2">
+                    <span>
+                      <MdShare size={18} className="text-primary" />
+                    </span>
+                    Total Shares
+                  </p>
+                  <p className="my-3 text-zinc-950 text-lg font-semibold">
+                    {data?.data?.performance?.totalShares || 0}
+                  </p>
+                  <p className="text-primary">
+                    +{data?.data?.performance?.weeklyGrowth?.shares || 0}% this
+                    week
+                  </p>
+                </div>
+                <div className="p-3 bg-primary/5 border border-stroke rounded-2xl">
+                  <p className="flex items-center gap-2">
+                    <span>
+                      <BsBookmarkPlus size={18} className="text-primary" />
+                    </span>
+                    Total Saves
+                  </p>
+                  <p className="my-3 text-zinc-950 text-lg font-semibold">
+                    {data?.data?.performance?.totalSaves || 0}
+                  </p>
+                  <p className="text-primary">
+                    +{data?.data?.performance?.weeklyGrowth?.saves || 0}% this
+                    week
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-10">
+                {isLoading ? (
+                  <TableLoader />
+                ) : allViews?.length > 0 ? (
+                  <>
+                    <div className="border w-[200px] mb-4 border-stroke px-2.5 py-1 bg-white focus:border-primary flex items-center gap-1 rounded-xl">
+                      <span className="w-[10%]">
+                        <FaRegCalendar className="text-primary" />
+                      </span>
+                      <div className="relative z-20 w-[90%] bg-transparent dark:bg-form-input">
+                        <select
+                          onChange={(e) => {
+                            setDate(e.target.value);
+                          }}
+                          className="relative z-20 w-full px-2 focus:outline-none appearance-none focus:ring-0
                      bg-transparent outline-none text-zinc-700
                     transition  border-none font-medium
                     bg-white"
-                      >
-                        <option value={""}>All</option>
-                        <option value={getDateFromToday(7)}>Last 7 days</option>
-                        <option value={getDateFromToday(15)}>
-                          Last 15 days
-                        </option>
-                        <option value={getDateFromToday(30)}>
-                          Last 30 days
-                        </option>
-                      </select>
-                      <span className="absolute top-1/2 hidden  cursor-pointer pointer-events-none right-2 z-30 -translate-y-1/2">
-                        <IoMdArrowDropdown />
-                      </span>
-                    </div>
-                  </div>
-                  <Table show>
-                    <Table.TableRow>
-                      <Table.Row>Company</Table.Row>
-                      <Table.Row>Date</Table.Row>
-                      <Table.Row>Action</Table.Row>
-                    </Table.TableRow>
-
-                    <Table.TableItems>
-                      {allViews?.map((data: any, index: number) => (
-                        <Table.CellRows
-                          useSelectOption={false}
-                          onClick={() => {}}
-                          key={data?.id + "-" + index}
                         >
-                          <Table.Cell isAction>
-                            <div className="flex gap-1.5 items-center text-sm">
-                              <span className="text-primary">
-                                <LuBuilding2 size={18} />
-                              </span>
-                              <div>
-                                <p className=" text-zinc-500">
-                                  {data?.company || "Anonymous"}
-                                </p>
+                          <option value={""}>All</option>
+                          <option value={getDateFromToday(7)}>
+                            Last 7 days
+                          </option>
+                          <option value={getDateFromToday(15)}>
+                            Last 15 days
+                          </option>
+                          <option value={getDateFromToday(30)}>
+                            Last 30 days
+                          </option>
+                        </select>
+                        <span className="absolute top-1/2 hidden  cursor-pointer pointer-events-none right-2 z-30 -translate-y-1/2">
+                          <IoMdArrowDropdown />
+                        </span>
+                      </div>
+                    </div>
+                    <Table show>
+                      <Table.TableRow>
+                        <Table.Row>Company</Table.Row>
+                        <Table.Row>Date</Table.Row>
+                        <Table.Row>Action</Table.Row>
+                      </Table.TableRow>
+
+                      <Table.TableItems>
+                        {allViews?.map((data: any, index: number) => (
+                          <Table.CellRows
+                            useSelectOption={false}
+                            onClick={() => {}}
+                            key={data?.id + "-" + index}
+                          >
+                            <Table.Cell isAction>
+                              <div className="flex gap-1.5 items-center text-sm">
+                                <span className="text-primary">
+                                  <LuBuilding2 size={18} />
+                                </span>
+                                <div>
+                                  <p className=" text-zinc-500">
+                                    {data?.company || "Anonymous"}
+                                  </p>
+                                </div>
                               </div>
-                            </div>
-                          </Table.Cell>
+                            </Table.Cell>
 
-                          <Table.Cell isAction>
-                            <div className="flex gap-1 text-sm items-center text-zinc-500">
-                              <span>
-                                <FaRegClock size={16} />
-                              </span>
-                              <span>
-                                {data?.date
-                                  ? formatDateString(data?.date)
-                                  : "Unspecified"}
-                              </span>
-                            </div>
-                          </Table.Cell>
+                            <Table.Cell isAction>
+                              <div className="flex gap-1 text-sm items-center text-zinc-500">
+                                <span>
+                                  <FaRegClock size={16} />
+                                </span>
+                                <span>
+                                  {data?.date
+                                    ? formatDateString(data?.date)
+                                    : "Unspecified"}
+                                </span>
+                              </div>
+                            </Table.Cell>
 
-                          <Table.Cell>
-                            {data?.action || "Unspecified"}
-                          </Table.Cell>
-                        </Table.CellRows>
-                      ))}
-                    </Table.TableItems>
-                  </Table>
+                            <Table.Cell>
+                              {data?.action || "Unspecified"}
+                            </Table.Cell>
+                          </Table.CellRows>
+                        ))}
+                      </Table.TableItems>
+                    </Table>
 
-                  <div className="my-8 flex w-full justify-end">
-                    <TablePagination
-                      data={allViews}
-                      page={page}
-                      pagination={pagination}
-                      setPage={setPage}
-                      setPageLimit={setItemsPerPage}
-                      pageLimit={itemsPerPage}
-                    />
-                  </div>
-                </>
-              ) : (
-                <Table.NoData
-                  onAdd={() => {}}
-                  hideButton={true}
-                  show={
-                    allViews === undefined ||
-                    allViews === null ||
-                    allViews?.length === 0
-                  }
-                >
-                  No Profile Actions Data found
-                </Table.NoData>
-              )}
+                    <div className="my-8 flex w-full justify-end">
+                      <TablePagination
+                        data={allViews}
+                        page={page}
+                        pagination={pagination}
+                        setPage={setPage}
+                        setPageLimit={setItemsPerPage}
+                        pageLimit={itemsPerPage}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <Table.NoData
+                    onAdd={() => {}}
+                    hideButton={true}
+                    show={
+                      allViews === undefined ||
+                      allViews === null ||
+                      allViews?.length === 0
+                    }
+                  >
+                    No Profile Actions Data found
+                  </Table.NoData>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>,

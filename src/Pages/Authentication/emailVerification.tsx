@@ -10,6 +10,7 @@ import { MdOutlineEmail } from "react-icons/md";
 import { TbLoader3 } from "react-icons/tb";
 import { BsPatchCheckFill } from "react-icons/bs";
 import { sendOtp, verifyEmailOtp } from "../../services/authServices";
+import Button from "../../components/Button";
 
 const EmailVerification: React.FC = () => {
   const {user, signIn} = useApp();
@@ -46,11 +47,21 @@ const EmailVerification: React.FC = () => {
     }
   };
 
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pasteData = e.clipboardData.getData('text');
+    const otpArray = pasteData.split('').slice(0, 6);
+    otpArray.forEach((char, index) => {
+      const syntheticEvent = { target: { value: char } } as React.ChangeEvent<HTMLInputElement>;
+      handleChange(syntheticEvent, index);
+    });
+  };
+
   const inputClasses = () =>
     classNames(
-      "border-b border-primary",
+      "border-b md:text-2xl text-xl text-primary font-bold border-primary border-0 ring-0",
       "p-3",
-      "w-12 focus:border-primary outline-none",
+      "w-12 focus:border-primary focus:border-b-2 focus:outline-none focus:ring-0 outline-none",
       "text-center",
       {
         "border-red-500": !isValid,
@@ -106,7 +117,7 @@ const EmailVerification: React.FC = () => {
                   Check your email
                 </h1>
                 <p className="text-zinc-500">
-                  Enter the 6 digit code sent to {formatEmail(user?.email)}
+                  Enter the 6 digit code sent to {user?.email && formatEmail(user?.email)}
                 </p>
               </div>
             </div>
@@ -139,18 +150,19 @@ const EmailVerification: React.FC = () => {
                     type="text"
                     value={otpValue[index] || ""}
                     onChange={(e) => handleChange(e, index)}
+                    onPaste={(e) => handlePaste(e)}
                     className={inputClasses()}
                     maxLength={1}
                     ref={inputRefs[index]}
                   />
                 ))}
               </div>
-              <button
+              <Button
                 disabled={otpValue.length !== 6 || loading}
                 onClick={() => {
                   handleVerifyOtp();
                 }}
-                className="w-full py-3 px-6 rounded-lg flex group disabled:hover:scale-100 disabled:opacity-50 items-center gap-3 bg-gradient-to-r hover:bg-gradient-to-l hover:scale-95 duration-300 ease-in-out from-[#2563EB] to-[#9333EA] justify-center text-white border-none hover:opacity-95"
+                width="w-full"
               >
                 {loading ? "Verifying Otp" : "Verify"}{" "}
                 {isLoading ? (
@@ -158,11 +170,11 @@ const EmailVerification: React.FC = () => {
                 ) : (
                   <FaArrowRightLong className="group-hover:translate-x-1.5" />
                 )}
-              </button>
-              <p className="text-center text-black/75 dark:text-slate-100 my-4">
+              </Button>
+              <p className="text-center text-zinc-500 font-semibold my-6">
                 Didn’t receive the email?{" "}
                 <span
-                  className="text-primary hover:opacity-95 cursor-pointer ml-1"
+                  className="text-blue-500 hover:opacity-95 cursor-pointer ml-1"
                   onClick={() => {
                     sendOTP();
                   }}
@@ -173,7 +185,7 @@ const EmailVerification: React.FC = () => {
 
               <Link
                 to="/signin"
-                className="flex gap-2 items-center pb-4 text-black hover:text-primary"
+                className="flex gap-2 font-semibold items-center pb-4 text-zinc-700 hover:text-primary"
               >
                 <FaArrowLeftLong /> Back to Sign in
               </Link>

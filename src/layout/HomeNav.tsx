@@ -158,10 +158,10 @@ export default function Navbar() {
                 <ul className="items-center justify-center flex space-x-6 space-y-0">
                   <div className="">
                     <StaggeredDropDown
-                      buttonIcon={<></>}
+                      showButton={false}
                       buttonText={
-                        <span className="text-zinc-500 flex items-center gap-1 uppercase text-[17px] font-medium">
-                          <TbWorld /> {i18n.language}
+                        <span className="text-zinc-500 flex items-center gap-1 text-sm uppercase font-medium">
+                          <TbWorld size={22} /> {i18n.language}
                         </span>
                       }
                     >

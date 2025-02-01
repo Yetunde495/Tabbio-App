@@ -7,8 +7,9 @@ const StaggeredDropDown: React.FC<{
   children: React.ReactNode;
   buttonText?: React.ReactNode;
   buttonIcon?: React.ReactNode;
+  showButton?: boolean;
   styles?: string;
-}> = ({ children, buttonText, buttonIcon, styles }) => {
+}> = ({ children, buttonText, buttonIcon, styles, showButton=true }) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -19,9 +20,9 @@ const StaggeredDropDown: React.FC<{
           className={styles ? styles : "flex items-center gap-2 px-3 py-2 rounded-md"}
         >
           {buttonText && buttonText}
-          <motion.span variants={iconVariants} className="ml-auto">
+          {showButton && <motion.span variants={iconVariants} className="ml-auto">
             {buttonIcon ? buttonIcon : <BsThreeDots />}
-          </motion.span>
+          </motion.span>}
         </button>
 
         <motion.ul
@@ -60,7 +61,7 @@ export const AnimatedOption = ({
       }   transition-colors cursor-pointer`}
     >
       {Icon &&<motion.span variants={actionIconVariants}>
-         Icon
+         {Icon}
       </motion.span>}
 
       <span>{text}</span>
