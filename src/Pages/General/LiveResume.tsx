@@ -11,6 +11,7 @@ import { mockResData } from "../../data/mockData";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import Professional from "../../components/PDFTemplates/Professional";
 import ProfessionalPDF from "../../components/PDFTemplates/ProfessionalPDF";
+import EntryPDF from "../../components/PDFTemplates/EntryPDF";
 
 const LiveResume: React.FC = () => {
   const { parsedResume } = useApp();
@@ -57,13 +58,23 @@ const LiveResume: React.FC = () => {
                 >
                   Switch Template
                 </button>
-                <div>
+                <div className="flex gap-2">
+                  {/* {resumeData?.template !== "entry" ? ( */}
                   <PDFDownloadLink
                     document={<ProfessionalPDF data={resumeData} />}
                     fileName={resumeData?.name}
                   >
                     <div className="flex gap-1 bg-primary rounded-md font-medium text-white px-5 py-2 items-center hover:scale-x-105">
-                      download
+                      Download Professional
+                    </div>
+                  </PDFDownloadLink>
+                  {/* ) : ( */}
+                  <PDFDownloadLink
+                    document={<EntryPDF resumeData={resumeData} />}
+                    fileName={resumeData?.name}
+                  >
+                    <div className="flex gap-1 bg-primary rounded-md font-medium text-white px-5 py-2 items-center hover:scale-x-105">
+                      Download Entry
                     </div>
                   </PDFDownloadLink>
                 </div>

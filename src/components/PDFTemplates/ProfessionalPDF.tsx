@@ -291,9 +291,7 @@ const ProfessionalPDF = ({ data }: any) => {
                 </Text>
                 <View
                   style={{
-                    display: "flex",
                     flexDirection: "row",
-                    justifyContent: "space-between",
                     flexWrap: "wrap",
                   }}
                 >
@@ -400,17 +398,21 @@ const ProfessionalPDF = ({ data }: any) => {
                         justifyContent: "space-between",
                       }}
                     >
-                      <Text style={[{ fontWeight: "semibold" }, {fontSize}]}>
+                      <Text style={[{ fontWeight: "semibold" }, { fontSize }]}>
                         {item?.company}
                       </Text>
-                      <Text style={[styles.dateText, {fontSize: fontSizeSm}]}>
+                      <Text style={[styles.dateText, { fontSize: fontSizeSm }]}>
                         {formatMonthYear(item?.startDate)} -{" "}
                         {item?.active
                           ? "Present"
                           : formatMonthYear(item?.endDate)}
                       </Text>
                     </View>
-                    <Text style={[{ marginVertical: 4 }, {fontSize: fontSizeSm}]}>{item?.title}</Text>
+                    <Text
+                      style={[{ marginVertical: 4 }, { fontSize: fontSizeSm }]}
+                    >
+                      {item?.title}
+                    </Text>
                     <View style={styles.bulletList}>
                       {item?.keyAchievements?.map((achievement, index) => (
                         <View key={index} style={styles.bulletItem}>
