@@ -114,14 +114,14 @@ const styles = StyleSheet.create({
 });
 
 const fontSizeMap = {
-  small: "14px",
-  medium: "16px",
-  large: "18px",
+  small: 14,
+  medium: 16,
+  large: 18,
 };
 const fontSizeSmMap = {
-  small: "13px",
-  medium: "14px",
-  large: "15px",
+  small: 13,
+  medium: 14,
+  large: 15,
 };
 
 const ProfessionalPDF = ({ data }: any) => {
@@ -290,10 +290,20 @@ const ProfessionalPDF = ({ data }: any) => {
                   RELEVANT COURSES
                 </Text>
                 <View
-                  style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    flexWrap: "wrap",
+                  }}
                 >
                   {data?.relevantCourses?.map((item, index) => (
-                    <Text key={index}>{item}</Text>
+                    <Text
+                      style={{ fontSize: fontSize, color: "#393942" }}
+                      key={index}
+                    >
+                      {item}
+                    </Text>
                   ))}
                 </View>
               </View>
@@ -316,18 +326,53 @@ const ProfessionalPDF = ({ data }: any) => {
                       style={{
                         flexDirection: "row",
                         justifyContent: "space-between",
+                        alignItems: "flex-start",
                       }}
                     >
-                      <Text style={{ fontWeight: "semibold" }}>
+                      <Text
+                        style={[
+                          {
+                            fontWeight: "semibold",
+                            color: "#000000",
+                            padding: "0 8px",
+                            marginBottom: 8,
+                          },
+                          { fontSize: fontSize },
+                        ]}
+                      >
                         {item?.name}
                       </Text>
-                      <Text style={styles.dateText}>{item?.technology}</Text>
+                      <Text
+                        style={[
+                          {
+                            fontWeight: "semibold",
+                            color: "#000000",
+                            padding: "0 8px",
+                          },
+                          { fontSize: fontSizeSm },
+                        ]}
+                      >
+                        {item?.technology}
+                      </Text>
                     </View>
-                    <Text style={{ marginVertical: 4 }}>
+                    <Text
+                      style={[
+                        {
+                          fontWeight: "semibold",
+                          padding: "0 6px",
+                          marginVertical: 4,
+                        },
+                        { fontSize: fontSizeSm },
+                      ]}
+                      // style={{ marginVertical: 4 }}
+                    >
                       {item?.description}
                     </Text>
                     {item?.link && (
-                      <Link src={item?.link} style={{ color: "blue" }}>
+                      <Link
+                        src={item?.link}
+                        style={[{ color: "blue" }, { fontSize }]}
+                      >
                         {item?.link}
                       </Link>
                     )}
@@ -355,17 +400,17 @@ const ProfessionalPDF = ({ data }: any) => {
                         justifyContent: "space-between",
                       }}
                     >
-                      <Text style={{ fontWeight: "semibold" }}>
+                      <Text style={[{ fontWeight: "semibold" }, {fontSize}]}>
                         {item?.company}
                       </Text>
-                      <Text style={styles.dateText}>
+                      <Text style={[styles.dateText, {fontSize: fontSizeSm}]}>
                         {formatMonthYear(item?.startDate)} -{" "}
                         {item?.active
                           ? "Present"
                           : formatMonthYear(item?.endDate)}
                       </Text>
                     </View>
-                    <Text style={{ marginVertical: 4 }}>{item?.title}</Text>
+                    <Text style={[{ marginVertical: 4 }, {fontSize: fontSizeSm}]}>{item?.title}</Text>
                     <View style={styles.bulletList}>
                       {item?.keyAchievements?.map((achievement, index) => (
                         <View key={index} style={styles.bulletItem}>
