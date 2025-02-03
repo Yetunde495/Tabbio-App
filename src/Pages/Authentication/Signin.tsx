@@ -15,7 +15,7 @@ import { BsLinkedin } from "react-icons/bs";
 import { FcGoogle } from "react-icons/fc";
 import { TbLoader3 } from "react-icons/tb";
 import { FaArrowRightLong } from "react-icons/fa6";
-import { sendOtp, signInUser } from "../../services/authServices";
+import { getUserData, sendOtp, signInUser } from "../../services/authServices";
 import Button from "../../components/Button";
 
 const Signin: React.FC = () => {
@@ -52,6 +52,13 @@ const Signin: React.FC = () => {
         token: response?.token,
         ...response?.data?.user,
         category: "Candidate",
+      });
+      const resp2 = await getUserData();
+      signIn({
+        token: response?.token,
+        ...response?.data?.user,
+        category: "Candidate",
+        ...resp2?.data?.userData,
       });
       if (response?.data?.user?.verified) {
         navigate(`/app/candidate/profile`);
@@ -196,7 +203,10 @@ const Signin: React.FC = () => {
             <p className="text-center text-zinc-800 mt-4 dark:text-slate-100">
               Don't have an account?{" "}
               <span>
-                <Link to="/signup" className="text-primary font-medium hover:opacity-95">
+                <Link
+                  to="/signup"
+                  className="text-primary font-medium hover:opacity-95"
+                >
                   Sign Up
                 </Link>
               </span>

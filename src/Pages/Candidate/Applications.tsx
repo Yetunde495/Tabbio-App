@@ -34,9 +34,13 @@ import AiMatchModal from "./AiMatch";
 import AdvancedSearchModal from "./AdvancedSearch";
 import CreateApplicationKit from "./CreateApplicationKit";
 import Tabs, { Tab } from "../../components/tabs";
+import { toast } from "react-toastify";
+import Notification from "../../components/Notification";
+import { useQuery } from "@tanstack/react-query";
+import { getUserApplications } from "../../services/applicationServices";
 
 const Applications: React.FC = () => {
-  const { } = useApp();
+  const {user} = useApp();
   // const navigate = useNavigate();
   const [allApplications, _setAllApplications] =
     useState<any[]>(mockApplicationData);
@@ -50,6 +54,30 @@ const Applications: React.FC = () => {
 
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
+
+  const { isLoading } = useQuery(
+      ["APPLICATIONS", page, itemsPerPage],
+      getUserApplications,
+      {
+        keepPreviousData: true,
+        enabled: !!user?._id,
+        onSuccess: (data: any) => {
+          console.log(data?.data?.applications);
+        },
+        onError: (err: any) => {
+          toast(
+            <Notification variant="error" title="Request Failed!">
+              {err.message}
+            </Notification>,
+            {
+              type: "error",
+              hideProgressBar: true,
+              toastId: Date.now() + "@USER_FILTER_ERROR",
+            }
+          );
+        },
+      }
+    );
 
   const pagination = paginate(5, Number(page), Number(itemsPerPage));
 
@@ -183,7 +211,7 @@ const Applications: React.FC = () => {
           </div>
 
           <div className="mt-20 w-full">
-            {false ? (
+            {isLoading ? (
               <div className="w-full flex justify-center items-center">
                 <div className="bg-white shadow-3 rounded-lg py-8 px-4 flex flex-col items-center gap-6 justify-center w-full md:w-[60%]">
                   <div className="rounded-full text-primary bg-primary/5 flex items-center animate-pulse justify-center w-12 h-12">
@@ -212,7 +240,7 @@ const Applications: React.FC = () => {
                           <p className="text-zinc-950 text-lg  max-md:text-base font-bold flex items-center gap-1.5">
                             {val?.job_role}
                             <span>
-                              {val?.ai && (
+                              {val?.aiAssistance && (
                                 <LuPuzzle className="text-slate-500" />
                               )}
                             </span>
@@ -236,7 +264,7 @@ const Applications: React.FC = () => {
                         <p className="text-zinc-950 text-lg max-md:text-base font-bold max-md:hidden">
                           {val?.job_role}
                         </p>
-                        {val?.ai && (
+                        {val?.aiAssistance && (
                           <LuPuzzle className="text-slate-500 max-md:hidden" />
                         )}
                         <div>

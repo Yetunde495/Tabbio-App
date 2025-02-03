@@ -1,4 +1,4 @@
-import {useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import logo from "../../assets/brand/logo-1.svg";
 import { useEffect, useState } from "react";
 import { GoCheckCircleFill } from "react-icons/go";
@@ -7,6 +7,7 @@ import { MdCancel } from "react-icons/md";
 import Button from "../../components/Button";
 import { TbLoader3 } from "react-icons/tb";
 import { toast } from "react-toastify";
+import { getUserData } from "../../services/authServices";
 
 const GoogleCallback: React.FC = () => {
   const { status } = useParams();
@@ -16,35 +17,46 @@ const GoogleCallback: React.FC = () => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (status === "error") {
-      setError(true);
-    } else {
-      setLoading(true);
-      const params = new URLSearchParams(window.location.search);
-      const token = params.get("token");
-      const userFromUrl = params.get("user");
+    const fetchData = async () => {
+      if (status === "error") {
+        setError(true);
+      } else {
+        setLoading(true);
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("token");
+        const userFromUrl = params.get("user");
 
-      if (userFromUrl) {
-        try {
-          // Decode the URL-encoded user data and parse it as JSON
-          const decodedUser = decodeURIComponent(userFromUrl);
-          const parsedUser = JSON.parse(decodedUser);
-          signIn({
-            ...parsedUser,
-            token: token,
-          });
-          setError(false);
-        } catch (error: any) {
-          console.error("Failed to parse user data:", error);
-          toast.error(
-            error?.message || "Failed to load your data! Please, try again"
-          );
-          setError(true);
-        } finally {
-          setLoading(false);
+        if (userFromUrl) {
+          try {
+            // Decode the URL-encoded user data and parse it as JSON
+            const decodedUser = decodeURIComponent(userFromUrl);
+            const parsedUser = JSON.parse(decodedUser);
+
+            signIn({
+              ...parsedUser,
+              token: token,
+            });
+            const resp2 = await getUserData();
+            signIn({
+              ...parsedUser,
+              token: token,
+              ...resp2?.data?.userData,
+            });
+            setError(false);
+          } catch (error: any) {
+            console.error("Failed to parse user data:", error);
+            toast.error(
+              error?.message || "Failed to load your data! Please, try again"
+            );
+            setError(true);
+          } finally {
+            setLoading(false);
+          }
         }
       }
-    }
+    };
+
+    fetchData();
   }, [status]);
 
   return (

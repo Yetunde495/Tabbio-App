@@ -30,6 +30,12 @@ type ApplicationResultProps = {
   onHide: () => void;
 };
 
+type ResumeResultProps = {
+  show: boolean;
+  onHide: () => void;
+  resumeData: any;
+};
+
 const ApplicationResult: React.FC<ApplicationResultProps> = ({
   show,
   onHide,
@@ -805,9 +811,10 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
   );
 };
 
-export const ResumeResult: React.FC<ApplicationResultProps> = ({
+export const ResumeResult: React.FC<ResumeResultProps> = ({
   show,
   onHide,
+  resumeData
 }) => {
   const [mainView, setMainview] = useState(true);
   const [resumeView, setResumeView] = useState(false);
@@ -899,7 +906,7 @@ export const ResumeResult: React.FC<ApplicationResultProps> = ({
                           Preview
                         </button>
                         <div className="w-full min-h-[220px] max-h-[250px] 2xl:max-h-[300px] 3xl:max-h-[350px] 4xl:max-h-[550px] overflow-auto custom-scrollbar h-full bg-white">
-                          <ResumePreview resumeData={mockResumeData} />
+                          <ResumePreview resumeData={resumeData} />
                         </div>
                         <p className="text-center text-sm text-zinc-600">
                           Click on the eye icon to view full preview
@@ -947,7 +954,7 @@ export const ResumeResult: React.FC<ApplicationResultProps> = ({
                 <ResumePDF resumeData={mockResumeData} />
 
   </PDFViewer> */}
-                <ResumePreview resumeData={mockResumeData} />
+                <ResumePreview resumeData={resumeData} />
               </div>
             </div>
             <div className="fixed right-4 bottom-4">

@@ -853,12 +853,22 @@ const ProfilePreview: React.FC = () => {
           <div className="flex flex-col w-full bg-white shadow-xl px-3 py-9 rounded-md xl:max-w-[75%] items-center">
             <img src={EmptyImg} alt="" className="max-w-[300px]" />
             <h2 className="text-2xl font-outfit font-bold text-zinc-800 mb-3">
-              Resume Data Unavailable!
+              {user?.profile
+                ? "Resume Data Unavailable!"
+                : "Profile not found!"}
             </h2>
-            <p className="text-zinc-600 font-normal px-3 mb-4">
-              This could be a network error <br /> Please, try again in some
-              minutes
-            </p>
+            {user?.profile ? (
+              <p className="text-zinc-600 font-normal px-3 mb-4">
+                This could be a network error <br /> Please, try again in some
+                minutes
+              </p>
+            ) : (
+              <p className="text-zinc-600 font-normal px-3 mb-4">
+                We could not find a profile for your account. <br />
+                Setup your professional profile now and start sharing to
+                Recruiters{" "}
+              </p>
+            )}
 
             <button
               onClick={() => navigate(-1)}

@@ -489,7 +489,7 @@ export const mockApplicationData = [
     date: new Date("2023-12-01"),
     status: "interviewing",
     match_score: 87,
-    ai: true,
+    aiAssistance: true,
   },
   {
     job_role: "Backend Developer",
@@ -498,7 +498,7 @@ export const mockApplicationData = [
     date: new Date("2023-11-20"),
     status: "applied",
     match_score: 74,
-    ai: false,
+    aiAssistance: false,
   },
   {
     job_role: "Full Stack Developer",
@@ -507,7 +507,7 @@ export const mockApplicationData = [
     date: new Date("2023-11-25"),
     status: "offered",
     match_score: 92,
-    ai: true,
+    aiAssistance: true,
   },
   {
     job_role: "Data Scientist",
@@ -516,7 +516,7 @@ export const mockApplicationData = [
     date: new Date("2023-12-03"),
     status: "rejected",
     match_score: 65,
-    ai: false,
+    aiAssistance: false,
   },
   {
     job_role: "UI/UX Designer",
@@ -525,7 +525,7 @@ export const mockApplicationData = [
     date: new Date("2023-11-15"),
     status: "accepted",
     match_score: 89,
-    ai: true,
+    aiAssistance: true,
   },
   {
     job_role: "DevOps Engineer",
@@ -534,7 +534,7 @@ export const mockApplicationData = [
     date: new Date("2023-12-05"),
     status: "interviewing",
     match_score: 81,
-    ai: false,
+    aiAssistance: false,
   },
   {
     job_role: "Mobile App Developer",
@@ -543,7 +543,7 @@ export const mockApplicationData = [
     date: new Date("2023-11-28"),
     status: "applied",
     match_score: 78,
-    ai: true,
+    aiAssistance: true,
   },
   {
     job_role: "Cybersecurity Analyst",
@@ -552,7 +552,7 @@ export const mockApplicationData = [
     date: new Date("2023-11-10"),
     status: "offered",
     match_score: 85,
-    ai: false,
+    aiAssistance: false,
   },
   {
     job_role: "Cloud Architect",
@@ -561,7 +561,7 @@ export const mockApplicationData = [
     date: new Date("2023-12-08"),
     status: "rejected",
     match_score: 59,
-    ai: true,
+    aiAssistance: true,
   },
   {
     job_role: "AI Researcher",
@@ -570,7 +570,7 @@ export const mockApplicationData = [
     date: new Date("2023-11-18"),
     status: "accepted",
     match_score: 94,
-    ai: true,
+    aiAssistance: true,
   },
 ];
 

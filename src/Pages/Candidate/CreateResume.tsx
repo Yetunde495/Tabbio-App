@@ -2,7 +2,7 @@ import DefaultLayout from "../../layout/DefaultLayout";
 import { useApp } from "../../context/AppContext";
 import { useState } from "react";
 import { Switch } from "../../components/form/Switch";
-import { MdOutlineColorLens, MdShare } from "react-icons/md";
+import { MdOutlineColorLens } from "react-icons/md";
 import { mockEmptyResume } from "../../data/mockData";
 import {
   CustomListSection,
@@ -12,13 +12,7 @@ import { Menu, MenuItem } from "../../AnimatedUi/AnimatedNav";
 import { HiOutlineSparkles, HiOutlineTemplate } from "react-icons/hi";
 import { Icons } from "../../components/icons";
 import { RiRobot2Line } from "react-icons/ri";
-import {
-  FaArrowRightLong,
-  FaCheck,
-  FaCircle,
-  FaPlus,
-  FaRegFile,
-} from "react-icons/fa6";
+import { FaArrowRightLong, FaCheck, FaPlus } from "react-icons/fa6";
 import { IoMdColorFilter } from "react-icons/io";
 import { PiSlidersHorizontalBold } from "react-icons/pi";
 import { Select4 } from "../../components/form/Select";
@@ -26,11 +20,10 @@ import { Sketch } from "@uiw/react-color";
 import { BsDownload, BsEye } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { LuExternalLink, LuInfo } from "react-icons/lu";
-import { TbWorld } from "react-icons/tb";
+import { TbLoader3, TbWorld } from "react-icons/tb";
 import Modal from "../../components/modal";
 import { VscWand } from "react-icons/vsc";
-import { FileUpload } from "../General/ResumeUpload";
-import { FiUpload } from "react-icons/fi";
+import { ResumeFileUpload } from "../General/ResumeUpload";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import Drawer from "../../components/Drawer";
 import Popover from "../../components/Popover";
@@ -57,14 +50,17 @@ import {
   ContactInfo,
   RelevantCourses,
 } from "../PageComponents/ATSApplicantComponents";
+import { toast } from "react-toastify";
+import { createResume, getProfileResume } from "../../services/resumeServices";
 
 const primaryColors = ["#0077B5", "#CC0074", "#FF7D00", "#00C196", "#000000"];
 
 const CreateLiveResume: React.FC = () => {
-  const {} = useApp();
+  const { user } = useApp();
   const navigate = useNavigate();
   const [value, setValue] = useState("");
   const [active, setActive] = useState<string | null>(null);
+  const [profileLoading, setProfileLoading] = useState(false);
   const paletteRef = useOutsideClick(() => setShowPalette(false));
   const [config, setConfig] = useState<any>(mockEmptyResume?.config || null);
   const [uploadOption, setUploadOption] = useState(true);
@@ -75,7 +71,7 @@ const CreateLiveResume: React.FC = () => {
   const [showDrawer, setShowDrawer] = useState(false);
   const [resultModal, setResultModal] = useState(false);
   const [kit, _setKit] = useState(false);
-
+  const [companyName, setCompanyName] = useState("")
   const [templateModal, setTemplateModal] = useState(false);
   const [scoreModal, setScoreModal] = useState(false);
   const [sectionCount, setSectionCount] = useState(0); // To track the number of sections added
@@ -164,6 +160,46 @@ const CreateLiveResume: React.FC = () => {
     setSectionCount(sectionCount - 1);
   };
 
+  const fetchProfileResume = async () => {
+    setProfileLoading(true);
+    try {
+      const resp = await getProfileResume(user?.profileId);
+      // Destructure the fields to omit them
+      const { _id, profileId, _v, ...filteredResume } = resp?.data?.resume;
+      setResumeData(filteredResume);
+      setConfig(resp?.data?.resume?.config);
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed! Please try again");
+    } finally {
+      setProfileLoading(false);
+      setUploadOption(false);
+    }
+  };
+
+  const handleCreateResume = async () => {
+    const toastId = toast.loading("Saving your Resume...");
+
+    try {
+      const resp = await createResume({
+        ...resumeData,
+        config: config,
+        resumeName: "Resume 1",
+      });
+      setResumeData(resp?.data?.resume);
+      setConfig(resp?.data?.resume?.config);
+      toast.update(toastId, {
+        render: "Your resume has been successfully saved",
+        type: "success",
+        isLoading: false,
+        closeButton: true,
+        autoClose: 3000,
+      });
+      setResultModal(true);
+    } catch (err: any) {
+      toast.dismiss(toastId);
+      toast.error(err?.message || "Request Failed! Please try again");
+    }
+  };
   return (
     <DefaultLayout>
       <section className="w-full">
@@ -608,12 +644,16 @@ const CreateLiveResume: React.FC = () => {
               <button className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center text-primary gap-1 hover:scale-x-105 ">
                 <BsDownload /> <span className="">Download</span>
               </button>
-              <button className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center gap-1 hover:scale-x-105 ">
-                <MdShare /> <span className="">Share</span>
-              </button>
               <button className="flex items-center py-1 px-1 gap-1 max-sm:text-[12px] hover:scale-105 duration-150 text-zinc-700">
                 <TbWorld /> EN
               </button>
+              <button
+                onClick={() => setUploadOption(true)}
+                className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center gap-1 hover:scale-x-105 "
+              >
+                <span className="">Create New</span> <LuExternalLink />
+              </button>
+
               <button
                 onClick={() => setUploadOption(true)}
                 className="hidden items-center gap-2 max-sm:text-xs p-1 hover:scale-105 duration-150 text-zinc-700"
@@ -625,19 +665,31 @@ const CreateLiveResume: React.FC = () => {
         </div>
 
         <div className="px-2 py-4 md:pl-8 md:pr-2">
-          <div className="2xl:hidden lg:w-[90%] w-full flex justify-between gap-6 mb-3 items-end">
-            <button
-              onClick={() => {
-                setResultModal(true);
-              }}
-              className="text-center hover:scale-105 duration-150 font-medium flex items-center gap-1 text-zinc-600"
-            >
-              <span>
-                <BsEye />
-              </span>{" "}
-              Save and Preview
-            </button>
-            <div className="flex gap-5 items-end">
+          <div className="lg:w-[90%] w-full flex justify-between gap-6 mb-3 items-end">
+            {resumeData?._id ? (
+              <button
+                onClick={() => setResultModal(true)}
+                className="text-center hover:scale-105 duration-150 font-medium flex items-center gap-1 text-zinc-600"
+              >
+                <span>
+                  <BsEye />
+                </span>{" "}
+                Preview {resumeData?.resumeName}
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  handleCreateResume();
+                }}
+                className="text-center hover:scale-105 duration-150 font-medium flex items-center gap-1 text-zinc-600"
+              >
+                <span>
+                  <BsEye />
+                </span>{" "}
+                Save and Preview
+              </button>
+            )}
+            <div className="flex 2xl:hidden gap-5 items-end">
               <button
                 onClick={() => {
                   setShowDrawer(true);
@@ -1040,9 +1092,25 @@ const CreateLiveResume: React.FC = () => {
                   Tailor Resume
                 </div>
                 <div className="p-3 flex flex-col space-y-3">
+                <div className="mb-4">
+                  <label
+                    htmlFor="major_skill"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Company Name
+                  </label>
+                  <input
+                    type="text"
+                    id="companyName"
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    placeholder="Enter name of company"
+                    className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  />
+                </div>
                   <div>
                     <TextArea
-                      placeholder="Include the job title, company name, and full job description..."
+                      placeholder="Include the job title, and full job description..."
                       label={
                         <span className="flex items-center gap-1">
                           <RiRobot2Line className="text-primary" />
@@ -1097,29 +1165,40 @@ const CreateLiveResume: React.FC = () => {
           >
             <div className="py-5 h-[65vh] max-sm:h-[75vh] overflow-y-auto no-scrollbar">
               <div>
-                <div
-                  onClick={() => {
-                    setUploadOption(false);
-                  }}
-                  className="px-4 mb-6 py-5 bg-gradient-to-r from-[#EFF6FF] to-[#EEF2FF] border border-[#DBEAFE] cursor-pointer rounded-xl"
-                >
-                  <div className="flex items-center max-sm:items-start w-full gap-2">
-                    <span className="bg-primary rounded-xl text-white max-sm:h-8 max-sm:w-8 max-sm:rounded-full w-12 h-12 flex items-center justify-center">
-                      <RiRobot2Line size={24} />
-                    </span>
-                    <div>
-                      <h3 className="font-semibold text-black dark:text-white mb-0">
-                        Continue with SmartResume™
-                      </h3>
-                      <p className="text-zinc-500 text-sm">
-                        Use your existing optimized resume with AI enhancement
-                      </p>
+                {user?.profile && (
+                  <div
+                    onClick={() => {
+                      fetchProfileResume();
+                    }}
+                    className="px-4 mb-6 py-5 bg-gradient-to-r from-[#EFF6FF] to-[#EEF2FF] border border-[#DBEAFE] cursor-pointer rounded-xl"
+                  >
+                    <div className="flex items-center max-sm:items-start w-full gap-2">
+                      <span className="bg-primary rounded-xl text-white max-sm:h-8 max-sm:w-8 max-sm:rounded-full w-12 h-12 flex items-center justify-center">
+                        <RiRobot2Line
+                          size={24}
+                          className={`${profileLoading && "animate-pulse"}`}
+                        />
+                      </span>
+                      <div>
+                        <h3 className="font-semibold text-black dark:text-white mb-0">
+                          Continue with SmartResume™
+                        </h3>
+                        <p className="text-zinc-500 text-sm">
+                          {profileLoading
+                            ? "Use your existing optimized resume with AI enhancement"
+                            : "Loading up your existing optimized resume data"}
+                        </p>
+                      </div>
+                      <span className="text-primary ml-auto max-md:w-8">
+                        {profileLoading ? (
+                          <TbLoader3 className="animate-spin" />
+                        ) : (
+                          <FaArrowRightLong />
+                        )}
+                      </span>
                     </div>
-                    <span className="text-primary ml-auto max-md:w-8">
-                      <FaArrowRightLong />
-                    </span>
                   </div>
-                </div>
+                )}
 
                 <div
                   onClick={() => {
@@ -1146,34 +1225,13 @@ const CreateLiveResume: React.FC = () => {
                 </div>
 
                 <div className="my-12">
-                  <FileUpload onSuccess={() => {}}>
-                    <p className="font-bold text-neutral-700 text-center text-lg pt-4">
-                      Drag & drop your resume here
-                    </p>
-
-                    <p className="text-neutral-500 text-center text-base">
-                      or click to browse your files
-                    </p>
-
-                    <div className="flex gap-5 text-sm text-neutral-500 items-center justify-center w-full mt-3">
-                      <p className="flex items-center gap-1">
-                        <span>
-                          <FaRegFile />
-                        </span>
-                        PDF, DOC, DOCX
-                      </p>
-
-                      <span>
-                        <FaCircle size={4} className="rounded-full" />
-                      </span>
-                      <p className="flex items-center gap-1">
-                        <span>
-                          <FiUpload />
-                        </span>
-                        Up to 10MB
-                      </p>
-                    </div>
-                  </FileUpload>
+                  <ResumeFileUpload
+                    onSuccess={(response: any) => {
+                      setResumeData(response?.data?.profile);
+                      setConfig(response?.data?.profile?.config);
+                      setUploadOption(false);
+                    }}
+                  />
                 </div>
               </div>
             </div>
@@ -1243,6 +1301,7 @@ const CreateLiveResume: React.FC = () => {
           <ResumeResult
             show={resultModal}
             onHide={() => setResultModal(false)}
+            resumeData={resumeData}
           />
         )}
         {resultModal && kit && (

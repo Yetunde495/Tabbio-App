@@ -915,7 +915,7 @@ const SmartResumeSettings: React.FC<{
 };
 
 const Profile: React.FC = () => {
-  const { user } = useApp();
+  const { user, updateUser } = useApp();
   const navigate = useNavigate();
   const [active, setActive] = useState(false);
   const [profileData, setProfileData] = useState<any | null>(null);
@@ -934,14 +934,18 @@ const Profile: React.FC = () => {
         autoClose: 3000,
       });
       setActive(true);
-      console.log(resp?.data?.profile);
+      updateUser({
+        ...user,
+        profile:true,
+        profileId: resp?.data?.profile?._id
+      })
     } catch (err: any) {
       toast.dismiss(toastId);
       toast.error(err?.message || "Request Failed");
     }
   };
 
-  const { isLoading, isError } = useQuery(
+  const { isFetching, isError } = useQuery(
     ["PROFESSIONAL_PROFILE", user?._id],
     () => getUserProfile(),
     {
@@ -950,6 +954,10 @@ const Profile: React.FC = () => {
       onSuccess(data) {
         setProfileData(data?.data?.profile);
         setActive(true);
+        updateUser({
+          ...user,
+          profileId: data?.data?.profile?._id
+        })
       },
       onError: (err: any) => {
         toast.error(err.message || "Request Failed");
@@ -959,7 +967,7 @@ const Profile: React.FC = () => {
 
   return (
     <DefaultLayout>
-      {isLoading ? (
+      {isFetching && user?.profile ? (
         <PageLoader />
       ) : isError ? (
         <div className="h-screen flex w-full justify-center text-center items-center">

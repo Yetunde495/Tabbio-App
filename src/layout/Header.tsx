@@ -24,6 +24,7 @@ import { UpgradeCandidateSubscription } from "../Pages/PageComponents/UpgradeSub
 import Modal from "../components/modal";
 import ResumeAnalytics from "../Pages/Candidate/ResumeAnalytics";
 import { FcReddit } from "react-icons/fc";
+import { toast } from "react-toastify";
 
 type SidebarProps = {
   sidebarOpen: boolean;
@@ -334,16 +335,16 @@ const Header = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 Upgrade <span className="max-lg:hidden">to Premium</span>
               </button>
             </div>
-            <button
+            {user?.profile && <button
               onClick={() => setShowAnalytics(true)}
               className="flex max-sm:hidden items-center gap-1 hover:scale-x-105 duration-100"
             >
               <BsEye className="max-lg:hidden" />
               <span className="max-md:hidden">
-                {user?.plan || "10 profile views"}
+                {user?.totalViews || "0"} profile views
               </span>
               <AiOutlineBarChart className="text-primary text-lg" />
-            </button>
+            </button>}
           </div>
 
           <button
@@ -356,10 +357,11 @@ const Header = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           </button>
 
           <div className="flex items-center  gap-4 max-sm:w-full max-sm:justify-between">
-            <div className="lg:flex hidden max-sm:flex items-center gap-1 text-zinc-400">
+            {user?.profile && <div className="lg:flex hidden max-sm:flex items-center gap-1 text-zinc-400">
               <LuClock className="max-sm:hidden" />
               <span>{user?.plan || "Updated 1d ago"}</span>
-            </div>
+            </div>}
+
 
             <div className="flex items-center gap-1">
               <button
@@ -375,7 +377,13 @@ const Header = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               </button>
 
               <button
-                onClick={() => setShareModal(true)}
+                onClick={() => {
+                  if (user?.profile) {
+                    setShareModal(true)
+                  } else {
+                    toast.warning("Your profile isn't setup yet. Complete your profile to start sharing your link")
+                  }
+                }}
                 className="py-1 px-1.5 md:ml-1 max-md:pl-0 flex items-center gap-1 hover:scale-x-105 "
               >
                 <MdShare /> <span className="">Share</span>
