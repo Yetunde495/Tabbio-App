@@ -82,8 +82,8 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    marginTop: 8,
-    marginRight: 8,
+    marginTop: 2,
+    marginRight: 4,
   },
   educationItem: {
     flexDirection: "row",
@@ -114,21 +114,21 @@ const styles = StyleSheet.create({
 });
 
 const fontSizeMap = {
-  small: 14,
-  medium: 16,
-  large: 18,
+  small: 10,
+  medium: 12,
+  large: 14,
 };
 const fontSizeSmMap = {
-  small: 13,
-  medium: 14,
-  large: 15,
+  small: 9,
+  medium: 10,
+  large: 11,
 };
 
 const ProfessionalPDF = ({ data }: any) => {
   const fontSize =
-    fontSizeMap[data?.style?.fontSize as keyof typeof fontSizeMap] || "16px";
+    fontSizeMap[data?.style?.fontSize as keyof typeof fontSizeMap] || "12px";
   const fontSizeSm =
-    fontSizeSmMap[data?.style?.fontSize as keyof typeof fontSizeMap] || "14px";
+    fontSizeSmMap[data?.style?.fontSize as keyof typeof fontSizeMap] || "10px";
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -409,7 +409,7 @@ const ProfessionalPDF = ({ data }: any) => {
                       </Text>
                     </View>
                     <Text
-                      style={[{ marginVertical: 4 }, { fontSize: fontSizeSm }]}
+                      style={[{ marginVertical: 4 }, { fontSize: fontSize }]}
                     >
                       {item?.title}
                     </Text>
@@ -422,7 +422,9 @@ const ProfessionalPDF = ({ data }: any) => {
                               { backgroundColor: data?.style?.primaryColor },
                             ]}
                           />
-                          <Text>{achievement}</Text>
+                          <Text style={{ fontSize: fontSizeSm }}>
+                            {achievement}
+                          </Text>
                         </View>
                       ))}
                     </View>
@@ -450,7 +452,9 @@ const ProfessionalPDF = ({ data }: any) => {
                         justifyContent: "space-between",
                       }}
                     >
-                      <Text style={{ fontWeight: "semibold" }}>
+                      <Text
+                        style={{ fontWeight: "semibold", fontSize: fontSizeSm }}
+                      >
                         {item?.company}
                       </Text>
                       <Text style={styles.dateText}>
@@ -460,7 +464,9 @@ const ProfessionalPDF = ({ data }: any) => {
                           : formatMonthYear(item?.endDate)}
                       </Text>
                     </View>
-                    <Text style={{ marginVertical: 4 }}>{item?.title}</Text>
+                    <Text style={{ marginVertical: 4, fontSize }}>
+                      {item?.title}
+                    </Text>
                     <View style={styles.bulletList}>
                       {item?.keyAchievements?.map((achievement, index) => (
                         <View key={index} style={styles.bulletItem}>
@@ -470,7 +476,9 @@ const ProfessionalPDF = ({ data }: any) => {
                               { backgroundColor: data?.style?.primaryColor },
                             ]}
                           />
-                          <Text>{achievement}</Text>
+                          <Text style={{ fontSize: fontSizeSm }}>
+                            {achievement}
+                          </Text>
                         </View>
                       ))}
                     </View>
@@ -498,7 +506,9 @@ const ProfessionalPDF = ({ data }: any) => {
                         justifyContent: "space-between",
                       }}
                     >
-                      <Text style={{ fontWeight: "semibold" }}>
+                      <Text
+                        style={{ fontWeight: "semibold", fontSize: fontSizeSm }}
+                      >
                         {item?.company}
                       </Text>
                       <Text style={styles.dateText}>
@@ -508,7 +518,9 @@ const ProfessionalPDF = ({ data }: any) => {
                           : formatMonthYear(item?.endDate)}
                       </Text>
                     </View>
-                    <Text style={{ marginVertical: 4 }}>{item?.title}</Text>
+                    <Text style={{ marginVertical: 4, fontSize }}>
+                      {item?.title}
+                    </Text>
                     <View style={styles.bulletList}>
                       {item?.keyAchievements?.map((achievement, index) => (
                         <View key={index} style={styles.bulletItem}>
@@ -518,7 +530,9 @@ const ProfessionalPDF = ({ data }: any) => {
                               { backgroundColor: data?.style?.primaryColor },
                             ]}
                           />
-                          <Text>{achievement}</Text>
+                          <Text style={{ fontSize: fontSizeSm }}>
+                            {achievement}
+                          </Text>
                         </View>
                       ))}
                     </View>

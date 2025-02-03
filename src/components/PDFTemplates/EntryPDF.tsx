@@ -10,29 +10,39 @@ import {
 } from "@react-pdf/renderer";
 import { formatMonthYear } from "../../lib/utils/formatters";
 
+// const fontSizeMap = {
+//   small: 14,
+//   medium: 16,
+//   large: 18,
+// };
+// const fontSizeSmMap = {
+//   small: 13,
+//   medium: 14,
+//   large: 15,
+// };
 const fontSizeMap = {
-  small: 14,
-  medium: 16,
-  large: 18,
+  small: 10,
+  medium: 12,
+  large: 14,
 };
 const fontSizeSmMap = {
-  small: 13,
-  medium: 14,
-  large: 15,
+  small: 9,
+  medium: 10,
+  large: 11,
 };
 
 // Helper function to get font sizes
 const getFontSize = (resumeData: any) => {
   return (
     fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
-    "16px"
+    "12px"
   );
 };
 
 const getFontSizeSm = (resumeData: any) => {
   return (
     fontSizeSmMap[resumeData?.style?.fontSize as keyof typeof fontSizeSmMap] ||
-    "14px"
+    "10px"
   );
 };
 
@@ -116,7 +126,10 @@ const EntryPDF = ({ resumeData }: any) => {
   const styles = createStyles(resumeData);
   const fontSize =
     fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
-    "16px";
+    "12px";
+  const fontSizeSm =
+    fontSizeSmMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+    "10px";
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -156,12 +169,13 @@ const EntryPDF = ({ resumeData }: any) => {
             <Text style={styles.sectionTitle}>KEY SKILLS</Text>
             <View>
               {resumeData?.skills?.map((item, index) => (
-                <View key={index} style={{ marginBottom: 8 }}>
+                <View key={index} style={{ marginBottom: 8, color: "#393942" }}>
                   <Text
                     style={{
                       fontSize: fontSize,
                       fontStyle: "italic",
                       textDecoration: "underline",
+                      color: "#71717A",
                     }}
                   >
                     {item.name}
@@ -194,7 +208,7 @@ const EntryPDF = ({ resumeData }: any) => {
             <View style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {resumeData?.careerHighlights?.map((item) => (
                 <View key={item.id} style={{ marginBottom: 8 }}>
-                  <Text style={{ fontSize: fontSize, fontWeight: "semibold" }}>
+                  <Text style={{ fontSize: fontSize, fontWeight: "bold" }}>
                     {item.title}
                   </Text>
                   <Text style={{ fontSize: fontSize }}>{item.description}</Text>
@@ -221,6 +235,7 @@ const EntryPDF = ({ resumeData }: any) => {
                       display: "flex",
                       flexDirection: "row",
                       justifyContent: "space-between",
+                      alignItems: "center",
                     }}
                   >
                     <Text
@@ -228,13 +243,22 @@ const EntryPDF = ({ resumeData }: any) => {
                     >
                       {item.company}
                     </Text>
-                    <Text style={{ fontSize: fontSize }}>{item.title}</Text>
-                    <Text style={{ fontSize: fontSize }}>
-                      {item.startDate && formatMonthYear(item.startDate)} -{" "}
-                      {item.active
-                        ? "Present"
-                        : item.endDate && formatMonthYear(item.endDate)}
-                    </Text>
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
+                    >
+                      <Text style={{ fontSize: fontSize }}>{item.title}</Text>
+                      <Text
+                        style={{ fontSize: 14, marginLeft: 4, marginRight: 4 }}
+                      >
+                        |
+                      </Text>
+                      <Text style={{ fontSize: fontSizeSm }}>
+                        {item.startDate && formatMonthYear(item.startDate)} -{" "}
+                        {item.active
+                          ? "Present"
+                          : item.endDate && formatMonthYear(item.endDate)}
+                      </Text>
+                    </View>
                   </View>
                   <Text style={{ fontSize: fontSize }}>{item.description}</Text>
                   <View style={{ marginTop: 8 }}>
@@ -272,7 +296,7 @@ const EntryPDF = ({ resumeData }: any) => {
                     >
                       {item.institution}
                     </Text>
-                    <Text style={{ fontSize: fontSize }}>
+                    <Text style={{ fontSize: fontSizeSm }}>
                       {item.startDate && formatMonthYear(item.startDate)} -{" "}
                       {item.active
                         ? "Present"
@@ -299,17 +323,31 @@ const EntryPDF = ({ resumeData }: any) => {
                       display: "flex",
                       flexDirection: "row",
                       justifyContent: "space-between",
+                      alignItems: "center",
                     }}
                   >
-                    <Text
-                      style={{ fontSize: fontSize, fontWeight: "semibold" }}
+                    <View
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
                     >
-                      {item.degree}
-                    </Text>
-                    <Text style={{ fontSize: fontSize }}>
-                      {item.institution}
-                    </Text>
-                    <Text style={{ fontSize: fontSize }}>
+                      <Text
+                        style={{ fontSize: fontSize, fontWeight: "semibold" }}
+                      >
+                        {item.degree}
+                      </Text>
+                      <Text
+                        style={{ fontSize: 14, marginLeft: 4, marginRight: 4 }}
+                      >
+                        |
+                      </Text>
+                      <Text style={{ fontSize: fontSize }}>
+                        {item.institution}
+                      </Text>
+                    </View>
+                    <Text style={{ fontSize: fontSizeSm }}>
                       {item.startDate && formatMonthYear(item.startDate)} -{" "}
                       {item.active
                         ? "Present"
@@ -334,18 +372,32 @@ const EntryPDF = ({ resumeData }: any) => {
                       display: "flex",
                       flexDirection: "row",
                       justifyContent: "space-between",
+                      alignItems: "center",
                     }}
                   >
-                    <Text
-                      style={{ fontSize: fontSize, fontWeight: "semibold" }}
+                    <View
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
                     >
-                      {item.name}
-                    </Text>
-                    <Text style={{ fontSize: fontSize }}>
-                      {item.institution}
-                    </Text>
-                    {item.date && (
+                      <Text
+                        style={{ fontSize: fontSize, fontWeight: "semibold" }}
+                      >
+                        {item.name}
+                      </Text>
+                      <Text
+                        style={{ fontSize: 14, marginLeft: 4, marginRight: 4 }}
+                      >
+                        |
+                      </Text>
                       <Text style={{ fontSize: fontSize }}>
+                        {item.institution}
+                      </Text>
+                    </View>
+                    {item.date && (
+                      <Text style={{ fontSize: fontSizeSm }}>
                         {formatMonthYear(item.date)}
                       </Text>
                     )}
