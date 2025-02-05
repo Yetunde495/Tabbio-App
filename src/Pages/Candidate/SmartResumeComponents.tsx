@@ -605,10 +605,10 @@ export const ProfileSummary: React.FC<{
                     onClick={() => {
                       handleGenerateSummary();
                     }}
-                    className="relative inline-flex items-center justify-center disabled:bg-opacity-40 text-sm p-[2px] mb-2 me-2 overflow-hidden font-medium rounded-full group bg-gradient-to-br from-[#2563EB] to-[#9333EA] group-hover:from-[#9333EA] group-hover:to-[#2563EB] hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800"
+                    className="relative inline-flex items-center justify-center disabled:bg-opacity-40 text-sm p-[2px] mb-2 me-2 overflow-hidden font-medium rounded-full group bg-gradient-to-b from-[#5272EA] to-[#394FC0] group-hover:from-[#394FC0] group-hover:to-[#5272EA] hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800"
                   >
                     <span className="relative px-3 py-1 transition-all ease-in duration-75 bg-white rounded-full group-hover:bg-opacity-0">
-                      <p className="text-center text-xs gap-1 items-center bg-gradient-to-r group-hover:text-white from-[#2563EB] text-transparent bg-clip-text to-[#9333EA] inline-flex">
+                      <p className="text-center text-xs gap-1 items-center bg-gradient-to-r group-hover:text-white from-[#5272EA] to-[#394FC0] text-transparent bg-clip-text inline-flex">
                         <HiOutlineSparkles className="text-primary group-hover:text-white" />{" "}
                         {aiLoading ? "LOADING..." : "WRITING ASSISTANT"}
                       </p>

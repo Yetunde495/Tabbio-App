@@ -1,12 +1,13 @@
 import { useState } from "react";
 
 interface TabsProps {
-    tabs: { label: string; content: React.ReactNode }[];
+    tabs: string[];
+    setTab: React.Dispatch<React.SetStateAction<string>>;
   }
   
-  const Tabs: React.FC<TabsProps> = ({ tabs }) => {
+  const Tabs: React.FC<TabsProps> = ({ tabs, setTab }) => {
     const [activeTab, setActiveTab] = useState<string>(
-      tabs.length > 0 ? tabs[0]?.label : ""
+      tabs.length > 0 ? tabs[0] : ""
     );
   
     const handleClick = (
@@ -15,34 +16,24 @@ interface TabsProps {
     ) => {
       e.preventDefault();
       setActiveTab(newActiveTab);
+      setTab(newActiveTab)
     };
   
     return (
-      <div className="bg-white px-10 py-5">
-        <div className="flex border-b border-zinc-200">
+        <div className="flex gap-5 border-b border-zinc-200">
           {tabs.map((tab) => (
             <button
-              key={tab.label}
+              key={tab}
               className={`${
-                activeTab === tab.label ? "border-b-2 border-primary/90" : ""
-              } flex-1 text-gray-700 font-medium py-2`}
-              onClick={(e) => handleClick(e, tab.label)}
+                activeTab === tab ? "border-b-2 border-primary/90" : ""
+              } text-gray-700 font-medium py-2`}
+              onClick={(e) => handleClick(e, tab)}
             >
-              {tab.label}
+              {tab}
             </button>
           ))}
         </div>
-        <div className="mt-10">
-          {tabs.map((tab) => (
-            <div
-              key={tab.label}
-              style={{ display: activeTab === tab.label ? "block" : "none" }}
-            >
-              {tab.content}
-            </div>
-          ))}
-        </div>
-      </div>
+       
     );
   };
 

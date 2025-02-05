@@ -175,13 +175,13 @@ export default function Navbar() {
                       <AnimatedOption
                         text="Spanish"
                         onClick={() => {
-                          onChangeLang("it");
+                          onChangeLang("es");
                         }}
                       />
                       <AnimatedOption
                         text="Italian"
                         onClick={() => {
-                          onChangeLang("es");
+                          onChangeLang("it");
                         }}
                       />
                     </StaggeredDropDown>

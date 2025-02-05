@@ -10,6 +10,7 @@ import { BsCheckCircleFill, BsPatchCheckFill } from "react-icons/bs";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import { TbLoader3 } from "react-icons/tb";
 import { ResetPassword } from "../../services/authServices";
+import Button from "../../components/Button";
 
 type resetPasswordData = {
   password: string;
@@ -181,9 +182,9 @@ const ResetPasswordForm: React.FC = () => {
                         )}
 
                         <div className="mt-10 flex w-full justify-center items-center flex-col">
-                          <button
+                          <Button
                             type="submit"
-                            className="w-full py-3 px-6 rounded-lg flex group disabled:hover:scale-100 disabled:opacity-50 items-center gap-3 bg-gradient-to-r hover:bg-gradient-to-l hover:scale-95 duration-300 ease-in-out from-[#2563EB] to-[#9333EA] justify-center text-white border-none hover:opacity-95"
+                            width="w-full"
                             onClick={() => {}}
                             disabled={isLoading}
                           >
@@ -193,7 +194,7 @@ const ResetPasswordForm: React.FC = () => {
                             ) : (
                               <FaArrowRightLong className="group-hover:translate-x-1.5" />
                             )}
-                          </button>
+                          </Button>
                           <Link
                             to="/signin"
                             className="flex gap-2 items-center py-4 text-black hover:text-primary"
@@ -208,14 +209,14 @@ const ResetPasswordForm: React.FC = () => {
               </div>
             ) : (
               <div className="py-6 flex justify-center">
-                <button
+                <Button
                   onClick={() => {
                     navigate("/signin", { replace: true });
                   }}
-                  className="w-full py-3 px-6 rounded-lg flex group disabled:hover:scale-100 disabled:opacity-50 items-center gap-3 bg-gradient-to-r hover:bg-gradient-to-l hover:scale-95 duration-300 ease-in-out from-[#2563EB] to-[#9333EA] justify-center text-white border-none hover:opacity-95"
+                  width="w-full"
                 >
                   Continue to Login
-                </button>
+                </Button>
               </div>
             )}
           </div>

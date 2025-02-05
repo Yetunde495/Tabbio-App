@@ -357,7 +357,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           </button>
 
           <div className="flex items-center  gap-4 max-sm:w-full max-sm:justify-between">
-            {user?.profile && <div className="lg:flex hidden max-sm:flex items-center gap-1 text-zinc-400">
+            {user?.profile && <div className="md:flex hidden items-center gap-1 text-zinc-400">
               <LuClock className="max-sm:hidden" />
               <span>{user?.plan || "Updated 1d ago"}</span>
             </div>}

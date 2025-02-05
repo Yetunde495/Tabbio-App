@@ -44,6 +44,11 @@ const EmailVerification: React.FC = () => {
       if (inputValue && index < inputRefs.length - 1) {
         inputRefs[index + 1]?.current?.focus();
       }
+
+      // Move focus to the previous input if the current input is cleared
+      if (!inputValue && index > 0) {
+        inputRefs[index - 1]?.current?.focus();
+      }
     }
   };
 
@@ -192,14 +197,14 @@ const EmailVerification: React.FC = () => {
             </div>
           ) : (
             <div className="py-6 flex justify-center">
-              <button
+              <Button
                 onClick={() => {
                   navigate("/signin", { replace: true });
                 }}
-                className="w-full py-3 px-6 rounded-lg flex group disabled:hover:scale-100 disabled:opacity-50 items-center gap-3 bg-gradient-to-r hover:bg-gradient-to-l hover:scale-95 duration-300 ease-in-out from-[#2563EB] to-[#9333EA] justify-center text-white border-none hover:opacity-95"
+                width="w-full"
               >
                 Continue to Login
-              </button>
+              </Button>
             </div>
           )}
         </div>

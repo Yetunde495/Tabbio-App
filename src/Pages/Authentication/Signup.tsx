@@ -12,6 +12,7 @@ import { BsLinkedin } from "react-icons/bs";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { TbLoader3 } from "react-icons/tb";
 import { registerUser, sendOtp } from "../../services/authServices";
+import Button from "../../components/Button";
 
 const Signup: React.FC = () => {
   const { signIn } = useApp();
@@ -164,10 +165,10 @@ const Signup: React.FC = () => {
                   </div>
 
                   <div className="mt-6">
-                    <button
+                    <Button
                       type="submit"
-                      className="w-full py-3 px-6 rounded-lg flex group disabled:hover:scale-100 disabled:opacity-50 items-center gap-3 bg-gradient-to-r hover:bg-gradient-to-l hover:scale-95 duration-300 ease-in-out from-[#2563EB] to-[#9333EA] justify-center text-white border-none hover:opacity-95"
                       disabled={isLoading}
+                      width="w-full"
                       onClick={() => {}}
                     >
                       {isLoading ? "Loading" : "Sign up"}
@@ -176,7 +177,7 @@ const Signup: React.FC = () => {
                       ) : (
                         <FaArrowRightLong className="group-hover:translate-x-1.5" />
                       )}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>

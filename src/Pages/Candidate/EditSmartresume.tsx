@@ -208,7 +208,7 @@ const EditSmartResume: React.FC = () => {
       ) : (
         <section className="w-full">
           <div className="bg-zinc-50/90 lg:px-9 md:px-6 px-2 py-3 mb-6 mt-3 w-full">
-            <div className="flex max-sm:flex-col gap-3 gap-y-1.5 sm:items-center relative w-full z-99">
+            <div className="flex max-lg:flex-col gap-3 gap-y-1.5 lg:items-center relative w-full z-99">
               <Menu setActive={setActive}>
                 <MenuItem
                   setActive={() => setTemplateModal(true)}
@@ -646,7 +646,7 @@ const EditSmartResume: React.FC = () => {
                 <TabbioScore onClick={() => setScoreModal(true)} score={50} />
               </Menu>
 
-              <div className="sm:ml-auto flex items-center gap-2">
+              <div className="lg:ml-auto flex items-center gap-2">
                 <div
                   onClick={() => setScoreModal(true)}
                   className="flex gap-1 cursor-pointer sm:hidden text-sm max-sm:text-[10px] items-center"
@@ -656,7 +656,7 @@ const EditSmartResume: React.FC = () => {
                   </span>
                   <span>View my Tabbio Score</span>
                 </div>
-                <button className="flex items-center gap-2 hover:scale-105 duration-150 text-zinc-700">
+                <button className="hidden items-center gap-2 hover:scale-105 duration-150 text-zinc-700">
                   <TbWorld />
                 </button>
                 <button

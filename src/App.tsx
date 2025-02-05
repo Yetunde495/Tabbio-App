@@ -9,6 +9,7 @@ import { Loader } from "./components/Loader";
 
 import AuthPages from "./Pages/Authentication/Index";
 import CompanyPages from "./Pages/Company/Index";
+import AccountSettings from "./Pages/AccountSettings/AccountSettings";
 
 axios.defaults.baseURL = import.meta.env.VITE_PUBLIC_TABBIO_API_URL;
 
@@ -121,6 +122,10 @@ function App() {
                 <Route
                   path="/app/candidate/resume-builder"
                   element={<CandidatePages.CreateLiveResume />}
+                />
+                <Route
+                  path="/app/user-account/settings"
+                  element={<AccountSettings />}
                 />
               </Route>
             </>

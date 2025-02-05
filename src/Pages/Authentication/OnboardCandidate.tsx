@@ -64,6 +64,11 @@ const OnboardCandidate: React.FC<{
       if (inputValue && index < inputRefs.length - 1) {
         inputRefs[index + 1]?.current?.focus();
       }
+
+      // Move focus to the previous input if the current input is cleared
+      if (!inputValue && index > 0) {
+        inputRefs[index - 1]?.current?.focus();
+      }
     }
   };
 

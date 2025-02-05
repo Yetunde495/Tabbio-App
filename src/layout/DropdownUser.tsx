@@ -96,7 +96,7 @@ const DropdownUser = () => {
       >
         <ul className="flex flex-col">
           <li className="flex hover:bg-neutral-100 border-b  border-stroke cursor-pointer dark:border-strokedark items-center gap-3.5 px-5 py-3 text-sm font-medium duration-300 ease-in-out text-black/80 dark:text-white/80 lg:text-base">
-            <Link to={"/app/settings"}>
+            <Link to={"/app/user-account/settings"}>
               <button>Account Settings</button>
             </Link>
           </li>
