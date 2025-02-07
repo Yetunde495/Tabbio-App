@@ -21,41 +21,183 @@ import { formatMonthYear } from "../../lib/utils/formatters";
 //   large: 15,
 // };
 const fontSizeMap = {
-  small: 10,
-  medium: 12,
-  large: 14,
+  small: 8,
+  medium: 10,
+  large: 12,
 };
 const fontSizeSmMap = {
-  small: 9,
-  medium: 10,
-  large: 11,
+  small: 7,
+  medium: 8,
+  large: 9,
 };
 
-// Helper function to get font sizes
-const getFontSize = (resumeData: any) => {
-  return (
-    fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
-    "12px"
-  );
-};
-
-const getFontSizeSm = (resumeData: any) => {
-  return (
-    fontSizeSmMap[resumeData?.style?.fontSize as keyof typeof fontSizeSmMap] ||
-    "10px"
-  );
-};
+// // Helper function to get font sizes
+// const getFontSize = (resumeData: any) => {
+//   return (
+//     fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
+//     "12px"
+//   );
+// };
+//
+// const getFontSizeSm = (resumeData: any) => {
+//   return (
+//     fontSizeSmMap[resumeData?.style?.fontSize as keyof typeof fontSizeSmMap] ||
+//     "10px"
+//   );
+// };
 
 // Define styles for the PDF
-const createStyles = (resumeData) => {
-  const fontSize = getFontSize(resumeData);
-  const fontSizeSm = getFontSizeSm(resumeData);
+// const createStyles = (resumeData) => {
+//   const fontSize = getFontSize(resumeData);
+//   const fontSizeSm = getFontSizeSm(resumeData);
+//
+//   return StyleSheet.create({
+//     page: {
+//       // fontFamily: resumeData?.style?.fontFamily || "Helvetica",
+//       padding: 32,
+//       backgroundColor: "#ffffff",
+//     },
+//     section: {
+//       marginBottom: 15,
+//     },
+//     header: {
+//       display: "flex",
+//       flexDirection: "row",
+//       alignItems: "center",
+//       borderBottomWidth: 2,
+//       paddingBottom: 8,
+//       marginBottom: 15,
+//       borderColor: resumeData?.style?.primaryColor,
+//     },
+//     name: {
+//       fontSize: 40,
+//       fontWeight: "medium",
+//       textTransform: "uppercase",
+//       color: resumeData?.style?.primaryColor,
+//     },
+//     role: {
+//       fontSize: 18,
+//       fontWeight: "medium",
+//       textTransform: "uppercase",
+//       paddingLeft: 8,
+//     },
+//     contactInfo: {
+//       display: "flex",
+//       flexDirection: "row",
+//       flexWrap: "wrap",
+//       gap: 8,
+//       marginBottom: 15,
+//     },
+//     contactItem: {
+//       fontSize: fontSizeSm,
+//       display: "flex",
+//       flexDirection: "row",
+//       alignItems: "center",
+//       gap: 4,
+//     },
+//     sectionTitle: {
+//       fontSize: 18,
+//       fontWeight: "semibold",
+//       textTransform: "uppercase",
+//       borderBottomWidth: 2,
+//       paddingBottom: 4,
+//       marginBottom: 8,
+//       color: resumeData?.style?.primaryColor,
+//       borderColor: resumeData?.style?.primaryColor,
+//     },
+//     text: {
+//       fontSize: fontSize,
+//       fontWeight: "medium",
+//       color: "#000000",
+//     },
+//     listItem: {
+//       fontSize: fontSize,
+//       marginBottom: 4,
+//     },
+//     link: {
+//       fontSize: fontSizeSm,
+//       color: "#2563eb",
+//       textDecoration: "none",
+//     },
+//   });
+// };
 
-  return StyleSheet.create({
+// Helper to register fonts only once
+const registeredFonts = new Set();
+
+// Pre-register common fonts with URLs
+const DEFAULT_FONTS: any = {
+  "Times New Roman": "https://pdf-lib.js.org/assets/fonts/liberation-serif.ttf",
+  Helvetica:
+    "https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-regular-webfont.ttf",
+};
+
+const EntryPDF = ({ data }: any) => {
+  // Get font configuration from data
+  const fontFamily = data?.style?.fontFamily || "Helvetica";
+  const baseFontSrc = data?.style?.fontSrc
+    ? `${window.location.origin}${data.style.fontSrc}`
+    : DEFAULT_FONTS[fontFamily];
+
+  // Define font variants based on naming convention
+  const fontVariants = {
+    regular: baseFontSrc,
+    bold: baseFontSrc.replace(".ttf", "-bold.ttf"),
+    semibold: baseFontSrc.replace(".ttf", "-semibold.ttf"),
+    italic: baseFontSrc.replace(".ttf", "-italic.ttf"),
+    boldItalic: baseFontSrc.replace(".ttf", "-bold-italic.ttf"),
+  };
+
+  // Register all font variants
+  if (fontFamily && !registeredFonts.has(fontFamily)) {
+    Font.register({
+      family: fontFamily,
+      fonts: [
+        {
+          src: fontVariants.regular,
+          fontWeight: "normal",
+          fontStyle: "normal",
+        },
+        { src: fontVariants.bold, fontWeight: "bold", fontStyle: "normal" },
+        {
+          src: fontVariants.semibold,
+          fontWeight: "semibold",
+          fontStyle: "normal",
+        },
+        { src: fontVariants.italic, fontWeight: "normal", fontStyle: "italic" },
+        {
+          src: fontVariants.boldItalic,
+          fontWeight: "bold",
+          fontStyle: "italic",
+        },
+      ],
+    });
+    registeredFonts.add(fontFamily);
+  }
+
+  // Register dynamic font once
+  if (data?.style?.fontFamily && data?.style?.fontSrc) {
+    const fontKey = `${data.style.fontFamily}-${data.style.fontSrc}`;
+    if (!registeredFonts.has(fontKey)) {
+      Font.register({
+        family: data.style.fontFamily,
+        src: data.style.fontSrc,
+      });
+      registeredFonts.add(fontKey);
+    }
+  }
+
+  const fontSize =
+    fontSizeMap[data?.style?.fontSize as keyof typeof fontSizeMap] || "10px";
+  const fontSizeSm =
+    fontSizeSmMap[data?.style?.fontSize as keyof typeof fontSizeMap] || "8px";
+
+  const styles = StyleSheet.create({
     page: {
       // fontFamily: resumeData?.style?.fontFamily || "Helvetica",
       padding: 32,
       backgroundColor: "#ffffff",
+      fontFamily: fontFamily,
     },
     section: {
       marginBottom: 15,
@@ -64,46 +206,46 @@ const createStyles = (resumeData) => {
       display: "flex",
       flexDirection: "row",
       alignItems: "center",
-      borderBottomWidth: 2,
+      borderBottomWidth: 1,
       paddingBottom: 8,
       marginBottom: 15,
-      borderColor: resumeData?.style?.primaryColor,
+      borderColor: data?.style?.primaryColor,
     },
     name: {
-      fontSize: 40,
+      fontSize: 30,
       fontWeight: "medium",
       textTransform: "uppercase",
-      color: resumeData?.style?.primaryColor,
+      color: data?.style?.primaryColor,
     },
     role: {
-      fontSize: 18,
+      fontSize: 14,
       fontWeight: "medium",
       textTransform: "uppercase",
-      paddingLeft: 8,
     },
     contactInfo: {
       display: "flex",
       flexDirection: "row",
       flexWrap: "wrap",
+      // alignItems: "flex-start",
       gap: 8,
       marginBottom: 15,
     },
     contactItem: {
-      fontSize: fontSizeSm,
+      fontSize: fontSize,
       display: "flex",
       flexDirection: "row",
-      alignItems: "center",
+      // alignItems: "flex-start",
       gap: 4,
     },
     sectionTitle: {
-      fontSize: 18,
+      fontSize: 14,
       fontWeight: "semibold",
       textTransform: "uppercase",
-      borderBottomWidth: 2,
+      borderBottomWidth: 1,
       paddingBottom: 4,
       marginBottom: 8,
-      color: resumeData?.style?.primaryColor,
-      borderColor: resumeData?.style?.primaryColor,
+      color: data?.style?.primaryColor,
+      borderColor: data?.style?.primaryColor,
     },
     text: {
       fontSize: fontSize,
@@ -120,55 +262,53 @@ const createStyles = (resumeData) => {
       textDecoration: "none",
     },
   });
-};
-
-const EntryPDF = ({ resumeData }: any) => {
-  const styles = createStyles(resumeData);
-  const fontSize =
-    fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
-    "12px";
-  const fontSizeSm =
-    fontSizeSmMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
-    "10px";
   return (
     <Document>
       <Page size="A4" style={styles.page}>
         {/* Header Section */}
         <View style={styles.section}>
           <View style={styles.header}>
-            <Text style={styles.name}>{resumeData?.name}</Text>
-            {resumeData?.config.role && (
-              <Text style={styles.role}>{resumeData?.role}</Text>
-            )}
+            <Text style={styles.name}>{data?.name}</Text>
+            <View
+              style={{
+                width: 1,
+                height: "80%",
+                borderLeftWidth: 1,
+                borderColor: "#3F3F46",
+                marginLeft: 8,
+                marginRight: 8,
+              }}
+            ></View>
+            {data?.config.role && <Text style={styles.role}>{data?.role}</Text>}
           </View>
           <View style={styles.contactInfo}>
             {["email", "phone", "location", "linkedin", "website"]
-              .filter((field) => resumeData?.config[field])
+              .filter((field) => data?.config[field])
               .map((field) => (
                 <View key={field} style={styles.contactItem}>
-                  <Text style={{ fontWeight: "semibold" }}>
+                  <Text style={{ fontWeight: "bold" }}>
                     {field.charAt(0).toUpperCase() + field.slice(1)}:
                   </Text>
-                  <Text>{resumeData[field] || "Unspecified"}</Text>
+                  <Text>{data[field] || "Unspecified"}</Text>
                 </View>
               ))}
           </View>
         </View>
 
         {/* Professional Summary */}
-        {resumeData?.config.professionalSummary && (
+        {data?.config.professionalSummary && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>PROFESSIONAL SUMMARY</Text>
-            <Text style={styles.text}>{resumeData?.professionalSummary}</Text>
+            <Text style={styles.text}>{data?.professionalSummary}</Text>
           </View>
         )}
 
         {/* Key Skills */}
-        {resumeData?.config.skills && (
+        {data?.config.skills && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>KEY SKILLS</Text>
             <View>
-              {resumeData?.skills?.map((item, index) => (
+              {data?.skills?.map((item, index) => (
                 <View key={index} style={{ marginBottom: 8, color: "#393942" }}>
                   <Text
                     style={{
@@ -202,11 +342,11 @@ const EntryPDF = ({ resumeData }: any) => {
         )}
 
         {/* Career Highlights */}
-        {resumeData?.config.careerHighlights && (
+        {data?.config.careerHighlights && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>CAREER HIGHLIGHTS</Text>
             <View style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {resumeData?.careerHighlights?.map((item) => (
+              {data?.careerHighlights?.map((item) => (
                 <View key={item.id} style={{ marginBottom: 8 }}>
                   <Text style={{ fontSize: fontSize, fontWeight: "bold" }}>
                     {item.title}
@@ -224,11 +364,11 @@ const EntryPDF = ({ resumeData }: any) => {
         )}
 
         {/* Professional Experience */}
-        {resumeData?.config.workExperience && (
+        {data?.config.workExperience && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>PROFESSIONAL EXPERIENCE</Text>
             <View style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {resumeData?.workExperience?.map((item) => (
+              {data?.workExperience?.map((item) => (
                 <View key={item.id} style={{ marginBottom: 8 }}>
                   <View
                     style={{
@@ -246,13 +386,22 @@ const EntryPDF = ({ resumeData }: any) => {
                     <View
                       style={{ flexDirection: "row", alignItems: "center" }}
                     >
-                      <Text style={{ fontSize: fontSize }}>{item.title}</Text>
+                      <Text
+                        style={{
+                          fontSize: fontSize,
+                          fontWeight: "semibold",
+                          color: "#3F3F46",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        {item.title}
+                      </Text>
                       <Text
                         style={{ fontSize: 14, marginLeft: 4, marginRight: 4 }}
                       >
                         |
                       </Text>
-                      <Text style={{ fontSize: fontSizeSm }}>
+                      <Text style={{ fontSize: fontSizeSm, color: "#71717A" }}>
                         {item.startDate && formatMonthYear(item.startDate)} -{" "}
                         {item.active
                           ? "Present"
@@ -278,11 +427,11 @@ const EntryPDF = ({ resumeData }: any) => {
         )}
 
         {/* Education */}
-        {resumeData?.config.education && (
+        {data?.config.education && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>EDUCATION</Text>
             <View style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {resumeData?.education?.map((item) => (
+              {data?.education?.map((item) => (
                 <View key={item.id} style={{ marginBottom: 8 }}>
                   <View
                     style={{
@@ -291,11 +440,48 @@ const EntryPDF = ({ resumeData }: any) => {
                       justifyContent: "space-between",
                     }}
                   >
-                    <Text
-                      style={{ fontSize: fontSize, fontWeight: "semibold" }}
+                    <View
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        // justifyContent: "flex-s<",
+                        width: "75%",
+                      }}
                     >
-                      {item.institution}
-                    </Text>
+                      <Text
+                        style={{
+                          fontSize: fontSize,
+                          fontWeight: "semibold",
+                          lineHeight: 1.5,
+                          textTransform: "uppercase",
+                          width: "50%",
+                        }}
+                      >
+                        {item.institution}
+                      </Text>
+                      <View
+                        style={{
+                          width: 1,
+                          height: "100%",
+                          borderLeftWidth: 1,
+                          borderColor: "#3F3F46",
+                          marginLeft: 4,
+                          marginRight: 4,
+                        }}
+                      ></View>
+                      <Text
+                        style={{
+                          fontSize: fontSize,
+                          fontWeight: "semibold",
+                          textTransform: "uppercase",
+                          width: "50%",
+                          lineHeight: 1.5,
+                        }}
+                      >
+                        {item.degree}
+                      </Text>
+                    </View>
                     <Text style={{ fontSize: fontSizeSm }}>
                       {item.startDate && formatMonthYear(item.startDate)} -{" "}
                       {item.active
@@ -303,7 +489,6 @@ const EntryPDF = ({ resumeData }: any) => {
                         : item.endDate && formatMonthYear(item.endDate)}
                     </Text>
                   </View>
-                  <Text style={{ fontSize: fontSize }}>{item.degree}</Text>
                   <Text style={{ fontSize: fontSize }}>{item.description}</Text>
                 </View>
               ))}
@@ -312,11 +497,11 @@ const EntryPDF = ({ resumeData }: any) => {
         )}
 
         {/* Training */}
-        {resumeData?.config.trainings && (
+        {data?.config.trainings && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>TRAINING</Text>
             <View style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {resumeData?.trainings?.map((item) => (
+              {data?.trainings?.map((item) => (
                 <View key={item._id} style={{ marginBottom: 8 }}>
                   <View
                     style={{
@@ -361,11 +546,11 @@ const EntryPDF = ({ resumeData }: any) => {
         )}
 
         {/* Certifications */}
-        {resumeData?.certifications?.length > 0 && (
+        {data?.certifications?.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>CERTIFICATIONS</Text>
             <View style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {resumeData?.certifications?.map((item) => (
+              {data?.certifications?.map((item) => (
                 <View key={item._id} style={{ marginBottom: 8 }}>
                   <View
                     style={{

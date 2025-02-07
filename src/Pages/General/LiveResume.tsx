@@ -64,18 +64,16 @@ const LiveResume: React.FC = () => {
                     document={<ProfessionalPDF data={resumeData} />}
                     fileName={resumeData?.name}
                   >
-                    <div className="flex gap-1 bg-primary rounded-md font-medium text-white px-5 py-2 items-center hover:scale-x-105">
-                      Download Professional
+                    <div className="underline">
+                      Download Professional PDF File
                     </div>
                   </PDFDownloadLink>
                   {/* ) : ( */}
                   <PDFDownloadLink
-                    document={<EntryPDF resumeData={resumeData} />}
+                    document={<EntryPDF data={resumeData} />}
                     fileName={resumeData?.name}
                   >
-                    <div className="flex gap-1 bg-primary rounded-md font-medium text-white px-5 py-2 items-center hover:scale-x-105">
-                      Download Entry
-                    </div>
+                    <div className="underline">Download Entry PDF File</div>
                   </PDFDownloadLink>
                 </div>
                 {/* <div> */}
