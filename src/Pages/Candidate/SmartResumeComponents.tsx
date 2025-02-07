@@ -107,7 +107,7 @@ export const BasicDetails: React.FC<{
   };
   return (
     <div>
-      <div className="flex gap-x-2 md:gap-x-6 items-center gap-y-2 mb-8">
+      <div className="flex md:flex-row flex-col gap-x-2 md:gap-x-6 items-center gap-y-2 mb-8">
         <div>
           <ProfilePicture
             name={profileData?.name}

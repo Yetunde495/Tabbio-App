@@ -402,7 +402,7 @@ const ResumeAiScore: React.FC<Props> = ({ show, onHide, resumeData }) => {
       <div
         className={` bg-white py-5  flex flex-col lg:max-w-[60%]  md:rounded-2xl justify-center md:mx-6 md:my-auto mx-0`}
       >
-        <div className="flex flex-col justify-center relative">
+        <div className="flex flex-col md:justify-center relative">
           <div className="flex items-center md:px-6 px-4">
             <div>
               <h3 className="text-xl font-semibold text-black dark:text-white sm:text-2xl mb-0">

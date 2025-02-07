@@ -2,7 +2,7 @@ import DefaultLayout from "../../layout/DefaultLayout";
 import { useApp } from "../../context/AppContext";
 import { useState } from "react";
 import { Switch } from "../../components/form/Switch";
-import { MdOutlineColorLens } from "react-icons/md";
+import { MdOutlineColorLens, MdShare } from "react-icons/md";
 import { mockEmptyResume } from "../../data/mockData";
 import {
   CustomListSection,
@@ -239,7 +239,7 @@ const CreateLiveResume: React.FC = () => {
                 active={active}
                 position="max-sm:-translate-x-[25%]"
                 item={
-                  <div className="flex space-x-[2px] max-sm:text-[11px] sm:space-x-2 items-center">
+                  <div className="flex space-x-[2px] max-sm:text-[12px] sm:space-x-2 items-center">
                     <HiOutlineTemplate />
                     <span>Template</span>
                     <Icons.arrowDown />
@@ -255,7 +255,7 @@ const CreateLiveResume: React.FC = () => {
                 active={active}
                 position="max-sm:-translate-x-[40%]"
                 item={
-                  <div className="flex space-x-[2px] max-sm:text-[11px] sm:space-x-2 items-center">
+                  <div className="flex space-x-[2px] max-sm:text-[12px] sm:space-x-2 items-center">
                     <HiOutlineTemplate />
                     <span>Typography</span>
                     <Icons.arrowDown />
@@ -329,7 +329,7 @@ const CreateLiveResume: React.FC = () => {
                   active={active}
                   position="max-sm:-translate-x-[62%]"
                   item={
-                    <div className="flex space-x-[2px] max-sm:text-[11px] sm:space-x-2 items-center">
+                    <div className="flex space-x-[2px] max-sm:text-[12px] sm:space-x-2 items-center">
                       <MdOutlineColorLens />
                       <span>Color</span>
                       <Icons.arrowDown />
@@ -400,7 +400,7 @@ const CreateLiveResume: React.FC = () => {
                 active={active}
                 position="max-sm:-translate-x-[90.5%]"
                 item={
-                  <div className="flex space-x-[2px] max-sm:text-[11px] sm:space-x-2 items-center">
+                  <div className="flex space-x-[2px] max-sm:text-[12px] sm:space-x-2 items-center">
                     <PiSlidersHorizontalBold />
                     <span>Sections</span>
                     <Icons.arrowDown />
@@ -669,15 +669,18 @@ const CreateLiveResume: React.FC = () => {
               </div>
             </Menu>
 
-            <div className="xl:ml-auto flex items-center gap-2">
+            <div className="xl:ml-auto flex items-center gap-2 max-sm:gap-2.5">
               <div className="hidden max-md:block">
-                <TabbioScore onClick={() => setScoreModal(true)} score={resumeData?.tabbioScore || 0} />
+                <TabbioScore onClick={() => {setScoreModal(true)}} score={resumeData?.tabbioScore || 0} />
               </div>
               <button className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center text-primary gap-1 hover:scale-x-105 ">
-                <BsDownload /> <span className="">Download</span>
+                <BsDownload /> <span className="max-sm:hidden">Download</span>
+              </button>
+              <button className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center text-zinc-700 gap-1 hover:scale-x-105 ">
+                <MdShare /> <span className="max-sm:hidden">Share</span>
               </button>
               <button className="flex items-center py-1 px-1 gap-1 max-sm:text-[12px] hover:scale-105 duration-150 text-zinc-700">
-                <TbWorld /> EN
+                <TbWorld /> <span className="max-sm:hidden">EN</span>
               </button>
               <button
                 onClick={() => setUploadOption(true)}

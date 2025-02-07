@@ -4,9 +4,10 @@ import { FormProvider, useForm } from "react-hook-form";
 import { AutoInput } from "../../components/form/customInput";
 import { Textarea } from "../../components/form";
 import { toast } from "react-toastify";
-import { BsX } from "react-icons/bs";
-import { truncateFilename } from "../../lib/utils/formatters";
 import Button from "../../components/Button";
+import { MultipleFileUpload } from "./FileUpload";
+import { MdOutlineFileUpload } from "react-icons/md";
+
 
 const ContactForm: React.FC<{ show: boolean; setShow: () => void }> = ({
   show,
@@ -14,18 +15,18 @@ const ContactForm: React.FC<{ show: boolean; setShow: () => void }> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const methods = useForm<any>();
-  const [files, setFiles] = useState<File[]>([]);
+  const [_files, setFiles] = useState<File[]>([]);
   // const [loading, setLoading] = useState(false);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFiles([...files, ...Array.from(e.target.files)]);
-    }
-  };
+  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files) {
+  //     setFiles([...files, ...Array.from(e.target.files)]);
+  //   }
+  // };
 
-  const handleFileRemove = (index: number) => {
-    setFiles(files.filter((_, i) => i !== index));
-  };
+  // const handleFileRemove = (index: number) => {
+  //   setFiles(files.filter((_, i) => i !== index));
+  // };
 
   const onSubmit = async (_data: any) => {
     const { errors } = methods.formState;
@@ -50,12 +51,23 @@ const ContactForm: React.FC<{ show: boolean; setShow: () => void }> = ({
   };
   return (
     <div>
-      <Modal show={show} onHide={setShow} size="" title="Contact Support">
+      <Modal
+        show={show}
+        onHide={setShow}
+        size=""
+        title={
+          <div>
+            <h3 className="font-semibold max-sm:text-lg text-xl mb-0">
+              Contact Support
+            </h3>
+            <p className="mb-3 max-sm:text-sm">
+              Fill the form below to submit an enquiry or complaint
+            </p>
+          </div>
+        }
+      >
         <section className="pr-2 2xl:max-h-full overflow-y-auto no-scrollbar">
-          <p className="sm:text-center mb-3">
-            Fill the form below to submit an enquiry or complaint
-          </p>
-          <div className="pl-6">
+          <div className="md:pl-6">
             <FormProvider {...methods}>
               <form onSubmit={methods.handleSubmit(onSubmit)} className="">
                 <div>
@@ -96,44 +108,25 @@ const ContactForm: React.FC<{ show: boolean; setShow: () => void }> = ({
                       />
 
                       <div className="mb-4">
+                       <MultipleFileUpload
+                        maxFiles={3}
+                        onSuccess={() => {setFiles([])}}
+                       >
                         <label
                           htmlFor="files"
                           className="block text-black mb-2"
                         >
                           Attach Files
                         </label>
-                        <input
-                          id="files"
-                          type="file"
-                          className="block w-full rounded-sm border-stroke text-sm text-gray-500 file:mr-4 file:py-3 file:px-4 file:border-0 border file:text-sm file:font-semibold file:bg-blue-50 file:hover:text-blue-700 hover:file:bg-blue-100"
-                          onChange={handleFileChange}
-                          multiple
-                        />
-
-                        {files.length > 0 && (
-                          <div className="my-4">
-                            <ul className="flex flex-wrap items-center gap-3">
-                              {files.map((file, index) => (
-                                <li
-                                  key={index}
-                                  className="flex items-center bg-neutral-100 rounded mb-2"
-                                >
-                                  <span className="text-gray-700 mr-3 py-2 pl-2">
-                                    {truncateFilename(file.name)}
-                                  </span>
-                                  <button
-                                    type="button"
-                                    className="bg-transparent hover:bg-danger/20 text-black hover:text-red-500 font-bold py-3 px-1 h-full rounded-r focus:outline-none focus:shadow-outline"
-                                    onClick={() => handleFileRemove(index)}
-                                  >
-                                    <BsX size={18} />
-                                  </button>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
+                        <div className="w-full bg-primary/10 shadow rounded-lg py-4 px-5">
+                        
+                          <p className="sm:text-lg mb-2 text-base text-primary flex items-center gap-2 text-center"><MdOutlineFileUpload /> Click to select from Device</p>
+                          <p className="text-zinc-500 font-medium text-center">Up to 10mb</p>
+                        </div>
+                       </MultipleFileUpload>
                       </div>
+
+                     
 
                       <Textarea
                         name="description"
@@ -147,8 +140,7 @@ const ContactForm: React.FC<{ show: boolean; setShow: () => void }> = ({
                     <div className="mt-10">
                       <Button
                         type="submit"
-                        width="full"
-                        rounded
+                        width="w-full"
                         disabled={isLoading}
                         onClick={() => {}}
                       >

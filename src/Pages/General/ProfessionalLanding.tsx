@@ -54,9 +54,9 @@ const ProfessionalLandingpage: React.FC = () => {
         className="p-8 max-sm:px-4 md:py-22 text grid grid-cols-1 gap-12 xl:max-w-7xl 2xl:max-w-full 2xl:px-[12rem] w-full mx-auto"
       >
         <div className="text-center text-lg text-zinc-500">
-          <p className="text-[#DC2626] bg-red-100/50 inline-flex rounded-full max-sm:text-start items-center px-4 py-2 mb-6 text-sm gap-2">
+          <p className="text-[#DC2626] bg-red-100/50 inline-flex rounded-full sm:items-center px-4 py-2 mb-6 max-sm:text-[12px] text-sm gap-2">
             <span>
-              <MdOutlineShield />
+              <MdOutlineShield className="max-sm:text-base" />
             </span>
             {t("landing1.cta")}
             {/* Want to know why you are not getting callbacks? */}

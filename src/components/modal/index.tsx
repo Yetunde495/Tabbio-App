@@ -64,7 +64,7 @@ const Modal: React.FC<WarningProps> = ({
       <div
         className={`${size ? size : "md:min-w-[50%] min-w-full"} ${
           props?.roundedMd ? "md:rounded-md" : "md:rounded-2xl"
-        } bg-white py-5 max-sm:pt-8 flex flex-col  sm:justify-center md:mx-6 md:my-auto mx-0`}
+        } bg-white py-5 flex flex-col  sm:justify-center md:mx-6 md:my-auto mx-0`}
         ref={modalRef}
       >
         <div className="flex flex-col justify-center relative">
