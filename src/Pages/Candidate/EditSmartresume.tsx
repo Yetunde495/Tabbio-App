@@ -2,7 +2,7 @@ import { useApp } from "../../context/AppContext";
 import DefaultLayout from "../../layout/DefaultLayout";
 import { useMemo, useState } from "react";
 import { Switch } from "../../components/form/Switch";
-import { MdOutlineColorLens } from "react-icons/md";
+import { MdOutlineColorLens, MdShare } from "react-icons/md";
 import { mockEmpty, mockResumeData } from "../../data/mockData";
 import {
   CustomListSection,
@@ -22,7 +22,7 @@ import { IoMdColorFilter } from "react-icons/io";
 import { PiSlidersHorizontalBold } from "react-icons/pi";
 import { Select4 } from "../../components/form/Select";
 import { Sketch } from "@uiw/react-color";
-import { BsPencil } from "react-icons/bs";
+import { BsDownload, BsPencil } from "react-icons/bs";
 import { useNavigate, useParams } from "react-router-dom";
 import { LuExternalLink } from "react-icons/lu";
 import { TbWorld } from "react-icons/tb";
@@ -55,6 +55,7 @@ import { toast } from "react-toastify";
 import { generateUniqueId } from "../../lib/utils";
 import Button from "../../components/Button";
 import TabbioScore from "../../components/tabbioScore";
+import ShareResume from "./ShareResume";
 
 const primaryColors = ["#0077B5", "#CC0074", "#FF7D00", "#00C196", "#000000"];
 
@@ -76,7 +77,7 @@ const EditSmartResume: React.FC = () => {
   const [sectionCount, setSectionCount] = useState(0); // To track the number of sections added
   const [customSections, setCustomSections] = useState<any[]>([]);
   const [sectionType, setSectionType] = useState("");
-
+  const [shareModal, setShareModal] = useState(false);
   const [updateLoading, setUpdateLoading] = useState(false);
   // Function to add a new section to resumeData
   const addCustomSection = (type: string) => {
@@ -214,7 +215,7 @@ const EditSmartResume: React.FC = () => {
                   active={active}
                   position="max-sm:-translate-x-[25%]"
                   item={
-                    <div className="flex space-x-[2px] max-sm:text-[11px] sm:space-x-2 items-center">
+                    <div className="flex space-x-[2px] max-sm:text-[12px] text-[15px] sm:space-x-2 items-center">
                       <HiOutlineTemplate />
                       <span>Template</span>
                       <Icons.arrowDown />
@@ -230,7 +231,7 @@ const EditSmartResume: React.FC = () => {
                   active={active}
                   position="max-sm:-translate-x-[40%]"
                   item={
-                    <div className="flex space-x-[2px] max-sm:text-[11px] sm:space-x-2 items-center">
+                    <div className="flex space-x-[2px] max-sm:text-[12px] text-[15px] sm:space-x-2 items-center">
                       <HiOutlineTemplate />
                       <span>Typography</span>
                       <Icons.arrowDown />
@@ -306,7 +307,7 @@ const EditSmartResume: React.FC = () => {
                     active={active}
                     position="max-sm:-translate-x-[62%]"
                     item={
-                      <div className="flex space-x-[2px] max-sm:text-[11px] sm:space-x-2 items-center">
+                      <div className="flex space-x-[2px] max-sm:text-[12px] text-[15px] sm:space-x-2 items-center">
                         <MdOutlineColorLens />
                         <span>Color</span>
                         <Icons.arrowDown />
@@ -377,7 +378,7 @@ const EditSmartResume: React.FC = () => {
                   active={active}
                   position="max-sm:-translate-x-[90.5%]"
                   item={
-                    <div className="flex space-x-[2px] max-sm:text-[11px] sm:space-x-2 items-center">
+                    <div className="flex space-x-[2px] max-sm:text-[12px] text-[15px] sm:space-x-2 items-center">
                       <PiSlidersHorizontalBold />
                       <span>Sections</span>
                       <Icons.arrowDown />
@@ -642,22 +643,24 @@ const EditSmartResume: React.FC = () => {
                   </div>
                 </MenuItem>
 
-                <TabbioScore
-                  onClick={() => setScoreModal(true)}
-                  score={resumeData?.tabbioScore || 0}
-                />
+                <div className="max-md:hidden block">
+                <TabbioScore onClick={() => setScoreModal(true)} score={resumeData?.tabbioScore || 0} />
+              </div>
               </Menu>
 
               <div className="lg:ml-auto flex items-center gap-2">
-                <div className="hidden">
-                  <TabbioScore
-                    onClick={() => setScoreModal(true)}
-                    score={resumeData?.tabbioScore || 0}
-                  />
-                </div>
-                <button className="hidden items-center gap-2 hover:scale-105 duration-150 text-zinc-700">
-                  <TbWorld />
-                </button>
+                <div className="hidden max-md:block">
+                <TabbioScore onClick={() => {setScoreModal(true)}} score={resumeData?.tabbioScore || 0} />
+              </div>
+              <button className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center text-primary gap-1 hover:scale-x-105 ">
+                <BsDownload /> <span className="max-sm:hidden">Download</span>
+              </button>
+              <button onClick={() => setShareModal(true)} className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center text-zinc-700 gap-1 hover:scale-x-105 ">
+                <MdShare /> <span className="max-sm:hidden">Share</span>
+              </button>
+              <button className="flex items-center py-1 px-1 gap-1 max-sm:text-[12px] hover:scale-105 duration-150 text-zinc-700">
+                <TbWorld /> <span className="max-sm:hidden">EN</span>
+              </button>
                 <button
                   onClick={() => setNewCvModal(true)}
                   className="hidden items-center gap-2 max-sm:text-xs p-1 hover:scale-105 duration-150 text-zinc-700"
@@ -1247,6 +1250,13 @@ const EditSmartResume: React.FC = () => {
               </div>
             </Modal>
           )}
+          {shareModal && (
+          <ShareResume
+            show={shareModal}
+            setShow={() => setShareModal(false)}
+            resumeData={resumeData}
+          />
+        )}
         </section>
       )}
     </DefaultLayout>

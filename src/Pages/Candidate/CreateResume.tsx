@@ -58,6 +58,7 @@ import {
 import { generateResumeTitle } from "../../lib/utils/getUserInitials";
 import { AiOutlineSave } from "react-icons/ai";
 import { GrDocumentUpdate } from "react-icons/gr";
+import ShareResume from "./ShareResume";
 
 const primaryColors = ["#0077B5", "#CC0074", "#FF7D00", "#00C196", "#000000"];
 
@@ -69,6 +70,7 @@ const CreateLiveResume: React.FC = () => {
   const [profileLoading, setProfileLoading] = useState(false);
   const paletteRef = useOutsideClick(() => setShowPalette(false));
   const [config, setConfig] = useState<any>(mockEmptyResume?.config || null);
+  const [shareModal, setShareModal] = useState(false);
   const [uploadOption, setUploadOption] = useState(true);
   const [resumeData, setResumeData] = useState<any>(mockEmptyResume);
   const [editingName, setEditingName] = useState(false);
@@ -239,7 +241,7 @@ const CreateLiveResume: React.FC = () => {
                 active={active}
                 position="max-sm:-translate-x-[25%]"
                 item={
-                  <div className="flex space-x-[2px] max-sm:text-[12px] sm:space-x-2 items-center">
+                  <div className="flex space-x-[2px] max-sm:text-[12px] text-[15px] sm:space-x-2 items-center">
                     <HiOutlineTemplate />
                     <span>Template</span>
                     <Icons.arrowDown />
@@ -255,7 +257,7 @@ const CreateLiveResume: React.FC = () => {
                 active={active}
                 position="max-sm:-translate-x-[40%]"
                 item={
-                  <div className="flex space-x-[2px] max-sm:text-[12px] sm:space-x-2 items-center">
+                  <div className="flex space-x-[2px] max-sm:text-[12px] text-[15px] sm:space-x-2 items-center">
                     <HiOutlineTemplate />
                     <span>Typography</span>
                     <Icons.arrowDown />
@@ -329,7 +331,7 @@ const CreateLiveResume: React.FC = () => {
                   active={active}
                   position="max-sm:-translate-x-[62%]"
                   item={
-                    <div className="flex space-x-[2px] max-sm:text-[12px] sm:space-x-2 items-center">
+                    <div className="flex space-x-[2px] max-sm:text-[12px] text-[15px] sm:space-x-2 items-center">
                       <MdOutlineColorLens />
                       <span>Color</span>
                       <Icons.arrowDown />
@@ -400,7 +402,7 @@ const CreateLiveResume: React.FC = () => {
                 active={active}
                 position="max-sm:-translate-x-[90.5%]"
                 item={
-                  <div className="flex space-x-[2px] max-sm:text-[12px] sm:space-x-2 items-center">
+                  <div className="flex space-x-[2px] max-sm:text-[12px] text-[15px] sm:space-x-2 items-center">
                     <PiSlidersHorizontalBold />
                     <span>Sections</span>
                     <Icons.arrowDown />
@@ -665,18 +667,26 @@ const CreateLiveResume: React.FC = () => {
                 </div>
               </MenuItem>
               <div className="max-md:hidden block">
-                <TabbioScore onClick={() => setScoreModal(true)} score={resumeData?.tabbioScore || 0} />
+                <TabbioScore
+                  onClick={() => setScoreModal(true)}
+                  score={resumeData?.tabbioScore || 0}
+                />
               </div>
             </Menu>
 
-            <div className="xl:ml-auto flex items-center gap-2 max-sm:gap-2.5">
+            <div className="xl:ml-auto flex items-center text-sm gap-2 max-sm:gap-2.5">
               <div className="hidden max-md:block">
-                <TabbioScore onClick={() => {setScoreModal(true)}} score={resumeData?.tabbioScore || 0} />
+                <TabbioScore
+                  onClick={() => {
+                    setScoreModal(true);
+                  }}
+                  score={resumeData?.tabbioScore || 0}
+                />
               </div>
               <button className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center text-primary gap-1 hover:scale-x-105 ">
                 <BsDownload /> <span className="max-sm:hidden">Download</span>
               </button>
-              <button className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center text-zinc-700 gap-1 hover:scale-x-105 ">
+              <button onClick={() => setShareModal(false)} className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center text-zinc-700 gap-1 hover:scale-x-105 ">
                 <MdShare /> <span className="max-sm:hidden">Share</span>
               </button>
               <button className="flex items-center py-1 px-1 gap-1 max-sm:text-[12px] hover:scale-105 duration-150 text-zinc-700">
@@ -1481,6 +1491,13 @@ const CreateLiveResume: React.FC = () => {
           <ResumeAiScore
             show={scoreModal}
             onHide={() => setScoreModal(false)}
+            resumeData={resumeData}
+          />
+        )}
+        {shareModal && (
+          <ShareResume
+            show={shareModal}
+            setShow={() => setShareModal(false)}
             resumeData={resumeData}
           />
         )}

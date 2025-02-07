@@ -79,7 +79,7 @@ export const Menu = ({
   return (
     <nav
       // onMouseLeave={() => setActive(null)} // resets the state
-      className="relative border border-transparent bg-zinc-50/90 flex flex-wrap justify-between items-center gap-2 xl:gap-4 max-sm:gap-1.5"
+      className="relative border border-transparent bg-zinc-50/90 flex flex-wrap max-md:justify-between items-center gap-2 2xl:gap-4 max-sm:gap-1.5"
     >
       {children}
     </nav>

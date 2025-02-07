@@ -11,6 +11,7 @@ import {
 import { RiErrorWarningLine, RiRobot2Line } from "react-icons/ri";
 import { LuWand2 } from "react-icons/lu";
 import { FaRegStar } from "react-icons/fa6";
+import { MdOutlineErrorOutline } from "react-icons/md";
 
 type Props = {
   show?: boolean;
@@ -201,6 +202,8 @@ const ResumeAiScore: React.FC<Props> = ({ show, onHide, resumeData }) => {
   ]);
 
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleAnalyzeResume = async () => {
     try {
@@ -216,7 +219,8 @@ const ResumeAiScore: React.FC<Props> = ({ show, onHide, resumeData }) => {
 
       // console.log(resp?.data?.profile);
     } catch (err: any) {
-      toast.error(err?.message || "Request Failed");
+      setError(true);
+      setErrorMessage(err?.message);
     } finally {
       setLoading(false);
     }
@@ -434,6 +438,28 @@ const ResumeAiScore: React.FC<Props> = ({ show, onHide, resumeData }) => {
                   Analyzing your Resume
                 </h3>
                 <p>Please, wait while our AI analyzes your resume</p>
+              </div>
+            </div>
+          ) : error ? (
+            <div>
+              <div className="py-5">
+                <div className="flex items-center justify-center gap-2">
+                  <span className="bg-red-600 rounded-full text-white w-14 h-14 flex items-center justify-center">
+                    <MdOutlineErrorOutline
+                      size={28}
+                      className="animate-pulse"
+                    />
+                  </span>
+                </div>
+
+                <div className="my-8 text-center">
+                  <h3 className="text-lg font-semibold text-zinc-800">
+                    An Error occurred!
+                  </h3>
+                  <p>
+                    {errorMessage} <br /> Please, try again in some minutes
+                  </p>
+                </div>
               </div>
             </div>
           ) : (

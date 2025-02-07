@@ -90,6 +90,12 @@ const Sidebar = ({
     }
   }, [sidebarExpanded]);
 
+  useEffect(() => {
+   if (pathname.includes(`/app/candidate/profile`)) {
+    setOpen(false)
+   }
+  }, [pathname])
+
   return (
     <aside
       ref={sidebar}

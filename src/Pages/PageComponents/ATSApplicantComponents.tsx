@@ -775,11 +775,7 @@ export const AtsExperience: React.FC<{
                         style={{ fontSize }}
                         value={item?.company}
                         onChange={(e) =>
-                          handleInputChange(
-                            item?.id,
-                            "company",
-                            e.target.value
-                          )
+                          handleInputChange(item?.id, "company", e.target.value)
                         }
                       />
                       <input
@@ -1243,7 +1239,7 @@ export const AtsInternships: React.FC<{
       item?.id === currentItem?.id
         ? {
             ...item,
-            ["keyAchievements"]: [...item?.keyAchievements, selectedItems],
+            ["keyAchievements"]: [...item?.keyAchievements, ...selectedItems],
           }
         : item
     );
@@ -1768,7 +1764,7 @@ export const AtsVolunteerExperience: React.FC<{
       item?.id === currentItem?.id
         ? {
             ...item,
-            ["keyAchievements"]: [...item?.keyAchievements, selectedItems],
+            ["keyAchievements"]: [...item?.keyAchievements, ...selectedItems],
           }
         : item
     );
@@ -1902,7 +1898,7 @@ export const AtsVolunteerExperience: React.FC<{
             <div className="w-full">
               <div className="flex w-full justify-between items-start">
                 <input
-                  className={`border-none text-base font-semibold bg-white text-black dynamic-input-2 focus:outline-none focus:bg-zinc-100 px-2 mb-2`}
+                  className={`border-none w-full focus:w-auto text-base font-semibold bg-white text-black dynamic-input-2 focus:outline-none focus:bg-zinc-100 px-2 mb-2`}
                   placeholder="Company Name"
                   value={item?.company}
                   style={{ fontSize }}
@@ -1911,7 +1907,7 @@ export const AtsVolunteerExperience: React.FC<{
                   }
                 />
                 <input
-                  className={`border-none text-sm font-medium focus:outline-none bg-white text-black placeholder:text-black focus:bg-zinc-100 px-2`}
+                  className={`border-none text-right text-sm font-medium focus:outline-none bg-white text-black placeholder:text-black focus:bg-zinc-100 px-2`}
                   placeholder="From - Until"
                   value={item?.duration}
                   style={{ fontSize: fontSizeSm }}
@@ -1962,7 +1958,7 @@ export const AtsVolunteerExperience: React.FC<{
                             );
                             setResumeData((prev: any) => ({
                               ...prev,
-                              experience: updatedItems,
+                              volunteerExperience: updatedItems,
                             }));
                           }}
                           className={`${
@@ -2061,10 +2057,10 @@ export const AtsVolunteerExperience: React.FC<{
                 id="role"
               />
             </div>
-            <div className="mb-4">
+            <div className="mb-4 w-[48%]">
               <label
                 htmlFor="level"
-                className="block text-sm font-medium text-gray-700"
+                className="block font-medium mb-[0.4rem] text-zinc-700"
               >
                 Level
               </label>
@@ -2077,7 +2073,7 @@ export const AtsVolunteerExperience: React.FC<{
                     experienceLevel: e.target.value,
                   }));
                 }}
-                className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="mt-1 block py-1.5 w-full rounded-md border-stroke focus:border-indigo-500 focus:ring-indigo-500"
               >
                 <option value={aiFormdata?.experienceLevel}>
                   {aiFormdata?.experienceLevel ||
@@ -2170,12 +2166,11 @@ export const AtsVolunteerExperience: React.FC<{
           </Button>
           {selectedItems.length > 0 && (
             <Button
-              rounded
               onClick={() => {
                 applyAiList();
                 setShowModal(false);
               }}
-              width="[80%]"
+              width="w-[80%]"
             >
               Apply Selected Items
             </Button>
@@ -2397,11 +2392,7 @@ export const AtsProjects: React.FC<{
                       "Provide a brief description of the project, its purpose, and key technologies used."
                     }
                     onChange={(e) =>
-                      handleInputChange(
-                        item?.id,
-                        "description",
-                        e.target.value
-                      )
+                      handleInputChange(item?.id, "description", e.target.value)
                     }
                     onBlur={() => setEditingItemId(null)}
                     autoFocus
@@ -2671,7 +2662,7 @@ export const AtsCareerHighlight: React.FC<{
             <div className="w-full">
               <div className="flex w-full">
                 <input
-                  className={`border-none text-base font-semibold bg-white text-black dynamic-input-2 focus:outline-none focus:bg-zinc-100 px-2 mb-2`}
+                  className={`border-none text-base w-full font-semibold bg-white text-black dynamic-input-2 focus:outline-none focus:bg-zinc-100 px-2 mb-2`}
                   placeholder="Highlight Name"
                   value={item?.title}
                   style={{ fontSize }}
@@ -2691,11 +2682,7 @@ export const AtsCareerHighlight: React.FC<{
                       "Provide a brief description of the project, its purpose, and key technologies used."
                     }
                     onChange={(e) =>
-                      handleInputChange(
-                        item?.id,
-                        "description",
-                        e.target.value
-                      )
+                      handleInputChange(item?.id, "description", e.target.value)
                     }
                     onBlur={() => setEditingItemId(null)}
                     autoFocus
@@ -2720,33 +2707,21 @@ export const AtsCareerHighlight: React.FC<{
                 )}
               </div>
 
-              <div className={`pb-1 pt-3 border-stroke`}>
+              <div className={`pb-1 pt-3`}>
                 <div className="flex">
-                  {editingItemId === item?.id ? (
-                    <input
-                      type="text"
-                      value={
-                        item?.link ||
-                        "Attach a github or website link to this project"
-                      }
-                      onChange={(e) =>
-                        handleInputChange(item?.id, "link", e.target.value)
-                      }
-                      style={{ fontSize: fontSizeSm }}
-                      placeholder="Enter link to this project"
-                      className="flex-1 max-sm:w-[75%] rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                  ) : (
-                    <a
-                      className="px-1.5 text-[15px] cursor-text text-blue-600 font-medium"
-                      onClick={() => setEditingItemId(item?.id)}
-                      href={""}
-                      style={{ fontSize: fontSizeSm }}
-                    >
-                      {item?.link ||
-                        "Attach a github or website link to this highlight"}
-                    </a>
-                  )}
+                  <input
+                    type="text"
+                    value={
+                      item?.link ||
+                      "Attach a github or website link to this project"
+                    }
+                    onChange={(e) =>
+                      handleInputChange(item?.id, "link", e.target.value)
+                    }
+                    style={{ fontSize: fontSizeSm }}
+                    placeholder="Enter link to this project"
+                    className="flex-1 max-sm:w-[75%] rounded-md border-none text-primary placeholder:text-primary focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  />
                 </div>
               </div>
             </div>
@@ -3012,11 +2987,7 @@ export const Ats: React.FC<{
                       "Provide a brief description of the project, its purpose, and key technologies used."
                     }
                     onChange={(e) =>
-                      handleInputChange(
-                        item?.id,
-                        "description",
-                        e.target.value
-                      )
+                      handleInputChange(item?.id, "description", e.target.value)
                     }
                     onBlur={() => setEditingItemId(null)}
                     autoFocus
@@ -3496,8 +3467,7 @@ export const AtsEducation: React.FC<{
                 </div>
 
                 <div className="py-2">
-                  {hoveredItemId === item?.id &&
-                  editingInfoId === item?.id ? (
+                  {hoveredItemId === item?.id && editingInfoId === item?.id ? (
                     <div>
                       <textarea
                         className={`border-none bg-white focus:bg-zinc-100 focus:ring-0 focus:outline-none px-3 font-medium text-black text-base placeholder:text-black w-full`}

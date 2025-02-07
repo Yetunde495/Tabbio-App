@@ -54,20 +54,7 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
   };
 
   const [sampleData, _setSampleData] = useState({
-    cover_letter: `Dear [Employer's Name],
-
-    I am excited to apply for the Human Resources position at [Company Name]. With [X years] of experience in HR management, including recruitment, employee relations, and performance management, I am confident in my ability to contribute effectively to your team.
-
-    In my previous role at [Your Current/Previous Company], I streamlined the onboarding process, reducing turnover by 20% and improving employee satisfaction. I am particularly drawn to [Company Name] because of your commitment to diversity and inclusion, which aligns with my passion for creating a positive work environment.
-
-    I look forward to the opportunity to discuss how my skills and experiences can support your HR goals.
-    Thank you for considering my application.
-    
-    Best regards,  
-    Ahmed Mohammad AlDhraif AlShamsi
-    
-    
-        `,
+    cover_letter: "# Dear Hiring Team at Interswitch Group,\n\nI am writing to express my keen interest in the Senior Back End Software Engineer position at your esteemed Innovation Hub, as advertised. With a solid foundation in computer science from the University of California, Los Angeles (UCLA), and over five years of professional experience in software development, I am excited about the opportunity to contribute to Interswitch Group's mission of pioneering cutting-edge technological solutions.\n\nThroughout my career, I have demonstrated a strong aptitude for developing scalable, secure, and high-performing backend systems. My proficiency spans a wide range of technologies, including advanced expertise in JavaScript, and substantial experience with Node.js, which aligns with your requirement for a back-end software engineer skilled in languages such as Java, Python, or Node.js. Furthermore, my hands-on experience with both relational (MySQL, PostgreSQL) and NoSQL databases (MongoDB), as well as cloud computing platforms like AWS, positions me as a valuable asset to your team.\n\nAt TechSoft Inc., where I have honed my skills as a Frontend Developer, I led a project to significantly improve site performance by 25% through code optimization and modern web practices. This role enabled me to collaborate closely with backend teams to ensure seamless integration and optimal performance of the entire stack. My transition from front-end to back-end development was driven by a passion for understanding and improving the full spectrum of web technologies, leading me to pursue and successfully complete certifications such as the Certified React Developer from Meta and a specialization in JavaScript Algorithms and Data Structures from freeCodeCamp.\n\nI am particularly drawn to Interswitch Group's commitment to innovation and excellence in the tech industry. Your focus on developing RESTful APIs, microservices, and leading-edge solutions resonates with my career aspirations and my drive to solve complex problems with innovative solutions. I am eager to bring my background in software architecture design, security, and cloud-based solutions to your team, contributing to projects that enhance user experiences and drive business success.\n\nMoreover, I am committed to ongoing professional development and enthusiastic about the opportunity to mentor and coach other team members, sharing knowledge and fostering a collaborative and innovative engineering culture.\n\nI am keen to bring my technical skills, leadership capabilities, and passion for technology to the Interswitch Group. I look forward to the possibility of discussing how I can contribute to your team and help drive your projects to new heights of success.\n\nThank you for considering my application. I am excited about the opportunity to further discuss how I can contribute to the Interswitch Group.\n\nSincerely,\n\nJohn Doe\n(123) 456-7890\njohn.doe@email.com"
   });
 
   const handleDownload = async (component: any) => {
