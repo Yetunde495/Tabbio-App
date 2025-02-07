@@ -107,7 +107,7 @@ export const BasicDetails: React.FC<{
   };
   return (
     <div>
-      <div className="flex md:flex-row flex-col gap-x-6 items-center gap-y-2 mb-8">
+      <div className="flex gap-x-2 md:gap-x-6 items-center gap-y-2 mb-8">
         <div>
           <ProfilePicture
             name={profileData?.name}
@@ -367,32 +367,12 @@ export const BasicDetails: React.FC<{
             <div className="mb-5">
               <Alert variant="info">
                 <p>
-                  Any changes to your name and role will automatically update on
+                  Any changes to your role will automatically update on
                   your Downloadable CV
                 </p>
               </Alert>
             </div>
-            <div className="mb-6">
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Name
-              </label>
-              <input
-                type="text"
-                id="role"
-                value={basicDetails?.name}
-                onChange={(e) =>
-                  setBasicDetails((data: any) => ({
-                    ...data,
-                    name: e.target.value,
-                  }))
-                }
-                placeholder="Enter your name"
-                className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              />
-            </div>
+            
             <div className="mb-6">
               <label
                 htmlFor="role"
@@ -427,7 +407,6 @@ export const BasicDetails: React.FC<{
             <button
               onClick={() => {
                 handleUpdateProfile({
-                  name: basicDetails?.name,
                   role: basicDetails?.role,
                 });
               }}

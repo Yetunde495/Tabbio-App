@@ -18,7 +18,6 @@ import { PiSlidersHorizontalBold } from "react-icons/pi";
 import { Select4 } from "../../components/form/Select";
 import { Sketch } from "@uiw/react-color";
 import { BsDownload, BsEye } from "react-icons/bs";
-import { useNavigate } from "react-router-dom";
 import { LuExternalLink, LuInfo } from "react-icons/lu";
 import { TbLoader3, TbWorld } from "react-icons/tb";
 import Modal from "../../components/modal";
@@ -51,13 +50,20 @@ import {
   RelevantCourses,
 } from "../PageComponents/ATSApplicantComponents";
 import { toast } from "react-toastify";
-import { createResume, getProfileResume } from "../../services/resumeServices";
+import {
+  createResume,
+  getProfileResume,
+  updateResume,
+} from "../../services/resumeServices";
+import { generateResumeTitle } from "../../lib/utils/getUserInitials";
+import { AiOutlineSave } from "react-icons/ai";
+import { GrDocumentUpdate } from "react-icons/gr";
 
 const primaryColors = ["#0077B5", "#CC0074", "#FF7D00", "#00C196", "#000000"];
 
 const CreateLiveResume: React.FC = () => {
   const { user } = useApp();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [value, setValue] = useState("");
   const [active, setActive] = useState<string | null>(null);
   const [profileLoading, setProfileLoading] = useState(false);
@@ -71,7 +77,7 @@ const CreateLiveResume: React.FC = () => {
   const [showDrawer, setShowDrawer] = useState(false);
   const [resultModal, setResultModal] = useState(false);
   const [kit, _setKit] = useState(false);
-  const [companyName, setCompanyName] = useState("")
+  const [companyName, setCompanyName] = useState("");
   const [templateModal, setTemplateModal] = useState(false);
   const [scoreModal, setScoreModal] = useState(false);
   const [sectionCount, setSectionCount] = useState(0); // To track the number of sections added
@@ -183,7 +189,6 @@ const CreateLiveResume: React.FC = () => {
       const resp = await createResume({
         ...resumeData,
         config: config,
-        resumeName: "Resume 1",
       });
       setResumeData(resp?.data?.resume);
       setConfig(resp?.data?.resume?.config);
@@ -200,11 +205,34 @@ const CreateLiveResume: React.FC = () => {
       toast.error(err?.message || "Request Failed! Please try again");
     }
   };
+
+  const handleUpdateResume = async () => {
+    const toastId = toast.loading("Updating your Resume...");
+
+    try {
+      const resp = await updateResume(resumeData?._id, {
+        ...resumeData,
+        config: config,
+      });
+      setResumeData(resp?.data?.resume);
+      setConfig(resp?.data?.resume?.config);
+      toast.update(toastId, {
+        render: "Your resume has been successfully updated",
+        type: "success",
+        isLoading: false,
+        closeButton: true,
+        autoClose: 3000,
+      });
+    } catch (err: any) {
+      toast.dismiss(toastId);
+      toast.error(err?.message || "Request Failed! Please try again");
+    }
+  };
   return (
     <DefaultLayout>
       <section className="w-full">
         <div className="bg-zinc-50/90 lg:px-9 md:px-6 px-2 py-3 mb-6 mt-3 w-full">
-          <div className="flex max-sm:flex-col gap-3 gap-y-1.5 sm:items-center relative w-full z-99">
+          <div className="flex max-xl:flex-col gap-3 gap-y-1.5  relative w-full z-99">
             <Menu setActive={setActive}>
               <MenuItem
                 setActive={() => setTemplateModal(true)}
@@ -636,11 +664,15 @@ const CreateLiveResume: React.FC = () => {
                   </div>
                 </div>
               </MenuItem>
-
-              <TabbioScore onClick={() => setScoreModal(true)} score={50} />
+              <div className="max-md:hidden block">
+                <TabbioScore onClick={() => setScoreModal(true)} score={resumeData?.tabbioScore || 0} />
+              </div>
             </Menu>
 
-            <div className="sm:ml-auto flex items-center gap-2">
+            <div className="xl:ml-auto flex items-center gap-2">
+              <div className="hidden max-md:block">
+                <TabbioScore onClick={() => setScoreModal(true)} score={resumeData?.tabbioScore || 0} />
+              </div>
               <button className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center text-primary gap-1 hover:scale-x-105 ">
                 <BsDownload /> <span className="">Download</span>
               </button>
@@ -665,62 +697,74 @@ const CreateLiveResume: React.FC = () => {
         </div>
 
         <div className="px-2 py-4 md:pl-8 md:pr-2">
-          <div className="lg:w-[90%] w-full flex justify-between gap-6 mb-3 items-end">
-            {resumeData?._id ? (
-              <button
-                onClick={() => setResultModal(true)}
-                className="text-center hover:scale-105 duration-150 font-medium flex items-center gap-1 text-zinc-600"
-              >
-                <span>
-                  <BsEye />
-                </span>{" "}
-                Preview {resumeData?.resumeName}
-              </button>
-            ) : (
-              <button
-                onClick={() => {
-                  handleCreateResume();
-                }}
-                className="text-center hover:scale-105 duration-150 font-medium flex items-center gap-1 text-zinc-600"
-              >
-                <span>
-                  <BsEye />
-                </span>{" "}
-                Save and Preview
-              </button>
-            )}
-            <div className="flex 2xl:hidden gap-5 items-end">
-              <button
-                onClick={() => {
-                  setShowDrawer(true);
-                }}
-                className="text-center group font-medium 2xl:hidden flex items-center gap-1 text-zinc-600"
-              >
-                <span className="group-hover:scale-105 duration-150"></span>
-                Tailor Resume{" "}
-                <span className="mt-1">
-                  <Popover
-                    icon={<LuInfo size={18} className="" />}
-                    title="Job Hub"
-                    position="bottom"
-                    onClick={() => {}}
-                  >
-                    Lorem ipsum dolor sit amet but waiting till the end of time
-                  </Popover>
-                </span>
-              </button>
-              <button
-                onClick={() => {
-                  navigate(-1);
-                }}
-                className="px-6 py-2 hidden bg-primary hover:opacity-90 text-white font-medium rounded-lg"
-              >
-                Save Changes
-              </button>
-            </div>
-          </div>
           <div className="w-full flex 2xl:flex-row flex-col gap-5 overflow-x-auto">
             <div className="w-full 2xl:max-w-[75%]  lg:w-[90%] min-w-[800px]">
+              <div className="w-full flex justify-between gap-6 mb-3 items-end">
+                {resumeData?.resumeName && (
+                  <p className="font-medium text-zinc-600">
+                    <span className="font-semibold font-sans">
+                      ({resumeData?.resumeName})
+                    </span>
+                  </p>
+                )}
+
+                <div className="flex gap-3 items-center">
+                  {resumeData?._id ? (
+                    <button
+                      onClick={() => {
+                        handleUpdateResume();
+                        // console.log(resumeData)
+                      }}
+                      className="text-center px-3 py-1.5 rounded-md duration-150 bg-primary/15 hover:scale-105 text-primary font-medium flex items-center gap-1"
+                    >
+                      <GrDocumentUpdate />
+                      Update CV
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        handleCreateResume();
+                      }}
+                      className="px-3 py-1.5 bg-primary/15 hover:scale-105 text-primary flex gap-1 items-center hover:opacity-90 font-medium rounded-md"
+                    >
+                      <AiOutlineSave /> Save CV
+                    </button>
+                  )}
+                  {resumeData?._id && (
+                    <button
+                      onClick={() => {
+                        setResultModal(true);
+                      }}
+                      className="text-center hover:text-primary font-medium flex items-center gap-1 text-zinc-600"
+                    >
+                      <span>
+                        <BsEye />
+                      </span>{" "}
+                      Preview{" "}
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => {
+                      setShowDrawer(true);
+                    }}
+                    className="text-center group hover:scale-105 font-medium 2xl:hidden flex items-center gap-1 text-zinc-600"
+                  >
+                    Tailor Resume{" "}
+                    <span className="mt-1">
+                      <Popover
+                        icon={<LuInfo size={18} className="" />}
+                        title="Job Hub"
+                        position="bottom"
+                        onClick={() => {}}
+                      >
+                        Lorem ipsum dolor sit amet but waiting till the end of
+                        time
+                      </Popover>
+                    </span>
+                  </button>
+                </div>
+              </div>
               {resumeData?.template === "entry" && (
                 <div
                   style={{ fontFamily: resumeData?.style?.fontFamily || "" }}
@@ -741,24 +785,44 @@ const CreateLiveResume: React.FC = () => {
                       style={{ color: resumeData?.style?.primaryColor }}
                       placeholder="Your Name"
                       value={resumeData?.name}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setResumeData((r: any) => ({
                           ...r,
                           name: e.target.value,
-                        }))
-                      }
+                        }));
+                        if (resumeData?.role && e.target.value !== "") {
+                          const title = generateResumeTitle(
+                            e.target.value,
+                            resumeData?.role
+                          );
+                          setResumeData((r: any) => ({
+                            ...r,
+                            resumeName: title,
+                          }));
+                        }
+                      }}
                     />
                     {config.role && (
                       <input
                         className={`border-none text-lg bg-white focus:outline-none text-center text-black placeholder:text-black focus:bg-zinc-100 px-4 font-semibold`}
                         placeholder="Professional Title"
                         value={resumeData?.role}
-                        onChange={(e) =>
+                        onChange={(e) => {
                           setResumeData((r: any) => ({
                             ...r,
                             role: e.target.value,
-                          }))
-                        }
+                          }));
+                          if (resumeData?.name && e.target.value !== "") {
+                            const title = generateResumeTitle(
+                              resumeData?.name,
+                              e.target.value
+                            );
+                            setResumeData((r: any) => ({
+                              ...r,
+                              resumeName: title,
+                            }));
+                          }
+                        }}
                       />
                     )}
                     <ContactInfo
@@ -925,20 +989,34 @@ const CreateLiveResume: React.FC = () => {
                       }}
                       className="w-full flex divide-x-2 border-b-2 gap-3 items-center mt-15"
                     >
-                      {editingName ? (
+                      {editingName || !resumeData?.name ? (
                         <input
                           className={`border-none bg-white focus:bg-zinc-100 focus:outline-none px-3 font-medium text-[40px] dynamic-input`}
                           style={{ color: resumeData?.style?.primaryColor }}
                           placeholder="Your Name"
                           value={resumeData?.name}
                           autoFocus
-                          onBlur={() => setEditingName(false)}
-                          onChange={(e) =>
+                          onBlur={() => {
+                            if (resumeData?.name) {
+                              setEditingName(false);
+                            }
+                          }}
+                          onChange={(e) => {
                             setResumeData((r: any) => ({
                               ...r,
                               name: e.target.value,
-                            }))
-                          }
+                            }));
+                            if (resumeData?.role && e.target.value !== "") {
+                              const title = generateResumeTitle(
+                                e.target.value,
+                                resumeData?.role
+                              );
+                              setResumeData((r: any) => ({
+                                ...r,
+                                resumeName: title,
+                              }));
+                            }
+                          }}
                         />
                       ) : (
                         <span
@@ -955,14 +1033,28 @@ const CreateLiveResume: React.FC = () => {
                               className={`border-none text-lg bg-white focus:outline-none text-black mr-2 uppercase placeholder:text-black focus:bg-zinc-100 px-4 font-medium`}
                               placeholder="YOUR ROLE"
                               autoFocus
-                              onBlur={() => setEditingRole(false)}
+                              onBlur={() => {
+                                if (resumeData?.role) {
+                                  setEditingRole(false);
+                                }
+                              }}
                               value={resumeData?.role}
-                              onChange={(e) =>
+                              onChange={(e) => {
                                 setResumeData((r: any) => ({
                                   ...r,
                                   role: e.target.value,
-                                }))
-                              }
+                                }));
+                                if (resumeData?.name && e.target.value !== "") {
+                                  const title = generateResumeTitle(
+                                    resumeData?.name,
+                                    e.target.value
+                                  );
+                                  setResumeData((r: any) => ({
+                                    ...r,
+                                    resumeName: title,
+                                  }));
+                                }
+                              }}
                             />
                           ) : (
                             <span
@@ -1092,22 +1184,22 @@ const CreateLiveResume: React.FC = () => {
                   Tailor Resume
                 </div>
                 <div className="p-3 flex flex-col space-y-3">
-                <div className="mb-4">
-                  <label
-                    htmlFor="major_skill"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Company Name
-                  </label>
-                  <input
-                    type="text"
-                    id="companyName"
-                    value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
-                    placeholder="Enter name of company"
-                    className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  />
-                </div>
+                  <div className="mb-4">
+                    <label
+                      htmlFor="major_skill"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Company Name
+                    </label>
+                    <input
+                      type="text"
+                      id="companyName"
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
+                      placeholder="Enter name of company"
+                      className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    />
+                  </div>
                   <div>
                     <TextArea
                       placeholder="Include the job title, and full job description..."
@@ -1202,6 +1294,8 @@ const CreateLiveResume: React.FC = () => {
 
                 <div
                   onClick={() => {
+                    setConfig(mockEmptyResume?.config);
+                    setResumeData(mockEmptyResume);
                     setUploadOption(false);
                   }}
                   className="px-4 py-5 bg-white border border-[#DBEAFE] cursor-pointer rounded-xl"
@@ -1227,7 +1321,10 @@ const CreateLiveResume: React.FC = () => {
                 <div className="my-12">
                   <ResumeFileUpload
                     onSuccess={(response: any) => {
-                      setResumeData(response?.data?.profile);
+                      setResumeData({
+                        ...response?.data?.profile,
+                        user: user?._id,
+                      });
                       setConfig(response?.data?.profile?.config);
                       setUploadOption(false);
                     }}

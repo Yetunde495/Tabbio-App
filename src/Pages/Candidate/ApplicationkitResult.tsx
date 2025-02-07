@@ -110,15 +110,15 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
         {mainView && (
           <div className="relative h-screen">
             <div className="w-full bg-primary flex items-center md:px-6 py-6 px-4 mb-8">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 md:gap-2">
                 <span className="bg-white/25 rounded-lg text-yellow-200 w-9 h-9 flex items-center justify-center">
                   <LuCrown />
                 </span>
                 <div>
-                  <h3 className="font-semibold text-white text-lg mb-0">
+                  <h3 className="font-semibold text-white max-sm:text-base text-lg mb-0">
                     Your Application Kit is Ready!
                   </h3>
-                  <p className="text-zinc-200">
+                  <p className="text-zinc-200 max-sm:text-sm">
                     Every component has been optimized for Software Engineer at
                     Example Corp
                   </p>
@@ -127,7 +127,7 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
 
               <button
                 onClick={onHide}
-                className="absolute top-[12px] md:top-[20px] text-white right-2 bg-white/25 hover:bg-white/30 rounded-full p-[4px]"
+                className="absolute top-[12px] max-sm:mb-1 md:top-[20px] text-white right-2 bg-white/25 hover:bg-white/30 rounded-full p-[4px]"
               >
                 <RxCross2 size={18} className="" />
               </button>
@@ -141,7 +141,6 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
                   </h2>
                   <div className="grid md:grid-cols-2 grid-cols-1 gap-4">
                     <ContentAccordion
-                      defaultOpen
                       title={
                         <div className="flex gap-2 items-center">
                           <span>

@@ -31,7 +31,18 @@ export const getProfileResume = async (id: string | undefined) => {
     return response?.data;
   };
 
-  
+  export const getResumeDataByName = async (resumeName: string | undefined) => {
+    const response: any = await axios
+      .get(`/resumes/resume_name/${resumeName}`)
+      .catch((e) => ({ error: e }));
+    //check error
+    if (response && response?.error) {
+      const err = response?.error?.response;
+      const msg = err?.data?.message || err?.status;
+      throw new Error(msg || response?.error?.message);
+    }
+    return response?.data;
+  };
   export const generateExperienceData = async (data: any) => {
     const response: any = await axios
       .post(`/profile/experience_assistant`, data)
@@ -99,6 +110,19 @@ export const getProfileResume = async (id: string | undefined) => {
   export const analyzeResume = async (data: any, id?: string | undefined) => {
     const response: any = await axios
       .post(`/resumes/analyze_resume?resumeId=${id}`, data)
+      .catch((e) => ({ error: e }));
+    //check error
+    if (response && response?.error) {
+      const err = response?.error?.response;
+      const msg = err?.data?.message || err?.status;
+      throw new Error(msg || response?.error?.message);
+    }
+    return response?.data;
+  };
+
+  export const fixSingleResumeIssue = async (data: any) => {
+    const response: any = await axios
+      .post(`/resumes/fix_issues`, data)
       .catch((e) => ({ error: e }));
     //check error
     if (response && response?.error) {

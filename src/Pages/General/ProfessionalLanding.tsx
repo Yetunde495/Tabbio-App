@@ -33,8 +33,7 @@ const ProfessionalLandingpage: React.FC = () => {
   const { setParsedResume } = useApp();
   const [colorMode, setColorMode] = useColorMode();
   const [hasEntered, setHasEntered] = useState(false);
-    const { t } = useTranslation();
-  
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!hasEntered) {
@@ -55,7 +54,7 @@ const ProfessionalLandingpage: React.FC = () => {
         className="p-8 max-sm:px-4 md:py-22 text grid grid-cols-1 gap-12 xl:max-w-7xl 2xl:max-w-full 2xl:px-[12rem] w-full mx-auto"
       >
         <div className="text-center text-lg text-zinc-500">
-          <p className="text-[#DC2626] bg-red-100/50 inline-flex rounded-full items-center px-4 py-2 mb-6 text-sm gap-2">
+          <p className="text-[#DC2626] bg-red-100/50 inline-flex rounded-full max-sm:text-start items-center px-4 py-2 mb-6 text-sm gap-2">
             <span>
               <MdOutlineShield />
             </span>
@@ -65,13 +64,15 @@ const ProfessionalLandingpage: React.FC = () => {
           <h1 className="text-center lg:text-6xl sm:text-5xl font-bold text-4xl text-slate-900 tracking-tight">
             Create your <br />
             <span className="py-2 gradient-text text-transparent inline-block">
-            Smart CV in seconds
+              Smart CV in seconds
             </span>
           </h1>
-          <p className="mb-2 text-black">Get your custom tabbio.com/YourName URL today for free.</p>
-          <p>
-          Smart, Dynamic, Recruiter tools equipped CV <br />
-          Designed to help you stand out and land interviews faster
+          <p className="mb-2 text-black">
+            Get your custom tabbio.com/YourName URL today for free.
+          </p>
+          <p className="max-sm:text-sm">
+            Smart, Dynamic, Recruiter tools equipped CV <br />
+            Designed to help you stand out and land interviews faster
           </p>
         </div>
 
@@ -93,7 +94,7 @@ const ProfessionalLandingpage: React.FC = () => {
                   },
                 });
               }
-              navigate("/live-resume");
+              navigate("/onboard-user/live-resume");
             }}
           />
         </div>
@@ -109,11 +110,15 @@ const ProfessionalLandingpage: React.FC = () => {
             <span>Get Started</span>
             <FaArrowRightLong className="group-hover:translate-x-1.5" />
           </Button>
-          <button className="hover:scale-105 bg-gradient-to-b from-[#3B82F60D] to-[#A855F70D] text-black py-3 px-8 rounded-md">Watch Demo</button>
+          <button className="hover:scale-105 bg-gradient-to-b from-[#3B82F60D] to-[#A855F70D] text-black py-3 px-8 rounded-md">
+            Watch Demo
+          </button>
         </div>
       </motion.section>
       <div className="w-full  flex flex-col justify-center items-center  py-4 px-6">
-        <h5 className="text-center text-[#6B7280] mb-1.5">TRUSTED BY TEAMS FROM WORLD'S LEADING COMPANIES</h5>
+        <h5 className="text-center text-[#6B7280] mb-1.5">
+          TRUSTED BY TEAMS FROM WORLD'S LEADING COMPANIES
+        </h5>
         <InfiniteMovingIcons
           items={brandIcons}
           direction="right"
@@ -156,7 +161,8 @@ const ProfessionalLandingpage: React.FC = () => {
               <div className="w-full">
                 <div className="mb-8">
                   <h1 className="font-bold text-center lg:text-3xl text-2xl">
-                  The Only CV You Need: Smart, Live, Dynamic.<br />{" "}
+                    The Only CV You Need: Smart, Live, Dynamic.
+                    <br />{" "}
                     <span className="gradient-text text-transparent inline-block">
                       Free Forever
                     </span>
@@ -236,7 +242,6 @@ const ProfessionalLandingpage: React.FC = () => {
               <motion.div
                 className="h-30 w-full"
                 initial={{ className: "hidden" }}
-                
                 whileInView={{
                   className: " block",
                 }}
@@ -244,9 +249,10 @@ const ProfessionalLandingpage: React.FC = () => {
               <div className="w-full">
                 <div className="mb-8 md:mb-14">
                   <h1 className="font-bold text-center text-white lg:text-3xl text-2xl">
-                  Premium Tools to Tailor, <br /> Optimize, and Supercharge, {" "}<br />
+                    Premium Tools to Tailor, <br /> Optimize, and Supercharge,{" "}
+                    <br />
                     <span className="gradient-text text-transparent  inline-block">
-                    Your Job Search.
+                      Your Job Search.
                     </span>
                   </h1>
                 </div>
@@ -259,7 +265,8 @@ const ProfessionalLandingpage: React.FC = () => {
                       Unlimited AI Tools
                     </h1>
                     <p className="text-[#9CA3AF]">
-                    Score and optimize your CV, gain detailed recommendations, and unlock exclusive job application perks.
+                      Score and optimize your CV, gain detailed recommendations,
+                      and unlock exclusive job application perks.
                     </p>
                   </div>
                   <div className="text-center bg-[#1e293b] hover:bg-[#2e405c] h-full  rounded-md  w-full px-4 py-8 space-y-3 flex-col flex justify-center items-center">
@@ -267,10 +274,11 @@ const ProfessionalLandingpage: React.FC = () => {
                       <BsBrowserChrome size={24} />
                     </span>
                     <h1 className="text-white font-semibold text-lg">
-                    One-Click Application Kit
+                      One-Click Application Kit
                     </h1>
                     <p className="text-[#9CA3AF]">
-                    Instantly tailor your CV, cover letter, company insights, and interview tips for any job description
+                      Instantly tailor your CV, cover letter, company insights,
+                      and interview tips for any job description
                     </p>
                   </div>
                   <div className="text-center bg-[#1e293b] hover:bg-[#2e405c] h-full  rounded-md  w-full px-4 py-8 space-y-3 flex-col flex justify-center items-center">
@@ -281,7 +289,8 @@ const ProfessionalLandingpage: React.FC = () => {
                       Advanced Analytics
                     </h1>
                     <p className="text-[#9CA3AF]">
-                    Dive deep into your CV’s performance with recruiter behavior insights, view tracking, and engagement analysis.
+                      Dive deep into your CV’s performance with recruiter
+                      behavior insights, view tracking, and engagement analysis.
                     </p>
                   </div>
                   <div className="text-center bg-[#1e293b] hover:bg-[#2e405c] h-full  rounded-md  w-full px-4 py-8 space-y-3 flex-col flex justify-center items-center">
@@ -289,16 +298,20 @@ const ProfessionalLandingpage: React.FC = () => {
                       <FaLock size={24} />
                     </span>
                     <h1 className="text-white font-semibold text-lg">
-                    Browser Extension
+                      Browser Extension
                     </h1>
                     <p className="text-[#9CA3AF]">
-                    Quickly tailor each application and apply directly to jobs from any job board
+                      Quickly tailor each application and apply directly to jobs
+                      from any job board
                     </p>
                   </div>
                 </div>
 
                 <div className="w-full flex justify-center items-center my-12">
-                  <button className="text-white rounded-md bg-gradient-to-br hover:scale-105 from-[#3B82F61A] to-[#A855F71A] flex items-center gap-2 px-10 py-3.5" onClick={() => {}}>
+                  <button
+                    className="text-white rounded-md bg-gradient-to-br hover:scale-105 from-[#3B82F61A] to-[#A855F71A] flex items-center gap-2 px-10 py-3.5"
+                    onClick={() => {}}
+                  >
                     Upgrade to Premium{" "}
                     <span>
                       <IoFlashOutline size={18} />

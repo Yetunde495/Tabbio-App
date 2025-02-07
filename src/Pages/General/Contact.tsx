@@ -51,8 +51,8 @@ const ContactForm: React.FC<{ show: boolean; setShow: () => void }> = ({
   return (
     <div>
       <Modal show={show} onHide={setShow} size="" title="Contact Support">
-        <section className="lg:max-h-[500px] max-h-[400px] pr-2 2xl:max-h-full overflow-y-auto custom-scrollbar">
-          <p className="text-center mb-3">
+        <section className="pr-2 2xl:max-h-full overflow-y-auto no-scrollbar">
+          <p className="sm:text-center mb-3">
             Fill the form below to submit an enquiry or complaint
           </p>
           <div className="pl-6">
@@ -60,7 +60,7 @@ const ContactForm: React.FC<{ show: boolean; setShow: () => void }> = ({
               <form onSubmit={methods.handleSubmit(onSubmit)} className="">
                 <div>
                   <div>
-                    <div className="grid gap-7">
+                    <div className="grid gap-7 h-[60vh] overflow-y-auto no-scrollbar">
                       <AutoInput
                         label="Full Name"
                         name="full_name"

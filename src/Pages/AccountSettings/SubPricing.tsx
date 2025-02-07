@@ -2,7 +2,6 @@ import { Icons } from "../../components/icons";
 import logo1 from "../../assets/svg/logo-1.svg";
 import { cn } from "../../lib/utils/cn";
 import { Fragment, useState } from "react";
-import { Radio, RadioGroup } from "@headlessui/react";
 import fireEmoji from "../../assets/fireEmoji.png";
 
 interface Feature {
@@ -191,21 +190,22 @@ const SubPricing = () => {
             <div className="mx-auto max-w-7xl px-6 lg:px-8">
               <div className="mt-16 flex justify-center ">
                 <fieldset aria-label="Payment frequency" className="w-[50%]">
-                  <RadioGroup
-                    value={frequency}
-                    onChange={setFrequency}
-                    className="grid grid-cols-2 gap-x-1 rounded-md p-1 text-center text-xs font-semibold leading-5 ring-1 ring-inset ring-gray-200"
-                  >
+                  <legend className="sr-only">Payment frequency</legend>
+                  <div className="grid grid-cols-2 gap-x-1 rounded-md p-1 text-center text-xs font-semibold leading-5 ring-1 ring-inset ring-gray-200">
                     {frequencies.map((option) => (
-                      <Radio
-                        key={option.value}
-                        value={option}
-                        className="cursor-pointer rounded-lg px-2.5 py-1 text-gray-500 data-[checked]:bg-primary data-[checked]:text-white"
-                      >
+                      <label key={option.value} className="cursor-pointer rounded-lg px-2.5 py-1 text-gray-500 data-[checked]:bg-primary data-[checked]:text-white">
+                        <input
+                          type="radio"
+                          name="frequency"
+                          value={option.value}
+                          checked={frequency.value === option.value}
+                          onChange={() => setFrequency(option)}
+                          className="sr-only"
+                        />
                         {option.label}
-                      </Radio>
+                      </label>
                     ))}
-                  </RadioGroup>
+                  </div>
                 </fieldset>
               </div>
               <div className="isolate mx-auto mt-18 grid max-w-md grid-cols-1 gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">

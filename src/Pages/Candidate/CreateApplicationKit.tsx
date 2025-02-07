@@ -128,7 +128,7 @@ const CreateApplicationKit: React.FC<Props> = ({ show, onHide }) => {
   return ReactDOM.createPortal(
     <div className="w-screen h-screen z-9999 bg-black bg-opacity-50 fixed top-0 flex md:items-center justify-center text-[#444444] overflow-x-auto">
       <div
-        className={` bg-white py-5  flex flex-col md:min-w-[55%] md:max-w-[55%] min-w-full   md:rounded-2xl justify-center md:mx-6 md:my-auto mx-0`}
+        className={` bg-white md:py-5 py-0.5   flex flex-col md:min-w-[55%] md:max-w-[55%] min-w-full   md:rounded-2xl justify-center md:mx-6 md:my-auto mx-0`}
         ref={modalRef}
       >
         <div className="flex flex-col justify-center relative">

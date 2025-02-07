@@ -48,7 +48,6 @@ import Modal from "../../components/modal";
 import useOutsideClick from "../../hooks/useOutsideClick";
 import resumeImg1 from "../../assets/images/entry-resume-sample.png";
 import resumeImg2 from "../../assets/images/pro-resume-sample.png";
-import { ProgressBar2 } from "../../components/ProgressBar";
 import ResumeAiScore from "./ResumeAiScore";
 import { PageLoader } from "../../components/Loader";
 import { getProfileResume, updateResume } from "../../services/resumeServices";
@@ -66,10 +65,10 @@ const EditSmartResume: React.FC = () => {
   const [newCvModal, setNewCvModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [active, setActive] = useState<string | null>(null);
+  const [nameModal, setNameModal] = useState(false);
   const [resumeData, setResumeData] = useState<any>(null);
   const [showPalette, setShowPalette] = useState(false);
   const paletteRef = useOutsideClick(() => setShowPalette(false));
-  const [editingName, setEditingName] = useState(false);
   const [editingRole, setEditingRole] = useState(false);
   const [templateModal, setTemplateModal] = useState(false);
   const [scoreModal, setScoreModal] = useState(false);
@@ -78,7 +77,7 @@ const EditSmartResume: React.FC = () => {
   const [customSections, setCustomSections] = useState<any[]>([]);
   const [sectionType, setSectionType] = useState("");
 
-  const [updateLoading, setUpdateLoading] = useState(false)
+  const [updateLoading, setUpdateLoading] = useState(false);
   // Function to add a new section to resumeData
   const addCustomSection = (type: string) => {
     const newSection = {
@@ -164,7 +163,7 @@ const EditSmartResume: React.FC = () => {
 
   const handleUpdateResume = async () => {
     const toastId = toast.loading("Saving your changes...");
-    setUpdateLoading(true)
+    setUpdateLoading(true);
     try {
       const resp = await updateResume(resumeData?._id, {
         ...resumeData,
@@ -184,7 +183,7 @@ const EditSmartResume: React.FC = () => {
       toast.dismiss(toastId);
       toast.error(err?.message || "Request Failed");
     } finally {
-      setUpdateLoading(false)
+      setUpdateLoading(false);
     }
   };
   useMemo(async () => {
@@ -643,18 +642,18 @@ const EditSmartResume: React.FC = () => {
                   </div>
                 </MenuItem>
 
-                <TabbioScore onClick={() => setScoreModal(true)} score={50} />
+                <TabbioScore
+                  onClick={() => setScoreModal(true)}
+                  score={resumeData?.tabbioScore || 0}
+                />
               </Menu>
 
               <div className="lg:ml-auto flex items-center gap-2">
-                <div
-                  onClick={() => setScoreModal(true)}
-                  className="flex gap-1 cursor-pointer sm:hidden text-sm max-sm:text-[10px] items-center"
-                >
-                  <span>
-                    <ProgressBar2 percent={50} />
-                  </span>
-                  <span>View my Tabbio Score</span>
+                <div className="hidden">
+                  <TabbioScore
+                    onClick={() => setScoreModal(true)}
+                    score={resumeData?.tabbioScore || 0}
+                  />
                 </div>
                 <button className="hidden items-center gap-2 hover:scale-105 duration-150 text-zinc-700">
                   <TbWorld />
@@ -685,13 +684,12 @@ const EditSmartResume: React.FC = () => {
                   onClick={() => {
                     // console.log(resumeData);
                     // console.log(customSections);
-                    handleUpdateResume()
+                    handleUpdateResume();
                   }}
                   disabled={updateLoading}
                   className="px-4 py-2 md:px-5 flex rounded-md group text-lg disabled:hover:scale-100 max-sm:text-sm disabled:bg-opacity-60 items-center gap-3 bg-gradient-to-b hover:bg-gradient-to-t hover:scale-105 duration-300 ease-in-out from-[#5272EA] to-[#394FC0] justify-center text-white border-none"
-
                 >
-                   {updateLoading ? 'Loading...' : 'Save Changes'}
+                  {updateLoading ? "Loading..." : "Save Changes"}
                 </button>
               </div>
             </div>
@@ -713,18 +711,15 @@ const EditSmartResume: React.FC = () => {
                       Console
                     </button>
                     <div className="flex flex-col w-full justify-center items-center  mb-8 border-b pb-2 border-stroke">
-                      <input
-                        className={`border-none bg-white focus:bg-zinc-100 focus:outline-none text-center  px-3 font-medium text-[40px] dynamic-input`}
+                      <h1
+                        className={`text-center font-medium text-[40px]`}
                         style={{ color: resumeData?.style?.primaryColor }}
-                        placeholder="Your Name"
-                        value={resumeData?.name}
-                        onChange={(e) =>
-                          setResumeData((r: any) => ({
-                            ...r,
-                            name: e.target.value,
-                          }))
-                        }
-                      />
+                        onClick={() => {
+                          setNameModal(true);
+                        }}
+                      >
+                        {resumeData?.name}
+                      </h1>
                       {config.role && (
                         <input
                           className={`border-none text-lg bg-white focus:outline-none text-center text-black placeholder:text-black focus:bg-zinc-100 px-4 font-semibold`}
@@ -902,29 +897,15 @@ const EditSmartResume: React.FC = () => {
                         }}
                         className="w-full flex divide-x-2 border-b-2 gap-3 items-center mt-15"
                       >
-                        {editingName ? (
-                          <input
-                            className={`border-none bg-white focus:bg-zinc-100 focus:outline-none px-3 font-medium text-[40px] dynamic-input`}
-                            style={{ color: resumeData?.style?.primaryColor }}
-                            placeholder="Your Name"
-                            value={resumeData?.name}
-                            autoFocus
-                            onBlur={() => setEditingName(false)}
-                            onChange={(e) =>
-                              setResumeData((r: any) => ({
-                                ...r,
-                                name: e.target.value,
-                              }))
-                            }
-                          />
-                        ) : (
-                          <span
-                            onClick={() => setEditingName(true)}
-                            className="text-[40px] cursor-text font-medium uppercase"
-                          >
-                            {resumeData?.name}
-                          </span>
-                        )}
+                        <h1
+                          onClick={() => {
+                            setNameModal(true);
+                          }}
+                          className="text-[40px] cursor-text font-medium uppercase"
+                        >
+                          {resumeData?.name}
+                        </h1>
+
                         {config.role && (
                           <>
                             {editingRole ? (
@@ -1073,12 +1054,12 @@ const EditSmartResume: React.FC = () => {
                       onClick={() => {
                         // console.log(resumeData);
                         // console.log(customSections);
-                        handleUpdateResume()
+                        handleUpdateResume();
                       }}
                       disabled={updateLoading}
                       width="w-full"
                     >
-                       {updateLoading ? 'Loading...' : 'Save Changes'}
+                      {updateLoading ? "Loading..." : "Save Changes"}
                     </Button>
                     <button
                       onClick={() => {}}
@@ -1244,6 +1225,27 @@ const EditSmartResume: React.FC = () => {
               onHide={() => setScoreModal(false)}
               resumeData={resumeData}
             />
+          )}
+          {nameModal && (
+            <Modal
+              show={nameModal}
+              onHide={() => {
+                setNameModal(false);
+              }}
+              title=""
+            >
+              <div className="flex flex-col w-full justify-center items-center">
+                <h4 className="mb-0.5 text-center text-lg text-zinc-950">
+                  Notice!!
+                </h4>
+                <h4 className="mb-4 text-center">
+                  Name on Smart CV must be the same as the name on your account
+                </h4>
+                <Button onClick={() => navigate(`/app/user-account/settings`)}>
+                  Continue to Account settings to Edit name{" "}
+                </Button>
+              </div>
+            </Modal>
           )}
         </section>
       )}

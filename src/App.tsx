@@ -93,7 +93,11 @@ function App() {
                 element={<AuthPages.ResetPasswordForm />}
               />
               <Route
-                path="/live-resume"
+                path="/onboard-user/live-resume"
+                element={<GeneralPages.OnboardUserWithResume />}
+              />
+              <Route
+                path="/live-resume/:resumeName"
                 element={<GeneralPages.LiveResume />}
               />
               <Route path="/profile/:tabbioLink" element={<GeneralPages.SmartResume />} />

@@ -5,13 +5,15 @@ import Button from "../../components/Button";
 import PhoneInput from "react-phone-number-input";
 import ProfilePicture from "../PageComponents/ProfilePhoto";
 import { toast } from "react-toastify";
-import { ChangePassword, updateUserData } from "../../services/authServices";
+import { ChangePassword, deleteUser, updateUserData } from "../../services/authServices";
 import Delete from "../../components/modal/Delete";
+import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
-  const { user, updateUser } = useApp();
+  const { user, updateUser, signOut } = useApp();
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(false);
-  const [deleteLoading, _setDeleteLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [linkedinUrl, setLinkedinUrl] = useState(user?.linkedIn?.url || "");
@@ -46,6 +48,19 @@ const Settings = () => {
     }
   };
 
+  const handleDeleteUser = async () => {
+    setDeleteLoading(true);
+    try {
+      await deleteUser(user?._id);
+      signOut()
+      toast.success("Account deleted Successful!");
+      navigate("/");
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
   const handleChangePassword = async () => {
     setPasswordLoading(true);
     try {
@@ -434,7 +449,7 @@ const Settings = () => {
       <Delete
         show={deleteModal}
         onHide={() => setDeleteModal(false)}
-        onProceed={() => {}}
+        onProceed={() => {handleDeleteUser()}}
         isLoading={deleteLoading}
         isLoadingText="Deleting Account..."
         title="Delete Account?"

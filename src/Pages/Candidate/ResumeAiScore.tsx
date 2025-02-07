@@ -4,7 +4,10 @@ import { HiOutlineCheckCircle, HiOutlineTemplate } from "react-icons/hi";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
 import { toast } from "react-toastify";
-import { analyzeResume } from "../../services/resumeServices";
+import {
+  analyzeResume,
+  fixSingleResumeIssue,
+} from "../../services/resumeServices";
 import { RiErrorWarningLine, RiRobot2Line } from "react-icons/ri";
 import { LuWand2 } from "react-icons/lu";
 import { FaRegStar } from "react-icons/fa6";
@@ -171,7 +174,12 @@ const ResumeAiScore: React.FC<Props> = ({ show, onHide, resumeData }) => {
       score: 82,
       icon: <IoDocumentTextOutline size={22} />,
     },
-    { id: "format", label: "Format", score: 91, icon: <HiOutlineTemplate size={22} /> },
+    {
+      id: "format",
+      label: "Format",
+      score: 91,
+      icon: <HiOutlineTemplate size={22} />,
+    },
     {
       id: "optimization",
       label: "Optimization",
@@ -214,6 +222,17 @@ const ResumeAiScore: React.FC<Props> = ({ show, onHide, resumeData }) => {
     }
   };
 
+  const handleFixResumeIssue = async (data: any) => {
+    try {
+      const resp = await fixSingleResumeIssue(data);
+      console.log(resp?.data?.result);
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const renderContent = () => {
     const issues = contentData?.issues;
 
@@ -228,7 +247,7 @@ const ResumeAiScore: React.FC<Props> = ({ show, onHide, resumeData }) => {
           >
             <div
               className={` mt-1.5 p-0.5 ${
-                issue?.severity === "warning" || "medium"
+                issue?.severity === "low"
                   ? "text-yellow-400 bg-yellow-400/15 rounded-lg"
                   : "text-red-500 bg-red-400/15 rounded-lg"
               }`}
@@ -242,7 +261,17 @@ const ResumeAiScore: React.FC<Props> = ({ show, onHide, resumeData }) => {
               </p>
             </div>
             <div className="ml-auto">
-              <button className="bg-primary/15 text-primary w-[120px] flex items-center gap-2 rounded-md hover:scale-105 py-1.5 px-4 font-medium">
+              <button
+                onClick={() => {
+                  console.log("clicked");
+                  handleFixResumeIssue({
+                    type: type,
+                    resumeId: resumeData?._id,
+                    issues: issue,
+                  });
+                }}
+                className="bg-primary/15 text-primary w-[120px] flex items-center gap-2 rounded-md hover:scale-105 py-1.5 px-4 font-medium"
+              >
                 <LuWand2 /> Fix Issue
               </button>
             </div>
@@ -428,7 +457,9 @@ const ResumeAiScore: React.FC<Props> = ({ show, onHide, resumeData }) => {
                       >
                         {tab.icon}
                       </span>
-                      <span className="text-base font-semibold">{tab.label}</span>
+                      <span className="text-base font-semibold">
+                        {tab.label}
+                      </span>
                       <span
                         className={`text-xl font-bold ${
                           tab?.score < 50

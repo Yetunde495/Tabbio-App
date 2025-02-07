@@ -3605,7 +3605,7 @@ export const AtsCertifications: React.FC<{
       const formattedCertifications = resumeData?.certifications?.map(
         (certification: any) => ({
           ...certification,
-          date: certification?.date ? formatMonthYear(certification?.date) : "",
+          date: certification?.date,
         })
       );
       setItems(formattedCertifications);
@@ -3831,8 +3831,8 @@ export const AtsCertifications: React.FC<{
                   <div className="ml-auto">
                     <input
                       className={`border-none text-sm text-right w-full font-medium bg-white text-black placeholder:text-black focus:outline-none focus:bg-zinc-100 px-2`}
-                      placeholder="Enter date (yyyy-mm)"
-                      value={item?.date}
+                      placeholder="Enter date (month-yyyy)"
+                      value={item?.date || ""}
                       style={{ fontSize: fontSizeSm }}
                       onChange={(e) =>
                         handleInputChange(item?.id, "date", e.target.value)
@@ -3925,8 +3925,8 @@ export const AtsTrainings: React.FC<{
         },
         {
           id: generateUniqueId(),
-          title: "TITLE",
-          platform: "NAME OF INSTITUTION",
+          degree: "TITLE",
+          institution: "NAME OF INSTITUTION",
           description: "",
           startDate: "",
           endDate: "",

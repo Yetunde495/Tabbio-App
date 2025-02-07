@@ -4,7 +4,6 @@ import paginate from "../../lib/utils/paginate";
 import Notification from "../../components/Notification";
 import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
 import { useState } from "react";
 import { TableLoader } from "../../components/Loader";
 import Table from "../../components/table";

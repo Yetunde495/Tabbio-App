@@ -88,7 +88,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
             </div>
 
             {/* Skills/Areas of Expertise */}
-            {resumeData?.config?.areasOfExpertise && (
+            {resumeData?.config?.areasOfExpertise &&  resumeData?.areasOfExpertise > 0 && (
               <div className=" border-b border-stroke pt-4 pb-6">
                 <div className="rounded-md px-2 py-3">
                   <div className="w-full flex justify-between">
@@ -125,7 +125,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
             {/* Skills/Areas of Expertise */}
 
             {/* Education */}
-            {resumeData?.config?.education && (
+            {resumeData?.config?.education &&  resumeData?.education > 0 && (
               <div className="border-b border-stroke py-6">
                 <div>
                   <h6
@@ -185,7 +185,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
             {/* Education */}
 
             {/* CERtifications */}
-            {resumeData?.config?.certifications && (
+            {resumeData?.config?.certifications && resumeData?.certifications > 0 && (
               <div className="border-b border-stroke py-6">
                 <div>
                   <h6
@@ -243,7 +243,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
             {/* CERtifications */}
 
             {/*Relevant Courses  */}
-            {resumeData?.config?.relevantCourses && (
+            {resumeData?.config?.relevantCourses && resumeData?.relevantCourses > 0 && (
               <div className="border-b border-stroke py-6">
                 <div className=" px-2 py-3">
                   <div className="w-full flex justify-between">
@@ -280,7 +280,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
             {/*Relevant Courses */}
 
             {/* Projects */}
-            {resumeData?.config?.projects && (
+            {resumeData?.config?.projects && resumeData?.projects > 0 && (
               <div className="border-b border-stroke py-6">
                 <div className="flex mb-3 gap-3  justify-between items-center">
                   <h6
@@ -345,7 +345,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
             {/* Projects */}
 
             {/* Work Experience */}
-            {resumeData?.config?.workExperience && (
+            {resumeData?.config?.workExperience && resumeData?.workExperience > 0 && (
               <div className="border-b py-9 border-stroke mb-4">
                 <div className="flex mb-3 gap-3  justify-between items-center">
                   <h6
@@ -425,7 +425,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
             {/* Work Experience */}
 
             {/* Internships */}
-            {resumeData?.config?.internships && (
+            {resumeData?.config?.internships && resumeData?.internships > 0 && (
               <div className="border-b py-9 border-stroke mb-4">
                 <div>
                   <div className="flex mb-3 gap-3  justify-between items-center">
@@ -657,7 +657,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                 </p>
               </div>
             )}
-            {resumeData?.config?.skills && (
+            {resumeData?.config?.skills && resumeData?.skills > 0 && (
               <div className="pb-4">
                 <h6
                   className="font-semibold text-lg uppercase border-b-2 ml-3 py-1 w-full"
@@ -707,7 +707,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                 </ul>
               </div>
             )}
-            {resumeData?.config?.careerHighlights && (
+            {resumeData?.config?.careerHighlights &&  resumeData?.careerHighlights > 0 && (
               <div className="pb-4">
                 <div className="flex mb-3 gap-3  justify-between items-center">
                   <h6
@@ -767,7 +767,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                 </div>
               </div>
             )}
-            {resumeData?.config?.workExperience && (
+            {resumeData?.config?.workExperience &&  resumeData?.workExperience > 0 && (
               <div className="py-5  mb-4">
                 <div className="mb-3 gap-3">
                   <h6
@@ -848,7 +848,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                 </div>
               </div>
             )}
-            {resumeData?.config?.education && (
+            {resumeData?.config?.education && resumeData?.education > 0 && (
               <div className="py-6">
                 <h6
                   className="font-semibold text-lg uppercase border-b-2 ml-3 py-1 mb-2 w-full"
@@ -909,7 +909,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                 </div>
               </div>
             )}
-            {resumeData?.config?.trainings && (
+            {resumeData?.config?.trainings && resumeData?.trainings > 0 && (
               <div className="py-6">
                 <h6
                   className="font-semibold text-lg uppercase border-b-2 ml-3 py-1 mb-2 w-full"

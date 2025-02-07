@@ -50,8 +50,8 @@ const sampleData = [
 
 const Subscription = () => {
   const [allResumes, setAllResumes] = useState<any>([]);
-  const [_selectedResume, setSelectedResume] = useState<any>(null);
-  const [search, setSearch] = useState<string>("");
+  const [_selectedResume, _setSelectedResume] = useState<any>(null);
+  const [search, _setSearch] = useState<string>("");
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
