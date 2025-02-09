@@ -18,7 +18,7 @@ const CareerPage: React.FC = () => {
           <div className="text-center text-lg text-zinc-500">
             <h1 className="text-center lg:text-6xl sm:text-5xl font-bold text-4xl text-slate-900 tracking-tight">
               Join the Future of{" "}
-              <span className="py-2 bg-gradient-to-r from-[#2563EB] text-transparent bg-clip-text to-[#9333EA] inline-block">
+              <span className="py-2 gradient-text text-transparent inline-block">
                 Recruitment
               </span>
             </h1>
@@ -180,7 +180,9 @@ const CareerPage: React.FC = () => {
         </div>
       </section>
 
-      <section className="bg-gradient-to-r from-[#2563EB] to-[#9333EA] py-[7%] px-8 lg:px-[4rem] 2xl:px-[12rem]">
+      <section
+        className="bg-[linear-gradient(134.95deg,_#5272EA_6.55%,_#394FC0_93.38%)] py-[7%] px-8 lg:px-[4rem] 2xl:px-[12rem]"
+      >
         <div className="mb-8 text-center">
           <h1 className="font-bold text-center lg:text-3xl text-2xl mb-3 text-white">
             Find your next opportunity at Tabbio.
@@ -197,7 +199,7 @@ const CareerPage: React.FC = () => {
             onClick={() => navigate("/signup")}
             className="px-12 py-3 bg-white hover:scale-105 duration-150 fonr-semibold text-lg rounded-md border-none text-primary"
           >
-            Send Your Resume
+            Send Your CV
           </button>
         </div>
       </section>

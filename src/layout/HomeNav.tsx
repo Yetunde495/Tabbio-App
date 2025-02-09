@@ -127,7 +127,7 @@ export default function Navbar() {
                 <StaggeredDropDown
                   buttonIcon={<IoMdArrowDropdown />}
                   buttonText={
-                    <span className="bg-gradient-to-r from-[#2563EB] max-sm:text-xs  text-transparent bg-clip-text to-[#9333EA] inline-block font-medium">
+                    <span className="max-sm:text-xs  gradient-text text-transparent inline-block font-medium">
                       {pathname.includes("company")
                         ? "Company"
                         : "Professionals"}

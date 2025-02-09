@@ -122,8 +122,8 @@ const PricingPage: React.FC = () => {
                       Free Forever
                     </h3>
 
-                    <h2 className="text-4xl font-extrabold mt-4 mb-2 text-center">
-                      <span className="py-2 bg-gradient-to-r from-[#2563EB] text-transparent bg-clip-text to-[#9333EA] inline-block">
+                    <h2 className="text-4xl font-bold mt-4 mb-0.5 text-center">
+                      <span className="py-2 bg-gradient-to-r from-[#5272EA] to-[#394FC0] text-transparent bg-clip-text inline-block">
                         $0{" "}
                       </span>
 
@@ -203,8 +203,8 @@ const PricingPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <h2 className="text-4xl font-extrabold mt-4 text-center mb-2">
-                      <span className="py-2 bg-gradient-to-r from-[#2563EB] text-transparent bg-clip-text to-[#9333EA] inline-block">
+                    <h2 className="text-4xl font-bold mt-4 text-center mb-2">
+                      <span className="py-2 bg-gradient-to-r from-[#5272EA] to-[#394FC0] text-transparent bg-clip-text inline-block">
                         {" "}
                         ${isMonthlyProfessional ? "12" : "8"}{" "}
                       </span>
@@ -220,8 +220,8 @@ const PricingPage: React.FC = () => {
                       <li className="flex items-center gap-2">
                         <MdCheck /> Everything in Free, plus:
                       </li>
-                      <li className="flex items-center gap-2">
-                        <MdCheck /> AI Resume Optimization
+                      <li className="flex items-center">
+                        <MdCheck /> <span className="inline-block gradient-text text-transparent">AI Resume Optimization</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <MdCheck /> Premium Templates Library
@@ -245,15 +245,17 @@ const PricingPage: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <div className="flex max-md:flex-col gap-6 w-full h-full justify-center items-center">
+                <div className="w-full flex justify-center items-center">
+                <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 items-center gap-6 w-full max-w-[1150px] justify-center">
                   {/* Free Plan - Companies */}
+                  <div className="h-full">
                   <div className="border-none flex flex-col h-full md:min-w-[317px] max-sm:w-full max-md:w-[70%] hover:scale-105 delay-100 duration-200 p-6 rounded-lg bg-white shadow-xl">
-                    <h3 className="text-xl font-semibold text-zinc-800 text-center mb-2">
+                    <h3 className="text-xl font-semibold text-zinc-800 text-center">
                       Free Forever
                     </h3>
 
-                    <h2 className="text-4xl font-extrabold mt-4 mb-2 text-center">
-                      <span className="py-2 bg-gradient-to-r from-[#2563EB] text-transparent bg-clip-text to-[#9333EA] inline-block">
+                    <h2 className="text-4xl font-bold mt-2 mb-2 text-center">
+                      <span className="py-2 bg-gradient-to-r from-[#5272EA] to-[#394FC0] text-transparent bg-clip-text inline-block">
                         $0{" "}
                       </span>
 
@@ -304,10 +306,13 @@ const PricingPage: React.FC = () => {
                     <button className="w-full mt-4 py-2.5 bg-black text-white rounded-md ">
                       Get Started Free
                     </button>
+                  </div> 
                   </div>
+                  
                   {/* Business Plan - Companies */}
+                  <div className="h-full">
                   <div className="border flex flex-col h-full hover:scale-105 md:min-w-[317px] max-sm:w-full max-md:w-[70%] duration-200 p-6 rounded-lg bg-white shadow-xl border-primary">
-                    <h3 className="text-xl font-semibold text-zinc-800 text-center mb-2">
+                    <h3 className="text-xl font-bold text-zinc-800 text-center">
                       Business
                     </h3>
                     {/* Monthly/Yearly Toggle */}
@@ -336,8 +341,8 @@ const PricingPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <h2 className="text-4xl font-extrabold mt-4 text-center mb-2">
-                      <span className="py-2 bg-gradient-to-r from-[#2563EB] text-transparent bg-clip-text to-[#9333EA] inline-block">
+                    <h2 className="text-4xl font-bold mt-4 text-center mb-2">
+                      <span className="py-2 bg-gradient-to-r from-[#5272EA] to-[#394FC0] text-transparent bg-clip-text inline-block">
                         {" "}
                         ${isMonthlyCompany ? "49" : "39"}{" "}
                       </span>
@@ -378,8 +383,11 @@ const PricingPage: React.FC = () => {
                         : "Get Business - $39/month"}
                     </button>
                   </div>
+                  </div>
+                 
 
                   {/* Enterprise Plan - Companies */}
+                  <div className="h-full">
                   <div
                     className="border-none
                     md:min-w-[317px] flex flex-col h-full max-sm:w-full max-md:w-[70%] hover:scale-105 delay-100 duration-200 p-6 rounded-lg bg-white shadow-xl"
@@ -419,6 +427,9 @@ const PricingPage: React.FC = () => {
                       Get Started Free
                     </button>
                   </div>
+                  </div>
+                  
+                </div>
                 </div>
               )}
             </div>

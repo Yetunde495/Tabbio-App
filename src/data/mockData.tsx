@@ -24,8 +24,8 @@ export const mockResumeData = {
   },
   style: {
     primary_color: "#007CFF",
-    fontFamily: '',
-    font_size: ''
+    fontFamily: "",
+    font_size: "",
   },
   professional_summary: `Results-driven Senior Software Engineer with 8+ years of experience in full-stack development and technical leadership. Specialized in building scalable distributed systems and microservices architectures. Proven track record of improving application performance, mentoring junior developers, and delivering high-impact solutions that drive business growth.
   
@@ -49,21 +49,20 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
   ],
   skills: [
     {
-    name: 'technical skills',
-    items: ['Development']
+      name: "technical skills",
+      items: ["Development"],
     },
     {
-      name: 'soft skills',
-      items: ['Patience', ]
+      name: "soft skills",
+      items: ["Patience"],
     },
-    
-],
+  ],
   relevantCourses: [
     "Data Structures and Algorithms",
     "Web Application Development",
     "Database Management Systems",
     "Software Engineering Principles",
-    "Operating Systems"
+    "Operating Systems",
   ],
   experience: [
     {
@@ -144,14 +143,15 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       name: "Portfolio Website",
       description: "Developed a personal portfolio website.",
       technology: "HTML, CSS, JavaScript",
-      github_link: "github.com/johndoe/portfolio"
-    }
+      github_link: "github.com/johndoe/portfolio",
+    },
   ],
   careerHighlights: [
     {
       id: 1,
       title: "Technical Leadership",
-      description: "Collaborated with cross-functional teams to deliver project milestones",
+      description:
+        "Collaborated with cross-functional teams to deliver project milestones",
       link: "",
     },
     {
@@ -163,10 +163,10 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
     {
       id: 3,
       title: "Team Development",
-      description: "Mentored 5+ Junior developers, leading to their promotion to mid-level roles",
+      description:
+        "Mentored 5+ Junior developers, leading to their promotion to mid-level roles",
       link: "https://videos.pexels.com/video-files/1966695/1966695-sd_640_360_30fps.mp4",
     },
-    
   ],
   trainings: [
     {
@@ -185,208 +185,221 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
 };
 
 export const mockResData = {
-  "name": "John Doe",
-  "language": "English",
-  "role": "Frontend Developer",
-  "email": "john.doe@email.com",
-  "phone": "(123) 456-7890",
-  "linkedIn": "https://linkedin.com/in/johndoe",
-  "website": "https://johndoe.dev",
-  "location": "New York, USA",
-  "template" : "professional",
-  "style" : {
-    "fontFamily": "Times New Roman",
-    "primaryColor": "#007CFF",
-    "fontSize": "medium"
+  name: "John Doe",
+  language: "English",
+  role: "Frontend Developer",
+  email: "john.doe@email.com",
+  phone: "(123) 456-7890",
+  linkedIn: "https://linkedin.com/in/johndoe",
+  website: "https://johndoe.dev",
+  location: "New York, USA",
+  template: "professional",
+  style: {
+    fontFamily: "Times New Roman",
+    primaryColor: "#007CFF",
+    fontSize: "medium",
+    fontSrc: "/fonts/timesnewroman/times-new-roman.ttf",
   },
-  "professionalSummary": "Creative and detail-oriented Frontend Developer with 5+ years of experience designing and implementing responsive, user-friendly web applications. Proficient in JavaScript, React, and TypeScript, with expertise in modern frontend development practices and tools. Strong focus on accessibility, performance, and delivering seamless user experiences.",
-  "skills": [
+  professionalSummary:
+    "Creative and detail-oriented Frontend Developer with 5+ years of experience designing and implementing responsive, user-friendly web applications. Proficient in JavaScript, React, and TypeScript, with expertise in modern frontend development practices and tools. Strong focus on accessibility, performance, and delivering seamless user experiences.",
+  skills: [
     {
-      "name": "Languages",
-      "items": ["JavaScript (ES6+)", "TypeScript", "HTML", "CSS (SASS/LESS)"]
+      name: "Languages",
+      items: ["JavaScript (ES6+)", "TypeScript", "HTML", "CSS (SASS/LESS)"],
     },
     {
-      "name": "Frameworks & Libraries",
-      "items": ["React.js", "Redux", "Tailwind CSS", "Next.js"]
+      name: "Frameworks & Libraries",
+      items: ["React.js", "Redux", "Tailwind CSS", "Next.js"],
     },
     {
-      "name": "Tools",
-      "items": ["Git", "Webpack", "Vite", "Figma", "Firebase", "Docker"]
+      name: "Tools",
+      items: ["Git", "Webpack", "Vite", "Figma", "Firebase", "Docker"],
     },
     {
-      "name": "Testing",
-      "items": ["Jest", "Cypress", "React Testing Library"]
-    }
+      name: "Testing",
+      items: ["Jest", "Cypress", "React Testing Library"],
+    },
   ],
-  "education": [
+  education: [
     {
-      "_id": "edu1",
-      "degree": "Bachelor of Science in Computer Science",
-      "institution": "University of California, Los Angeles (UCLA)",
-      "startDate": "2015-09-01",
-      "endDate": "2019-06-01",
-      "description": "Focused on software engineering, algorithms, and web development.",
-      "active": false
-    }
+      _id: "edu1",
+      degree: "Bachelor of Science in Computer Science",
+      institution: "University of California, Los Angeles (UCLA)",
+      startDate: "2015-09-01",
+      endDate: "2019-06-01",
+      description:
+        "Focused on software engineering, algorithms, and web development.",
+      active: false,
+    },
   ],
-  "certifications": [
+  certifications: [
     {
-      "_id": "cert1",
-      "name": "Certified React Developer",
-      "institution": "Meta",
-      "date": "2022-10-01"
+      _id: "cert1",
+      name: "Certified React Developer",
+      institution: "Meta",
+      date: "2022-10-01",
     },
     {
-      "_id": "cert2",
-      "name": "JavaScript Algorithms and Data Structures",
-      "institution": "freeCodeCamp",
-      "date": "2021-03-01"
-    }
+      _id: "cert2",
+      name: "JavaScript Algorithms and Data Structures",
+      institution: "freeCodeCamp",
+      date: "2021-03-01",
+    },
   ],
-  "workExperience": [
+  workExperience: [
     {
-      "_id": "work1",
-      "title": "Frontend Developer",
-      "company": "TechSoft Inc.",
-      "startDate": "2019-07-01",
-      "endDate": "Present",
-      "description": "Developing and maintaining web applications.",
-      "keyAchievements": [
+      _id: "work1",
+      title: "Frontend Developer",
+      company: "TechSoft Inc.",
+      startDate: "2019-07-01",
+      endDate: "Present",
+      description: "Developing and maintaining web applications.",
+      keyAchievements: [
         "Redesigned the company website, resulting in a 40% increase in user engagement.",
-        "Implemented performance optimizations, reducing page load times by 25%."
+        "Implemented performance optimizations, reducing page load times by 25%.",
       ],
-      "skills": ["React.js", "TypeScript", "Redux", "CSS"],
-      "active": true
-    }
+      skills: ["React.js", "TypeScript", "Redux", "CSS"],
+      active: true,
+    },
   ],
-  "internships": [
+  internships: [
     {
-      "_id": "intern1",
-      "title": "Frontend Intern",
-      "company": "StartTech Labs",
-      "startDate": "2018-06-01",
-      "endDate": "2018-08-01",
-      "description": "Assisted in the development of a React-based dashboard for client analytics.",
-      "keyAchievements": ["Built reusable components to speed up development."],
-      "skills": ["React.js", "JavaScript", "HTML", "CSS"],
-      "active": false
-    }
+      _id: "intern1",
+      title: "Frontend Intern",
+      company: "StartTech Labs",
+      startDate: "2018-06-01",
+      endDate: "2018-08-01",
+      description:
+        "Assisted in the development of a React-based dashboard for client analytics.",
+      keyAchievements: ["Built reusable components to speed up development."],
+      skills: ["React.js", "JavaScript", "HTML", "CSS"],
+      active: false,
+    },
   ],
-  "volunteerExperience": [
+  volunteerExperience: [
     {
-      "_id": "vol1",
-      "title": "Web Developer Volunteer",
-      "company": "Open Source Contributions",
-      "startDate": "2020-01-01",
-      "endDate": "2021-12-01",
-      "description": "Contributed to open-source projects to improve accessibility and usability.",
-      "keyAchievements": ["Enhanced UI/UX for multiple projects."],
-      "skills": ["React.js", "JavaScript", "Accessibility"],
-      "active": false
-    }
+      _id: "vol1",
+      title: "Web Developer Volunteer",
+      company: "Open Source Contributions",
+      startDate: "2020-01-01",
+      endDate: "2021-12-01",
+      description:
+        "Contributed to open-source projects to improve accessibility and usability.",
+      keyAchievements: ["Enhanced UI/UX for multiple projects."],
+      skills: ["React.js", "JavaScript", "Accessibility"],
+      active: false,
+    },
   ],
-  "projects": [
+  projects: [
     {
-      "_id": "proj1",
-      "name": "Portfolio Website",
-      "description": "Developed a personal portfolio website to showcase projects and skills.",
-      "technology": "React.js, Tailwind CSS, TypeScript",
-      "githubLink": "https://github.com/johndoe/portfolio"
+      _id: "proj1",
+      name: "Portfolio Website",
+      description:
+        "Developed a personal portfolio website to showcase projects and skills.",
+      technology: "React.js, Tailwind CSS, TypeScript",
+      link: "https://github.com/johndoe/portfolio",
     },
     {
-      "_id": "proj2",
-      "name": "E-Commerce Platform",
-      "description": "Built a scalable e-commerce platform with React and Redux.",
-      "technology": "React.js, Redux, Firebase",
-      "githubLink": "https://github.com/johndoe/e-commerce"
-    }
+      _id: "proj2",
+      name: "E-Commerce Platform",
+      description: "Built a scalable e-commerce platform with React and Redux.",
+      technology: "React.js, Redux, Firebase",
+      link: "https://github.com/johndoe/e-commerce",
+    },
   ],
-  "relevantCourses": ["Advanced JavaScript", "Web Accessibility Fundamentals", "Frontend Performance Optimization"],
-  "trainings": [
+  relevantCourses: [
+    "Advanced JavaScript",
+    "Web Accessibility Fundamentals",
+    "Frontend Performance Optimization",
+  ],
+  trainings: [
     {
-      "_id": "training1",
-      "degree": "Agile Development and Scrum",
-      "institution": "Scrum Alliance",
-      "startDate": "2020-01-01",
-      "endDate": "2021-12-01",
-      "description": "Completed training on Agile methodologies and Scrum practices for software teams."
+      _id: "training1",
+      degree: "Agile Development and Scrum",
+      institution: "Scrum Alliance",
+      startDate: "2020-01-01",
+      endDate: "2021-12-01",
+      description:
+        "Completed training on Agile methodologies and Scrum practices for software teams.",
     },
     {
-      "_id": "training2",
-      "degree": "Performance Optimization for Web Apps",
-      "institution": "Pluralsight",
-      "startDate": "2020-01-01",
-      "endDate": "2021-12-01",
-      "description": "Learned strategies to optimize performance in modern web applications."
-    }
+      _id: "training2",
+      degree: "Performance Optimization for Web Apps",
+      institution: "Pluralsight",
+      startDate: "2020-01-01",
+      endDate: "2021-12-01",
+      description:
+        "Learned strategies to optimize performance in modern web applications.",
+    },
   ],
-  "memberships": [
+  memberships: [
     {
-      "_id": "membership1",
-      "name": "Member",
-      "organization": "Interaction Design Association (IxDA)",
-      "startDate": "2020-01-01",
-      "endDate": "Present"
+      _id: "membership1",
+      name: "Member",
+      organization: "Interaction Design Association (IxDA)",
+      startDate: "2020-01-01",
+      endDate: "Present",
     },
     {
-      "_id": "membership2",
-      "name": "Member",
-      "organization": "Frontend Masters Community",
-      "startDate": "2021-05-01",
-      "endDate": "Present"
-    }
+      _id: "membership2",
+      name: "Member",
+      organization: "Frontend Masters Community",
+      startDate: "2021-05-01",
+      endDate: "Present",
+    },
   ],
-  "areaOfExpertise": ["Frontend Development", "Responsive Web Design", "UI/UX"],
-  "careerHighlights": [
+  areaOfExpertise: ["Frontend Development", "Responsive Web Design", "UI/UX"],
+  careerHighlights: [
     {
-      "_id": "highlight1",
-      "title": "Company Website Redesign",
-      "description": "Redesigned the company website, increasing engagement by 40%.",
-      "thumbnail": "https://example.com/image.png",
-      "skills": ["React.js", "CSS", "User Experience"],
-      "attachments": {
-        "type": "image",
-        "link": "https://example.com/website-redesign"
-      }
-    }
+      _id: "highlight1",
+      title: "Company Website Redesign",
+      description:
+        "Redesigned the company website, increasing engagement by 40%.",
+      thumbnail: "https://example.com/image.png",
+      skills: ["React.js", "CSS", "User Experience"],
+      attachments: {
+        type: "image",
+        link: "https://example.com/website-redesign",
+      },
+    },
   ],
-  "references": [
+  references: [
     {
-      "_id": "ref1",
-      "name": "Jane Smith",
-      "title": "Senior Software Engineer",
-      "company": "TechSoft Inc.",
-      "email": "jane.smith@techsoft.com",
-      "phone": "(987) 654-3210",
-      "relationship": "Manager"
-    }
+      _id: "ref1",
+      name: "Jane Smith",
+      title: "Senior Software Engineer",
+      company: "TechSoft Inc.",
+      email: "jane.smith@techsoft.com",
+      phone: "(987) 654-3210",
+      relationship: "Manager",
+    },
   ],
-  "hobbies": ["Photography", "Traveling", "Reading"],
-  "config": {
-    "location": true,
-    "role": true,
-    "workExperience": true,
-    "professionalSummary": true,
-    "email": true,
-    "phone": true,
-    "relevantCourses" : true,
-    "skills": true,
-    "links": true,
-    "volunteerExperience": true,
-    "careerHighlights": true,
-    "internships": true,
-    "education": true,
-    "memberships": true,
-    "references": true,
-    "certifications": true,
-    "trainings": true,
-    "areaOfExpertise": true,
-    "isLive": true,
-    "lastUpdate": true,
-    "showTabbioLink": false
-  }
-}
-
+  hobbies: ["Photography", "Traveling", "Reading"],
+  config: {
+    location: true,
+    role: true,
+    workExperience: true,
+    professionalSummary: true,
+    email: true,
+    phone: true,
+    relevantCourses: true,
+    skills: true,
+    links: true,
+    volunteerExperience: true,
+    careerHighlights: true,
+    internships: true,
+    education: true,
+    projects:true,
+    memberships: true,
+    references: true,
+    certifications: true,
+    trainings: true,
+    areaOfExpertise: true,
+    isLive: true,
+    lastUpdate: true,
+    showTabbioLink: false,
+  },
+};
 
 export const mockEmptyResume = {
   name: "Your Name",
@@ -460,8 +473,7 @@ export const mockEmpty = {
   skills: [],
   extracurricular_activities: [],
   languages: [],
-}
-
+};
 
 export const analyticsData = [
   {
@@ -704,20 +716,20 @@ export const interviewTipsData = [
 export const mockProfileData = {
   config: {
     location: true,
-    role:true,
+    role: true,
     workExperience: true,
     professionalSummary: true,
     email: true,
     phone_number: true,
     skills: true,
-    links:true,
+    links: true,
     volunteerExperience: true,
-    careerHighlights:true,
+    careerHighlights: true,
     internships: true,
     education: true,
     memberships: true,
     references: true,
-    certifications: true
+    certifications: true,
   },
   name: "John Doe",
   role: "Senior HR Expert | CIPD, MBA, HRBP",
@@ -734,18 +746,14 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
   website: "https://johndoeportfolio.com",
   linkedin: "https://linkedin.com/in/johndoe",
   tabbioLink: "https://tabbio.com/tp/john-doe",
-  locationType: ["Hybrid", 'Remote', 'On-Site'],
-  relocation: 'Open to Relocate',
+  locationType: ["Hybrid", "Remote", "On-Site"],
+  relocation: "Open to Relocate",
   skills: [
     {
-      name: 'technical',
-      items: [ "JavaScript",
-        "React",
-        "Node.js",
-        "Express",
-        "MongoDB",
-        "HTML",]
-    }],
+      name: "technical",
+      items: ["JavaScript", "React", "Node.js", "Express", "MongoDB", "HTML"],
+    },
+  ],
   hobbies: ["Hiking", "Photography", "Cooking"],
   languages: ["English", "Spanish"],
   workExperience: [
@@ -843,13 +851,14 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
     {
       id: 1,
       title: "Technical Leadership",
-      description: "Collaborated with cross-functional teams to deliver project milestones",
+      description:
+        "Collaborated with cross-functional teams to deliver project milestones",
       thumbnail: "",
       attachment: {
-        type: 'link',
-        url: 'https://w3schools.com'
+        type: "link",
+        url: "https://w3schools.com",
       },
-      skills: ['Team Management', 'Leadership']
+      skills: ["Team Management", "Leadership"],
     },
     {
       id: 2,
@@ -857,28 +866,30 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       description: "Optimized database queries, reducing response time by 50%",
       thumbnail: "",
       attachment: {
-        type: 'image',
-        url: 'https://images.pexels.com/photos/709143/pexels-photo-709143.jpeg?auto=compress&cs=tinysrgb&w=600'
+        type: "image",
+        url: "https://images.pexels.com/photos/709143/pexels-photo-709143.jpeg?auto=compress&cs=tinysrgb&w=600",
       },
-      skills: []
+      skills: [],
     },
     {
       id: 3,
       title: "Team Development",
-      description: "Mentored 5+ Junior developers, leading to their promotion to mid-level roles",
+      description:
+        "Mentored 5+ Junior developers, leading to their promotion to mid-level roles",
       thumbnail: "",
       attachment: {
-        type: 'video',
-        url: 'https://videos.pexels.com/video-files/1966695/1966695-sd_640_360_30fps.mp4'
+        type: "video",
+        url: "https://videos.pexels.com/video-files/1966695/1966695-sd_640_360_30fps.mp4",
       },
-      skills: []
+      skills: [],
     },
     {
       id: 4,
       title: "Lorem Ipsum Dolor sit",
-      description: "Mentored 5+ Junior developers, leading to their promotion to mid-level roles dolor sit amet",
+      description:
+        "Mentored 5+ Junior developers, leading to their promotion to mid-level roles dolor sit amet",
       thumbnail: "",
-      skills: []
+      skills: [],
     },
   ],
   education: [
@@ -913,7 +924,7 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       role: "Professional Member",
       start_year: "2020",
       end_year: "2021",
-      active: false
+      active: false,
     },
     {
       id: 2,
@@ -921,7 +932,7 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
       role: "Senior Member",
       start_year: "2022",
       end_year: "2023",
-      active: true
+      active: true,
     },
   ],
   references: [
@@ -949,7 +960,7 @@ Skilled in creating dynamic, user-friendly applications and collaborating within
 export const mockEmptyProfileData = {
   config: {
     location: true,
-    role:true,
+    role: true,
     isLive: false,
     lastUpdate: true,
     workExperience: true,
@@ -957,26 +968,25 @@ export const mockEmptyProfileData = {
     email: true,
     phone: true,
     skills: true,
-    links:true,
+    links: true,
     volunteerExperience: true,
-    careerHighlights:false,
+    careerHighlights: false,
     internships: true,
     education: true,
     memberships: false,
     references: false,
     trainings: false,
-    certifications: true
+    certifications: true,
   },
   name: "",
   role: "",
-  level: '',
-  yearsOfExperience: '',
-  majorSkill: '',
+  level: "",
+  yearsOfExperience: "",
+  majorSkill: "",
   resume: "",
   professionalSummary: "",
   areasOfExpertise: [],
-  photo_url:
-    "",
+  photo_url: "",
   location: "",
   email: "",
   phone_number: "",
@@ -984,8 +994,8 @@ export const mockEmptyProfileData = {
   linkedIn: "",
   tabbioLink: "",
   locationType: [],
-  language: 'EN',
-  relocation: '',
+  language: "EN",
+  relocation: "",
   skills: [],
   hobbies: [],
   languages: [],
@@ -1001,36 +1011,44 @@ export const mockEmptyProfileData = {
   memberships: [],
   references: [],
   awards: [],
-  trainings: []
+  trainings: [],
 };
 
 export const faqData = [
   {
-    "title": "How does the Free plan work?",
-    "content": "The Free plan allows you to use essential features without any cost. You can create resumes, post jobs, and track candidates with basic tools. There are no hidden fees, and you can upgrade to a premium plan anytime."
+    title: "How does the Free plan work?",
+    content:
+      "The Free plan allows you to use essential features without any cost. You can create resumes, post jobs, and track candidates with basic tools. There are no hidden fees, and you can upgrade to a premium plan anytime.",
   },
   {
-    "title": "Can I upgrade or downgrade at any time?",
-    "content": "Yes, you can upgrade or downgrade your plan at any time. When you change your plan, the new billing cycle will begin immediately, and your previous subscription will be adjusted accordingly."
+    title: "Can I upgrade or downgrade at any time?",
+    content:
+      "Yes, you can upgrade or downgrade your plan at any time. When you change your plan, the new billing cycle will begin immediately, and your previous subscription will be adjusted accordingly.",
   },
   {
-    "title": "What payment methods do you accept?",
-    "content": "We accept all major credit and debit cards, including Visa, Mastercard, and American Express. For Enterprise plans, we also support bank transfers upon request."
+    title: "What payment methods do you accept?",
+    content:
+      "We accept all major credit and debit cards, including Visa, Mastercard, and American Express. For Enterprise plans, we also support bank transfers upon request.",
   },
   {
-    "title": "Can I switch between monthly and yearly billing?",
-    "content": "Yes, you can switch between monthly and yearly billing at any time. Yearly billing offers a discount compared to the monthly rate."
+    title: "Can I switch between monthly and yearly billing?",
+    content:
+      "Yes, you can switch between monthly and yearly billing at any time. Yearly billing offers a discount compared to the monthly rate.",
   },
   {
-    "title": "Is there a limit on the number of team members for the Business plan?",
-    "content": "The Business plan allows multiple team members with an additional cost of $24 per team member per month."
+    title:
+      "Is there a limit on the number of team members for the Business plan?",
+    content:
+      "The Business plan allows multiple team members with an additional cost of $24 per team member per month.",
   },
   {
-    "title": "How do I contact support for the Enterprise plan?",
-    "content": "For the Enterprise plan, you can contact our sales team directly to discuss custom requirements and pricing."
+    title: "How do I contact support for the Enterprise plan?",
+    content:
+      "For the Enterprise plan, you can contact our sales team directly to discuss custom requirements and pricing.",
   },
   {
-    "title": "Do you offer a refund if I cancel my subscription?",
-    "content": "We do not offer refunds for partially used billing periods. You can cancel your subscription anytime, and you will continue to have access until the end of the current billing period."
-  }
-]
+    title: "Do you offer a refund if I cancel my subscription?",
+    content:
+      "We do not offer refunds for partially used billing periods. You can cancel your subscription anytime, and you will continue to have access until the end of the current billing period.",
+  },
+];
