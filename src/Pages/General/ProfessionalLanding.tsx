@@ -27,13 +27,38 @@ import { BsBrowserChrome } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "../../context/AppContext";
 import { useTranslation } from "react-i18next";
+import Modal from "../../components/modal";
+import { Carousel } from "../../components/Carousel";
+import img1 from "../../assets/images/hiw-1.png"
+import img2 from "../../assets/images/hiw-2.png"
+import img3 from "../../assets/images/hiw-3.png"
+
 
 const ProfessionalLandingpage: React.FC = () => {
   const navigate = useNavigate();
   const { setParsedResume } = useApp();
   const [colorMode, setColorMode] = useColorMode();
   const [hasEntered, setHasEntered] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const { t } = useTranslation();
+
+  const demoData = [
+    {
+      image: img1,
+      text:"Simply drag and drop your existing CV",
+      title:"Upload Your CV"
+    },
+    {
+      image:img2,
+      text:"Your CV is instantly transformed",
+      title:"Get your smart CV"
+    },
+    {
+      image:img3,
+      text:"Apply Anywhere",
+      title:"One click to apply everywhere"
+    },
+  ]
 
   useEffect(() => {
     if (!hasEntered) {
@@ -110,7 +135,7 @@ const ProfessionalLandingpage: React.FC = () => {
             <span>Get Started</span>
             <FaArrowRightLong className="group-hover:translate-x-1.5" />
           </Button>
-          <button className="hover:scale-105 bg-gradient-to-b from-[#3B82F60D] to-[#A855F70D] text-black py-3 px-8 rounded-md">
+          <button onClick={() => setShowModal(true)} className="hover:scale-105 bg-gradient-to-b from-[#3B82F60D] to-[#A855F70D] text-black py-3 px-8 rounded-md">
             Watch Demo
           </button>
         </div>
@@ -361,7 +386,7 @@ const ProfessionalLandingpage: React.FC = () => {
                 </div>
                 <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4 justify-center items-center w-full transition-all mx-auto duration-500 ease xs:gap-y-8 gap-x-6">
                   <div className="shadow-lg hover:shadow-xl h-full rounded-xl w-full px-4 py-4 space-y-3 flex-col flex justify-center">
-                    <span className="rounded-md p-2.5 w-10 bg-[#EFF6FF] text-slate-900">
+                    <span className="rounded-md p-2.5 w-10 bg-gradient-to-r from-[#5272EA]/10 to-[#394FC0]/10 text-slate-900">
                       <LuFileSearch size={20} />
                     </span>
                     <h1 className="text-black dark:text-white font-semibold text-lg">
@@ -371,12 +396,12 @@ const ProfessionalLandingpage: React.FC = () => {
                       Never know if your resume was even seen
                     </p>
                     <div className="flex items-center gap-2">
-                      <span className="h-1 w-[45px] rounded-full bg-gradient-to-r from-[#2563EB] to-[#9333EA]"></span>
-                      <span>Solution: Real-time tracking & analytics</span>
+                      <span className="h-1 w-[45px] rounded-full bg-gradient-to-r from-[#5272EA] to-[#394FC0]"></span>
+                      <span className="text-[13px] text-primary">Solution: Real-time tracking & analytics</span>
                     </div>
                   </div>
                   <div className="shadow-lg hover:shadow-xl h-full rounded-xl w-full px-4 py-4 space-y-3 flex-col flex justify-center">
-                    <span className="rounded-md p-2.5 w-10 bg-[#EFF6FF] text-slate-900">
+                    <span className="rounded-md p-2.5 w-10 bg-gradient-to-r from-[#5272EA]/10 to-[#394FC0]/10 text-slate-900">
                       <BiBrain size={20} />
                     </span>
                     <h1 className="text-black dark:text-white font-semibold text-lg">
@@ -386,12 +411,12 @@ const ProfessionalLandingpage: React.FC = () => {
                       Getting filtered out by ATS systems
                     </p>
                     <div className="flex items-center gap-2">
-                      <span className="h-1 w-[45px] rounded-full bg-gradient-to-r from-[#2563EB] to-[#9333EA]"></span>
-                      <span>Solution: AI-powered optimization</span>
+                      <span className="h-1 w-[45px] rounded-full bg-gradient-to-r from-[#5272EA] to-[#394FC0]"></span>
+                      <span className="text-[13px] text-primary">Solution: AI-powered optimization</span>
                     </div>
                   </div>
                   <div className="shadow-lg hover:shadow-xl h-full rounded-xl w-full px-4 py-4 space-y-3 flex-col flex justify-center">
-                    <span className="rounded-md p-2.5 w-10 bg-[#EFF6FF] text-slate-900">
+                    <span className="rounded-md p-2.5 w-10 bg-gradient-to-r from-[#5272EA]/10 to-[#394FC0]/10 text-slate-900">
                       <FaRegClock size={20} />
                     </span>
                     <h1 className="text-black dark:text-white font-semibold text-lg">
@@ -401,8 +426,8 @@ const ProfessionalLandingpage: React.FC = () => {
                       Hours spent tweaking resumes
                     </p>
                     <div className="flex items-center gap-2">
-                      <span className="h-1 w-[45px] rounded-full bg-gradient-to-r from-[#2563EB] to-[#9333EA]"></span>
-                      <span>Solution: One-click customization</span>
+                      <span className="h-1 w-[45px] rounded-full bg-gradient-to-r from-[#5272EA] to-[#394FC0]"></span>
+                      <span className="text-[13px] text-primary">Solution: One-click customization</span>
                     </div>
                   </div>
                 </div>
@@ -448,7 +473,7 @@ const ProfessionalLandingpage: React.FC = () => {
                     <span className="rounded-md p-2.5 bg-[linear-gradient(90deg,_rgba(59,_130,_246,_0.1)_0%,_rgba(168,_85,_247,_0.1)_100%)] text-slate-900">
                       <FaArrowTrendUp size={20} />
                     </span>
-                    <h1 className="bg-gradient-to-r from-[#2563EB] text-transparent bg-clip-text to-[#9333EA] inline-block font-semibold text-2xl">
+                    <h1 className="bg-gradient-to-r from-[#5272EA] to-[#394FC0] text-transparent bg-clip-text inline-block font-semibold text-2xl">
                       <CountUp
                         className="text-inherit -mr-[5px]"
                         start={7}
@@ -464,7 +489,7 @@ const ProfessionalLandingpage: React.FC = () => {
                     <span className="rounded-md p-2.5 bg-[linear-gradient(90deg,_rgba(59,_130,_246,_0.1)_0%,_rgba(168,_85,_247,_0.1)_100%)] text-slate-900">
                       <FaRegClock size={20} />
                     </span>
-                    <h1 className="bg-gradient-to-r from-[#2563EB] text-transparent bg-clip-text to-[#9333EA] inline-block font-semibold text-2xl">
+                    <h1 className="bg-gradient-to-r from-[#5272EA] to-[#394FC0] text-transparent bg-clip-text inline-block font-semibold text-2xl">
                       <CountUp
                         className="text-inherit -mr-[5px]"
                         start={0}
@@ -480,7 +505,7 @@ const ProfessionalLandingpage: React.FC = () => {
                     <span className="rounded-md p-2.5 bg-[linear-gradient(90deg,_rgba(59,_130,_246,_0.1)_0%,_rgba(168,_85,_247,_0.1)_100%)] text-slate-900">
                       <FiTarget size={20} />
                     </span>
-                    <h1 className="bg-gradient-to-r from-[#2563EB] text-transparent bg-clip-text to-[#9333EA] inline-block font-semibold text-2xl">
+                    <h1 className="bg-gradient-to-r from-[#5272EA] to-[#394FC0] text-transparent bg-clip-text inline-block font-semibold text-2xl">
                       <CountUp
                         className="text-inherit -mr-[5px]"
                         start={3}
@@ -496,7 +521,7 @@ const ProfessionalLandingpage: React.FC = () => {
                     <span className="rounded-md p-2.5 bg-[linear-gradient(90deg,_rgba(59,_130,_246,_0.1)_0%,_rgba(168,_85,_247,_0.1)_100%)] text-slate-900">
                       <FiBriefcase size={20} />
                     </span>
-                    <h1 className="bg-gradient-to-r from-[#2563EB] text-transparent bg-clip-text to-[#9333EA] inline-block font-semibold text-2xl">
+                    <h1 className="bg-gradient-to-r from-[#5272EA] to-[#394FC0] text-transparent bg-clip-text inline-block font-semibold text-2xl">
                       <CountUp
                         className="text-inherit -mr-[5px]"
                         start={10}
@@ -584,6 +609,15 @@ const ProfessionalLandingpage: React.FC = () => {
           </div>
         </div>
       </section>
+      <Modal
+       show={showModal}
+       onHide={() => setShowModal(false)}
+
+      >
+      <section>
+      <Carousel showControls={true} carouselContent={demoData} />
+    </section>
+      </Modal>
     </Layout>
   );
 };
