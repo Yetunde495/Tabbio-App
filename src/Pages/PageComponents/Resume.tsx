@@ -92,7 +92,6 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
   }, []);
   return (
     <section className="w-full bg-white">
-      <div className="inline-block">
         <animated.div
           ref={ref}
           style={{ ...style, touchAction: "none" }}
@@ -1139,7 +1138,6 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
             </div>
           )}
         </animated.div>
-      </div>
     </section>
   );
 };
