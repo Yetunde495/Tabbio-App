@@ -74,6 +74,14 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
       document.removeEventListener('gestureend', handler)
     }
   }, [])
+  useEffect(() => {
+    if (ref.current) {
+      const { width } = ref.current.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      const initialScale = Math.min(viewportWidth / width, 1); // Ensure it doesn’t exceed 1
+      api.start({ scale: initialScale });
+    }
+  }, []);
   return (
     <section className="w-full bg-white">
       <animated.div ref={ref} className="min-w-[800px] max-w-[1200px] w-full">

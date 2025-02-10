@@ -1,16 +1,21 @@
 import { Fragment, useMemo, useState } from "react";
 import { PageLoader } from "../../components/Loader";
 import EmptyImg from "../../assets/svg/empty-animate.svg";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ResumePreview } from "../PageComponents/Resume";
 import { getResumeDataByName } from "../../services/resumeServices";
 import { toast } from "react-toastify";
 import { mockResData } from "../../data/mockData";
+import { FiDownload, FiExternalLink } from "react-icons/fi";
+import { MdShare } from "react-icons/md";
+import ShareResume from "../Candidate/ShareResume";
 
 const LiveResume: React.FC = () => {
   const { resumeName } = useParams();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [resumeData, setResumeData] = useState<any | null>(null);
+  const [shareModal, setShareModal] = useState(false);
 
   useMemo(async () => {
     if (resumeName) {
@@ -30,14 +35,14 @@ const LiveResume: React.FC = () => {
   }, [resumeName]);
 
   return (
-    <section className="h-screen bg-[#F9FAFB]">
+    <section className="min-h-screen bg-[#F9FAFB]">
       {loading ? (
         <PageLoader />
       ) : resumeData ? (
         <Fragment>
           <section className="w-full flex py-[3%] justify-center items-center">
             <div className="max-w-4xl w-full">
-            <ResumePreview resumeData={resumeData} />
+              <ResumePreview resumeData={resumeData} />
             </div>
           </section>
         </Fragment>
@@ -54,6 +59,39 @@ const LiveResume: React.FC = () => {
             </p>
           </div>
         </div>
+      )}
+      {resumeData && (
+        <div className="fixed left-0 right-0 w-full bottom-0">
+          <div className="w-full flex justify-between max-sm:flex-col max-sm:text-xs text-sm items-center text-zinc-500 py-3.5 px-1.5 max-sm:gap-1 sm:px-5 bg-[#FBFCFC] border border-[#F3F4F6]">
+            <p>Powered by Tabbio</p>
+            <div className="flex items-center divide-x divide-white bg-primary rounded-lg">
+              <button className="sm:px-4 flex items-center gap-2 py-1 px-2 max-sm:text-xs sm:py-2 bg-primary hover:scale-105 text-white rounded-l-lg">
+                <FiDownload /> Download PDF
+              </button>
+              <button
+                onClick={() => setShareModal(true)}
+                className="sm:px-4 flex items-center gap-2 py-1 px-2 max-sm:text-xs sm:py-2 bg-primary hover:scale-105 text-white "
+              >
+                <MdShare /> Share
+              </button>
+              <button
+                onClick={() => {
+                  navigate(`/signup`);
+                }}
+                className="sm:px-4 flex items-center gap-2 py-1 px-2 max-sm:text-xs sm:py-2 bg-primary hover:scale-105 text-white rounded-r-lg "
+              >
+                <span><FiExternalLink /></span> Create your SmartResume
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {shareModal && (
+        <ShareResume
+          show={shareModal}
+          setShow={() => setShareModal(false)}
+          resumeData={resumeData}
+        />
       )}
     </section>
   );
