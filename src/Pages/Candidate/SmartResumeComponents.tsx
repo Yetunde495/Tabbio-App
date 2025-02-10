@@ -127,7 +127,7 @@ export const BasicDetails: React.FC<{
               {profileData?.name}{" "}
               <BsPatchCheck size={16} className="text-primary mt-0.5" />
             </h1>
-            {profileData?.config?.role && (
+            {user?.profileConfig?.role && (
               <h6 className={`text-base text-zinc-600 max-sm:text-center uppercase`}>
                 {profileData?.role}
               </h6>
