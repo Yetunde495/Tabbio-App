@@ -1,7 +1,7 @@
 import { useApp } from "../../context/AppContext";
 import DefaultLayout from "../../layout/DefaultLayout";
 import { ResumeUpload } from "../General/ResumeUpload";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../../components/modal";
 import { Switch } from "../../components/form/Switch";
 import { CiEdit } from "react-icons/ci";
@@ -48,7 +48,8 @@ import ErrorTimeoutImg from "../../assets/svg/gateway-error.svg";
 const SmartResumeSettings: React.FC<{
   profileData: any;
   setProfileData: React.Dispatch<React.SetStateAction<any | null>>;
-}> = ({ profileData, setProfileData }) => {
+  setConfig: React.Dispatch<React.SetStateAction<any | null>>;
+}> = ({ profileData, setProfileData, setConfig }) => {
   const { user, updateUser } = useApp();
   const [editLink, setEditLink] = useState(false);
   const navigate = useNavigate();
@@ -344,20 +345,46 @@ const SmartResumeSettings: React.FC<{
         </div>
 
         <div className="flex flex-col gap-4 border-t border-zinc-100 py-4 px-3 mb-5 shadow rounded-lg">
-          <div className="flex text-sm items-center gap-3 justify-between">
+          <div
+            onClick={() => setKey("professionalSummary")}
+            className="flex text-sm items-center gap-3 justify-between"
+          >
             <p>Profile Summary</p>
             <div className="ml-auto flex items-center gap-1">
-              <span>
-                {profileData?.config?.professionalSummary ? "+" : "-"}
-              </span>
-              <Switch
-                value={status}
-                checked={profileData?.config?.professionalSummary}
-                onChange={(value) => {
-                  setStatus(value);
+              <span
+                className="text-lg cursor-pointer"
+                onClick={() => {
+                  updateUser({
+                    ...user,
+                    profileConfig: {
+                      ...user?.profileConfig,
+                      professionalSummary:
+                        !user?.profileConfig?.professionalSummary,
+                    },
+                  });
+                  setConfig({
+                    ...user?.profileConfig,
+                    professionalSummary:
+                      !user?.profileConfig?.professionalSummary,
+                  });
                 }}
-                size="sm"
-              />
+              >
+                {user?.profileConfig?.professionalSummary ? "+" : "-"}
+              </span>
+              {loading && key === "professionalSummary" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin text-lg" />
+                </span>
+              ) : (
+                <Switch
+                  value={status}
+                  checked={profileData?.config?.professionalSummary}
+                  onChange={(value) => {
+                    setStatus(value);
+                  }}
+                  size="sm"
+                />
+              )}
             </div>
           </div>
           <div
@@ -366,27 +393,44 @@ const SmartResumeSettings: React.FC<{
           >
             <p>Professional Title</p>
             <div className="ml-auto flex items-center gap-1">
-              {loading && key === "role" ? (
-                <span>
-                  <RiLoader3Fill className="animate-spin" />
-                </span>
-              ) : (
-                <span>{profileData?.config?.role ? "+" : "-"}</span>
-              )}
-
-              <Switch
-                value={profileData?.config?.role}
-                checked={profileData?.config?.role}
-                onChange={(value) => {
-                  handleUpdateProfile({
-                    config: {
-                      ...profileData?.config,
-                      role: value,
+              <span
+                className="text-lg cursor-pointer"
+                onClick={() => {
+                  updateUser({
+                    ...user,
+                    profileConfig: {
+                      ...user?.profileConfig,
+                      role: !user?.profileConfig?.role,
                     },
                   });
+                  setConfig({
+                    ...user?.profileConfig,
+                    role: !user?.profileConfig?.role,
+                  });
                 }}
-                size="sm"
-              />
+              >
+                {user?.profileConfig?.role ? "+" : "-"}
+              </span>
+
+              {loading && key === "role" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin text-lg" />
+                </span>
+              ) : (
+                <Switch
+                  value={profileData?.config?.role}
+                  checked={profileData?.config?.role}
+                  onChange={(value) => {
+                    handleUpdateProfile({
+                      config: {
+                        ...profileData?.config,
+                        role: value,
+                      },
+                    });
+                  }}
+                  size="sm"
+                />
+              )}
             </div>
           </div>
           <div
@@ -395,27 +439,44 @@ const SmartResumeSettings: React.FC<{
           >
             <p>Career Highlights</p>
             <div className="ml-auto flex items-center gap-1">
-              {loading && key === "careerHighlight" ? (
-                <span>
-                  <RiLoader3Fill className="animate-spin" />
-                </span>
-              ) : (
-                <span>{profileData?.config?.careerHighlights ? "+" : "-"}</span>
-              )}
-
-              <Switch
-                value={profileData?.config?.careerHighlights}
-                checked={profileData?.config?.careerHighlights}
-                onChange={(value) => {
-                  handleUpdateProfile({
-                    config: {
-                      ...profileData?.config,
-                      careerHighlights: value,
+              <span
+                className="text-lg cursor-pointer"
+                onClick={() => {
+                  updateUser({
+                    ...user,
+                    profileConfig: {
+                      ...user?.profileConfig,
+                      careerHighlights: !user?.profileConfig?.careerHighlights,
                     },
                   });
+                  setConfig({
+                    ...user?.profileConfig,
+                    careerHighlights: !user?.profileConfig?.careerHighlights,
+                  });
                 }}
-                size="sm"
-              />
+              >
+                {user?.profileConfig?.careerHighlights ? "+" : "-"}
+              </span>
+
+              {loading && key === "careerHighlight" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin text-lg" />
+                </span>
+              ) : (
+                <Switch
+                  value={profileData?.config?.careerHighlights}
+                  checked={profileData?.config?.careerHighlights}
+                  onChange={(value) => {
+                    handleUpdateProfile({
+                      config: {
+                        ...profileData?.config,
+                        careerHighlights: value,
+                      },
+                    });
+                  }}
+                  size="sm"
+                />
+              )}
             </div>
           </div>
           <div
@@ -424,27 +485,44 @@ const SmartResumeSettings: React.FC<{
           >
             <p>Work Experience</p>
             <div className="ml-auto flex items-center gap-1">
-              {loading && key === "workExperience" ? (
-                <span>
-                  <RiLoader3Fill className="animate-spin" />
-                </span>
-              ) : (
-                <span>{profileData?.config?.workExperience ? "+" : "-"}</span>
-              )}
-
-              <Switch
-                value={profileData?.config?.workExperience}
-                checked={profileData?.config?.workExperience}
-                onChange={(value) => {
-                  handleUpdateProfile({
-                    config: {
-                      ...profileData?.config,
-                      workExperience: value,
+              <span
+                className="text-lg cursor-pointer"
+                onClick={() => {
+                  updateUser({
+                    ...user,
+                    profileConfig: {
+                      ...user?.profileConfig,
+                      workExperience: !user?.profileConfig?.workExperience,
                     },
                   });
+                  setConfig({
+                    ...user?.profileConfig,
+                    workExperience: !user?.profileConfig?.workExperience,
+                  });
                 }}
-                size="sm"
-              />
+              >
+                {user?.profileConfig?.workExperience ? "+" : "-"}
+              </span>
+
+              {loading && key === "workExperience" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin text-lg" />
+                </span>
+              ) : (
+                <Switch
+                  value={profileData?.config?.workExperience}
+                  checked={profileData?.config?.workExperience}
+                  onChange={(value) => {
+                    handleUpdateProfile({
+                      config: {
+                        ...profileData?.config,
+                        workExperience: value,
+                      },
+                    });
+                  }}
+                  size="sm"
+                />
+              )}
             </div>
           </div>
           <div
@@ -453,29 +531,46 @@ const SmartResumeSettings: React.FC<{
           >
             <p>Volunteer Experience</p>
             <div className="ml-auto flex items-center gap-1">
-              {loading && key === "volunteerExperience" ? (
-                <span>
-                  <RiLoader3Fill className="animate-spin" />
-                </span>
-              ) : (
-                <span>
-                  {profileData?.config?.volunteerExperience ? "+" : "-"}
-                </span>
-              )}
-
-              <Switch
-                value={profileData?.config?.volunteerExperience}
-                checked={profileData?.config?.volunteerExperience}
-                onChange={(value) => {
-                  handleUpdateProfile({
-                    config: {
-                      ...profileData?.config,
-                      volunteerExperience: value,
+              <span
+                className="text-lg cursor-pointer"
+                onClick={() => {
+                  updateUser({
+                    ...user,
+                    profileConfig: {
+                      ...user?.profileConfig,
+                      volunteerExperience:
+                        !user?.profileConfig?.volunteerExperience,
                     },
                   });
+                  setConfig({
+                    ...user?.profileConfig,
+                    volunteerExperience:
+                      !user?.profileConfig?.volunteerExperience,
+                  });
                 }}
-                size="sm"
-              />
+              >
+                {user?.profileConfig?.volunteerExperience ? "+" : "-"}
+              </span>
+
+              {loading && key === "volunteerExperience" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin text-lg" />
+                </span>
+              ) : (
+                <Switch
+                  value={profileData?.config?.volunteerExperience}
+                  checked={profileData?.config?.volunteerExperience}
+                  onChange={(value) => {
+                    handleUpdateProfile({
+                      config: {
+                        ...profileData?.config,
+                        volunteerExperience: value,
+                      },
+                    });
+                  }}
+                  size="sm"
+                />
+              )}
             </div>
           </div>
           <div
@@ -484,27 +579,44 @@ const SmartResumeSettings: React.FC<{
           >
             <p>Internships</p>
             <div className="ml-auto flex items-center gap-1">
-              {loading && key === "internships" ? (
-                <span>
-                  <RiLoader3Fill className="animate-spin" />
-                </span>
-              ) : (
-                <span>{profileData?.config?.internships ? "+" : "-"}</span>
-              )}
-
-              <Switch
-                value={profileData?.config?.internships}
-                checked={profileData?.config?.internships}
-                onChange={(value) => {
-                  handleUpdateProfile({
-                    config: {
-                      ...profileData?.config,
-                      internships: value,
+              <span
+                className="text-lg cursor-pointer"
+                onClick={() => {
+                  updateUser({
+                    ...user,
+                    profileConfig: {
+                      ...user?.profileConfig,
+                      internships: !user?.profileConfig?.internships,
                     },
                   });
+                  setConfig({
+                    ...user?.profileConfig,
+                    internships: !user?.profileConfig?.internships,
+                  });
                 }}
-                size="sm"
-              />
+              >
+                {user?.profileConfig?.internships ? "+" : "-"}
+              </span>
+
+              {loading && key === "internships" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin text-lg" />
+                </span>
+              ) : (
+                <Switch
+                  value={profileData?.config?.internships}
+                  checked={profileData?.config?.internships}
+                  onChange={(value) => {
+                    handleUpdateProfile({
+                      config: {
+                        ...profileData?.config,
+                        internships: value,
+                      },
+                    });
+                  }}
+                  size="sm"
+                />
+              )}
             </div>
           </div>
           <div
@@ -513,26 +625,44 @@ const SmartResumeSettings: React.FC<{
           >
             <p>Education</p>
             <div className="ml-auto flex items-center gap-1">
-              {loading && key === "education" ? (
-                <span>
-                  <RiLoader3Fill className="animate-spin" />
-                </span>
-              ) : (
-                <span>{profileData?.config?.education ? "+" : "-"}</span>
-              )}
-              <Switch
-                value={profileData?.config?.education}
-                checked={profileData?.config?.education}
-                onChange={(value) => {
-                  handleUpdateProfile({
-                    config: {
-                      ...profileData?.config,
-                      education: value,
+              <span
+                className="text-lg cursor-pointer"
+                onClick={() => {
+                  updateUser({
+                    ...user,
+                    profileConfig: {
+                      ...user?.profileConfig,
+                      education: !user?.profileConfig?.education,
                     },
                   });
+                  setConfig({
+                    ...user?.profileConfig,
+                    education: !user?.profileConfig?.education,
+                  });
                 }}
-                size="sm"
-              />
+              >
+                {user?.profileConfig?.education ? "+" : "-"}
+              </span>
+
+              {loading && key === "education" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin text-lg" />
+                </span>
+              ) : (
+                <Switch
+                  value={profileData?.config?.education}
+                  checked={profileData?.config?.education}
+                  onChange={(value) => {
+                    handleUpdateProfile({
+                      config: {
+                        ...profileData?.config,
+                        education: value,
+                      },
+                    });
+                  }}
+                  size="sm"
+                />
+              )}
             </div>
           </div>
           <div
@@ -541,26 +671,44 @@ const SmartResumeSettings: React.FC<{
           >
             <p>Certifications and Trainings</p>
             <div className="ml-auto flex items-center gap-1">
-              {loading && key === "certifications" ? (
-                <span>
-                  <RiLoader3Fill className="animate-spin" />
-                </span>
-              ) : (
-                <span>{profileData?.config?.certifications ? "+" : "-"}</span>
-              )}
-              <Switch
-                value={profileData?.config?.certifications}
-                checked={profileData?.config?.certifications}
-                onChange={(value) => {
-                  handleUpdateProfile({
-                    config: {
-                      ...profileData?.config,
-                      certifications: value,
+              <span
+                className="text-lg cursor-pointer"
+                onClick={() => {
+                  updateUser({
+                    ...user,
+                    profileConfig: {
+                      ...user?.profileConfig,
+                      certifications: !user?.profileConfig?.certifications,
                     },
                   });
+                  setConfig({
+                    ...user?.profileConfig,
+                    certifications: !user?.profileConfig?.certifications,
+                  });
                 }}
-                size="sm"
-              />
+              >
+                {user?.profileConfig?.certifications ? "+" : "-"}
+              </span>
+
+              {loading && key === "certifications" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin text-lg" />
+                </span>
+              ) : (
+                <Switch
+                  value={profileData?.config?.certifications}
+                  checked={profileData?.config?.certifications}
+                  onChange={(value) => {
+                    handleUpdateProfile({
+                      config: {
+                        ...profileData?.config,
+                        certifications: value,
+                      },
+                    });
+                  }}
+                  size="sm"
+                />
+              )}
             </div>
           </div>
           <div
@@ -569,26 +717,44 @@ const SmartResumeSettings: React.FC<{
           >
             <p>Membership & Affiliation</p>
             <div className="ml-auto flex items-center gap-1">
-              {loading && key === "memberships" ? (
-                <span>
-                  <RiLoader3Fill className="animate-spin" />
-                </span>
-              ) : (
-                <span>{profileData?.config?.memberships ? "+" : "-"}</span>
-              )}
-              <Switch
-                value={profileData?.config?.memberships}
-                checked={profileData?.config?.memberships}
-                onChange={(value) => {
-                  handleUpdateProfile({
-                    config: {
-                      ...profileData?.config,
-                      memberships: value,
+              <span
+                className="text-lg cursor-pointer"
+                onClick={() => {
+                  updateUser({
+                    ...user,
+                    profileConfig: {
+                      ...user?.profileConfig,
+                      memberships: !user?.profileConfig?.memberships,
                     },
                   });
+                  setConfig({
+                    ...user?.profileConfig,
+                    memberships: !user?.profileConfig?.memberships,
+                  });
                 }}
-                size="sm"
-              />
+              >
+                {user?.profileConfig?.memberships ? "+" : "-"}
+              </span>
+
+              {loading && key === "memberships" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin text-lg" />
+                </span>
+              ) : (
+                <Switch
+                  value={profileData?.config?.memberships}
+                  checked={profileData?.config?.memberships}
+                  onChange={(value) => {
+                    handleUpdateProfile({
+                      config: {
+                        ...profileData?.config,
+                        memberships: value,
+                      },
+                    });
+                  }}
+                  size="sm"
+                />
+              )}
             </div>
           </div>
           <div
@@ -597,26 +763,44 @@ const SmartResumeSettings: React.FC<{
           >
             <p>Professional Reference</p>
             <div className="ml-auto flex items-center gap-1">
-              {loading && key === "references" ? (
-                <span>
-                  <RiLoader3Fill className="animate-spin" />
-                </span>
-              ) : (
-                <span>{profileData?.config?.references ? "+" : "-"}</span>
-              )}
-              <Switch
-                value={profileData?.config?.references}
-                checked={profileData?.config?.references}
-                onChange={(value) => {
-                  handleUpdateProfile({
-                    config: {
-                      ...profileData?.config,
-                      references: value,
+              <span
+                className="text-lg cursor-pointer"
+                onClick={() => {
+                  updateUser({
+                    ...user,
+                    profileConfig: {
+                      ...user?.profileConfig,
+                      references: !user?.profileConfig?.references,
                     },
                   });
+                  setConfig({
+                    ...user?.profileConfig,
+                    references: !user?.profileConfig?.references,
+                  });
                 }}
-                size="sm"
-              />
+              >
+                {user?.profileConfig?.references ? "+" : "-"}
+              </span>
+
+              {loading && key === "references" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin text-lg" />
+                </span>
+              ) : (
+                <Switch
+                  value={profileData?.config?.references}
+                  checked={profileData?.config?.references}
+                  onChange={(value) => {
+                    handleUpdateProfile({
+                      config: {
+                        ...profileData?.config,
+                        references: value,
+                      },
+                    });
+                  }}
+                  size="sm"
+                />
+              )}
             </div>
           </div>
         </div>
@@ -921,6 +1105,20 @@ const Profile: React.FC = () => {
   const [profileData, setProfileData] = useState<any | null>(null);
   const [showDrawer, setShowDrawer] = useState(false);
 
+  const [config, setConfig] = useState(
+    user?.profileConfig || {
+      professionalSummary: true,
+      careerHighlights: true,
+      workExperience: true,
+      volunteerExperience: true,
+      internships: true,
+      education: true,
+      certifications: true,
+      memberships: true,
+      references: true,
+    }
+  );
+
   const handleCreateProfile = async (data: any) => {
     const toastId = toast.loading("Setting up your Profile...");
     try {
@@ -936,9 +1134,9 @@ const Profile: React.FC = () => {
       setActive(true);
       updateUser({
         ...user,
-        profile:true,
-        profileId: resp?.data?.profile?._id
-      })
+        profile: true,
+        profileId: resp?.data?.profile?._id,
+      });
     } catch (err: any) {
       toast.dismiss(toastId);
       toast.error(err?.message || "Request Failed");
@@ -956,8 +1154,8 @@ const Profile: React.FC = () => {
         setActive(true);
         updateUser({
           ...user,
-          profileId: data?.data?.profile?._id
-        })
+          profileId: data?.data?.profile?._id,
+        });
       },
       onError: (err: any) => {
         toast.error(err.message || "Request Failed");
@@ -965,6 +1163,24 @@ const Profile: React.FC = () => {
     }
   );
 
+  useEffect(() => {
+    if (!user?.config) {
+      updateUser({
+        ...user,
+        profileConfig: {
+          professionalSummary: true,
+          careerHighlights: true,
+          workExperience: true,
+          volunteerExperience: true,
+          internships: true,
+          education: true,
+          certifications: true,
+          memberships: true,
+          references: true,
+        },
+      });
+    }
+  }, []);
   return (
     <DefaultLayout>
       {isFetching && user?.profile ? (
@@ -1009,58 +1225,58 @@ const Profile: React.FC = () => {
                       setProfileData={setProfileData}
                       profileData={profileData}
                     />
-                    {profileData?.config?.professionalSummary && (
+                    {config?.professionalSummary && (
                       <ProfileSummary
                         resumeData={profileData}
                         setResumeData={setProfileData}
                       />
                     )}
-                    {profileData?.config?.careerHighlights && (
+                    {config?.careerHighlights && (
                       <CareerHighlight
                         profileData={profileData}
                         setProfileData={setProfileData}
                       />
                     )}
-                    {profileData?.config?.workExperience && (
+                    {config?.workExperience && (
                       <WorkExperience
                         profileData={profileData}
                         setProfileData={setProfileData}
                       />
                     )}
-                    {profileData?.config?.volunteerExperience && (
+                    {config?.volunteerExperience && (
                       <VolunteerExperience
                         profileData={profileData}
                         setProfileData={setProfileData}
                       />
                     )}
 
-                    {profileData?.config?.internships && (
+                    {config?.internships && (
                       <Internships
                         profileData={profileData}
                         setProfileData={setProfileData}
                       />
                     )}
-                    {profileData?.config?.education && (
+                    {config?.education && (
                       <Education
                         profileData={profileData}
                         setProfileData={setProfileData}
                       />
                     )}
 
-                    {profileData?.config?.certifications && (
+                    {config?.certifications && (
                       <Certifications
                         profileData={profileData}
                         setProfileData={setProfileData}
                       />
                     )}
 
-                    {profileData?.config?.memberships && (
+                    {config?.memberships && (
                       <Memberships
                         profileData={profileData}
                         setProfileData={setProfileData}
                       />
                     )}
-                    {profileData?.config?.references && (
+                    {config?.references && (
                       <ProfessionalReference
                         profileData={profileData}
                         setProfileData={setProfileData}
@@ -1072,6 +1288,7 @@ const Profile: React.FC = () => {
                   <SmartResumeSettings
                     setProfileData={setProfileData}
                     profileData={profileData}
+                    setConfig={setConfig}
                   />
                 </div>
               </div>
@@ -1126,6 +1343,7 @@ const Profile: React.FC = () => {
                 <SmartResumeSettings
                   setProfileData={setProfileData}
                   profileData={profileData}
+                  setConfig={setConfig}
                 />
               </div>
             </Drawer>

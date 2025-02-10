@@ -6,7 +6,6 @@ import {
 } from "react-icons/fa6";
 import { useApp } from "../../context/AppContext";
 import DefaultLayout from "../../layout/DefaultLayout";
-import { BsSliders2Vertical } from "react-icons/bs";
 import { useState } from "react";
 import ResumeAnalytics from "./ResumeAnalytics";
 import {
@@ -17,7 +16,6 @@ import {
 import { MdCancel } from "react-icons/md";
 import { TbSearch } from "react-icons/tb";
 import { RiAwardLine, RiRobot2Line } from "react-icons/ri";
-import { HiOutlineSparkles } from "react-icons/hi";
 import { mockApplicationData } from "../../data/mockData";
 import { IoDocumentTextOutline, IoLocationOutline } from "react-icons/io5";
 import { formatDateString } from "../../lib/utils/formatters";
@@ -30,8 +28,6 @@ import classNames from "classnames";
 import { IoIosArrowForward } from "react-icons/io";
 import { BiLoaderAlt } from "react-icons/bi";
 import ExtensionModal from "../PageComponents/ExtensionModal";
-import AiMatchModal from "./AiMatch";
-import AdvancedSearchModal from "./AdvancedSearch";
 import CreateApplicationKit from "./CreateApplicationKit";
 import Tabs, { Tab } from "../../components/tabs";
 import { toast } from "react-toastify";
@@ -48,8 +44,6 @@ const Applications: React.FC = () => {
   const [_status, setStatus] = useState("");
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [extension, setExtension] = useState(false);
-  const [aiMatch, setAiMatch] = useState(false);
-  const [aiSearch, setAiSearch] = useState(false);
   const [createModal, setCreateModal] = useState(false);
 
   const [page, setPage] = useState(1);
@@ -97,8 +91,8 @@ const Applications: React.FC = () => {
           </div>
 
           <div className="w-full flex  justify-between gap-4 xl:flex-row flex-col">
-            <div className="bg-white flex items-center rounded-xl border border-stroke justify-between max-xl:w-full px-2 py-2 w-[450px]">
-              <div className="relative ">
+            <div className="">
+              <div className="relative w-full bg-white flex items-center rounded-xl border border-stroke justify-between max-xl:w-full px-2 py-2 sm:w-[450px]">
                 <button className="absolute top-1/2 left-0 -translate-y-1/2 pl-3">
                   <TbSearch />
                 </button>
@@ -108,25 +102,10 @@ const Applications: React.FC = () => {
                   placeholder="Search"
                   // value={search}
                   // onChange={(e) => setSearch(e.target.value)}
-                  className=" border-none max-sm:w-[180px]  bg-white text-sm pr-3 pl-8 focus:outline-none "
+                  className=" border-none w-full  bg-white focus:ring-0 text-sm pr-3 pl-8 focus:outline-none "
                 />
               </div>
-              <div className="flex gap-2 items-center">
-                <button className="" onClick={() => setAiSearch(true)}>
-                  <BsSliders2Vertical />
-                </button>
-                <button
-                  onClick={() => setAiMatch(true)}
-                  className="flex gap-1 items-center sm:justify-center max-sm:w-[110px] px-3 text-sm py-1 hover:scale-y-105 bg-primary/10 text-primary rounded-lg"
-                >
-                  <span>
-                    {" "}
-                    <RiRobot2Line className="max-sm:text-sm" />
-                  </span>
-                  AI Match
-                  <HiOutlineSparkles className="max-sm:hidden" />
-                </button>
-              </div>
+             
             </div>
             <div className="flex gap-4 max-md:gap-2 items-center max-lg:w-full">
               <button
@@ -428,17 +407,6 @@ const Applications: React.FC = () => {
         )}
         {extension && (
           <ExtensionModal show={extension} onHide={() => setExtension(false)} />
-        )}
-        {aiMatch && (
-          <AiMatchModal show={aiMatch} onHide={() => setAiMatch(false)} />
-        )}
-        {aiSearch && (
-          <AdvancedSearchModal
-            show={aiSearch}
-            onHide={() => setAiSearch(false)}
-          >
-            <div className="grid grid-cols-2 gap-6"></div>
-          </AdvancedSearchModal>
         )}
         {createModal && (
           <CreateApplicationKit

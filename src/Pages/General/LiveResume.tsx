@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { ResumePreview } from "../PageComponents/Resume";
 import { getResumeDataByName } from "../../services/resumeServices";
 import { toast } from "react-toastify";
+import { mockResData } from "../../data/mockData";
 
 const LiveResume: React.FC = () => {
   const { resumeName } = useParams();
@@ -20,6 +21,7 @@ const LiveResume: React.FC = () => {
       } catch (err: any) {
         if (err?.message !== "Profile not found") {
           toast.error(err?.message || "Request Failed");
+          setResumeData(mockResData);
         }
       } finally {
         setLoading(false);
