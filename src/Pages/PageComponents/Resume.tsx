@@ -78,17 +78,32 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
       document.removeEventListener("gestureend", handler);
     };
   }, []);
-  useEffect(() => {
-    requestAnimationFrame(() => {
-      if (ref.current) {
-        const { width } = ref.current.getBoundingClientRect();
-        const viewportWidth = window.innerWidth;
-        const initialScale = viewportWidth / width;
+  // Function to apply the initial zoom
+  const applyInitialZoom = () => {
+    if (ref.current) {
+      const { width, height, x, y } = ref.current.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
 
-        api.set({ scale: initialScale, x: 0, y: 0 });
-        console.log("Initial width:", width, "Initial scale:", initialScale);
-      }
-    });
+      const initialScale = viewportWidth / width;
+
+      const ox = x + width / 2;
+      const oy = y + height / 2;
+      const tx = ox - (x + width / 2);
+      const ty = oy - (y + height / 2);
+
+      api.start({
+        scale: initialScale,
+        x: -tx * (initialScale - 1),
+        y: -ty * (initialScale - 1),
+      });
+
+      console.log("Auto Zoom Applied:", { width, viewportWidth, initialScale });
+    }
+  };
+
+  // Auto-zoom on page load
+  useEffect(() => {
+    requestAnimationFrame(applyInitialZoom);
   }, []);
   return (
     <section className="w-full bg-white">
