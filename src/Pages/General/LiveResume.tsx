@@ -35,7 +35,7 @@ const LiveResume: React.FC = () => {
   }, [resumeName]);
 
   return (
-    <section className="min-h-screen bg-[#F9FAFB]">
+    <section className="h-screen bg-[#F9FAFB]">
       {loading ? (
         <PageLoader />
       ) : resumeData ? (
@@ -62,15 +62,15 @@ const LiveResume: React.FC = () => {
       )}
       {resumeData && (
         <div className="fixed left-0 right-0 w-full bottom-0">
-          <div className="w-full flex justify-between max-sm:flex-col max-sm:text-xs text-sm items-center text-zinc-500 py-3.5 px-1.5 max-sm:gap-1 sm:px-5 bg-[#FBFCFC] border border-[#F3F4F6]">
+          <div className="w-full flex justify-between max-sm:flex-col max-sm:text-xs text-sm items-center text-zinc-500 py-2 sm:py-3.5 px-1.5 max-sm:gap-1 sm:px-5 bg-[#FBFCFC] border border-[#F3F4F6]">
             <p>Powered by Tabbio</p>
             <div className="flex items-center divide-x divide-white bg-primary rounded-lg">
-              <button className="sm:px-4 flex items-center gap-2 py-1 px-2 max-sm:text-xs sm:py-2 bg-primary hover:scale-105 text-white rounded-l-lg">
+              <button className="sm:px-4 flex items-center gap-2 py-1.5 px-2 max-sm:text-xs sm:py-2 bg-primary hover:scale-105 text-white rounded-l-lg">
                 <FiDownload /> Download PDF
               </button>
               <button
                 onClick={() => setShareModal(true)}
-                className="sm:px-4 flex items-center gap-2 py-1 px-2 max-sm:text-xs sm:py-2 bg-primary hover:scale-105 text-white "
+                className="sm:px-4 flex items-center gap-2 py-1.5 px-2 max-sm:text-xs sm:py-2 bg-primary hover:scale-105 text-white "
               >
                 <MdShare /> Share
               </button>
@@ -78,7 +78,7 @@ const LiveResume: React.FC = () => {
                 onClick={() => {
                   navigate(`/signup`);
                 }}
-                className="sm:px-4 flex items-center gap-2 py-1 px-2 max-sm:text-xs sm:py-2 bg-primary hover:scale-105 text-white rounded-r-lg "
+                className="sm:px-4 flex items-center gap-2 py-1.5 px-2 max-sm:text-xs sm:py-2 bg-primary hover:scale-105 text-white rounded-r-lg "
               >
                 <span><FiExternalLink /></span> Create your SmartResume
               </button>
