@@ -94,7 +94,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
     <section className="w-full bg-white">
         <animated.div
           ref={ref}
-          style={{ touchAction: "none" }}
+          // style={{ touchAction: "none" }}
           className="min-w-[800px] w-full max-w-[1200px] overflow-hidden"
         >
           <button
