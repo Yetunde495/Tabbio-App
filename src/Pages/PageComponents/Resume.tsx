@@ -2,7 +2,7 @@ import { FaCircle } from "react-icons/fa6";
 import { formatMonthYear } from "../../lib/utils/formatters";
 import { useSpring, animated } from "@react-spring/web";
 import { createUseGesture, dragAction, pinchAction } from "@use-gesture/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const useGesture = createUseGesture([dragAction, pinchAction]);
 
@@ -25,7 +25,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
   const fontSizeSm =
     fontSizeSmMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
     "14px";
-
+    const [_userInteracted, _setUserInteracted] = useState(false);
   const [style, api] = useSpring(() => ({
     x: 0,
     y: 0,
@@ -69,6 +69,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
 
   useEffect(() => {
     const handler = (e: Event) => e.preventDefault();
+    // const handleInteraction = () => setUserInteracted(true);
     document.addEventListener("gesturestart", handler);
     document.addEventListener("gesturechange", handler);
     document.addEventListener("gestureend", handler);
@@ -79,38 +80,38 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
     };
   }, []);
   // Function to apply the initial zoom
-  const applyInitialZoom = () => {
-    if (ref.current) {
-      const { width, height, x, y } = ref.current.getBoundingClientRect();
-      const viewportWidth = window.innerWidth;
+  // const applyInitialZoom = () => {
+  //   if (ref.current) {
+  //     const { width, height, x, y } = ref.current.getBoundingClientRect();
+  //     const viewportWidth = window.innerWidth;
 
-      const initialScale = viewportWidth / width;
+  //     const initialScale = viewportWidth / width;
 
-      const ox = x + width / 2;
-      const oy = y + height / 2;
-      const tx = ox - (x + width / 2);
-      const ty = oy - (y + height / 2);
+  //     const ox = x + width / 2;
+  //     const oy = y + height / 2;
+  //     const tx = ox - (x + width / 2);
+  //     const ty = oy - (y + height / 2);
 
-      api.start({
-        scale: initialScale,
-        x: -tx * (initialScale - 1),
-        y: -ty * (initialScale - 1),
-      });
+  //     api.start({
+  //       scale: initialScale,
+  //       x: -tx * (initialScale - 1),
+  //       y: -ty * (initialScale - 1),
+  //     });
 
-      console.log("Auto Zoom Applied:", { width, viewportWidth, initialScale });
-    }
-  };
+  //     console.log("Auto Zoom Applied:", { width, viewportWidth, initialScale });
+  //   }
+  // };
 
-  // Auto-zoom on page load
-  useEffect(() => {
-    requestAnimationFrame(applyInitialZoom);
-  }, []);
+  // // Auto-zoom on page load
+  // useEffect(() => {
+  //   requestAnimationFrame(applyInitialZoom);
+  // }, []);
   return (
     <section className="w-full bg-white">
         <animated.div
           ref={ref}
           // style={{ touchAction: "none" }}
-          className="min-w-[800px] w-full max-w-[1200px] overflow-hidden"
+          className={` min-w-[800px] w-full max-w-[1200px]`}
         >
           <button
             className="hidden"

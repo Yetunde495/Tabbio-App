@@ -698,7 +698,7 @@ const EditSmartResume: React.FC = () => {
             </div>
 
             <div className="w-full flex 2xl:flex-row flex-col gap-5 overflow-x-auto">
-              <div className="w-full 2xl:max-w-[75%]  lg:w-[90%] min-w-[800px]">
+              <div className="w-full max-w-[1100px]  lg:w-[90%] min-w-[800px]">
                 {resumeData?.template === "entry" && (
                   <div
                     style={{ fontFamily: resumeData?.style?.fontFamily || "" }}
@@ -1227,6 +1227,9 @@ const EditSmartResume: React.FC = () => {
               show={scoreModal}
               onHide={() => setScoreModal(false)}
               resumeData={resumeData}
+              setResumeData={setResumeData}
+              config={config}
+              setConfig={setConfig}
             />
           )}
           {nameModal && (

@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ResumePreview } from "../PageComponents/Resume";
 import { getResumeDataByName } from "../../services/resumeServices";
 import { toast } from "react-toastify";
-import { mockResData } from "../../data/mockData";
+// import { mockResData } from "../../data/mockData";
 import { FiDownload, FiExternalLink } from "react-icons/fi";
 import { MdShare } from "react-icons/md";
 import ShareResume from "../Candidate/ShareResume";
@@ -26,7 +26,7 @@ const LiveResume: React.FC = () => {
       } catch (err: any) {
         if (err?.message !== "Profile not found") {
           toast.error(err?.message || "Request Failed");
-          setResumeData(mockResData);
+          // setResumeData(mockResData);
         }
       } finally {
         setLoading(false);

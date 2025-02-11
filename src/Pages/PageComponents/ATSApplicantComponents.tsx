@@ -8,7 +8,6 @@ import { BsPlusCircleFill } from "react-icons/bs";
 import { FaCheck, FaCircle, FaCircleMinus, FaRegCircle } from "react-icons/fa6";
 import { RiExpandUpDownLine, RiRobot2Line } from "react-icons/ri";
 import { FaRegCheckCircle } from "react-icons/fa";
-import { formatMonthYear } from "../../lib/utils/formatters";
 import { generateUniqueId } from "../../lib/utils";
 import { generateProfileSummary } from "../../services/profileServices";
 import { toast } from "react-toastify";
@@ -1661,15 +1660,7 @@ export const AtsVolunteerExperience: React.FC<{
 
   useEffect(() => {
     if (resumeData?.volunteerExperience?.length > 0) {
-      const formattedExperience = resumeData?.volunteerExperience?.map(
-        (experience: any) => ({
-          ...experience,
-          duration: experience?.startDate
-            ? formatMonthYear(experience?.startDate)
-            : "",
-        })
-      );
-      setItems(formattedExperience);
+      setItems(resumeData?.volunteerExperience);
     } else {
       setItems([
         {
@@ -2209,6 +2200,7 @@ export const AtsProjects: React.FC<{
           technology: "",
           description: "",
           link: "",
+          tools:[]
         },
       ]);
     }
