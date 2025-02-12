@@ -457,7 +457,7 @@ export const AtsExperience: React.FC<{
       setItems([
         {
           id: generateUniqueId(),
-          title: "",
+          title: "POSITION",
           company: "",
           description:
             "Write details of short overview of the job here. Use bullet point to summaries your key achievement",
@@ -468,19 +468,6 @@ export const AtsExperience: React.FC<{
             "Recruiters like to be able to get an idea of why you move from company to company. ",
             "Demonstrate your increasing impact and responsibility from job to job.",
             "You don’t need to include every job you’ve ever had on your resume. Stick to the jobs that are most relevant and demonstrate your career trajectory.",
-          ],
-        },
-        {
-          id: generateUniqueId(),
-          company: "",
-          title: "",
-          description: "",
-          startDate: "",
-          endDate: "",
-          duration: "From-to",
-          keyAchievements: [
-            "Recruiters like to be able to get an idea of why you move from company to company. ",
-            "This shows the recruiter that you’re capable of taking on more and more and gives them an idea of where your career is heading.",
           ],
         },
       ]);
