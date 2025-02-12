@@ -743,7 +743,7 @@ const CreateLiveResume: React.FC = () => {
 
         <div className="px-2 py-4 md:pl-8 md:pr-2">
           <div className="w-full flex 2xl:flex-row flex-col gap-5 overflow-x-auto">
-            <div className="w-full 2xl:max-w-[75%]  lg:w-[90%] min-w-[800px]">
+            <div className="w-full 5xl:max-w-[1300px] 2xl:max-w-[1100px] max-w-[900px] lg:w-[90%] min-w-[800px] 2xl:ml-auto">
               <div className="w-full flex justify-between gap-6 mb-3 items-end">
                 {resumeData?.resumeName && (
                   <p className="font-medium text-zinc-600">
