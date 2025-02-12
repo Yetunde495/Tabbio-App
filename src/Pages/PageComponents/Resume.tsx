@@ -1013,13 +1013,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                                   <p
                                     className={`text-sm text-right font-medium text-black px-2`}
                                   >
-                                    {item?.startDate &&
-                                      formatMonthYear(item?.startDate)}
-                                    -
-                                    {item?.active
-                                      ? "Present"
-                                      : item?.endDate &&
-                                        formatMonthYear(item?.endDate)}
+                                    {item?.duration}
                                   </p>
                                 </div>
                               </div>
@@ -1077,13 +1071,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                                   <span
                                     className={`text-sm text-right font-medium text-black px-2`}
                                   >
-                                    {item?.startDate &&
-                                      formatMonthYear(item?.startDate)}
-                                    -
-                                    {item?.active
-                                      ? "Present"
-                                      : item?.endDate &&
-                                        formatMonthYear(item?.endDate)}
+                                    {item?.year}
                                   </span>
                                 </div>
                               </div>

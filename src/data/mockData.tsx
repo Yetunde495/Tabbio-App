@@ -435,7 +435,7 @@ export const mockEmptyResume = {
   location: "Enter Address",
   address: "Enter Address",
   email: "Email",
-  phone: "Phone Numbe",
+  phone: "Phone Number",
   website: "Website",
   linkedIn: "Linkedin Url",
   areaOfExpertise: [],
