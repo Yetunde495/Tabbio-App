@@ -6,6 +6,7 @@ import { RxCross2 } from "react-icons/rx";
 import { toast } from "react-toastify";
 import {
   analyzeResume,
+  createResume,
   fixAllResumeIssues,
   fixSingleResumeIssue,
   updateResume,
@@ -231,6 +232,19 @@ const ResumeAiScore: React.FC<Props> = ({
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const handleCreateResume = async () => {
+    try {
+      const resp = await createResume({
+        ...resumeData,
+        config: config,
+      });
+      setResumeData(resp?.data?.resume);
+      setConfig(resp?.data?.resume?.config);
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed! Please try again");
+    }
+  };
+
   const handleUpdateResume = async () => {
     try {
       const resp = await updateResume(resumeData?._id, {
@@ -246,7 +260,12 @@ const ResumeAiScore: React.FC<Props> = ({
 
   const handleAnalyzeResume = async () => {
     try {
-      await handleUpdateResume();
+      if (!resumeData?._id) {
+        await handleCreateResume();
+      } else {
+        await handleUpdateResume();
+      }
+
       const resp = await analyzeResume(
         {
           resumeId: resumeData?._id,
@@ -266,7 +285,6 @@ const ResumeAiScore: React.FC<Props> = ({
     setFixLoading(true);
     try {
       const resp = await fixSingleResumeIssue(data);
-      console.log(resp?.data);
 
       // Update the score of the active tab
       setTabs((prevTabs) =>
@@ -301,14 +319,14 @@ const ResumeAiScore: React.FC<Props> = ({
       const resp = await fixAllResumeIssues(data);
       // console.log(resp?.data);
       setResumeData(resp?.data?.resume);
-      onHide()
+      onHide();
     } catch (err: any) {
       toast.error(err?.message || "Request Failed");
       setErrorMessage(
         err?.message || "Request Failed! Please, try again later"
       );
       setError(true);
-      setFixLoading(false)
+      setFixLoading(false);
       setLoadingStep(0);
     } finally {
       setFixLoading(false);
@@ -557,10 +575,7 @@ const ResumeAiScore: React.FC<Props> = ({
               <div className="py-5">
                 <div className="flex items-center justify-center gap-2 px-3">
                   <span className="bg-red-600 rounded-full text-white w-14 h-14 flex items-center justify-center">
-                    <MdOutlineErrorOutline
-                      size={28}
-                      className=""
-                    />
+                    <MdOutlineErrorOutline size={28} className="" />
                   </span>
                 </div>
 
@@ -586,7 +601,8 @@ const ResumeAiScore: React.FC<Props> = ({
                     Fixing all CV issues
                   </h3>
                   <p className="text-center text-zinc-600">
-                    Our AI is analyzing and fixing issues in your CV. This will <br />
+                    Our AI is analyzing and fixing issues in your CV. This will{" "}
+                    <br />
                     only take a moment.
                   </p>
                 </div>

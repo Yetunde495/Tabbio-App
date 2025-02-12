@@ -278,7 +278,7 @@ export const ContactInfo: React.FC<{
           resumeData?.template === "professional" ? "" : "justify-center"
         } flex flex-wrap gap-x-2 divide-x gap-y-3 items-center`}
       >
-        {["email", "phone", "location", "linkedin", "website"]
+        {["email", "phone", "location", "linkedIn", "website"]
           .filter((field) => config[field as keyof typeof config])
           .map((field) => (
             <div
@@ -2197,10 +2197,10 @@ export const AtsProjects: React.FC<{
         {
           id: generateUniqueId(),
           name: "",
-          technology: "",
           description: "",
           link: "",
-          tools:[]
+          tools:"",
+          year: ""
         },
       ]);
     }
@@ -2260,9 +2260,10 @@ export const AtsProjects: React.FC<{
     const newProject = {
       id: generateUniqueId(),
       name: "",
-      technology: "",
+      tools: "",
       description: "",
       link: "",
+      year: ""
     };
     setItems([...items, newProject]);
     setResumeData(() => ({
@@ -2365,11 +2366,11 @@ export const AtsProjects: React.FC<{
                 />
                 <input
                   className={`border-none text-sm font-medium focus:outline-none bg-white text-black placeholder:text-black focus:bg-zinc-100 px-2`}
-                  placeholder="Enter Technology/skill used for this project"
-                  value={item?.technology}
+                  placeholder="Enter Technology/tools used for this project"
+                  value={item?.tools}
                   style={{ fontSize: fontSizeSm }}
                   onChange={(e) =>
-                    handleInputChange(item?.id, "duration", e.target.value)
+                    handleInputChange(item?.id, "tools", e.target.value)
                   }
                 />
               </div>

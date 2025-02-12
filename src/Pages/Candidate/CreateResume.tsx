@@ -59,6 +59,9 @@ import { generateResumeTitle } from "../../lib/utils/getUserInitials";
 import { AiOutlineSave } from "react-icons/ai";
 import { GrDocumentUpdate } from "react-icons/gr";
 import ShareResume from "./ShareResume";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import EntryPDF from "../../components/PDFTemplates/EntryPDF";
+import ProfessionalPDF from "../../components/PDFTemplates/ProfessionalPDF";
 
 const primaryColors = ["#0077B5", "#CC0074", "#FF7D00", "#00C196", "#000000"];
 
@@ -525,6 +528,20 @@ const CreateLiveResume: React.FC = () => {
                         </li>
                         <li>
                           <Switch
+                            checked={config.careerHighlights}
+                            value={config.careerHighlights}
+                            label="Career Highlights"
+                            size="sm"
+                            onChange={(val) => {
+                              setConfig((c: any) => ({
+                                ...c,
+                                careerHighlights: val,
+                              }));
+                            }}
+                          />
+                        </li>
+                        <li>
+                          <Switch
                             checked={config.certifications}
                             value={config.certifications}
                             label="Certifications"
@@ -683,10 +700,25 @@ const CreateLiveResume: React.FC = () => {
                   score={resumeData?.tabbioScore || 0}
                 />
               </div>
-              <button className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center text-primary gap-1 hover:scale-x-105 ">
-                <BsDownload /> <span className="max-sm:hidden">Download</span>
-              </button>
-              <button onClick={() => setShareModal(false)} className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center text-zinc-700 gap-1 hover:scale-x-105 ">
+              {resumeData?._id && <PDFDownloadLink
+                document={
+                  resumeData?.template === "professional" ? (
+                    <ProfessionalPDF data={resumeData} />
+                  ) : (
+                    <EntryPDF data={resumeData} />
+                  )
+                }
+                fileName={resumeData?.name || "Tabbio ATS Resume"}
+              >
+                <button className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center text-primary gap-1 hover:scale-x-105 ">
+                  <BsDownload /> <span className="max-sm:hidden">Download</span>
+                </button>
+              </PDFDownloadLink>}
+
+              <button
+                onClick={() => setShareModal(true)}
+                className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center text-zinc-700 gap-1 hover:scale-x-105 "
+              >
                 <MdShare /> <span className="max-sm:hidden">Share</span>
               </button>
               <button className="flex items-center py-1 px-1 gap-1 max-sm:text-[12px] hover:scale-105 duration-150 text-zinc-700">
@@ -1492,6 +1524,9 @@ const CreateLiveResume: React.FC = () => {
             show={scoreModal}
             onHide={() => setScoreModal(false)}
             resumeData={resumeData}
+            setResumeData={setResumeData}
+            config={config}
+            setConfig={setConfig}
           />
         )}
         {shareModal && (
