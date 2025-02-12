@@ -1101,7 +1101,7 @@ const SmartResumeSettings: React.FC<{
 const Profile: React.FC = () => {
   const { user, updateUser } = useApp();
   const navigate = useNavigate();
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(user?.profile);
   const [profileData, setProfileData] = useState<any | null>(null);
   const [showDrawer, setShowDrawer] = useState(false);
 
@@ -1209,14 +1209,16 @@ const Profile: React.FC = () => {
       ) : (
         <section className="">
           <div className="px-2 py-4 md:pl-8 md:pr-2">
-            <div className="xl:hidden flex justify-end items-center">
-              <button
-                onClick={() => setShowDrawer(true)}
-                className="px-4 py-1.5 flex items-center text-xl mb-3 gap-3"
-              >
-                <MdKeyboardDoubleArrowLeft /> <SlSettings />
-              </button>
-            </div>
+            {active && (
+              <div className="xl:hidden flex justify-end items-center">
+                <button
+                  onClick={() => setShowDrawer(true)}
+                  className="px-4 py-1.5 flex items-center text-xl mb-3 gap-3"
+                >
+                  <MdKeyboardDoubleArrowLeft /> <SlSettings />
+                </button>
+              </div>
+            )}
             {active ? (
               <div className="w-full flex xl:flex-row flex-col gap-5">
                 <div className="xl:min-w-[68%]">
@@ -1302,10 +1304,10 @@ const Profile: React.FC = () => {
                     <h2 className="text-xl text-center font-semibold text-black dark:text-white">
                       Create Your Profile
                     </h2>
-                    <p className="text-neutral-500 mb-3">
+                    <p className="text-neutral-500 mb-3 text-center">
                       Upload your existing resume or create a new one
                     </p>
-                    <div className="px-5 w-full mb-4">
+                    <div className="px-5 max-sm:px-0.5 w-full mb-4">
                       <ResumeUpload
                         onSuccess={(response: any) => {
                           handleCreateProfile(response?.data?.profile);

@@ -427,14 +427,15 @@ export const mockEmptyResume = {
   },
   style: {
     primaryColor: "#007CFF",
-    fontFamily: '',
-    fontSize: 'medium'
+    fontFamily: 'Times New Roman',
+    fontSize: 'medium',
+    fontSrc: "/fonts/timesnewroman/times-new-roman.ttf",
   },
   professionalSummary: ``,
   location: "Enter Address",
   address: "Enter Address",
   email: "Email",
-  phone: "Phone Numbe",
+  phone: "Phone Number",
   website: "Website",
   linkedIn: "Linkedin Url",
   areaOfExpertise: [],

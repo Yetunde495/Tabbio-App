@@ -49,7 +49,7 @@ const Applications: React.FC = () => {
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
 
-  const { isLoading } = useQuery(
+  const { isLoading, data } = useQuery(
       ["APPLICATIONS", page, itemsPerPage],
       getUserApplications,
       {
@@ -73,7 +73,7 @@ const Applications: React.FC = () => {
       }
     );
 
-  const pagination = paginate(5, Number(page), Number(itemsPerPage));
+  const pagination = paginate(Number(data?.results), Number(data?.totalPages), Number(itemsPerPage));
 
   return (
     <DefaultLayout>

@@ -316,7 +316,7 @@ const EntryPDF = ({ data }: any) => {
                 <Text style={styles.role}>{data?.role}</Text>
               )}
               <View style={styles.contactInfo}>
-                {["email", "phone", "location", "linkedin", "website"]
+                {["email", "phone", "location", "linkedIn", "website"]
                   .filter((field) => data?.config[field])
                   .map((field) => (
                     <View
@@ -382,10 +382,7 @@ const EntryPDF = ({ data }: any) => {
                       </View>
                     </View>
                     <Text style={[styles.dateText, { fontSize: fontSizeSm }]}>
-                      {formatMonthYear(item?.startDate)} -{" "}
-                      {item?.active
-                        ? "Present"
-                        : formatMonthYear(item?.endDate)}
+                      {item?.duration}
                     </Text>
                   </View>
                 ))}
@@ -500,7 +497,7 @@ const EntryPDF = ({ data }: any) => {
                           { fontSize: fontSizeSm },
                         ]}
                       >
-                        {item?.technology}
+                        {item?.tools}
                       </Text>
                     </View>
                     <Text
@@ -551,10 +548,7 @@ const EntryPDF = ({ data }: any) => {
                         {item?.company}
                       </Text>
                       <Text style={[styles.dateText, { fontSize: fontSizeSm }]}>
-                        {formatMonthYear(item?.startDate)} -{" "}
-                        {item?.active
-                          ? "Present"
-                          : formatMonthYear(item?.endDate)}
+                        {item?.duration}
                       </Text>
                     </View>
                     <Text
@@ -604,10 +598,7 @@ const EntryPDF = ({ data }: any) => {
                         {item?.company}
                       </Text>
                       <Text style={styles.dateText}>
-                        {formatMonthYear(item?.startDate)} -{" "}
-                        {item?.active
-                          ? "Present"
-                          : formatMonthYear(item?.endDate)}
+                        {item?.duration}
                       </Text>
                     </View>
                     <Text style={{ marginVertical: 4, fontSize }}>
@@ -650,15 +641,12 @@ const EntryPDF = ({ data }: any) => {
                       }}
                     >
                       <Text
-                        style={{ fontWeight: "semibold", fontSize: fontSizeSm }}
+                        style={{ fontWeight: "semibold", fontSize: fontSize }}
                       >
                         {item?.company}
                       </Text>
                       <Text style={styles.dateText}>
-                        {formatMonthYear(item?.startDate)} -{" "}
-                        {item?.active
-                          ? "Present"
-                          : formatMonthYear(item?.endDate)}
+                        {item?.duration}
                       </Text>
                     </View>
                     <Text style={{ marginVertical: 4, fontSize }}>

@@ -42,6 +42,12 @@ body {
   scroll-behavior: smooth!important;
 
 }
+/* Apply scaling only on first page load */
+@media (max-width: 800px) {
+  .document:not(.no-initial-scale) {
+    transform: scaleX(0.9)
+  }
+}
 
 .wmde-markdown pre {
   background-color: transparent!important;

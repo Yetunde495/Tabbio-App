@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import { HiOutlineCheckCircle, HiOutlineTemplate } from "react-icons/hi";
 import { IoDocumentTextOutline } from "react-icons/io5";
@@ -6,17 +6,26 @@ import { RxCross2 } from "react-icons/rx";
 import { toast } from "react-toastify";
 import {
   analyzeResume,
+  createResume,
+  fixAllResumeIssues,
   fixSingleResumeIssue,
+  updateResume,
 } from "../../services/resumeServices";
 import { RiErrorWarningLine, RiRobot2Line } from "react-icons/ri";
 import { LuWand2 } from "react-icons/lu";
-import { FaRegStar } from "react-icons/fa6";
+import { FaCircle, FaRegStar } from "react-icons/fa6";
 import { MdOutlineErrorOutline } from "react-icons/md";
+import ProgressBar from "../../components/ProgressBar";
+import botImg from "../../assets/svg/tb-score-bot.svg";
+import { motion } from "framer-motion";
 
 type Props = {
   show?: boolean;
   onHide: () => void;
   resumeData: any;
+  config: any;
+  setConfig: React.Dispatch<React.SetStateAction<any | null>>;
+  setResumeData: React.Dispatch<React.SetStateAction<any | null>>;
 };
 const sampleData = {
   status: "success",
@@ -162,12 +171,21 @@ const sampleData = {
     },
   },
 };
-const ResumeAiScore: React.FC<Props> = ({ show, onHide, resumeData }) => {
+const ResumeAiScore: React.FC<Props> = ({
+  show,
+  onHide,
+  resumeData,
+  setResumeData,
+  config,
+  setConfig,
+}) => {
   const [activeTab, setActiveTab] = useState<
     "content" | "format" | "optimization" | "bestPractices" | "applicationReady"
   >("content");
 
   const [contentData, setContentData] = useState<any>(null);
+  const [fixLoading, setFixLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [tabs, setTabs] = useState([
     {
       id: "content",
@@ -200,24 +218,61 @@ const ResumeAiScore: React.FC<Props> = ({ show, onHide, resumeData }) => {
       icon: <FaRegStar size={22} />,
     },
   ]);
+  const [loadingStep, setLoadingStep] = useState(0);
+  const stepRefs = useRef<HTMLDivElement[]>([]);
+  const steps = [
+    "Analyzing Content",
+    "Identifying Issues",
+    "Applying Fixes",
+    "Validating Changes",
+  ];
+  const [selectedIssue, setSelectedIssue] = useState<any | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const handleCreateResume = async () => {
+    try {
+      const resp = await createResume({
+        ...resumeData,
+        config: config,
+      });
+      setResumeData(resp?.data?.resume);
+      setConfig(resp?.data?.resume?.config);
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed! Please try again");
+    }
+  };
+
+  const handleUpdateResume = async () => {
+    try {
+      const resp = await updateResume(resumeData?._id, {
+        ...resumeData,
+        config: config,
+      });
+      setResumeData(resp?.data?.resume);
+      setConfig(resp?.data?.resume?.config);
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+    }
+  };
+
   const handleAnalyzeResume = async () => {
     try {
+      if (!resumeData?._id) {
+        await handleCreateResume();
+      } else {
+        await handleUpdateResume();
+      }
+
       const resp = await analyzeResume(
         {
           resumeId: resumeData?._id,
         },
         resumeData?._id
       );
-      // setContentData(resp?.data?.analysis);
-      setContentData(sampleData?.data?.analysis);
-      console.log(resp);
-
-      // console.log(resp?.data?.profile);
+      setContentData(resp?.data?.analysis);
     } catch (err: any) {
       setError(true);
       setErrorMessage(err?.message);
@@ -227,13 +282,55 @@ const ResumeAiScore: React.FC<Props> = ({ show, onHide, resumeData }) => {
   };
 
   const handleFixResumeIssue = async (data: any) => {
+    setFixLoading(true);
     try {
       const resp = await fixSingleResumeIssue(data);
-      console.log(resp?.data?.result);
+
+      // Update the score of the active tab
+      setTabs((prevTabs) =>
+        prevTabs.map((tab) =>
+          tab.id === activeTab ? { ...tab, score: resp?.data?.newScore } : tab
+        )
+      );
+
+      // Update the issues in the contentData state
+      setContentData((prevContentData: any) => ({
+        ...prevContentData,
+        issues: prevContentData.issues.map((issueGroup: any) =>
+          issueGroup.type === activeTab
+            ? { ...issueGroup, issues: resp?.data?.remainingIssues }
+            : issueGroup
+        ),
+      }));
+
+      setResumeData(resp?.data?.resume);
     } catch (err: any) {
       toast.error(err?.message || "Request Failed");
     } finally {
-      setLoading(false);
+      setFixLoading(false);
+    }
+  };
+
+  const handleFixAllResumeIssue = async (data: any) => {
+    setSelectedIssue(null);
+    setFixLoading(true);
+    setLoadingStep(0);
+    try {
+      const resp = await fixAllResumeIssues(data);
+      // console.log(resp?.data);
+      setResumeData(resp?.data?.resume);
+      onHide();
+    } catch (err: any) {
+      toast.error(err?.message || "Request Failed");
+      setErrorMessage(
+        err?.message || "Request Failed! Please, try again later"
+      );
+      setError(true);
+      setFixLoading(false);
+      setLoadingStep(0);
+    } finally {
+      setFixLoading(false);
+      setLoadingStep(0);
     }
   };
 
@@ -243,11 +340,12 @@ const ResumeAiScore: React.FC<Props> = ({ show, onHide, resumeData }) => {
     const renderIssues = (type: string) => {
       return issues
         ?.filter((issue: any) => issue.type === type)
-        .flatMap((issue: any) => issue.issues)
+        .flatMap((issueArray: any) => issueArray.issues)
         ?.map((issue: any, index: number) => (
           <div
             key={index}
             className="flex gap-3 items-start w-full mt-8 shadow-card rounded-xl py-4 px-3 bg-white"
+            onClick={() => setSelectedIssue(issue?.title)}
           >
             <div
               className={` mt-1.5 p-0.5 ${
@@ -266,17 +364,29 @@ const ResumeAiScore: React.FC<Props> = ({ show, onHide, resumeData }) => {
             </div>
             <div className="ml-auto">
               <button
+                disabled={fixLoading && selectedIssue === issue?.title}
                 onClick={() => {
-                  console.log("clicked");
                   handleFixResumeIssue({
                     type: type,
                     resumeId: resumeData?._id,
-                    issues: issue,
+                    issues: issues
+                      ?.filter((issue: any) => issue.type === type)
+                      .flatMap((issueArray: any) => issueArray.issues),
+                    issueIndex: index,
                   });
                 }}
                 className="bg-primary/15 text-primary w-[120px] flex items-center gap-2 rounded-md hover:scale-105 py-1.5 px-4 font-medium"
               >
-                <LuWand2 /> Fix Issue
+                <LuWand2
+                  className={`${
+                    fixLoading &&
+                    selectedIssue === issue?.title &&
+                    "animate-pulse"
+                  }`}
+                />{" "}
+                {fixLoading && selectedIssue === issue?.title
+                  ? "Fixing..."
+                  : "Fix Issue"}{" "}
               </button>
             </div>
           </div>
@@ -397,6 +507,26 @@ const ResumeAiScore: React.FC<Props> = ({ show, onHide, resumeData }) => {
     handleAnalyzeResume();
   }, []);
 
+  useEffect(() => {
+    if (fixLoading && selectedIssue === null) {
+      const interval = setInterval(() => {
+        setLoadingStep((prev) => (prev < steps.length - 1 ? prev + 1 : prev));
+        setProgress((prev) => (prev < 97 ? prev + 10 : 97));
+      }, 3000);
+
+      return () => clearInterval(interval);
+    }
+  }, [fixLoading, selectedIssue]);
+
+  useEffect(() => {
+    if (stepRefs.current[loadingStep]) {
+      stepRefs.current[loadingStep].scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [loadingStep]);
+
   if (!show) {
     return null;
   }
@@ -427,7 +557,7 @@ const ResumeAiScore: React.FC<Props> = ({ show, onHide, resumeData }) => {
 
           {loading ? (
             <div className="py-5">
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex w-full items-center justify-center gap-2">
                 <span className="bg-primary rounded-full text-white w-14 h-14 flex items-center justify-center">
                   <RiRobot2Line size={28} className="animate-pulse" />
                 </span>
@@ -443,12 +573,9 @@ const ResumeAiScore: React.FC<Props> = ({ show, onHide, resumeData }) => {
           ) : error ? (
             <div>
               <div className="py-5">
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-2 px-3">
                   <span className="bg-red-600 rounded-full text-white w-14 h-14 flex items-center justify-center">
-                    <MdOutlineErrorOutline
-                      size={28}
-                      className="animate-pulse"
-                    />
+                    <MdOutlineErrorOutline size={28} className="" />
                   </span>
                 </div>
 
@@ -462,9 +589,73 @@ const ResumeAiScore: React.FC<Props> = ({ show, onHide, resumeData }) => {
                 </div>
               </div>
             </div>
+          ) : fixLoading && selectedIssue === null ? (
+            <div className="max-h-[75vh] lg:max-h-[80vh] overflow-y-auto custom-scrollbar">
+              <div className="py-5 px-3">
+                <div className="flex items-center w-full justify-center gap-2">
+                  <img src={botImg} className="animate-pulse" />
+                </div>
+
+                <div className="my-4 text-center">
+                  <h3 className="text-lg font-semibold text-zinc-800">
+                    Fixing all CV issues
+                  </h3>
+                  <p className="text-center text-zinc-600">
+                    Our AI is analyzing and fixing issues in your CV. This will{" "}
+                    <br />
+                    only take a moment.
+                  </p>
+                </div>
+
+                <div className="space-y-1 my-8">
+                  {steps.map((step, index) => (
+                    <motion.div
+                      key={index}
+                      ref={(el) => (stepRefs.current[index] = el!)}
+                      initial={{ opacity: 0.3 }}
+                      animate={{ opacity: index <= loadingStep ? 1 : 0.3 }}
+                      transition={{ duration: 0.7 }}
+                      className={`relative`}
+                    >
+                      <p
+                        className={`${
+                          index <= loadingStep && index !== loadingStep
+                            ? "text-primary"
+                            : "text-[#9CA3AF]"
+                        } text-sm flex gap-1 items-center`}
+                      >
+                        {index <= loadingStep && index !== loadingStep ? (
+                          <FaCircle
+                            size={6}
+                            className="rounded-full text-primary"
+                          />
+                        ) : (
+                          <FaCircle
+                            size={6}
+                            className="rounded-full text-zinc-200"
+                          />
+                        )}{" "}
+                        <span className="text-[15px]">{step}</span>
+                      </p>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Progress Div */}
+                <div className="py-4">
+                  <div className="mb-1.5">
+                    <ProgressBar percent={progress} />
+                  </div>
+                  <div className="flex w-full justify-between gap-6 text-sm text-zinc-500">
+                    <p>Optimizing your CV</p>
+                    <p className="text-primary">{progress}%</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           ) : (
             <div className="py-6 px-5 max-h-[75vh] lg:max-h-[80vh] overflow-y-auto custom-scrollbar">
-              <div className="grid lg:grid-cols-5 grid-cols-2 gap-4 mb-4 px-4">
+              <div className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-4 mb-4 px-4">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
@@ -514,7 +705,15 @@ const ResumeAiScore: React.FC<Props> = ({ show, onHide, resumeData }) => {
                 >
                   Close
                 </button>
-                <button className="bg-primary flex items-center gap-2 rounded-md text-white hover:scale-105 py-1.5 px-4 font-medium">
+                <button
+                  onClick={() =>
+                    handleFixAllResumeIssue({
+                      issues: contentData?.issues,
+                      resumeId: resumeData?._id,
+                    })
+                  }
+                  className="bg-primary flex items-center gap-2 rounded-md text-white hover:scale-105 py-1.5 px-4 font-medium"
+                >
                   <RiRobot2Line /> Fix all Issues
                 </button>
               </div>

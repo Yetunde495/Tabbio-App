@@ -88,7 +88,7 @@ const ProfessionalPDF = ({ data }: any) => {
   }
 
   const fontSize =
-    fontSizeMap[data?.style?.fontSize as keyof typeof fontSizeMap] || "10px";
+    fontSizeMap[data?.style?.fontSize as keyof typeof fontSizeMap] || "11px";
   const fontSizeSm =
     fontSizeSmMap[data?.style?.fontSize as keyof typeof fontSizeMap] || "8px";
 
@@ -182,7 +182,7 @@ const ProfessionalPDF = ({ data }: any) => {
             {data?.config.role && <Text style={styles.role}>{data?.role}</Text>}
           </View>
           <View style={styles.contactInfo}>
-            {["email", "phone", "location", "linkedin", "website"]
+            {["email", "phone", "location", "linkedIn", "website"]
               .filter((field) => data?.config[field])
               .map((field) => (
                 <View key={field} style={styles.contactItem}>
@@ -302,20 +302,17 @@ const ProfessionalPDF = ({ data }: any) => {
                         |
                       </Text>
                       <Text style={{ fontSize: fontSizeSm, color: "#71717A" }}>
-                        {item.startDate && formatMonthYear(item.startDate)} -{" "}
-                        {item.active
-                          ? "Present"
-                          : item.endDate && formatMonthYear(item.endDate)}
+                        {item?.duration}
                       </Text>
                     </View>
                   </View>
-                  <Text style={{ fontSize: fontSize }}>{item.description}</Text>
-                  <View style={{ marginTop: 8 }}>
+                  <Text style={{ fontSize: fontSize, marginTop: '10px' }}>{item.description}</Text>
+                  <View style={{ marginTop: '12px' }}>
                     {item.keyAchievements?.map(
                       (achievement: any, index: number) => (
                         <Text
                           key={index}
-                          style={{ fontSize: fontSize, marginBottom: 4 }}
+                          style={{ fontSize: fontSize, marginBottom: '5px' }}
                         >
                           • {achievement}
                         </Text>
@@ -385,10 +382,7 @@ const ProfessionalPDF = ({ data }: any) => {
                       </Text>
                     </View>
                     <Text style={{ fontSize: fontSizeSm }}>
-                      {item.startDate && formatMonthYear(item.startDate)} -{" "}
-                      {item.active
-                        ? "Present"
-                        : item.endDate && formatMonthYear(item.endDate)}
+                      {item?.duration}
                     </Text>
                   </View>
                   <Text style={{ fontSize: fontSize }}>{item.description}</Text>
@@ -435,10 +429,7 @@ const ProfessionalPDF = ({ data }: any) => {
                       </Text>
                     </View>
                     <Text style={{ fontSize: fontSizeSm }}>
-                      {item.startDate && formatMonthYear(item.startDate)} -{" "}
-                      {item.active
-                        ? "Present"
-                        : item.endDate && formatMonthYear(item.endDate)}
+                      {item?.year}
                     </Text>
                   </View>
                 </View>

@@ -134,3 +134,16 @@ export const getProfileResume = async (id: string | undefined) => {
   };
 
   
+  export const fixAllResumeIssues = async (data: any) => {
+    const response: any = await axios
+      .post(`/resumes/fix_all_issues`, data)
+      .catch((e) => ({ error: e }));
+    //check error
+    if (response && response?.error) {
+      const err = response?.error?.response;
+      const msg = err?.data?.message || err?.status;
+      throw new Error(msg || response?.error?.message);
+    }
+    return response?.data;
+  };
+  

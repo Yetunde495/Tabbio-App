@@ -271,14 +271,14 @@ const OnboardCandidate: React.FC<{
                       </div>
 
                       <div className="mt-6">
-                        <button
+                        <Button
                           type="submit"
-                          className="w-full py-3 px-6 rounded-full bg-primary text-white border-none hover:opacity-95"
+                          width="w-full"
                           disabled={isLoading}
                           onClick={() => {}}
                         >
-                          {isLoading ? "Loading..." : "Sign in"}
-                        </button>
+                          {isLoading ? "Loading..." : "Sign up"}
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -331,14 +331,13 @@ const OnboardCandidate: React.FC<{
                   ))}
                 </div>
 
-                <div className="mt-9 mb-3 w-full">
+                <div className="mt-9 flex justify-center items-center mb-3 w-full">
                   <Button
                     disabled={otpValue.length !== 6 || loading}
                     onClick={() => {
                       handleVerifyOtp();
                     }}
                     width="w-full max-w-[80%]"
-                    rounded
                   >
                     {loading ? "Verifying Otp" : "Verify"}{" "}
                   </Button>
@@ -384,12 +383,14 @@ const OnboardCandidate: React.FC<{
           )}
 
           <div className="w-full flex justify-center items-center">
-            <button
-              onClick={() => navigate("/signin")}
-              className="bg-primary px-6 py-2.5 rounded-md hover:scale-105 duration-200 text-white font-medium text-lg"
-            >
-              Go to Signin
-            </button>
+            {!loading && (
+              <button
+                onClick={() => navigate("/signin")}
+                className="bg-primary px-6 py-2.5 rounded-md hover:scale-105 duration-200 text-white font-medium text-lg"
+              >
+                Go to Signin
+              </button>
+            )}
           </div>
         </div>
       )}

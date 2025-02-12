@@ -8,7 +8,6 @@ import { BsPlusCircleFill } from "react-icons/bs";
 import { FaCheck, FaCircle, FaCircleMinus, FaRegCircle } from "react-icons/fa6";
 import { RiExpandUpDownLine, RiRobot2Line } from "react-icons/ri";
 import { FaRegCheckCircle } from "react-icons/fa";
-import { formatMonthYear } from "../../lib/utils/formatters";
 import { generateUniqueId } from "../../lib/utils";
 import { generateProfileSummary } from "../../services/profileServices";
 import { toast } from "react-toastify";
@@ -279,7 +278,7 @@ export const ContactInfo: React.FC<{
           resumeData?.template === "professional" ? "" : "justify-center"
         } flex flex-wrap gap-x-2 divide-x gap-y-3 items-center`}
       >
-        {["email", "phone", "location", "linkedin", "website"]
+        {["email", "phone", "location", "linkedIn", "website"]
           .filter((field) => config[field as keyof typeof config])
           .map((field) => (
             <div
@@ -458,7 +457,7 @@ export const AtsExperience: React.FC<{
       setItems([
         {
           id: generateUniqueId(),
-          title: "",
+          title: "POSITION",
           company: "",
           description:
             "Write details of short overview of the job here. Use bullet point to summaries your key achievement",
@@ -469,19 +468,6 @@ export const AtsExperience: React.FC<{
             "Recruiters like to be able to get an idea of why you move from company to company. ",
             "Demonstrate your increasing impact and responsibility from job to job.",
             "You don’t need to include every job you’ve ever had on your resume. Stick to the jobs that are most relevant and demonstrate your career trajectory.",
-          ],
-        },
-        {
-          id: generateUniqueId(),
-          company: "",
-          title: "",
-          description: "",
-          startDate: "",
-          endDate: "",
-          duration: "From-to",
-          keyAchievements: [
-            "Recruiters like to be able to get an idea of why you move from company to company. ",
-            "This shows the recruiter that you’re capable of taking on more and more and gives them an idea of where your career is heading.",
           ],
         },
       ]);
@@ -1661,15 +1647,7 @@ export const AtsVolunteerExperience: React.FC<{
 
   useEffect(() => {
     if (resumeData?.volunteerExperience?.length > 0) {
-      const formattedExperience = resumeData?.volunteerExperience?.map(
-        (experience: any) => ({
-          ...experience,
-          duration: experience?.startDate
-            ? formatMonthYear(experience?.startDate)
-            : "",
-        })
-      );
-      setItems(formattedExperience);
+      setItems(resumeData?.volunteerExperience);
     } else {
       setItems([
         {
@@ -2206,9 +2184,10 @@ export const AtsProjects: React.FC<{
         {
           id: generateUniqueId(),
           name: "",
-          technology: "",
           description: "",
           link: "",
+          tools:"",
+          year: ""
         },
       ]);
     }
@@ -2268,9 +2247,10 @@ export const AtsProjects: React.FC<{
     const newProject = {
       id: generateUniqueId(),
       name: "",
-      technology: "",
+      tools: "",
       description: "",
       link: "",
+      year: ""
     };
     setItems([...items, newProject]);
     setResumeData(() => ({
@@ -2373,11 +2353,11 @@ export const AtsProjects: React.FC<{
                 />
                 <input
                   className={`border-none text-sm font-medium focus:outline-none bg-white text-black placeholder:text-black focus:bg-zinc-100 px-2`}
-                  placeholder="Enter Technology/skill used for this project"
-                  value={item?.technology}
+                  placeholder="Enter Technology/tools used for this project"
+                  value={item?.tools}
                   style={{ fontSize: fontSizeSm }}
                   onChange={(e) =>
-                    handleInputChange(item?.id, "duration", e.target.value)
+                    handleInputChange(item?.id, "tools", e.target.value)
                   }
                 />
               </div>
