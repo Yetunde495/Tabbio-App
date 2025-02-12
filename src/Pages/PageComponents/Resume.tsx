@@ -934,13 +934,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                                       <span>|</span>
 
                                       <p className="text-sm text-zinc-500 lg:mr-4">
-                                        {item?.startDate &&
-                                          formatMonthYear(item?.startDate)}{" "}
-                                        -{" "}
-                                        {item?.active
-                                          ? "Present"
-                                          : item?.endDate &&
-                                            formatMonthYear(item?.endDate)}
+                                        {item?.duration}
                                       </p>
                                     </div>
                                   </div>
