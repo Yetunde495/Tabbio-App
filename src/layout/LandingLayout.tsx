@@ -5,7 +5,7 @@ import Navbar from './HomeNav';
 const Layout = ({children}:{children: React.ReactNode}) => {
 
   return (
-    <div className='dark:bg-[#111827] dark:text-bodydark'>
+    <div className='dark:bg-[#111827] dark:text-bodydark w-full max-w-[1600px] mx-auto'>
         <div className='relative'>
          <Navbar />
           <main className='overflow-y-auto overflow-x-hidden'>

@@ -95,6 +95,7 @@ export const BasicDetails: React.FC<{
     try {
       const resp = await updateProfile(profileData?._id, data);
       setProfileData(resp?.data?.profile);
+      // console.log(resp?.data?.profile)
       toast.success("Update Successful!");
     } catch (err: any) {
       toast.error(err?.message || "Request Failed");
