@@ -9,7 +9,8 @@ import {
   CustomTextSection,
 } from "../PageComponents/ApplicantComponents";
 import { Menu, MenuItem } from "../../AnimatedUi/AnimatedNav";
-import { HiOutlineSparkles, HiOutlineTemplate } from "react-icons/hi";
+import { HiOutlineSparkles } from "react-icons/hi";
+import { FiLayout } from "react-icons/fi";
 import { Icons } from "../../components/icons";
 import { RiRobot2Line } from "react-icons/ri";
 import { FaArrowRightLong, FaCheck, FaPlus } from "react-icons/fa6";
@@ -62,6 +63,8 @@ import ShareResume from "./ShareResume";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import EntryPDF from "../../components/PDFTemplates/EntryPDF";
 import ProfessionalPDF from "../../components/PDFTemplates/ProfessionalPDF";
+import typographyIcon from "../../assets/svg/typography-icon.svg"
+import CreateApplicationKit from "./CreateApplicationKit";
 
 const primaryColors = ["#0077B5", "#CC0074", "#FF7D00", "#00C196", "#000000"];
 
@@ -81,6 +84,7 @@ const CreateLiveResume: React.FC = () => {
   const [showPalette, setShowPalette] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
   const [resultModal, setResultModal] = useState(false);
+  const [tailorResume, setTailorResume] = useState(false)
   const [kit, _setKit] = useState(false);
   const [companyName, setCompanyName] = useState("");
   const [templateModal, setTemplateModal] = useState(false);
@@ -204,7 +208,6 @@ const CreateLiveResume: React.FC = () => {
         closeButton: true,
         autoClose: 3000,
       });
-      setResultModal(true);
     } catch (err: any) {
       toast.dismiss(toastId);
       toast.error(err?.message || "Request Failed! Please try again");
@@ -236,7 +239,7 @@ const CreateLiveResume: React.FC = () => {
   return (
     <DefaultLayout>
       <section className="w-full">
-        <div className="bg-zinc-50/90 lg:px-9 md:px-6 px-2 py-3 mb-6 mt-3 w-full">
+        <div className="bg-zinc-50/90 md:px-6 px-2 py-3 mb-6 mt-3 w-full">
           <div className="flex max-xl:flex-col gap-3 gap-y-1.5  relative w-full z-99">
             <Menu setActive={setActive}>
               <MenuItem
@@ -245,7 +248,7 @@ const CreateLiveResume: React.FC = () => {
                 position="max-sm:-translate-x-[25%]"
                 item={
                   <div className="flex space-x-[2px] max-sm:text-[12px] text-[15px] sm:space-x-2 items-center">
-                    <HiOutlineTemplate />
+                    <FiLayout />
                     <span>Template</span>
                     <Icons.arrowDown />
                   </div>
@@ -261,7 +264,7 @@ const CreateLiveResume: React.FC = () => {
                 position="max-sm:-translate-x-[40%]"
                 item={
                   <div className="flex space-x-[2px] max-sm:text-[12px] text-[15px] sm:space-x-2 items-center">
-                    <HiOutlineTemplate />
+                    <img className="w-4" src={typographyIcon} />
                     <span>Typography</span>
                     <Icons.arrowDown />
                   </div>
@@ -741,9 +744,9 @@ const CreateLiveResume: React.FC = () => {
           </div>
         </div>
 
-        <div className="px-2 py-4 md:pl-8 md:pr-2">
-          <div className="w-full flex 2xl:flex-row flex-col gap-5 overflow-x-auto">
-            <div className="w-full 5xl:max-w-[1300px] 2xl:max-w-[1100px] max-w-[900px] lg:w-[90%] min-w-[800px] 2xl:ml-auto">
+        <div className="px-2 py-4 md:pl-8 md:pr-2 w-full">
+          <div className="w-full flex 2xl:flex-row flex-col gap-5 overflow-x-auto justify-center">
+            <div className="w-full 3xl:max-w-[1200px] 2xl:max-w-[1100px] max-w-[900px] lg:w-[90%] min-w-[800px]">
               <div className="w-full flex justify-between gap-6 mb-3 items-end">
                 {resumeData?.resumeName && (
                   <p className="font-medium text-zinc-600">
@@ -1223,8 +1226,8 @@ const CreateLiveResume: React.FC = () => {
                 </div>
               )}
             </div>
-            <div className="max-2xl:hidden ml-auto">
-              <div className="bg-white w-full min-w-[319px] h-full">
+            <div className="max-2xl:hidden max-3xl:ml-auto h-full">
+              <div className="bg-white w-full min-w-[319px] 3xl:min-w-[380px] h-full">
                 <div className="bg-zinc-50/90 flex font-medium items-center gap-1.5 py-2 px-3">
                   Tailor Resume
                 </div>
@@ -1444,12 +1447,18 @@ const CreateLiveResume: React.FC = () => {
             show={resultModal}
             onHide={() => setResultModal(false)}
             resumeData={resumeData}
+            onClick={() => {
+              setTailorResume(true)
+              setResultModal(false)
+              
+            }}
           />
         )}
         {resultModal && kit && (
           <ApplicationResult
             show={resultModal}
             onHide={() => setResultModal(false)}
+            applicationData={resumeData}
           />
         )}
         {templateModal && (
@@ -1535,6 +1544,14 @@ const CreateLiveResume: React.FC = () => {
             setShow={() => setShareModal(false)}
             resumeData={resumeData}
           />
+        )}
+         {tailorResume && (
+          <CreateApplicationKit
+          show={tailorResume}
+          onHide={() => setTailorResume(false)}
+          applicationData={resumeData}
+          tailor
+         />
         )}
       </section>
     </DefaultLayout>

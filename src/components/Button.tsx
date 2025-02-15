@@ -34,7 +34,7 @@ export default function Button({
 
     let btnCls = `${className} ${
       rounded ? "rounded-full" : "rounded-lg"
-    } ${size === "lg" ? "py-3 px-10 text-lg" : size === "sm" ? "py-1.5 px-4 text-base" : "md:py-3 py-2 px-6 text-lg"}  font-medium `;
+    } ${size === "lg" ? "py-3 max-sm:py-2 max-sm:px-4 max-sm:text-base px-10 text-lg" : size === "sm" ? "py-1.5 px-4 text-base" : "md:py-3 py-2 px-6 text-lg"}  font-medium `;
     btnCls = width ? btnCls + width : btnCls;
     btnCls = height ? btnCls + " h-" + height : btnCls;
   

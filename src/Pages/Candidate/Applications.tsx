@@ -1,22 +1,12 @@
-import {
-  FaCircleCheck,
-  FaPlus,
-  FaRegClock,
-  FaRegStar,
-} from "react-icons/fa6";
+import { FaCircleCheck, FaPlus, FaRegClock, FaRegStar } from "react-icons/fa6";
 import { useApp } from "../../context/AppContext";
 import DefaultLayout from "../../layout/DefaultLayout";
 import { useState } from "react";
 import ResumeAnalytics from "./ResumeAnalytics";
-import {
-  LuBriefcase,
-  LuBuilding2,
-  LuPuzzle,
-} from "react-icons/lu";
-import { MdCancel } from "react-icons/md";
+import { LuBriefcase, LuBuilding2, LuPuzzle } from "react-icons/lu";
+import { MdCancel, MdOutlineErrorOutline } from "react-icons/md";
 import { TbSearch } from "react-icons/tb";
 import { RiAwardLine, RiRobot2Line } from "react-icons/ri";
-import { mockApplicationData } from "../../data/mockData";
 import { IoDocumentTextOutline, IoLocationOutline } from "react-icons/io5";
 import { formatDateString } from "../../lib/utils/formatters";
 import { paginate } from "../../lib/utils";
@@ -34,52 +24,60 @@ import { toast } from "react-toastify";
 import Notification from "../../components/Notification";
 import { useQuery } from "@tanstack/react-query";
 import { getUserApplications } from "../../services/applicationServices";
+import ApplicationResult, { ResumeResult } from "./ApplicationkitResult";
+import { useNavigate } from "react-router-dom";
 
 const Applications: React.FC = () => {
-  const {user} = useApp();
-  // const navigate = useNavigate();
-  const [allApplications, _setAllApplications] =
-    useState<any[]>(mockApplicationData);
+  const { user } = useApp();
+  const navigate = useNavigate();
+  const [allApplications, setAllApplications] = useState<any[]>([]);
   const [tab2, setTab2] = useState("All");
-  const [_status, setStatus] = useState("");
+  const [status, setStatus] = useState("");
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [extension, setExtension] = useState(false);
   const [createModal, setCreateModal] = useState(false);
-
+  const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [tailorResume, setTailorResume] = useState(false)
+  const [selectedApplication, setApplication] = useState<any>(null);
+  const [previewModal, setPreviewModal] = useState(false);
 
-  const { isLoading, data } = useQuery(
-      ["APPLICATIONS", page, itemsPerPage],
-      getUserApplications,
-      {
-        keepPreviousData: true,
-        enabled: !!user?._id,
-        onSuccess: (data: any) => {
-          console.log(data?.data?.applications);
-        },
-        onError: (err: any) => {
-          toast(
-            <Notification variant="error" title="Request Failed!">
-              {err.message}
-            </Notification>,
-            {
-              type: "error",
-              hideProgressBar: true,
-              toastId: Date.now() + "@USER_FILTER_ERROR",
-            }
-          );
-        },
-      }
-    );
+  const { isLoading, isError, data } = useQuery(
+    ["APPLICATIONS", search, page, itemsPerPage, status],
+    getUserApplications,
+    {
+      keepPreviousData: true,
+      enabled: !!user?._id,
+      onSuccess: (data: any) => {
+        console.log(data?.data?.applications);
+        setAllApplications(data?.data?.applications?.data);
+      },
+      onError: (err: any) => {
+        toast(
+          <Notification variant="error" title="Request Failed!">
+            {err.message}
+          </Notification>,
+          {
+            type: "error",
+            hideProgressBar: true,
+            toastId: Date.now() + "@USER_FILTER_ERROR",
+          }
+        );
+        setErrorMessage(err.message || "An error occurred");
+      },
+    }
+  );
 
-  const pagination = paginate(Number(data?.results), Number(data?.totalPages), Number(itemsPerPage));
-
+  const pagination = paginate(
+    Number(data?.data?.applications?.count),
+    Number(data?.data?.applications?.totalPages),
+    Number(itemsPerPage)
+  );
   return (
     <DefaultLayout>
       <section>
-      
-
         <div className="md:px-8 px-3 py-4">
           <div className="mb-5">
             <h3 className="text-zinc-950 font-bold text-lg md:text-xl">
@@ -100,12 +98,11 @@ const Applications: React.FC = () => {
                 <input
                   type="text"
                   placeholder="Search"
-                  // value={search}
-                  // onChange={(e) => setSearch(e.target.value)}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
                   className=" border-none w-full  bg-white focus:ring-0 text-sm pr-3 pl-8 focus:outline-none "
                 />
               </div>
-             
             </div>
             <div className="flex gap-4 max-md:gap-2 items-center max-lg:w-full">
               <button
@@ -142,7 +139,7 @@ const Applications: React.FC = () => {
                 activeTab={tab2}
                 onChange={(tab) => {
                   setTab2(tab);
-                  setStatus("Draft");
+                  setStatus("applied");
                 }}
               >
                 Applied
@@ -151,7 +148,7 @@ const Applications: React.FC = () => {
                 activeTab={tab2}
                 onChange={(tab) => {
                   setTab2(tab);
-                  setStatus("Published");
+                  setStatus("interviewing");
                 }}
               >
                 Interviewing
@@ -161,7 +158,7 @@ const Applications: React.FC = () => {
                 activeTab={tab2}
                 onChange={(tab) => {
                   setTab2(tab);
-                  setStatus("Pending_Approval");
+                  setStatus("offered");
                 }}
               >
                 Offered
@@ -171,7 +168,7 @@ const Applications: React.FC = () => {
                 activeTab={tab2}
                 onChange={(tab) => {
                   setTab2(tab);
-                  setStatus("Pending_Approval");
+                  setStatus("accepted");
                 }}
               >
                 Accepted
@@ -181,7 +178,7 @@ const Applications: React.FC = () => {
                 activeTab={tab2}
                 onChange={(tab) => {
                   setTab2(tab);
-                  setStatus("Pending_Approval");
+                  setStatus("rejected");
                 }}
               >
                 Rejected
@@ -206,6 +203,25 @@ const Applications: React.FC = () => {
                   </div>
                 </div>
               </div>
+            ) : isError ? (
+              <div className="w-full flex justify-center items-center">
+                <div className="bg-white shadow-3 rounded-lg py-8 px-4 flex flex-col items-center gap-6 justify-center w-full md:w-[60%]">
+                  <div className="flex items-center justify-center gap-2 px-3">
+                    <span className="bg-red-600 rounded-full text-white w-14 h-14 flex items-center justify-center">
+                      <MdOutlineErrorOutline size={28} className="" />
+                    </span>
+                  </div>
+
+                  <div className="my-8 text-center">
+                    <h3 className="text-lg font-semibold text-zinc-800">
+                      An Error occurred!
+                    </h3>
+                    <p className="text-center text-zinc-600">
+                      {errorMessage} <br /> Please, try again in some minutes
+                    </p>
+                  </div>
+                </div>
+              </div>
             ) : allApplications?.length > 0 ? (
               <div className="w-full">
                 <ul className="space-y-5 w-full">
@@ -213,11 +229,12 @@ const Applications: React.FC = () => {
                     <li
                       key={index}
                       className="bg-white w-full shadow-3 rounded-lg p-3"
+                      onClick={() => setApplication(val)}
                     >
                       <div className="flex items-center justify-between md:hidden w-full mb-2">
                         <div>
                           <p className="text-zinc-950 text-lg  max-md:text-base font-bold flex items-center gap-1.5">
-                            {val?.job_role}
+                            {val?.name}
                             <span>
                               {val?.aiAssistance && (
                                 <LuPuzzle className="text-slate-500" />
@@ -229,7 +246,15 @@ const Applications: React.FC = () => {
                         <div>
                           <StaggeredDropDown>
                             <AnimatedOption
-                              text="View Resume"
+                              text="Preview Application"
+                              onClick={() => {}}
+                            />
+                            <AnimatedOption
+                              text="Edit Application Name"
+                              onClick={() => {}}
+                            />
+                            <AnimatedOption
+                              text="Edit Resume"
                               onClick={() => {}}
                             />
                             <AnimatedOption
@@ -318,18 +343,29 @@ const Applications: React.FC = () => {
                           </StaggeredDropDown>
                         </div>
 
-                        <span className="bg-[#F3E8FF] text-[#9333EA] text-sm flex items-center gap-2 rounded-full px-4 py-1">
-                          <FaRegStar className="text-[#FBBF24]" />{" "}
-                          {val?.match_score + "% Match"}
-                        </span>
+                        {val?.matchScore && (
+                          <span className="bg-[#F3E8FF] text-[#9333EA] text-sm flex items-center gap-2 rounded-full px-4 py-1">
+                            <FaRegStar className="text-[#FBBF24]" />{" "}
+                            {val?.match_score + "% Match"}
+                          </span>
+                        )}
+
                         <div className="ml-auto md:block hidden">
                           <StaggeredDropDown>
+                          <AnimatedOption
+                              text="Preview Application"
+                              onClick={() => {setPreviewModal(true)}}
+                            />
                             <AnimatedOption
-                              text="View Resume"
+                              text="Edit Application Name"
                               onClick={() => {}}
                             />
                             <AnimatedOption
-                              text="View Cover Letter"
+                              text="Edit Resume"
+                              onClick={() => {navigate(`/app/candidate/edit-resume/${val?.resume?._id}`)}}
+                            />
+                            <AnimatedOption
+                              text="Delete"
                               onClick={() => {}}
                             />
                           </StaggeredDropDown>
@@ -348,8 +384,8 @@ const Applications: React.FC = () => {
                           </li>
                           <li className="flex gap-1 items-center">
                             <FaRegClock />
-                            {val?.date
-                              ? formatDateString(val?.date)
+                            {val?.createdAt
+                              ? formatDateString(val?.createdAt)
                               : "Unspecified"}
                           </li>
                         </ul>
@@ -359,7 +395,7 @@ const Applications: React.FC = () => {
                         <span className="text-primary">
                           <IoDocumentTextOutline />
                         </span>
-                        <span>{val?.resume_name} Resume</span>
+                        <span>{val?.resume?.resumeName}</span>
                       </div>
                     </li>
                   ))}
@@ -383,15 +419,21 @@ const Applications: React.FC = () => {
                   </div>
                   <div className="text-center">
                     <h4 className="text-zinc-950 text-xl font-bold mb-2.5">
-                      Create Your First Application kit
+                      {search || status
+                        ? "No Data Found"
+                        : "Create Your First Application kit"}
                     </h4>
                     <p className="text-zinc-500">
-                      Start Building your kit to track and manage your job
-                      applications{" "}
+                      {search || status
+                        ? "We could not find any data that matched what you're looking for"
+                        : " Start Building your kit to track and manage your job applications"}{" "}
                     </p>
                   </div>
 
-                  <button className="flex gap-2 items-center justify-center px-6 py-2.5 mb-3 rounded-md hover:scale-95 duration-150 text-white bg-primary">
+                  <button
+                    onClick={() => setCreateModal(true)}
+                    className="flex gap-2 items-center justify-center px-6 py-2.5 mb-3 rounded-md hover:scale-95 duration-150 text-white bg-primary"
+                  >
                     <FaPlus /> New Application
                   </button>
                 </div>
@@ -413,6 +455,35 @@ const Applications: React.FC = () => {
             show={createModal}
             onHide={() => setCreateModal(false)}
           />
+        )}
+        {previewModal && (
+          <div>
+            {selectedApplication?.isTailored ? (
+              <ApplicationResult
+                show={previewModal}
+                onHide={() => setPreviewModal(false)}
+                applicationData={selectedApplication}
+              />
+             ) : (
+              <ResumeResult
+                show={previewModal}
+                onHide={() => setPreviewModal(false)}
+                resumeData={selectedApplication?.resume}
+                onClick={() => {
+                  setTailorResume(true)
+                  setPreviewModal(false)
+                }}
+              />
+            )} 
+          </div>
+        )}
+        {tailorResume && (
+          <CreateApplicationKit
+          show={tailorResume}
+          onHide={() => setTailorResume(false)}
+          applicationData={selectedApplication}
+          tailor
+         />
         )}
       </section>
     </DefaultLayout>

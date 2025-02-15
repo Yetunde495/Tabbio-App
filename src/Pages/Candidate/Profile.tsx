@@ -990,17 +990,17 @@ const SmartResumeSettings: React.FC<{
               <div className="flex gap-4 max-sm:flex-wrap">
                 {["On-Site", "Hybrid", "Remote"].map((type) => (
                   <button
-                    key={type}
+                    key={type} 
                     type="button"
                     onClick={() => toggleLocationType(type)}
                     className={`px-4 py-1.5 rounded-full flex gap-2 font-normal items-center border border-stroke focus:outline-none  transition 
               ${
-                basicDetails?.locationType.includes(type)
+                basicDetails?.locationType?.includes(type)
                   ? "bg-primary text-white"
                   : "bg-white text-zinc-700"
               }`}
                   >
-                    {basicDetails?.locationType.includes(type) ? (
+                    {basicDetails?.locationType?.includes(type) ? (
                       <FaCheck />
                     ) : (
                       <BsPlusLg />
@@ -1164,11 +1164,12 @@ const Profile: React.FC = () => {
   );
 
   useEffect(() => {
-    if (!user?.config) {
+    if (!user?.profileConfig) {
       updateUser({
         ...user,
         profileConfig: {
           professionalSummary: true,
+          role:true,
           careerHighlights: true,
           workExperience: true,
           volunteerExperience: true,
@@ -1207,8 +1208,8 @@ const Profile: React.FC = () => {
           </div>
         </div>
       ) : (
-        <section className="">
-          <div className="px-2 py-4 md:pl-8 md:pr-2">
+        <section className="w-full flex justify-center items-center">
+          <div className="px-2 py-4 md:pl-8 md:pr-2 3xl:max-w-[1600px]">
             {active && (
               <div className="xl:hidden flex justify-end items-center">
                 <button

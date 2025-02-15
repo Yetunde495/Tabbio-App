@@ -24,21 +24,25 @@ import { FiDownload } from "react-icons/fi";
 import { HiOutlineSparkles } from "react-icons/hi";
 import { TbArrowBigRightLinesFilled } from "react-icons/tb";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import CreateApplicationKit from "./CreateApplicationKit";
 
 type ApplicationResultProps = {
   show: boolean;
   onHide: () => void;
+  applicationData: any
 };
 
 type ResumeResultProps = {
   show: boolean;
   onHide: () => void;
+  onClick: () => void;
   resumeData: any;
 };
 
 const ApplicationResult: React.FC<ApplicationResultProps> = ({
   show,
   onHide,
+  applicationData
 }) => {
   const [mainView, setMainview] = useState(true);
   const [resumeView, setResumeView] = useState(false);
@@ -106,8 +110,7 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
                     Your Application Kit is Ready!
                   </h3>
                   <p className="text-zinc-200 max-sm:text-sm">
-                    Every component has been optimized for Software Engineer at
-                    Example Corp
+                    Every component has been optimized for {applicationData?.name} {applicationData?.companyName && "at " + applicationData?.companyName} 
                   </p>
                 </div>
               </div>
@@ -177,7 +180,7 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
                               Preview
                             </button>
                             <div className="w-full min-h-[220px] max-h-[250px] 2xl:max-h-[300px] 3xl:max-h-[350px] 4xl:max-h-[550px] overflow-auto custom-scrollbar h-full bg-white">
-                              <ResumePreview resumeData={mockResumeData} />
+                              <ResumePreview resumeData={applicationData?.resume} />
                             </div>
                             <p className="text-center text-sm text-zinc-600">
                               Click on the eye icon to view full preview
@@ -466,11 +469,6 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
                 ref={targetRef}
                 className="xl:max-w-[70%] lg:max-w-[90%] w-full"
               >
-                {/* <LiveResume  /> */}
-                {/* <PDFViewer>
-                <ResumePDF resumeData={mockResumeData} />
-
-  </PDFViewer> */}
                 <ResumePreview resumeData={mockResumeData} />
               </div>
             </div>
@@ -800,11 +798,13 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
 export const ResumeResult: React.FC<ResumeResultProps> = ({
   show,
   onHide,
-  resumeData
+  resumeData,
+  onClick
 }) => {
   const [mainView, setMainview] = useState(true);
   const [resumeView, setResumeView] = useState(false);
   const { targetRef } = usePDF({ filename: "page.pdf" });
+  const [tailorResume, setTailorResume] = useState(false)
 
   const handleDownload = async (component: any) => {
     // Generate a blob of the PDF
@@ -908,7 +908,7 @@ export const ResumeResult: React.FC<ResumeResultProps> = ({
               To craft your resume into a complete optimized kit with precision, convert to application kit! 🌟
                 
               </p>
-              <button className="bg-primary text-white justify-center font-semibold group rounded-md py-2.5 px-8 flex items-center gap-2">
+              <button onClick={onClick} className="bg-primary text-white justify-center font-semibold group rounded-md py-2.5 px-8 flex items-center gap-2">
                 Create Application Kit{" "}
                 <FaArrowRightLong className="group-hover:ml-4 duration-200" />
               </button>
@@ -969,6 +969,14 @@ export const ResumeResult: React.FC<ResumeResultProps> = ({
               </div>
             </div>
           </div>
+        )}
+        {tailorResume && (
+          <CreateApplicationKit
+           show={tailorResume}
+           onHide={() => setTailorResume(false)}
+           applicationData={resumeData}
+           tailor
+          />
         )}
       </motion.div>
     </AnimatePresence>,

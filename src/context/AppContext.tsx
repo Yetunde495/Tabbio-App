@@ -105,6 +105,7 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 
   const updateUser = (data: any) => {
     update({ user: data });
+    localStorage.setItem(DATA_CENTER_USER, JSON.stringify(data));
   };
 
 

@@ -37,6 +37,8 @@ const SmartResume: React.FC = () => {
   const [showAllCareer, setShowAllCareer] = useState(false);
   const [selectedCareer, setSelectedCareer] = useState<any>(null);
   const [careerModal, setCareerModal] = useState(false);
+  const [errMessage, setErrMessage] = useState("");
+
   const technicalSkill = profileData?.skills.find(
     (skill: any) => skill?.name === "technical"
   );
@@ -75,6 +77,7 @@ const SmartResume: React.FC = () => {
       } catch (err: any) {
         if (err?.message !== "Profile not found") {
           toast.error(err?.message || "Request Failed");
+          setErrMessage(err?.message);
         }
       } finally {
         setLoading(false);
@@ -895,10 +898,16 @@ const SmartResume: React.FC = () => {
             <h2 className="text-2xl font-outfit font-bold text-zinc-800 mb-3">
               Resume Data Unavailable!
             </h2>
-            <p className="text-zinc-600 font-normal px-3 mb-4">
-              This could be a network error <br /> Please, try again in some
-              minutes
-            </p>
+            {errMessage ? (
+              <p className="text-zinc-600 font-normal px-3 mb-4">
+                {errMessage}
+              </p>
+            ) : (
+              <p className="text-zinc-600 font-normal px-3 mb-4">
+                This could be a network error <br /> Please, try again in some
+                minutes
+              </p>
+            )}
 
             <button
               onClick={() => navigate(-1)}

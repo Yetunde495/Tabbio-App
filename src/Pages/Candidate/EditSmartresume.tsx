@@ -9,7 +9,6 @@ import {
   CustomTextSection,
 } from "../PageComponents/ApplicantComponents";
 import { Menu, MenuItem } from "../../AnimatedUi/AnimatedNav";
-import { HiOutlineTemplate } from "react-icons/hi";
 import { Icons } from "../../components/icons";
 import {
   FaArrowRightLong,
@@ -42,7 +41,7 @@ import {
   RelevantCourses,
 } from "../PageComponents/ATSApplicantComponents";
 import { FileUpload } from "../General/ResumeUpload";
-import { FiUpload } from "react-icons/fi";
+import { FiLayout, FiUpload } from "react-icons/fi";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import Modal from "../../components/modal";
 import useOutsideClick from "../../hooks/useOutsideClick";
@@ -56,6 +55,10 @@ import { generateUniqueId } from "../../lib/utils";
 import Button from "../../components/Button";
 import TabbioScore from "../../components/tabbioScore";
 import ShareResume from "./ShareResume";
+import typographyIcon from "../../assets/svg/typography-icon.svg";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import ProfessionalPDF from "../../components/PDFTemplates/ProfessionalPDF";
+import EntryPDF from "../../components/PDFTemplates/EntryPDF";
 
 const primaryColors = ["#0077B5", "#CC0074", "#FF7D00", "#00C196", "#000000"];
 
@@ -206,7 +209,7 @@ const EditSmartResume: React.FC = () => {
       {loading ? (
         <PageLoader />
       ) : (
-        <section className="w-full">
+        <section className="w-full flex flex-col justify-center items-center">
           <div className="bg-zinc-50/90 lg:px-9 md:px-6 px-2 py-3 mb-6 mt-3 w-full">
             <div className="flex max-lg:flex-col gap-3 gap-y-1.5 lg:items-center relative w-full z-99">
               <Menu setActive={setActive}>
@@ -216,7 +219,7 @@ const EditSmartResume: React.FC = () => {
                   position="max-sm:-translate-x-[25%]"
                   item={
                     <div className="flex space-x-[2px] max-sm:text-[12px] text-[15px] sm:space-x-2 items-center">
-                      <HiOutlineTemplate />
+                      <FiLayout />
                       <span>Template</span>
                       <Icons.arrowDown />
                     </div>
@@ -232,7 +235,8 @@ const EditSmartResume: React.FC = () => {
                   position="max-sm:-translate-x-[40%]"
                   item={
                     <div className="flex space-x-[2px] max-sm:text-[12px] text-[15px] sm:space-x-2 items-center">
-                      <HiOutlineTemplate />
+                      <img className="w-4" src={typographyIcon} />
+
                       <span>Typography</span>
                       <Icons.arrowDown />
                     </div>
@@ -644,23 +648,45 @@ const EditSmartResume: React.FC = () => {
                 </MenuItem>
 
                 <div className="max-md:hidden block">
-                <TabbioScore onClick={() => setScoreModal(true)} score={resumeData?.tabbioScore || 0} />
-              </div>
+                  <TabbioScore
+                    onClick={() => setScoreModal(true)}
+                    score={resumeData?.tabbioScore || 0}
+                  />
+                </div>
               </Menu>
 
               <div className="lg:ml-auto flex items-center gap-2">
                 <div className="hidden max-md:block">
-                <TabbioScore onClick={() => {setScoreModal(true)}} score={resumeData?.tabbioScore || 0} />
-              </div>
-              <button className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center text-primary gap-1 hover:scale-x-105 ">
-                <BsDownload /> <span className="max-sm:hidden">Download</span>
-              </button>
-              <button onClick={() => setShareModal(true)} className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center text-zinc-700 gap-1 hover:scale-x-105 ">
-                <MdShare /> <span className="max-sm:hidden">Share</span>
-              </button>
-              <button className="flex items-center py-1 px-1 gap-1 max-sm:text-[12px] hover:scale-105 duration-150 text-zinc-700">
-                <TbWorld /> <span className="max-sm:hidden">EN</span>
-              </button>
+                  <TabbioScore
+                    onClick={() => {
+                      setScoreModal(true);
+                    }}
+                    score={resumeData?.tabbioScore || 0}
+                  />
+                </div>
+                <PDFDownloadLink
+                document={
+                  resumeData?.template === "professional" ? (
+                    <ProfessionalPDF data={resumeData} />
+                  ) : (
+                    <EntryPDF data={resumeData} />
+                  )
+                }
+                fileName={resumeData?.name || "Tabbio ATS Resume"}
+              >
+                <button className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center text-primary gap-1 hover:scale-x-105 ">
+                  <BsDownload /> <span className="max-sm:hidden">Download</span>
+                </button>
+              </PDFDownloadLink>
+                <button
+                  onClick={() => setShareModal(true)}
+                  className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center text-zinc-700 gap-1 hover:scale-x-105 "
+                >
+                  <MdShare /> <span className="max-sm:hidden">Share</span>
+                </button>
+                <button className="flex items-center py-1 px-1 gap-1 max-sm:text-[12px] hover:scale-105 duration-150 text-zinc-700">
+                  <TbWorld /> <span className="max-sm:hidden">EN</span>
+                </button>
                 <button
                   onClick={() => setNewCvModal(true)}
                   className="hidden items-center gap-2 max-sm:text-xs p-1 hover:scale-105 duration-150 text-zinc-700"
@@ -671,7 +697,7 @@ const EditSmartResume: React.FC = () => {
             </div>
           </div>
 
-          <div className="px-2 py-4 md:pl-8 md:pr-2">
+          <div className="px-2 py-4 md:pl-8 md:pr-2 w-full 3xl:max-w-[1600px]">
             <div className="2xl:hidden lg:w-[90%] w-full flex justify-between gap-6 mb-3 items-end">
               <p className="text-lg text-zinc-700 font-medium">Profile CV</p>
               <div className="flex items-center gap-3">
@@ -698,7 +724,7 @@ const EditSmartResume: React.FC = () => {
             </div>
 
             <div className="w-full flex 2xl:flex-row flex-col gap-5 overflow-x-auto">
-              <div className="w-full max-w-[1100px]  lg:w-[90%] min-w-[800px]">
+              <div className="w-full max-w-[1100px] 3xl:max-w-[1200px]  lg:w-[90%] min-w-[800px]">
                 {resumeData?.template === "entry" && (
                   <div
                     style={{ fontFamily: resumeData?.style?.fontFamily || "" }}
@@ -1048,7 +1074,7 @@ const EditSmartResume: React.FC = () => {
                 )}
               </div>
               <div className="max-2xl:hidden ml-auto">
-                <div className="bg-white w-full min-w-[319px] h-full">
+                <div className="bg-white w-full min-w-[319px] 3xl:min-w-[380px]  h-full">
                   <div className="bg-zinc-50/90 flex font-semibold text-lg text-zinc-800 items-center gap-1.5 py-2 px-3">
                     <BsPencil size={18} /> Customize Profile CV
                   </div>
@@ -1254,12 +1280,12 @@ const EditSmartResume: React.FC = () => {
             </Modal>
           )}
           {shareModal && (
-          <ShareResume
-            show={shareModal}
-            setShow={() => setShareModal(false)}
-            resumeData={resumeData}
-          />
-        )}
+            <ShareResume
+              show={shareModal}
+              setShow={() => setShareModal(false)}
+              resumeData={resumeData}
+            />
+          )}
         </section>
       )}
     </DefaultLayout>

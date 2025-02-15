@@ -128,7 +128,9 @@ export const BasicDetails: React.FC<{
               <BsPatchCheck size={16} className="text-primary mt-0.5" />
             </h1>
             {user?.profileConfig?.role && (
-              <h6 className={`text-base text-zinc-600 max-sm:text-center uppercase`}>
+              <h6
+                className={`text-base text-zinc-600 max-sm:text-center uppercase`}
+              >
                 {profileData?.role}
               </h6>
             )}
@@ -367,12 +369,12 @@ export const BasicDetails: React.FC<{
             <div className="mb-5">
               <Alert variant="info">
                 <p>
-                  Any changes to your role will automatically update on
-                  your Downloadable CV
+                  Any changes to your role will automatically update on your
+                  Downloadable CV
                 </p>
               </Alert>
             </div>
-            
+
             <div className="mb-6">
               <label
                 htmlFor="role"
@@ -512,7 +514,9 @@ export const ProfileSummary: React.FC<{
         </button>
       </div>
       <div className="border border-stroke rounded-lg shadow-sm bg-white p-3">
-        <ReadMore text={resumeData?.professionalSummary} />
+        {resumeData?.professionalSummary && (
+          <ReadMore text={resumeData?.professionalSummary} />
+        )}
 
         <div className="w-full flex gap-x-3 max-md:flex-wrap gap-y-2 items-center">
           <Pill>
