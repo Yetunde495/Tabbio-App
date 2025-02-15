@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Modal from "../../components/modal";
 import { Switch } from "../../components/form/Switch";
 import { CiEdit } from "react-icons/ci";
-import { BsCopy, BsDatabaseGear, BsPlusLg } from "react-icons/bs";
+import { BsCopy, BsDatabaseGear, BsPlusLg, BsShield } from "react-icons/bs";
 import {
   MdInsertLink,
   MdKeyboardDoubleArrowLeft,
@@ -114,7 +114,8 @@ const SmartResumeSettings: React.FC<{
   };
 
   return (
-    <section className="bg-white w-full min-w-[319px] h-full">
+    <section className="bg-white w-full min-w-[319px] sticky top-30 h-screen overflow-y-auto no-scrollbar">
+      <div className="pb-30">
       <div className="bg-zinc-50/90 flex items-center gap-1.5 py-2 px-3">
         <SlSettings /> Settings
       </div>
@@ -125,12 +126,16 @@ const SmartResumeSettings: React.FC<{
               onClick={() => setKey("isLive")}
               className="flex items-center gap-2"
             >
-              <TbWorld className="text-primary" size={14} />
+              <span>
+                {" "}
+                <TbWorld className="text-primary" size={18} />
+              </span>
+
               <div className="flex flex-col">
-                <span className="text-sm">Smart Resume</span>
-                <span className="text-xs">
-                  Your Smart Resume is{" "}
-                  {profileData?.isLive ? "live" : "not live"}
+                <span className="text-sm font-semibold">Smart CV</span>
+                <span className="text-xs text-zinc-600">
+                  Your Smart CV is{" "}
+                  {profileData?.config?.isLive ? "discoverable" : "hidden"}
                 </span>
               </div>
               <div className="ml-auto">
@@ -251,11 +256,11 @@ const SmartResumeSettings: React.FC<{
         <div className="bg-gradient-to-l from-[#EFF6FF] to-[#DBEAFE] rounded-lg py-4 px-3">
           <div className="flex items-center gap-2">
             <div>
-              <IoDocumentTextOutline className="text-primary" size={16} />
+              <IoDocumentTextOutline className="text-primary" size={18} />
             </div>
             <div className="">
-              <p className="text-sm">Edit Downloadable CV</p>
-              <p className="text-xs">
+              <p className="text-sm font-semibold">Edit Downloadable CV</p>
+              <p className="text-xs max-w-[60%] text-zinc-600">
                 The ATS-friendly CV recruiters can download from your profile.
               </p>
             </div>
@@ -273,10 +278,12 @@ const SmartResumeSettings: React.FC<{
 
       <div className="p-3">
         <div className="flex items-center gap-2 border-t border-zinc-100 py-4 px-3 mb-5 shadow rounded-lg">
-          <LuBriefcase className="text-primary" size={16} />
+          <span>
+            <LuBriefcase className="text-primary" size={16} />
+          </span>
           <div className="flex flex-col">
             <span className="text-sm font-semibold">Open to</span>
-            <span className="text-xs">
+            <span className="text-xs text-zinc-600">
               Let recruiters know your availability
             </span>
           </div>
@@ -296,7 +303,7 @@ const SmartResumeSettings: React.FC<{
           <FaRegCalendar className="text-primary" size={16} />
           <div className="flex flex-col">
             <span className="text-sm font-semibold">Last Update Status</span>
-            <span className="text-xs">
+            <span className="text-xs text-zinc-600">
               Let recruiters know your update time
             </span>
           </div>
@@ -322,11 +329,19 @@ const SmartResumeSettings: React.FC<{
             )}
           </div>
         </div>
+      </div>
+
+      <div className="p-3">
+        <div className="flex items-center text-base font-semibold gap-1.5 mb-3">
+          <BsShield className="text-primary" /> Privacy Controls
+        </div>
         <div className="flex items-center gap-2 border-t border-zinc-100 py-4 px-3 mb-5 shadow rounded-lg">
           <LuContact className="text-primary" size={16} />
           <div className="flex flex-col">
             <span className="text-sm font-semibold">Contact Privacy</span>
-            <span className="text-xs">Showing all contact details</span>
+            <span className="text-xs text-zinc-600">
+              Showing all contact details
+            </span>
           </div>
           <div className="ml-auto">
             <button
@@ -340,7 +355,7 @@ const SmartResumeSettings: React.FC<{
       </div>
 
       <div className="p-3">
-        <div className="flex items-center text-lg gap-1.5 mb-3">
+        <div className="flex items-center text-base font-semibold gap-1.5 mb-3">
           <BsDatabaseGear className="text-primary" /> Controls
         </div>
 
@@ -805,6 +820,8 @@ const SmartResumeSettings: React.FC<{
           </div>
         </div>
       </div>
+      </div>
+      
       <Modal
         show={linkModal}
         onHide={() => {
@@ -990,7 +1007,7 @@ const SmartResumeSettings: React.FC<{
               <div className="flex gap-4 max-sm:flex-wrap">
                 {["On-Site", "Hybrid", "Remote"].map((type) => (
                   <button
-                    key={type} 
+                    key={type}
                     type="button"
                     onClick={() => toggleLocationType(type)}
                     className={`px-4 py-1.5 rounded-full flex gap-2 font-normal items-center border border-stroke focus:outline-none  transition 
@@ -1149,6 +1166,7 @@ const Profile: React.FC = () => {
     {
       enabled: !!user?.profile,
       keepPreviousData: true,
+      refetchOnWindowFocus: false,
       onSuccess(data) {
         setProfileData(data?.data?.profile);
         setActive(true);
@@ -1169,7 +1187,7 @@ const Profile: React.FC = () => {
         ...user,
         profileConfig: {
           professionalSummary: true,
-          role:true,
+          role: true,
           careerHighlights: true,
           workExperience: true,
           volunteerExperience: true,

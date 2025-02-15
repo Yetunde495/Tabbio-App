@@ -16,7 +16,7 @@ const DefaultLayout = ({children}:{children: React.ReactNode}) => {
   }, [user, isLoggedIn])
 
   return (
-    <div className='dark:bg-boxdark-2 bg-[#F2F4F6] dark:text-bodydark'>
+    <div className='dark:bg-boxdark-2 bg-[#F2F4F6] dark:text-bodydark w-full mx-auto max-w-[1600px]'>
       <div className='flex h-screen overflow-hidden'>
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
         <div className='relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden'>

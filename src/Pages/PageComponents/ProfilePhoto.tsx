@@ -40,15 +40,14 @@ const ProfilePicture: React.FC<{ photo: string; name: string, onSuccess: (url:st
       if (target.files?.length) {
         const file = target.files[0];
         setImgUrl(URL.createObjectURL(file) || "");
+        const id = toast.loading("Uploading your image, please wait...");
 
         try {
           setLoading(true);
 
           const formData = new FormData();
           formData.append("file", file);
-
           setLoading(true);
-          const id = toast.loading("Uploading your image, please wait...");
           const resp = await uploadFile(formData);
           toast.update(id, {
             render: "Your image was successfully uploaded",
@@ -60,9 +59,11 @@ const ProfilePicture: React.FC<{ photo: string; name: string, onSuccess: (url:st
           setImgUrl(resp?.data?.url || "");
           onSuccess(resp?.data?.url || "");
           setEditForm(false);
+          setDropdownOpen(false)
         } catch (err: any) {
           // TODO: Handle the response data according to your needs
           toast.error(err?.message || "Request Failed");
+          toast.dismiss(id)
           setImgUrl("");
           // TODO: Handle errors appropriately
         } finally {
