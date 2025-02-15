@@ -23,14 +23,18 @@ import ApplicationResult from "./ApplicationkitResult";
 type Props = {
   show?: boolean;
   onHide: () => void;
+  applicationData?: any;
+  tailor?:boolean;
 };
 
-const CreateApplicationKit: React.FC<Props> = ({ show, onHide }) => {
+const CreateApplicationKit: React.FC<Props> = ({ show, onHide, applicationData, tailor }) => {
   const modalRef = React.useRef<HTMLDivElement | null>(null);
   const [value, setValue] = React.useState("");
   const [activeStep, setActiveStep] = useState(0);
   const [loadingStep, setLoadingStep] = useState(0);
-  const [resultModal, setResultModal] = useState(false);
+
+  const [resultModal, setResultModal] = useState(applicationData?.isTailored);
+  const [applicationKitData, _setApplicationKitData] = useState<any>(applicationData || null)
 
   const stepRefs = useRef<HTMLDivElement[]>([]);
 
@@ -120,6 +124,13 @@ const CreateApplicationKit: React.FC<Props> = ({ show, onHide }) => {
       setResultModal(true);
     }
   }, [loadingStep]);
+
+  useEffect(() => {
+   if (tailor) {
+    setActiveStep(1)
+    setResultModal(false)
+   }
+  }, [])
 
   if (!show) {
     return null;
@@ -395,6 +406,7 @@ const CreateApplicationKit: React.FC<Props> = ({ show, onHide }) => {
             onHide();
             setResultModal(false);
           }}
+          applicationData={applicationKitData}
         />
       )}
     </div>,

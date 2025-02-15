@@ -1207,8 +1207,8 @@ const Profile: React.FC = () => {
           </div>
         </div>
       ) : (
-        <section className="">
-          <div className="px-2 py-4 md:pl-8 md:pr-2">
+        <section className="w-full flex justify-center items-center">
+          <div className="px-2 py-4 md:pl-8 md:pr-2 3xl:max-w-[1600px]">
             {active && (
               <div className="xl:hidden flex justify-end items-center">
                 <button

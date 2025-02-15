@@ -100,26 +100,27 @@ const ProfessionalPDF = ({ data }: any) => {
       fontFamily: fontFamily,
     },
     section: {
-      marginBottom: 15,
+      marginBottom: 20,
     },
     header: {
       display: "flex",
       flexDirection: "row",
       alignItems: "center",
       borderBottomWidth: 1,
-      paddingBottom: 8,
-      marginBottom: 15,
+      paddingBottom: 6,
+      marginBottom: 10,
       borderColor: data?.style?.primaryColor,
     },
     name: {
-      fontSize: 30,
-      fontWeight: "medium",
+      fontSize: 25,
+      fontWeight: 500,
       textTransform: "uppercase",
       color: data?.style?.primaryColor,
+      maxWidth: '65%'
     },
     role: {
       fontSize: 14,
-      fontWeight: "medium",
+      fontWeight: 500,
       textTransform: "uppercase",
     },
     contactInfo: {
@@ -139,7 +140,7 @@ const ProfessionalPDF = ({ data }: any) => {
     },
     sectionTitle: {
       fontSize: 14,
-      fontWeight: "semibold",
+      fontWeight: 600,
       textTransform: "uppercase",
       borderBottomWidth: '1px',
       paddingBottom: 8,
@@ -149,8 +150,9 @@ const ProfessionalPDF = ({ data }: any) => {
     },
     text: {
       fontSize: fontSize,
-      fontWeight: "medium",
+      fontWeight: 500,
       color: "#000000",
+      lineHeight: 1.5,
     },
     listItem: {
       fontSize: fontSize,
@@ -344,6 +346,7 @@ const ProfessionalPDF = ({ data }: any) => {
                         display: "flex",
                         flexDirection: "row",
                         alignItems: "center",
+                        lineHeight: 6,
                         // justifyContent: "flex-s<",
                         width: "75%",
                       }}
@@ -351,8 +354,8 @@ const ProfessionalPDF = ({ data }: any) => {
                       <Text
                         style={{
                           fontSize: fontSize,
-                          fontWeight: "semibold",
-                          lineHeight: 1.5,
+                          fontWeight: 600,
+                          lineHeight: '0.8rem',
                           textTransform: "uppercase",
                           width: "50%",
                         }}
@@ -375,7 +378,7 @@ const ProfessionalPDF = ({ data }: any) => {
                           fontWeight: "semibold",
                           textTransform: "uppercase",
                           width: "50%",
-                          lineHeight: 1.5,
+                          lineHeight: '0.8rem',
                         }}
                       >
                         {item.degree}
