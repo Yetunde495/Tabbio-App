@@ -193,6 +193,8 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
       setCoverLetterData(resp?.data?.coverLetter);
     } catch (err: any) {
       setErrorText(err?.message || "Request Failed! Please try again");
+    } finally {
+      setLoading(false);
     }
   };
 
