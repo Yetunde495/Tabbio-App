@@ -1,7 +1,7 @@
 import { FaCircleCheck, FaPlus, FaRegClock, FaRegStar } from "react-icons/fa6";
 import { useApp } from "../../context/AppContext";
 import DefaultLayout from "../../layout/DefaultLayout";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ResumeAnalytics from "./ResumeAnalytics";
 import { LuBriefcase, LuBuilding2, LuPuzzle } from "react-icons/lu";
 import { MdCancel, MdOutlineErrorOutline } from "react-icons/md";
@@ -9,7 +9,7 @@ import { TbSearch } from "react-icons/tb";
 import { RiAwardLine, RiRobot2Line } from "react-icons/ri";
 import { IoDocumentTextOutline, IoLocationOutline } from "react-icons/io5";
 import { formatDateString } from "../../lib/utils/formatters";
-import { paginate } from "../../lib/utils";
+import { capitalizeFirstLetter, paginate } from "../../lib/utils";
 import TablePagination from "../../components/table/TablePagination";
 import StaggeredDropDown, {
   AnimatedOption,
@@ -24,8 +24,15 @@ import { toast } from "react-toastify";
 import Notification from "../../components/Notification";
 import { useQuery } from "@tanstack/react-query";
 import { getUserApplications } from "../../services/applicationServices";
-import ApplicationResult, { ResumeResult } from "./ApplicationkitResult";
+import ApplicationResult from "./ApplicationkitResult";
 import { useNavigate } from "react-router-dom";
+import Modal from "../../components/modal";
+import {
+  useDeleteApplication,
+  useUpdateApplication,
+} from "../../services/api/applicationManagement";
+import Delete from "../../components/modal/Delete";
+import TailorResume from "./TailorResume";
 
 const Applications: React.FC = () => {
   const { user } = useApp();
@@ -40,12 +47,16 @@ const Applications: React.FC = () => {
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [errorMessage, setErrorMessage] = useState("");
-  const [tailorResume, setTailorResume] = useState(false)
+  const [tailorResume, setTailorResume] = useState(false);
   const [selectedApplication, setApplication] = useState<any>(null);
   const [previewModal, setPreviewModal] = useState(false);
 
+  const [editNameModal, setEditNameModal] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [name, setName] = useState("");
+
   const { isLoading, isError, data } = useQuery(
-    ["APPLICATIONS", search, page, itemsPerPage, status],
+    ["CANDIDATE_APPLICATIONS", search, page, itemsPerPage, status],
     getUserApplications,
     {
       keepPreviousData: true,
@@ -70,11 +81,36 @@ const Applications: React.FC = () => {
     }
   );
 
+  const {
+    mutateAsync,
+    isLoading: updateLoading,
+    isSuccess,
+  } = useUpdateApplication();
+  const {
+    mutate,
+    isLoading: deleting,
+    reset,
+    isSuccess: deleteSuccess,
+  } = useDeleteApplication();
+
   const pagination = paginate(
     Number(data?.data?.applications?.count),
     Number(data?.data?.applications?.totalPages),
     Number(itemsPerPage)
   );
+
+  useEffect(() => {
+    if (isSuccess) {
+      setEditNameModal(false);
+    }
+  }, [isSuccess]);
+  useEffect(() => {
+    if (deleteSuccess) {
+      reset();
+      setApplication(null);
+      setDeleteModal(false);
+    }
+  }, [deleteSuccess]);
   return (
     <DefaultLayout>
       <section>
@@ -247,26 +283,36 @@ const Applications: React.FC = () => {
                           <StaggeredDropDown>
                             <AnimatedOption
                               text="Preview Application"
-                              onClick={() => {}}
+                              onClick={() => {
+                                setPreviewModal(true);
+                              }}
                             />
                             <AnimatedOption
                               text="Edit Application Name"
-                              onClick={() => {}}
+                              onClick={() => {
+                                setEditNameModal(true);
+                              }}
                             />
                             <AnimatedOption
                               text="Edit Resume"
-                              onClick={() => {}}
+                              onClick={() => {
+                                navigate(
+                                  `/app/candidate/edit-resume/${val?.resume?._id}`
+                                );
+                              }}
                             />
                             <AnimatedOption
-                              text="View Cover Letter"
-                              onClick={() => {}}
+                              text="Delete"
+                              onClick={() => {
+                                setDeleteModal(true);
+                              }}
                             />
                           </StaggeredDropDown>
                         </div>
                       </div>
                       <div className="flex items-center max-md:flex-wrap text-sm gap-2">
                         <p className="text-zinc-950 text-lg max-md:text-base font-bold max-md:hidden">
-                          {val?.job_role}
+                          {val?.name}
                         </p>
                         {val?.aiAssistance && (
                           <LuPuzzle className="text-slate-500 max-md:hidden" />
@@ -289,7 +335,7 @@ const Applications: React.FC = () => {
                               }
                             )}
                             buttonText={
-                              false ? (
+                              updateLoading ? (
                                 <span className={`flex items-center gap-1.5`}>
                                   <BiLoaderAlt className="animate-spin text-zinc-700" />{" "}
                                   Loading
@@ -307,7 +353,7 @@ const Applications: React.FC = () => {
                                   ) : (
                                     <FaRegClock />
                                   )}
-                                  {val?.status}
+                                  {capitalizeFirstLetter(val?.status)}
                                 </span>
                               )
                             }
@@ -318,27 +364,52 @@ const Applications: React.FC = () => {
                             <AnimatedOption
                               text="Applied"
                               Icon={<FaRegClock className="text-primary" />}
-                              onClick={() => {}}
+                              onClick={() => {
+                                mutateAsync({
+                                  id: selectedApplication?._id,
+                                  payload: { status: "applied" },
+                                });
+                              }}
                             />
                             <AnimatedOption
                               text="Interviewing"
                               Icon={<RiRobot2Line className="text-[#9333EA]" />}
-                              onClick={() => {}}
+                              onClick={() => {
+                                mutateAsync({
+                                  id: selectedApplication?._id,
+                                  payload: { status: "interviewing" },
+                                });
+                              }}
                             />
                             <AnimatedOption
                               text="Offered"
                               Icon={<RiAwardLine className="text-warning" />}
-                              onClick={() => {}}
+                              onClick={() => {
+                                mutateAsync({
+                                  id: selectedApplication?._id,
+                                  payload: { status: "offered" },
+                                });
+                              }}
                             />
                             <AnimatedOption
                               text="Accepted"
                               Icon={<FaCircleCheck className="text-success" />}
-                              onClick={() => {}}
+                              onClick={() => {
+                                mutateAsync({
+                                  id: selectedApplication?._id,
+                                  payload: { status: "accepted" },
+                                });
+                              }}
                             />
                             <AnimatedOption
                               text="Rejected"
                               Icon={<MdCancel className="text-danger" />}
-                              onClick={() => {}}
+                              onClick={() => {
+                                mutateAsync({
+                                  id: selectedApplication?._id,
+                                  payload: { status: "rejected" },
+                                });
+                              }}
                             />
                           </StaggeredDropDown>
                         </div>
@@ -346,27 +417,37 @@ const Applications: React.FC = () => {
                         {val?.matchScore && (
                           <span className="bg-[#F3E8FF] text-[#9333EA] text-sm flex items-center gap-2 rounded-full px-4 py-1">
                             <FaRegStar className="text-[#FBBF24]" />{" "}
-                            {val?.match_score + "% Match"}
+                            {val?.matchScore + "% Match"}
                           </span>
                         )}
 
                         <div className="ml-auto md:block hidden">
                           <StaggeredDropDown>
-                          <AnimatedOption
+                            <AnimatedOption
                               text="Preview Application"
-                              onClick={() => {setPreviewModal(true)}}
+                              onClick={() => {
+                                setPreviewModal(true);
+                              }}
                             />
                             <AnimatedOption
                               text="Edit Application Name"
-                              onClick={() => {}}
+                              onClick={() => {
+                                setEditNameModal(true);
+                              }}
                             />
                             <AnimatedOption
                               text="Edit Resume"
-                              onClick={() => {navigate(`/app/candidate/edit-resume/${val?.resume?._id}`)}}
+                              onClick={() => {
+                                navigate(
+                                  `/app/candidate/edit-resume/${val?.resume?._id}`
+                                );
+                              }}
                             />
                             <AnimatedOption
                               text="Delete"
-                              onClick={() => {}}
+                              onClick={() => {
+                                setDeleteModal(true);
+                              }}
                             />
                           </StaggeredDropDown>
                         </div>
@@ -458,33 +539,87 @@ const Applications: React.FC = () => {
         )}
         {previewModal && (
           <div>
-            {selectedApplication?.isTailored ? (
-              <ApplicationResult
-                show={previewModal}
-                onHide={() => setPreviewModal(false)}
-                applicationData={selectedApplication}
-              />
-             ) : (
-              <ResumeResult
-                show={previewModal}
-                onHide={() => setPreviewModal(false)}
-                resumeData={selectedApplication?.resume}
-                onClick={() => {
-                  setTailorResume(true)
-                  setPreviewModal(false)
-                }}
-              />
-            )} 
+            <ApplicationResult
+              show={previewModal}
+              onHide={() => setPreviewModal(false)}
+              selectedApplication={selectedApplication}
+              onTailorResume={() => {
+                setTailorResume(true);
+                setPreviewModal(false);
+              }}
+            />
           </div>
         )}
         {tailorResume && (
-          <CreateApplicationKit
-          show={tailorResume}
-          onHide={() => setTailorResume(false)}
-          applicationData={selectedApplication}
-          tailor
-         />
+          <TailorResume
+            show={tailorResume}
+            onHide={() => setTailorResume(false)}
+            applicationData={selectedApplication}
+          />
         )}
+
+        <Modal
+          show={editNameModal}
+          onHide={() => setEditNameModal(false)}
+          title={"Edit Application Name"}
+          size="max-w-[600px] w-full"
+        >
+          <div>
+            <div className="no-scrollbar max-h-[65vh] max-sm:max-h-[70vh] overflow-y-auto px-2">
+              <div className="mb-6">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Application Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Ex: Project Manager"
+                  className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+              </div>
+            </div>
+            <div className="w-full border-t flex bg-white mt-3 pt-4 justify-between items-center border-stroke">
+              <button
+                onClick={() => {
+                  setEditNameModal(false);
+                }}
+                className="text-zinc-600 hover:scale-105 font-medium py-1.5 px-4"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  mutateAsync({
+                    id: selectedApplication?._id,
+                    payload: { name: name },
+                  });
+                }}
+                disabled={updateLoading}
+                className="bg-primary disabled:bg-opacity-50 rounded-md text-white hover:scale-105 py-1.5 px-4 font-medium"
+              >
+                {updateLoading ? "Loading..." : "Update"}
+              </button>
+            </div>
+          </div>
+        </Modal>
+        <Delete
+          show={deleteModal}
+          title={`Delete ${selectedApplication?.name} Application?`}
+          desc={`Are you sure you want to delete this application? This action is irreversible`}
+          isLoading={deleting}
+          isLoadingText="Deleting"
+          onHide={() => setDeleteModal(false)}
+          size="md:w-[500px] w-[350px]"
+          onProceed={() => {
+            mutate(selectedApplication?._id);
+          }}
+          okText="Yes, Delete"
+        ></Delete>
       </section>
     </DefaultLayout>
   );

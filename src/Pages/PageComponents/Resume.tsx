@@ -141,7 +141,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
             >
               <div className="flex flex-col w-full justify-center items-center  mb-8 border-b pb-2 border-stroke">
                 <h1
-                  className={`text-center px-3 font-medium text-[40px]`}
+                  className={`text-center px-3 font-medium text-[30px]`}
                   style={{ color: resumeData?.style?.primaryColor }}
                 >
                   {resumeData?.name}
@@ -729,7 +729,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                   }}
                   className="w-full flex divide-x-2 border-b-2 gap-3 items-center mt-15"
                 >
-                  <h1 className="text-[40px] font-medium uppercase">
+                  <h1 className="text-[30px] font-medium uppercase">
                     {resumeData?.name}
                   </h1>
 

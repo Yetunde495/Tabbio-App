@@ -211,6 +211,7 @@ const EntryPDF = ({ data }: any) => {
       padding: 30,
       // fontFamily: data?.style?.fontFamily || "Helvetica",
       fontFamily: fontFamily,
+      border: 0
     },
     container: {
       maxWidth: 1200,
@@ -230,7 +231,7 @@ const EntryPDF = ({ data }: any) => {
       alignItems: "center",
     },
     name: {
-      fontSize: 36,
+      fontSize: 30,
       fontWeight: "medium",
       marginBottom: 2,
       color: data?.style?.primaryColor,
@@ -304,7 +305,7 @@ const EntryPDF = ({ data }: any) => {
   });
 
   return (
-    <Document>
+    <Document style={{border: 0}}>
       <Page size="A4" style={styles.page}>
         <View style={styles.container}>
           <View>

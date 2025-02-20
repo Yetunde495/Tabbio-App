@@ -76,7 +76,7 @@ const ProfessionalLandingpage: React.FC = () => {
             setColorMode("light");
           }
         }}
-        className="p-8 max-sm:px-4 md:py-22 text grid grid-cols-1 gap-12 xl:max-w-7xl 2xl:max-w-full 2xl:px-[12rem] w-full mx-auto"
+        className="p-8 max-sm:px-4 md:py-22 text grid grid-cols-1 gap-12 xl:max-w-7xl 2xl:max-w-full 2xl:px-[12rem] 4xl:px-[3rem] w-full mx-auto"
       >
         <div className="text-center text-lg text-zinc-500">
           <p className="text-[#DC2626] bg-red-100/50 inline-flex rounded-full sm:items-center px-4 py-2 mb-6 max-sm:text-[12px] text-sm gap-2">
@@ -104,7 +104,7 @@ const ProfessionalLandingpage: React.FC = () => {
         <div className="mt-10">
           <UploadResume
             onChange={() => {}}
-            maxWidth="max-w-[800px]"
+            maxWidth="max-w-[800px] 4xl:max-w-[94%]"
             onSuccess={(response) => {
               if (response?.data?.profile?.template) {
                 setParsedResume(response?.data?.profile);
@@ -155,7 +155,7 @@ const ProfessionalLandingpage: React.FC = () => {
         <div className="">
           <section className="overflow-hidden flex flex-col justify-center items-center relative">
             <motion.div
-              className="pb-[64px] relative flex justify-center items-center py-[10rem] px-8 max-sm:px-4 lg:px-[4rem] 2xl:px-[12rem]"
+              className="pb-[64px] relative flex justify-center items-center py-[10rem] px-8 max-sm:px-4 lg:px-[4rem] 4xl:px-[3rem] 2xl:px-[12rem]"
               initial={{ y: 100, width: "90%" }}
               whileInView={{
                 y: -20,
@@ -243,7 +243,7 @@ const ProfessionalLandingpage: React.FC = () => {
             </motion.div>
 
             <motion.div
-              className="pb-[64px] mt-[80px] max-sm:px-4 relative flex flex-col justify-center items-center rounded-[18px] bg-[#111827] py-[5rem] px-8 lg:px-[4rem] 2xl:px-[12rem]"
+              className="pb-[64px] mt-[80px] max-sm:px-4 relative flex flex-col justify-center items-center rounded-[18px] bg-[#111827] py-[5rem] px-8 lg:px-[4rem] 4xl:px-[3rem] 2xl:px-[12rem]"
               initial={{ y: 100, width: "80%" }}
               whileInView={{
                 y: -30,
@@ -347,7 +347,7 @@ const ProfessionalLandingpage: React.FC = () => {
             </motion.div>
 
             <motion.div
-              className="pb-[64px] max-sm:px-4 relative flex justify-center items-center py-[10rem] px-8 lg:px-[4rem] 2xl:px-[12rem]"
+              className="pb-[64px] max-sm:px-4 relative flex justify-center items-center py-[10rem] px-8 lg:px-[4rem] 4xl:px-[3rem] 2xl:px-[12rem]"
               initial={{ y: 100, width: "90%" }}
               whileInView={{
                 y: -20,
@@ -437,7 +437,7 @@ const ProfessionalLandingpage: React.FC = () => {
         </div>
       </section>
 
-      <section className="py-[9%] px-8 max-sm:px-4 lg:px-[4rem] 2xl:px-[12rem] bg-gradient-to-b from-[#F9fafb] to-white">
+      <section className="py-[9%] px-8 max-sm:px-4 lg:px-[4rem] 2xl:px-[12rem] 4xl:px-[3rem] bg-gradient-to-b from-[#F9fafb] to-white">
         <div>
           <div className="overflow-hidden flex flex-col">
             <motion.div

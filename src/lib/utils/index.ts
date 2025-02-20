@@ -5,6 +5,16 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/**
+ * Capitalizes the first letter of a given string.
+ * @param str - The string to capitalize.
+ * @returns The string with the first letter capitalized.
+ */
+export function capitalizeFirstLetter(str: string): string {
+  if (!str) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 export function toggleIdInArray(arr: string[], id: string): string[] {
   const index = arr.indexOf(id);
   if (index !== -1) {

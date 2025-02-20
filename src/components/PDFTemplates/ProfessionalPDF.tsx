@@ -10,7 +10,6 @@ import {
 } from "@react-pdf/renderer";
 import { formatMonthYear } from "../../lib/utils/formatters";
 
-
 const fontSizeMap = {
   small: 8,
   medium: 10,
@@ -21,7 +20,6 @@ const fontSizeSmMap = {
   medium: 8,
   large: 9,
 };
-
 
 const registeredFonts = new Set();
 
@@ -98,6 +96,7 @@ const ProfessionalPDF = ({ data }: any) => {
       padding: 32,
       backgroundColor: "#ffffff",
       fontFamily: fontFamily,
+      border: 0,
     },
     section: {
       marginBottom: 20,
@@ -112,14 +111,14 @@ const ProfessionalPDF = ({ data }: any) => {
       borderColor: data?.style?.primaryColor,
     },
     name: {
-      fontSize: 25,
+      fontSize: 18,
       fontWeight: 500,
       textTransform: "uppercase",
       color: data?.style?.primaryColor,
-      maxWidth: '65%'
+      maxWidth: "60%",
     },
     role: {
-      fontSize: 14,
+      fontSize: 13,
       fontWeight: 500,
       textTransform: "uppercase",
     },
@@ -142,7 +141,7 @@ const ProfessionalPDF = ({ data }: any) => {
       fontSize: 14,
       fontWeight: 600,
       textTransform: "uppercase",
-      borderBottomWidth: '1px',
+      borderBottomWidth: "1px",
       paddingBottom: 8,
       marginBottom: 8,
       color: data?.style?.primaryColor,
@@ -165,7 +164,7 @@ const ProfessionalPDF = ({ data }: any) => {
     },
   });
   return (
-    <Document>
+    <Document style={{ border: 0 }}>
       <Page size="A4" style={styles.page}>
         {/* Header Section */}
         <View style={styles.section}>
@@ -308,13 +307,15 @@ const ProfessionalPDF = ({ data }: any) => {
                       </Text>
                     </View>
                   </View>
-                  <Text style={{ fontSize: fontSize, marginTop: '10px' }}>{item.description}</Text>
-                  <View style={{ marginTop: '12px' }}>
+                  <Text style={{ fontSize: fontSize, marginTop: "10px" }}>
+                    {item.description}
+                  </Text>
+                  <View style={{ marginTop: "12px" }}>
                     {item.keyAchievements?.map(
                       (achievement: any, index: number) => (
                         <Text
                           key={index}
-                          style={{ fontSize: fontSize, marginBottom: '5px' }}
+                          style={{ fontSize: fontSize, marginBottom: "5px" }}
                         >
                           • {achievement}
                         </Text>
@@ -355,7 +356,7 @@ const ProfessionalPDF = ({ data }: any) => {
                         style={{
                           fontSize: fontSize,
                           fontWeight: 600,
-                          lineHeight: '0.8rem',
+                          lineHeight: "0.8rem",
                           textTransform: "uppercase",
                           width: "50%",
                         }}
@@ -378,7 +379,7 @@ const ProfessionalPDF = ({ data }: any) => {
                           fontWeight: "semibold",
                           textTransform: "uppercase",
                           width: "50%",
-                          lineHeight: '0.8rem',
+                          lineHeight: "0.8rem",
                         }}
                       >
                         {item.degree}
@@ -431,9 +432,7 @@ const ProfessionalPDF = ({ data }: any) => {
                         {item.institution}
                       </Text>
                     </View>
-                    <Text style={{ fontSize: fontSizeSm }}>
-                      {item?.year}
-                    </Text>
+                    <Text style={{ fontSize: fontSizeSm }}>{item?.year}</Text>
                   </View>
                 </View>
               ))}
