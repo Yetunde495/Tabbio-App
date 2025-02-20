@@ -12,7 +12,7 @@ import { VscWand } from "react-icons/vsc";
 import { TextArea } from "../../components/form";
 import Stepper from "../../components/Stepper";
 import { IoDocumentTextOutline, IoSparklesOutline } from "react-icons/io5";
-import { SelectFileBox } from "../General/ResumeUpload";
+import { FileUpload } from "../General/ResumeUpload";
 import { FiUpload } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { LuBuilding2, LuCrown } from "react-icons/lu";
@@ -23,36 +23,31 @@ import { TbLoader3 } from "react-icons/tb";
 import { getProfileResume } from "../../services/resumeServices";
 import { useApp } from "../../context/AppContext";
 import { toast } from "react-toastify";
-import { generateApplication } from "../../services/applicationServices";
+import {
+  generateApplication,
+} from "../../services/applicationServices";
 
 type Props = {
   show?: boolean;
   onHide: () => void;
   applicationData?: any;
-  tailor?: boolean;
 };
 
-const CreateApplicationKit: React.FC<Props> = ({
-  show,
-  onHide,
-  applicationData,
-  tailor,
-}) => {
+const TailorResume: React.FC<Props> = ({ show, onHide, applicationData }) => {
   const modalRef = React.useRef<HTMLDivElement | null>(null);
   const { user } = useApp();
   const [value, setValue] = React.useState("");
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(1);
   const [loadingStep, setLoadingStep] = useState(0);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [resultModal, setResultModal] = useState(false);
+  const [applicationKitData, setApplicationKitData] = useState<any>(
+    applicationData || null
+  );
   const [progress, setProgress] = useState(0);
   const [intervalId, setIntervalId] = useState<ReturnType<
     typeof setInterval
   > | null>(null);
-  const [profileLoading, setProfileLoading] = useState(false);
-  const [resultModal, setResultModal] = useState(applicationData?.isTailored);
-  const [applicationKitData, setApplicationKitData] = useState<any>(
-    applicationData || null
-  );
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
   const stepRefs = useRef<HTMLDivElement[]>([]);
@@ -127,10 +122,10 @@ const CreateApplicationKit: React.FC<Props> = ({
       const resp = await getProfileResume(user?.profileId);
       // Destructure the fields to omit them
       const { profileId, ...filteredResume } = resp?.data?.resume;
-      setApplicationKitData((appData: any) => ({
-        ...appData,
+      setApplicationKitData({
+        ...applicationKitData,
         resume: filteredResume,
-      }));
+      });
       setActiveStep(activeStep + 1);
     } catch (err: any) {
       toast.error(err?.message || "Request Failed! Please try again");
@@ -143,11 +138,8 @@ const CreateApplicationKit: React.FC<Props> = ({
     setLoading(true);
     setActiveStep(activeStep + 1);
     const formData = new FormData();
-    if (selectedFile) {
-      formData.append("document", selectedFile);
-    } else {
-      formData.append("resumeId", applicationKitData?.resume?._id);
-    }
+
+    formData.append("resumeId", applicationKitData?.resume?._id);
     formData.append("jobDescription", value);
 
     // Start the interval to increment loading steps
@@ -185,13 +177,6 @@ const CreateApplicationKit: React.FC<Props> = ({
       });
     }
   }, [loadingStep]);
-
-  useEffect(() => {
-    if (tailor) {
-      setActiveStep(1);
-      setResultModal(false);
-    }
-  }, []);
 
   if (!show) {
     return null;
@@ -274,12 +259,7 @@ const CreateApplicationKit: React.FC<Props> = ({
                 </div>
 
                 <div className="my-12">
-                  <SelectFileBox
-                    onChange={(files: any) => {
-                      setSelectedFile(files[0]);
-                      setActiveStep(activeStep + 1);
-                    }}
-                  >
+                  <FileUpload onSuccess={() => {}}>
                     <p className="font-bold text-neutral-700 text-center text-lg pt-4">
                       Drag & drop your resume here
                     </p>
@@ -306,7 +286,7 @@ const CreateApplicationKit: React.FC<Props> = ({
                         Up to 10MB
                       </p>
                     </div>
-                  </SelectFileBox>
+                  </FileUpload>
                 </div>
               </div>
             ) : activeStep === 1 ? (
@@ -369,12 +349,6 @@ const CreateApplicationKit: React.FC<Props> = ({
                 </div>
 
                 <div className="mb-4 my-7 w-full flex items-center gap-6 justify-end">
-                  <button
-                    onClick={() => setActiveStep(activeStep - 1)}
-                    className="text-zinc-700 hover:scale-105 duration-150"
-                  >
-                    Back
-                  </button>
                   <button
                     disabled={value === "" || loading}
                     onClick={() => {
@@ -495,4 +469,4 @@ const CreateApplicationKit: React.FC<Props> = ({
   );
 };
 
-export default CreateApplicationKit;
+export default TailorResume;

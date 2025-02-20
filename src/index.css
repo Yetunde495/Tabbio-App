@@ -48,6 +48,9 @@ body {
     transform: scaleX(0.9)
   }
 }
+.font-medium {
+  font-weight: 500!important;
+}
 
 .wmde-markdown pre {
   background-color: transparent!important;
@@ -206,4 +209,10 @@ box-shadow: 0px 10px 15px -3px #0000001A; */
 }
 .custom-scrollbar::-moz-scrollbar-track {
   background-color: transparent !important;
+}
+
+/*  */
+iframe {
+  border-color: transparent!important;
+  background-color: #fff!important;
 }

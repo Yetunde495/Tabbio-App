@@ -28,7 +28,7 @@ import { IoDocumentTextOutline } from "react-icons/io5";
 import Drawer from "../../components/Drawer";
 import Popover from "../../components/Popover";
 import { TextArea } from "../../components/form";
-import ApplicationResult, { ResumeResult } from "./ApplicationkitResult";
+import ApplicationResult from "./ApplicationkitResult";
 import useOutsideClick from "../../hooks/useOutsideClick";
 import TabbioScore from "../../components/tabbioScore";
 import resumeImg1 from "../../assets/images/entry-resume-sample.png";
@@ -64,7 +64,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import EntryPDF from "../../components/PDFTemplates/EntryPDF";
 import ProfessionalPDF from "../../components/PDFTemplates/ProfessionalPDF";
 import typographyIcon from "../../assets/svg/typography-icon.svg"
-import CreateApplicationKit from "./CreateApplicationKit";
+import TailorResume from "./TailorResume";
 
 const primaryColors = ["#0077B5", "#CC0074", "#FF7D00", "#00C196", "#000000"];
 
@@ -85,7 +85,7 @@ const CreateLiveResume: React.FC = () => {
   const [showDrawer, setShowDrawer] = useState(false);
   const [resultModal, setResultModal] = useState(false);
   const [tailorResume, setTailorResume] = useState(false)
-  const [kit, _setKit] = useState(false);
+  const [_kit, _setKit] = useState(false);
   const [companyName, setCompanyName] = useState("");
   const [templateModal, setTemplateModal] = useState(false);
   const [scoreModal, setScoreModal] = useState(false);
@@ -1442,23 +1442,16 @@ const CreateLiveResume: React.FC = () => {
           </Drawer>
         )}
 
-        {resultModal && !kit && (
-          <ResumeResult
-            show={resultModal}
-            onHide={() => setResultModal(false)}
-            resumeData={resumeData}
-            onClick={() => {
-              setTailorResume(true)
-              setResultModal(false)
-              
-            }}
-          />
-        )}
-        {resultModal && kit && (
+       
+        {resultModal && (
           <ApplicationResult
             show={resultModal}
             onHide={() => setResultModal(false)}
-            applicationData={resumeData}
+            selectedApplication={{
+              ...resumeData,
+              _id:resumeData?.application
+            }}
+            onTailorResume={() => setTailorResume(true)}
           />
         )}
         {templateModal && (
@@ -1546,12 +1539,11 @@ const CreateLiveResume: React.FC = () => {
           />
         )}
          {tailorResume && (
-          <CreateApplicationKit
+          <TailorResume
           show={tailorResume}
           onHide={() => setTailorResume(false)}
-          applicationData={resumeData}
-          tailor
-         />
+          applicationData={{_id: resumeData?.application}}
+        />
         )}
       </section>
     </DefaultLayout>

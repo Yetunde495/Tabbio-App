@@ -152,3 +152,8 @@
 .PhoneInputInput:focus {
   border: 1px solid #0a58ca;
 }
+
+/* Editor */
+.w-md-editor {
+  border-radius: 1rem!important;
+}

@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 const Footer: React.FC = () => {
   return (
     <footer className="bg-[#f9fafb] text-slate-500 px-10 py-10 border-t-gray-400">
-      <section className="container mx-auto lg:max-w-7xl 2xl:max-w-full max-w-screen-2xl 2xl:px-[12rem]">
+      <section className="container mx-auto lg:max-w-7xl 2xl:max-w-full max-w-screen-2xl 4xl:px-[3rem] 2xl:px-[12rem]">
         <div className="grid text-sm grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 border-stroke border-b pt-4 pb-6">
            {/* Column 1: Logo and Social Links */}
           <div className="col-span-2">

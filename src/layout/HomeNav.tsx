@@ -60,9 +60,7 @@ export default function Navbar() {
       }`}
     >
       <nav
-        className={`${
-          scroll ? "rounded-b-[40px]" : ""
-        } shadow backdrop-blur-md bg-white/50  dark:bg-neutral-1000/80 dark:text-white w-full`}
+        className={`${scroll ? "rounded-b-[40px]" : ""} shadow backdrop-blur-md 3xl:rounded-b-[40px] bg-white/50  dark:bg-neutral-1000/80 dark:text-white w-full`}
       >
         <div className="relative mx-auto w-full max-w-screen-2xl 2xl:px-[10rem] 2xl:max-w-full p-2">
           <div className=" md:gap-4 gap-1.5 px-0.5 mx-auto lg:max-w-7xl 2xl:max-w-full items-center justify-between border-stroke flex md:px-8">
