@@ -11,7 +11,6 @@ import { BsBookmarkPlus, BsEye } from "react-icons/bs";
 import Table from "../../components/table";
 import { TableLoader } from "../../components/Loader";
 import TablePagination from "../../components/table/TablePagination";
-import { paginate } from "../../lib/utils";
 import { formatDateString } from "../../lib/utils/formatters";
 import { FaRegCalendar, FaRegClock } from "react-icons/fa6";
 import { LuBuilding2 } from "react-icons/lu";
@@ -23,6 +22,7 @@ import { getProfileAnalytics } from "../../services/profileServices";
 import { useApp } from "../../context/AppContext";
 import Notification from "../../components/Notification";
 import { TbLoader3 } from "react-icons/tb";
+import paginate from "../../lib/utils/paginate";
 
 type ResumeAnalyticsProps = {
   show?: boolean;
@@ -61,7 +61,7 @@ const ResumeAnalytics: React.FC<ResumeAnalyticsProps> = ({ show, onHide }) => {
   );
 
   const pagination = paginate(
-    data?.totalPages || 0,
+    data?.data?.performance?.recentActivities?.count || 0,
     Number(page),
     Number(itemsPerPage)
   );
@@ -82,6 +82,7 @@ const ResumeAnalytics: React.FC<ResumeAnalyticsProps> = ({ show, onHide }) => {
   if (!show) {
     return null;
   }
+
   return ReactDOM.createPortal(
     <div className="w-screen h-screen z-9999 bg-black bg-opacity-50 fixed top-0 flex md:items-center justify-center text-[#444444] overflow-x-auto">
       <div

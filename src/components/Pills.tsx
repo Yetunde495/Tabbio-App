@@ -10,7 +10,7 @@ export interface StatusCellProps {
     variant,
   }) => {
     let val = (
-      <p className="inline-flex rounded-full bg-light py-1 sm:px-3 px-2 text-xs sm:text-sm font-normal text-black">
+      <p className="inline-flex rounded-full bg-[#F3F4F6] py-1 sm:px-3 px-2 text-xs sm:text-sm font-normal text-black">
         {children}
       </p>
     );

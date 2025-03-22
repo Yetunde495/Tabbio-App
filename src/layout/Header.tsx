@@ -1,5 +1,5 @@
 // import { Link } from 'react-router-dom';
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import DropdownNotification from "./DropdownNotification";
 import DropdownUser from "./DropdownUser";
 import { BsEye, BsList, BsTwitterX, BsWhatsapp } from "react-icons/bs";
@@ -11,7 +11,7 @@ import { useState } from "react";
 import { CgFileDocument } from "react-icons/cg";
 import { TbWorld } from "react-icons/tb";
 import { LuClock, LuExternalLink, LuUsers } from "react-icons/lu";
-import { MdBusiness, MdShare } from "react-icons/md";
+import { MdBusiness } from "react-icons/md";
 import StaggeredDropDown, {
   AnimatedOption,
 } from "../AnimatedUi/staggeredDropdown";
@@ -19,12 +19,14 @@ import { IoIosArrowDown } from "react-icons/io";
 import logo1 from "../assets/brand/logo-1.svg";
 import { AiOutlineBarChart } from "react-icons/ai";
 import { FaCircle, FaFacebookF, FaLinkedinIn } from "react-icons/fa6";
-import { truncateString } from "../lib/utils/formatters";
 import { UpgradeCandidateSubscription } from "../Pages/PageComponents/UpgradeSubscriptionModal";
 import Modal from "../components/modal";
 import ResumeAnalytics from "../Pages/Candidate/ResumeAnalytics";
+import Ticon from "../assets/svg/t-white-icon.svg";
 import { FcReddit } from "react-icons/fc";
 import { toast } from "react-toastify";
+import { FaShareAlt } from "react-icons/fa";
+import { getTimeAgo } from "../lib/utils";
 
 type SidebarProps = {
   sidebarOpen: boolean;
@@ -37,7 +39,7 @@ type Position = {
   opacity: number;
 };
 
-const ShareCV: React.FC = () => {
+export const ShareCV: React.FC = () => {
   const { user } = useApp();
   const [buttonText, setButtonText] = useState("Copy");
 
@@ -136,8 +138,6 @@ const Header = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [upgradeModal, setUpgradeModal] = useState(false);
   const [shareModal, setShareModal] = useState(false);
-  const location = useLocation();
-  const { pathname } = location;
 
   return (
     <>
@@ -242,7 +242,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 Icon={<TbWorld className="text-primary" />}
                 onClick={() => {
                   changeCategory("Candidate");
-                  navigate(`/app/candidate/profile`);
+                  navigate(`/app/candidate/smart-cv`);
                 }}
               />
 
@@ -286,7 +286,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   <button
                     onClick={() => {
                       changeCategory("Candidate");
-                      navigate(`/app/candidate/profile`);
+                      navigate(`/app/candidate/smart-cv`);
                     }}
                     className="text-primary px-4 text-sm py-2 font-semibold rounded-md border border-stroke hover:scale-105 delay-100"
                   >
@@ -330,73 +330,80 @@ const Header = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               <span>{user?.plan || "Free Plan"}</span>
               <button
                 onClick={() => setUpgradeModal(true)}
-                className="py-1 px-1.5 ml-1 text-xs hover:scale-x-105 text-white rounded-full bg-[#C89529]"
+                className="py-1 px-2 ml-1 text-xs flex items-center gap-1 hover:scale-x-105 text-white rounded-full bg-[#C89529]"
               >
+                <img
+                  src={Ticon}
+                  className="w-3 h-3 max-sm:w-2 max-sm:h-2"
+                  alt="tabbio-icon"
+                />{" "}
                 Upgrade <span className="max-lg:hidden">to Premium</span>
               </button>
             </div>
-            {user?.profile && <button
-              onClick={() => setShowAnalytics(true)}
-              className="flex max-sm:hidden items-center gap-1 hover:scale-x-105 duration-100"
-            >
-              <BsEye className="max-lg:hidden" />
-              <span className="max-md:hidden">
-                {user?.totalViews || "0"} profile views
-              </span>
-              <AiOutlineBarChart className="text-primary text-lg" />
-            </button>}
+            {user?.profile && (
+              <button
+                onClick={() => setShowAnalytics(true)}
+                className="flex items-center max-sm:hidden gap-1 hover:scale-x-105 duration-100"
+              >
+                <BsEye className="" />
+                <span className=" text-primary">
+                  {user?.totalViews || "0"} profile views
+                </span>
+              </button>
+            )}
           </div>
 
-          <button
-            onClick={() => setShowAnalytics(true)}
-            className="flex sm:hidden items-center gap-1 hover:scale-x-105 duration-100"
-          >
-            <BsEye className="" />
-            <span className="">{user?.plan || "10 profile views"}</span>
-            <AiOutlineBarChart className="text-primary text-lg hidden" />
-          </button>
+          <div className="flex items-center  gap-4 max-sm:justify-between">
+            {user?.profile && (
+              <div className="md:flex hidden items-center gap-1 text-zinc-400">
+                <LuClock className="max-sm:hidden" />
+                <span>
+                  Updated {user?.lastUpdated && getTimeAgo(user?.lastUpdated)}{" "}
+                  
+                </span>
+              </div>
+            )}
 
-          <div className="flex items-center  gap-4 max-sm:w-full max-sm:justify-between">
-            {user?.profile && <div className="md:flex hidden items-center gap-1 text-zinc-400">
-              <LuClock className="max-sm:hidden" />
-              <span>{user?.plan || "Updated 1d ago"}</span>
-            </div>}
-
-
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => navigate("/app/candidate/profile/preview-cv")}
-                className="py-1 px-1.5 md:ml-1 max-md:pl-0 flex items-center gap-1 hover:scale-x-105"
+            <div className="flex items-center gap-2.5">
+              {user?.profile && (
+                <button
+                  onClick={() => setShowAnalytics(true)}
+                  className="flex items-center gap-1 hover:scale-x-105 sm:hidden duration-100"
+                >
+                  <AiOutlineBarChart className="text-primary text-lg" />
+                </button>
+              )}
+              <div
+                onClick={() => navigate("/app/candidate/preview-smart-cv")}
+                className="py-1 px-1.5 md:ml-1 max-sm:hidden max-md:pl-0 flex items-center gap-1"
               >
-                <FaCircle size={10} className="text-green-500 max-md:hidden" />
-                <span className="max-md:hidden">{user?.tabbioLink}</span>{" "}
-                <span className="md:hidden">
-                  {truncateString(user?.tabbioLink || "tabbio.com-name", 10)}
+                <FaCircle size={10} className="text-green-500" />
+                <span className="max-md:hidden">
+                  {user?.tabbioLink || "tabbio.com-name"}
                 </span>{" "}
-                <LuExternalLink size={14} className="" />
-              </button>
+              </div>
 
               <button
                 onClick={() => {
                   if (user?.profile) {
-                    setShareModal(true)
+                    setShareModal(true);
                   } else {
-                    toast.warning("Your profile isn't setup yet. Complete your profile to start sharing your link")
+                    toast.warning(
+                      "Your profile isn't setup yet. Complete your profile to start sharing your link"
+                    );
                   }
                 }}
-                className="py-1 px-1.5 md:ml-1 max-md:pl-0 flex items-center gap-1 hover:scale-x-105 "
+                className="py-1 px-1.5 md:ml-1 max-md:pl-0 flex items-center gap-1 hover:scale-x-110 "
               >
-                <MdShare /> <span className="">Share</span>
+                <FaShareAlt />
               </button>
-              {pathname !== "/app/candidate/profile" && (
-                <button
-                  onClick={() => navigate("/app/candidate/profile")}
-                  className="text-primary hover:scale-x-105 inline-flex items-center gap-1.5"
-                >
-                  <span className="">View Profile</span>{" "}
-                  <LuExternalLink size={14} className="" />
-                </button>
-              )}
+              <button
+                onClick={() => navigate("/app/candidate/preview-smart-cv")}
+                className="text-primary text-sm font-semibold hover:scale-x-105 inline-flex items-center gap-1.5"
+              >
+                <span className="">View Smart CV</span>{" "}
+                <LuExternalLink size={14} className="" />
+              </button>
             </div>
           </div>
         </div>

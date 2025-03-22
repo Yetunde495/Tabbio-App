@@ -29,7 +29,7 @@ export const getUserApplications = async ({ queryKey }: any) => {
   return response?.data;
 };
 
-export const getSingleApplication = async (id: string) => {
+export const getSingleApplication = async (id: string|undefined) => {
   const response: any = await axios
     .get(`/resumes/applications/${id}`)
     .catch((e) => ({ error: e }));

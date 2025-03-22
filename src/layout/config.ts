@@ -58,7 +58,7 @@ export const CANDIDATE_NAV_DATA = [
       },
       {
         name: "Application",
-        path: "/app/candidate/resume-builder", //use for nested rendering
+        path: "/app/candidate/cv-builder", //use for nested rendering
         icon: icons.Resume,
         fillIcon: icons.ResumeFill,
       },

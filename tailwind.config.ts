@@ -28,6 +28,7 @@ export default {
       fontFamily: {
         outfit: ["outfit", "sans-serif"],
         timesNewRoman: ["Times New Roman", "serif"],
+        segoe: ["Segoe UI", "sans-serif"],
       },
       fontSize: {
         "title-xxl": ["44px", "55px"],
@@ -44,7 +45,7 @@ export default {
         transparent: "transparent",
         white: "#FFFFFF",
         "light": '#f9fafb',
-        "black-2": "#010101",
+        "black-2": "#111827",
         body: "#64748B",
         bodydark: "#AEB7C0",
         bodydark1: "#DEE4EE",

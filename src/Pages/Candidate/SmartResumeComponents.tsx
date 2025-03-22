@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { ReadMore } from "../../components/ReadMore";
 import Modal from "../../components/modal";
+import sparkleIcon from "../../assets/svg/ai-sparkle.svg";
 import { LuPencil } from "react-icons/lu";
-import { HiOutlineSparkles } from "react-icons/hi";
 import { Pill } from "../../components/Pills";
 import { IoIosArrowDown, IoIosArrowUp, IoLogoLinkedin } from "react-icons/io";
 import {
@@ -20,7 +20,7 @@ import { FcCalendar } from "react-icons/fc";
 import { TbMenuOrder } from "react-icons/tb";
 import Delete from "../../components/modal/Delete";
 import PhoneInput from "react-phone-number-input";
-import { FaRegUserCircle } from "react-icons/fa";
+import { FaInfoCircle, FaRegUserCircle } from "react-icons/fa";
 import { FiUpload } from "react-icons/fi";
 import { FileUpload } from "../General/ResumeUpload";
 import { Dropdown2 } from "../../components/Dropdown";
@@ -57,7 +57,7 @@ export const ItemList = ({ items }: any) => {
             className="flex items-center max-sm:items-start gap-1 text-zinc-500"
             key={index}
           >
-            <FaCircle size={6} className="text-primary max-sm:mt-2" /> {item}
+            <FaCircle size={6} className="text-[#333333] max-sm:mt-2" /> {item}
           </li>
         ))}
       </ul>
@@ -94,8 +94,10 @@ export const BasicDetails: React.FC<{
     setLoading(true);
     try {
       const resp = await updateProfile(profileData?._id, data);
-      setProfileData(resp?.data?.profile);
-      // console.log(resp?.data?.profile)
+      setProfileData({
+        ...resp?.data?.profile,
+        suggestedSkills: profileData?.suggestedSkills,
+      });
       toast.success("Update Successful!");
     } catch (err: any) {
       toast.error(err?.message || "Request Failed");
@@ -106,6 +108,7 @@ export const BasicDetails: React.FC<{
       setShowModal(false);
     }
   };
+
   return (
     <div>
       <div className="flex md:flex-row flex-col gap-x-2 md:gap-x-6 items-center gap-y-2 mb-8">
@@ -143,7 +146,7 @@ export const BasicDetails: React.FC<{
               )}
               <span
                 onClick={() => setShowModal(true)}
-                className="text-primary font-semibold cursor-pointer hover:scale-100"
+                className="text-primary font-semibold text-sm cursor-pointer hover:scale-100"
               >
                 Contact Details
               </span>
@@ -166,7 +169,7 @@ export const BasicDetails: React.FC<{
         show={showModal}
         onHide={() => setShowModal(false)}
         title={profileData?.name}
-        size="max-w-[500px] w-full"
+        size="max-w-[600px] w-full"
       >
         {formView ? (
           <div>
@@ -414,7 +417,7 @@ export const BasicDetails: React.FC<{
                 });
               }}
               disabled={loading}
-              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              className="bg-primary disabled:bg-opacity-50 rounded-md text-white hover:scale-105 py-2 px-5 font-medium"
             >
               {loading ? "Loading..." : "Save"}
             </button>
@@ -438,17 +441,10 @@ export const ProfileSummary: React.FC<{
   );
   const [level, setLevel] = useState(resumeData?.level);
   const [majorSkill, setMajorSkill] = useState(resumeData?.majorSkill);
-  const [skills, setSkills] = useState<string[]>(
-    resumeData?.skills.find((skill: any) => skill?.name === "technical")
-      ?.items || []
-  );
+  const [skills, setSkills] = useState<string[]>(resumeData?.skills || []);
   const [newSkill, setNewSkill] = useState("");
 
   const [loading, setLoading] = useState(false);
-
-  const technicalSkill = resumeData?.skills.find(
-    (skill: any) => skill?.name === "technical"
-  );
 
   const addSkill = () => {
     if (newSkill && !skills.includes(newSkill)) {
@@ -467,16 +463,14 @@ export const ProfileSummary: React.FC<{
       const resp = await updateProfile(resumeData?._id, {
         professionalSummary: bio,
         majorSkill,
-        skills: [
-          ...resumeData?.skills.filter(
-            (skill: any) => skill.name !== "technical"
-          ),
-          { name: "technical", items: skills },
-        ],
+        skills: skills,
         level,
         yearsOfExperience: experience.toString(),
       });
-      setResumeData(resp?.data?.profile);
+      setResumeData({
+        ...resp?.data?.profile,
+        suggestedSkills: resumeData?.suggestedSkills,
+      });
       toast.success("Your Professional Summary was successfully updated");
       setEditBioMode(false);
     } catch (err: any) {
@@ -507,6 +501,7 @@ export const ProfileSummary: React.FC<{
         <h6 className="text-lg font-medium text-zinc-800">Profile Summary</h6>
         <button
           onClick={() => {
+            setBio(resumeData?.professionalSummary);
             setEditBioMode(true);
           }}
           className="hover:bg-slate-100/50 rounded-full p-2"
@@ -543,7 +538,7 @@ export const ProfileSummary: React.FC<{
           </button>
           {showCompetencies && (
             <div className="py-2 border-t border-stroke w-full flex gap-2 items-center flex-wrap">
-              {technicalSkill?.items?.map((val: string, index: number) => (
+              {resumeData?.skills?.map((val: string, index: number) => (
                 <Pill key={index}>{val}</Pill>
               ))}
             </div>
@@ -589,14 +584,12 @@ export const ProfileSummary: React.FC<{
                     onClick={() => {
                       handleGenerateSummary();
                     }}
-                    className="relative inline-flex items-center justify-center disabled:bg-opacity-40 text-sm p-[2px] mb-2 me-2 overflow-hidden font-medium rounded-full group bg-gradient-to-b from-[#5272EA] to-[#394FC0] group-hover:from-[#394FC0] group-hover:to-[#5272EA] hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800"
+                    className="ai-button px-4 ml-2 rounded-full py-0.5 text-center flex justify-center items-center gap-2"
                   >
-                    <span className="relative px-3 py-1 transition-all ease-in duration-75 bg-white rounded-full group-hover:bg-opacity-0">
-                      <p className="text-center text-xs gap-1 items-center bg-gradient-to-r group-hover:text-white from-[#5272EA] to-[#394FC0] text-transparent bg-clip-text inline-flex">
-                        <HiOutlineSparkles className="text-primary group-hover:text-white" />{" "}
-                        {aiLoading ? "LOADING..." : "WRITING ASSISTANT"}
-                      </p>
+                    <span>
+                      <img src={sparkleIcon} />
                     </span>
+                    {aiLoading ? "Loading..." : "Write with Ai"}
                   </button>
                 </div>
               </div>
@@ -749,7 +742,7 @@ export const ProfileSummary: React.FC<{
                 handleUpdateProfile();
               }}
               disabled={loading}
-              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              className="bg-primary disabled:bg-opacity-50 rounded-md text-white hover:scale-105 py-2 px-5 font-medium"
             >
               {loading ? "Loading..." : "Save"}
             </button>
@@ -779,7 +772,7 @@ export const WorkExperience: React.FC<{
     endDate: new Date(),
     skills: [],
     active: false,
-    _id: generateUniqueId(),
+    id: generateUniqueId(),
   });
   const [newSkill, setNewSkill] = useState("");
   const [newAchievment, setNewAchievment] = useState("");
@@ -848,7 +841,10 @@ export const WorkExperience: React.FC<{
     setLoading(true);
     try {
       const resp = await updateProfile(profileData?._id, data);
-      setProfileData(resp?.data?.profile);
+      setProfileData({
+        ...resp?.data?.profile,
+        suggestedSkills: profileData?.suggestedSkills,
+      });
       toast.success("Successfull!");
     } catch (err: any) {
       toast.error(err?.message || "Request Failed");
@@ -1239,7 +1235,7 @@ export const WorkExperience: React.FC<{
                   ],
                 });
               }}
-              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              className="bg-primary disabled:bg-opacity-50 rounded-md text-white hover:scale-105 py-2 px-5 font-medium"
             >
               {loading ? "Saving..." : "Save"}
             </button>
@@ -1553,7 +1549,7 @@ export const WorkExperience: React.FC<{
                   workExperience: updatedWorkExperience,
                 });
               }}
-              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              className="bg-primary disabled:bg-opacity-50 rounded-md text-white hover:scale-105 py-2 px-5 font-medium"
             >
               {loading ? "Loading..." : "Update"}
             </button>
@@ -1597,7 +1593,7 @@ export const CareerHighlight: React.FC<{
   const [skills, setSkills] = useState<string[]>([]);
   const [newSkill, setNewSkill] = useState("");
   const [careerData, setCareerData] = useState({
-    _id: generateUniqueId,
+    id: generateUniqueId,
     title: "",
     description: "",
     thumbnail: "",
@@ -1629,7 +1625,10 @@ export const CareerHighlight: React.FC<{
     setLoading(true);
     try {
       const resp = await updateProfile(profileData?._id, data);
-      setProfileData(resp?.data?.profile);
+      setProfileData({
+        ...resp?.data?.profile,
+        suggestedSkills: profileData?.suggestedSkills,
+      });
       toast.success("Successfull!");
     } catch (err: any) {
       toast.error(err?.message || "Request Failed");
@@ -2132,7 +2131,9 @@ export const CareerHighlight: React.FC<{
                 )}
               </div>
             </div>
-            <div className="w-full border-t flex bg-white mt-3 pt-4 justify-between items-center border-stroke">
+            
+          </div>
+          <div className="w-full border-t flex bg-white mt-3 pt-4 justify-between items-center border-stroke">
               <button
                 onClick={() => {
                   setNewExperienceModal(false);
@@ -2152,12 +2153,11 @@ export const CareerHighlight: React.FC<{
                   console.log(careerData);
                 }}
                 disabled={loading}
-                className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+                className="bg-primary disabled:bg-opacity-50 rounded-md text-white hover:scale-105 py-2 px-5 font-medium"
               >
                 {loading ? "Loading..." : "Save"}
               </button>
             </div>
-          </div>
         </div>
       </Modal>
 
@@ -2608,7 +2608,7 @@ export const CareerHighlight: React.FC<{
                   careerHighlights: updatedCareerHighlight,
                 });
               }}
-              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              className="bg-primary disabled:bg-opacity-50 rounded-md text-white hover:scale-105 py-2 px-5 font-medium"
             >
               {loading ? "Loading..." : "Update"}
             </button>
@@ -2727,7 +2727,7 @@ export const VolunteerExperience: React.FC<{
     endDate: new Date(),
     skills: [],
     active: false,
-    _id: generateUniqueId(),
+    id: generateUniqueId(),
   });
   const [newSkill, setNewSkill] = useState("");
   const [newAchievment, setNewAchievment] = useState("");
@@ -2796,7 +2796,10 @@ export const VolunteerExperience: React.FC<{
     setLoading(true);
     try {
       const resp = await updateProfile(profileData?._id, data);
-      setProfileData(resp?.data?.profile);
+      setProfileData({
+        ...resp?.data?.profile,
+        suggestedSkills: profileData?.suggestedSkills,
+      });
       toast.success("Successfull!");
     } catch (err: any) {
       toast.error(err?.message || "Request Failed");
@@ -3188,7 +3191,7 @@ export const VolunteerExperience: React.FC<{
                   ],
                 });
               }}
-              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              className="bg-primary disabled:bg-opacity-50 rounded-md text-white hover:scale-105 py-2 px-5 font-medium"
             >
               {loading ? "Saving..." : "Save"}
             </button>
@@ -3500,7 +3503,7 @@ export const VolunteerExperience: React.FC<{
                   volunteerExperience: updatedVolunteerExperience,
                 });
               }}
-              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              className="bg-primary disabled:bg-opacity-50 rounded-md text-white hover:scale-105 py-2 px-5 font-medium"
             >
               {loading ? "Loading..." : "Update"}
             </button>
@@ -3617,7 +3620,10 @@ export const Internships: React.FC<{
     setLoading(true);
     try {
       const resp = await updateProfile(profileData?._id, data);
-      setProfileData(resp?.data?.profile);
+      setProfileData({
+        ...resp?.data?.profile,
+        suggestedSkills: profileData?.suggestedSkills,
+      });
       toast.success("Successfull!");
     } catch (err: any) {
       toast.error(err?.message || "Request Failed");
@@ -4010,7 +4016,7 @@ export const Internships: React.FC<{
                   ],
                 });
               }}
-              className="bg-primary rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              className="bg-primary rounded-md text-white hover:scale-105 py-2 px-5 font-medium"
             >
               {loading ? "Loading..." : "Save"}
             </button>
@@ -4322,7 +4328,7 @@ export const Internships: React.FC<{
                   internships: updatedInternshipExperience,
                 });
               }}
-              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              className="bg-primary disabled:bg-opacity-50 rounded-md text-white hover:scale-105 py-2 px-5 font-medium"
             >
               {loading ? "Loading" : "Update"}
             </button>
@@ -4361,6 +4367,8 @@ export const Education: React.FC<{
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [courses, setCourses] = useState<string[]>([]);
+  const [newCourse, setNewCourse] = useState("");
   const [educationData, setEducationData] = useState({
     degree: "",
     institution: "",
@@ -4368,6 +4376,13 @@ export const Education: React.FC<{
     startDate: new Date(),
     endDate: new Date(),
     active: false,
+    fieldOfStudy: "",
+    location: "",
+    gpa: "",
+    minors: "",
+    relevantCourseWork: [],
+    hideEndDate: false,
+    id: generateUniqueId(),
   });
   const [loading, setLoading] = useState(false);
 
@@ -4375,15 +4390,53 @@ export const Education: React.FC<{
     setLoading(true);
     try {
       const resp = await updateProfile(profileData?._id, data);
-      setProfileData(resp?.data?.profile);
+      setProfileData({
+        ...resp?.data?.profile,
+        suggestedSkills: profileData?.suggestedSkills,
+      });
       toast.success("Successfull!");
     } catch (err: any) {
       toast.error(err?.message || "Request Failed");
     } finally {
       setLoading(false);
+      setCourses([])
       setNewItemModal(false);
       setEditModal(false);
       setDeleteModal(false);
+    }
+  };
+
+  const addCourse = () => {
+    if (newCourse && !courses.includes(newCourse)) {
+      setCourses([...courses, newCourse]);
+      if (editModal) {
+        setSelectedItem((data: any) => ({
+          ...data,
+          relevantCourseWork: [...courses, newCourse],
+        }));
+      } else {
+        setEducationData((data: any) => ({
+          ...data,
+          relevantCourseWork: [...courses, newCourse],
+        }));
+      }
+
+      setNewCourse("");
+    }
+  };
+
+  const removeCourse = (course: string) => {
+    setCourses(courses.filter((s) => s !== course));
+    if (editModal) {
+      setSelectedItem((data: any) => ({
+        ...data,
+        relevantCourseWork: courses.filter((s) => s !== course),
+      }));
+    } else {
+      setEducationData((data: any) => ({
+        ...data,
+        relevantCourseWork: courses.filter((s) => s !== course),
+      }));
     }
   };
   return (
@@ -4404,6 +4457,7 @@ export const Education: React.FC<{
           <div
             key={index}
             onClick={() => {
+              setCourses(item?.relevantCourseWork || []);
               setSelectedItem(item);
             }}
             className="border border-stroke rounded-lg shadow-sm bg-white p-3"
@@ -4443,24 +4497,46 @@ export const Education: React.FC<{
               </div>
             </div>
 
-            <div>
-              <p className="font-normal text-sm text-zinc-500">
-                {item?.description}
-              </p>
+            <div className="mb-3 space-y-2">
+              {item?.gpa && (
+                <p className="font-normal md:text-base text-sm text-[#374151]">
+                  GPA: {item?.gpa}
+                </p>
+              )}
+
+              {item?.minors && (
+                <p className="text-sm md:text-base font-normal text-[#374151]">
+                  Minors: {item?.minors}
+                </p>
+              )}
             </div>
+
+            {item?.relevantCourseWork?.length > 0 && (
+              <div className="py-2 w-full flex gap-2 mb-4 items-center flex-wrap">
+                <p className="font-normal text-sm md:text-base text-[#374151]">
+                  Relevant Courses:
+                </p>
+
+                {item?.relevantCourseWork?.map((val: string, index: number) => (
+                  <Pill key={index}>{val}</Pill>
+                ))}
+              </div>
+            )}
           </div>
         ))}
       </div>
 
       <Modal
         show={newItemModal}
-        onHide={() => setNewItemModal(false)}
+        onHide={() => {
+          setCourses([])
+          setNewItemModal(false)}}
         title="Education"
         size="max-w-[700px] w-full"
       >
         <div>
-          <div className="no-scrollbar h-[65vh] max-sm:h-[70vh] overflow-y-auto pr-2">
-            <div className="mb-6">
+          <div className="custom-scrollbar h-[65vh] max-sm:h-[70vh] space-y-7 overflow-y-auto pr-2">
+            <div className="">
               <label
                 htmlFor="title"
                 className="text-sm font-medium text-gray-700 flex items-center gap-1"
@@ -4484,7 +4560,7 @@ export const Education: React.FC<{
                 className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
-            <div className="mb-6">
+            <div className="">
               <label
                 htmlFor="institution"
                 className="text-sm font-medium text-gray-700 flex items-center gap-1"
@@ -4508,6 +4584,96 @@ export const Education: React.FC<{
                 className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
+
+            <FormGroup>
+              <div className="xl:w-1/2">
+                <label
+                  htmlFor="location"
+                  className="text-[#242424] text-base flex items-center gap-1"
+                >
+                  Location{" "}
+                </label>
+                <input
+                  type="text"
+                  id="location"
+                  value={educationData?.location}
+                  onChange={(e) =>
+                    setEducationData((data: any) => ({
+                      ...data,
+                      location: e.target.value,
+                    }))
+                  }
+                  placeholder="Enter School's state and country"
+                  className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+              </div>
+              <div className="xl:w-1/2">
+                <label
+                  htmlFor="field"
+                  className="text-[#242424] text-base flex items-center gap-1"
+                >
+                  Field of Study{" "}
+                </label>
+                <input
+                  type="text"
+                  id="field"
+                  value={educationData?.fieldOfStudy}
+                  onChange={(e) =>
+                    setEducationData((data: any) => ({
+                      ...data,
+                      fieldOfStudy: e.target.value,
+                    }))
+                  }
+                  placeholder="Ex: Computer Science"
+                  className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+              </div>
+            </FormGroup>
+
+            <FormGroup>
+              <div className="xl:w-1/2">
+                <label
+                  htmlFor="location"
+                  className="text-[#242424] text-base flex items-center gap-1"
+                >
+                  Minors{" "}
+                </label>
+                <input
+                  type="text"
+                  id="minors"
+                  value={educationData?.minors}
+                  onChange={(e) =>
+                    setEducationData((data: any) => ({
+                      ...data,
+                      minors: e.target.value,
+                    }))
+                  }
+                  placeholder="Ex: Product Design, Data Science"
+                  className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+              </div>
+              <div className="xl:w-1/2">
+                <label
+                  htmlFor="gpa"
+                  className="text-[#242424] text-base flex items-center gap-1"
+                >
+                  GPA <span className="text-zinc-500">(Optional)</span>
+                </label>
+                <input
+                  type="text"
+                  id="gpa"
+                  value={educationData?.gpa}
+                  onChange={(e) =>
+                    setEducationData((data: any) => ({
+                      ...data,
+                      gpa: e.target.value,
+                    }))
+                  }
+                  placeholder="Ex: 3.8/4.0"
+                  className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+              </div>
+            </FormGroup>
             <FormGroup>
               <div>
                 <p className="text-sm font-medium text-gray-700 flex items-center gap-1">
@@ -4549,49 +4715,105 @@ export const Education: React.FC<{
                 />
               </div>
             </FormGroup>
-            <div className="gap-2 flex items-center text-sm font-medium text-gray-700 mb-7.5 w-full pl-1">
-              <input
-                type="checkbox"
-                id="active"
-                name="active"
-                checked={educationData?.active}
-                onChange={(e) =>
-                  setEducationData((data: any) => ({
-                    ...data,
-                    active: e.target.checked,
-                  }))
-                }
-                className="text-sm rounded-sm border-stroke focus:border-stroke focus:ring-primary/40"
-              />
-              <label htmlFor="active" className="dark:text-slate-100 text-sm">
-                I am still schooling
-              </label>
+
+            <div>
+              <div className="flex w-full text-[12px] items-start pb-2.5 -mt-5 pl-1 font-medium ">
+                <FaInfoCircle className="mr-1 mt-1 text-[#6B7280]" />
+                <p className="text-sm m-0 font-normal text-[#111827]">
+                  Consider hiding the end date to avoid potential age bias in
+                  your application
+                </p>
+              </div>
+              <div className="grid xl:grid-cols-2 grid-cols-1 w-full gap-3.5">
+                <div className="gap-2  flex items-center text-sm text-[#111827] font-medium w-full pl-1">
+                  <input
+                    type="checkbox"
+                    id="active"
+                    name="active"
+                    checked={educationData?.active}
+                    onChange={(e) =>
+                      setEducationData((data: any) => ({
+                        ...data,
+                        active: e.target.checked,
+                      }))
+                    }
+                    className="text-sm rounded-sm border-stroke focus:border-stroke focus:ring-primary/40"
+                  />
+                  <label htmlFor="active" className="text-sm">
+                    I am currently schooling here
+                  </label>
+                </div>
+                <div className="gap-2  flex items-center text-sm text-[#111827] font-medium w-full pl-1 xl:pl-5">
+                  <input
+                    type="checkbox"
+                    id="hideEndDate"
+                    name="hideEndDate"
+                    checked={educationData?.hideEndDate}
+                    onChange={(e) =>
+                      setEducationData((data: any) => ({
+                        ...data,
+                        hideEndDate: e.target.checked,
+                      }))
+                    }
+                    className="text-sm rounded-sm border-stroke focus:border-stroke focus:ring-primary/40"
+                  />
+                  <label htmlFor="hideEndDate" className="text-sm">
+                    Hide End date
+                  </label>
+                </div>
+              </div>
             </div>
-            <div className="w-full mb-5">
+
+            <div className="">
               <label
-                className="mb-[0.7rem] block text-sm font-normal text-zinc-800 dark:text-white"
-                htmlFor="description"
+                htmlFor="relevantCourseWork"
+                className="text-[#242424] mb-[0.4rem] text-base flex items-center gap-1"
               >
-                Description
+                Relevant Coursework
               </label>
-              <div className="relative rounded-lg border border-stroke">
-                <textarea
-                  className={`
-                     w-full 
-                     py-3 pl-4.5 pr-4.5 text-zinc-800 font-normal border-none rounded-lg
-                     focus:border-primary/50 focus-visible:outline-none custom-scrollbar
-                     dark:border-strokedark dark:bg-meta-4
-                     dark:text-white dark:focus:border-primary `}
-                  name={`Description`}
-                  placeholder="Ex: Graduated with Honors, GPA: 3.8/4.0"
-                  value={educationData?.description}
-                  onChange={(e) =>
-                    setEducationData((data: any) => ({
-                      ...data,
-                      description: e.target.value,
-                    }))
-                  }
+              {courses.length > 0 && (
+                <div className="flex w-full flex-col gap-2 mt-2 pb-1.5 divide-y divide-zinc-300">
+                  {courses.map((course) => (
+                    <div
+                      key={course}
+                      className="flex w-full justify-between items-center text-sm px-3 py-1"
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => removeCourse(course)}
+                          className="ml-2 text-lg px-1.5 py-[1px] rounded-md hover:bg-red-600/10 text-zinc-600 hover:text-red-700"
+                        >
+                          &times;
+                        </button>
+                        <span>{course}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="mt-1 mb-5 flex relative">
+                <input
+                  type="text"
+                  id="relevantCourseWork"
+                  value={newCourse}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      addCourse();
+                    }
+                  }}
+                  onChange={(e) => setNewCourse(e.target.value)}
+                  placeholder="Ex: Data Management"
+                  className="flex-1 max-sm:w-[75%] pr-12 rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
+                <button
+                  type="button"
+                  onClick={addCourse}
+                  className="ml-2 px-4 py-[9px] max-sm:py-[11px] bottom-0 absolute right-0 bg-indigo-500/15 text-indigo-500 text-sm rounded-r-md hover:bg-indigo-600/15"
+                >
+                  <BsPlusLg size={20} />
+                </button>
               </div>
             </div>
           </div>
@@ -4611,7 +4833,7 @@ export const Education: React.FC<{
                   education: [...profileData?.education, educationData],
                 });
               }}
-              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              className="bg-primary disabled:bg-opacity-50 rounded-md text-white hover:scale-105 py-2 px-5 font-medium"
             >
               {loading ? "Loading..." : "Save"}
             </button>
@@ -4621,14 +4843,15 @@ export const Education: React.FC<{
       <Modal
         show={editModal}
         onHide={() => {
+          setCourses([])
           setEditModal(false);
         }}
         title="Edit Education Data"
         size="max-w-[700px] w-full"
       >
         <div>
-          <div className="no-scrollbar h-[65vh] max-sm:h-[70vh] overflow-y-auto pr-2">
-            <div className="mb-6">
+          <div className="custom-scrollbar h-[65vh] space-y-7 max-sm:h-[70vh] overflow-y-auto pr-2">
+            <div className="">
               <label
                 htmlFor="title"
                 className="text-sm font-medium text-gray-700 flex items-center gap-1"
@@ -4652,7 +4875,7 @@ export const Education: React.FC<{
                 className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
-            <div className="mb-6">
+            <div className="">
               <label
                 htmlFor="institution"
                 className="text-sm font-medium text-gray-700 flex items-center gap-1"
@@ -4676,6 +4899,95 @@ export const Education: React.FC<{
                 className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
+            <FormGroup>
+              <div className="xl:w-1/2">
+                <label
+                  htmlFor="location"
+                  className="text-[#242424] text-base flex items-center gap-1"
+                >
+                  Location{" "}
+                </label>
+                <input
+                  type="text"
+                  id="location"
+                  value={selectedItem?.location}
+                  onChange={(e) =>
+                    setSelectedItem((data: any) => ({
+                      ...data,
+                      location: e.target.value,
+                    }))
+                  }
+                  placeholder="Enter School's state and country"
+                  className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+              </div>
+              <div className="xl:w-1/2">
+                <label
+                  htmlFor="field"
+                  className="text-[#242424] text-base flex items-center gap-1"
+                >
+                  Field of Study{" "}
+                </label>
+                <input
+                  type="text"
+                  id="field"
+                  value={selectedItem?.fieldOfStudy}
+                  onChange={(e) =>
+                    setSelectedItem((data: any) => ({
+                      ...data,
+                      fieldOfStudy: e.target.value,
+                    }))
+                  }
+                  placeholder="Ex: Computer Science"
+                  className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+              </div>
+            </FormGroup>
+
+            <FormGroup>
+              <div className="xl:w-1/2">
+                <label
+                  htmlFor="location"
+                  className="text-[#242424] text-base flex items-center gap-1"
+                >
+                  Minors{" "}
+                </label>
+                <input
+                  type="text"
+                  id="minors"
+                  value={selectedItem?.minors}
+                  onChange={(e) =>
+                    setSelectedItem((data: any) => ({
+                      ...data,
+                      minors: e.target.value,
+                    }))
+                  }
+                  placeholder="Ex: Product Design, Data Science"
+                  className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+              </div>
+              <div className="xl:w-1/2">
+                <label
+                  htmlFor="gpa"
+                  className="text-[#242424] text-base flex items-center gap-1"
+                >
+                  GPA <span className="text-zinc-500">(Optional)</span>
+                </label>
+                <input
+                  type="text"
+                  id="gpa"
+                  value={selectedItem?.gpa}
+                  onChange={(e) =>
+                    setSelectedItem((data: any) => ({
+                      ...data,
+                      gpa: e.target.value,
+                    }))
+                  }
+                  placeholder="Ex: 3.8/4.0"
+                  className="mt-1 block w-full rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+              </div>
+            </FormGroup>
             <FormGroup>
               <div>
                 <p className="text-sm font-medium text-gray-700 flex items-center gap-1">
@@ -4717,49 +5029,94 @@ export const Education: React.FC<{
                 />
               </div>
             </FormGroup>
-            <div className="gap-2 flex items-center text-sm font-medium text-gray-700 mb-7.5 w-full pl-1">
-              <input
-                type="checkbox"
-                id="active"
-                name="active"
-                checked={selectedItem?.active}
-                onChange={(e) =>
-                  setSelectedItem((data: any) => ({
-                    ...data,
-                    active: e.target.checked,
-                  }))
-                }
-                className="text-sm rounded-sm border-stroke focus:border-stroke focus:ring-primary/40"
-              />
-              <label htmlFor="active" className="dark:text-slate-100 text-sm">
-                I am still schooling
-              </label>
-            </div>
-            <div className="w-full mb-5">
-              <label
-                className="mb-[0.7rem] block text-sm font-normal text-zinc-800 dark:text-white"
-                htmlFor="description"
-              >
-                Description
-              </label>
-              <div className="relative rounded-lg border border-stroke">
-                <textarea
-                  className={`
-                     w-full 
-                     py-3 pl-4.5 pr-4.5 text-zinc-800 font-normal border-none rounded-lg
-                     focus:border-primary/50 focus-visible:outline-none custom-scrollbar
-                     dark:border-strokedark dark:bg-meta-4
-                     dark:text-white dark:focus:border-primary `}
-                  name={`Description`}
-                  placeholder="Enter a short description"
-                  value={selectedItem?.description}
+            <div className="grid xl:grid-cols-2 grid-cols-1 w-full gap-3.5">
+              <div className="gap-2  flex items-center text-sm text-[#111827] font-medium w-full pl-1">
+                <input
+                  type="checkbox"
+                  id="active"
+                  name="active"
+                  checked={selectedItem?.active}
                   onChange={(e) =>
                     setSelectedItem((data: any) => ({
                       ...data,
-                      description: e.target.value,
+                      active: e.target.checked,
                     }))
                   }
+                  className="text-sm rounded-sm border-stroke focus:border-stroke focus:ring-primary/40"
                 />
+                <label htmlFor="active" className="text-sm">
+                  I am currently schooling here
+                </label>
+              </div>
+              <div className="gap-2  flex items-center text-sm text-[#111827] font-medium w-full pl-1 xl:pl-5">
+                <input
+                  type="checkbox"
+                  id="hideEndDate"
+                  name="hideEndDate"
+                  checked={selectedItem?.hideEndDate}
+                  onChange={(e) =>
+                    setSelectedItem((data: any) => ({
+                      ...data,
+                      hideEndDate: e.target.checked,
+                    }))
+                  }
+                  className="text-sm rounded-sm border-stroke focus:border-stroke focus:ring-primary/40"
+                />
+                <label htmlFor="hideEndDate" className="text-sm">
+                  Hide End date
+                </label>
+              </div>
+            </div>
+            <div className="">
+              <label
+                htmlFor="relevantCourseWork"
+                className="text-[#242424] mb-[0.4rem] text-base flex items-center gap-1"
+              >
+                Relevant Coursework
+              </label>
+              {courses.length > 0 && (
+                <div className="flex w-full flex-col gap-2 mt-2 pb-1.5 divide-y divide-zinc-300">
+                  {courses.map((course) => (
+                    <div
+                      key={course}
+                      className="flex w-full justify-between items-center text-sm px-3 py-1"
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => removeCourse(course)}
+                          className="ml-2 text-lg px-1.5 py-[1px] rounded-md hover:bg-red-600/10 text-zinc-600 hover:text-red-700"
+                        >
+                          &times;
+                        </button>
+                        <span>{course}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="mt-1 mb-5 flex relative">
+                <input
+                  type="text"
+                  id="relevantCourseWork"
+                  value={newCourse}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      addCourse();
+                    }
+                  }}
+                  onChange={(e) => setNewCourse(e.target.value)}
+                  placeholder="Ex: Data Management"
+                  className="flex-1 max-sm:w-[75%] pr-12 rounded-md border-stroke shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={addCourse}
+                  className="ml-2 px-4 py-[9px] max-sm:py-[11px] bottom-0 absolute right-0 bg-indigo-500/15 text-indigo-500 text-sm rounded-r-md hover:bg-indigo-600/15"
+                >
+                  <BsPlusLg size={20} />
+                </button>
               </div>
             </div>
           </div>
@@ -4783,7 +5140,7 @@ export const Education: React.FC<{
                   education: updatedEducation,
                 });
               }}
-              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              className="bg-primary disabled:bg-opacity-50 rounded-md text-white hover:scale-105 py-2 px-5 font-medium"
             >
               {loading ? "Loading..." : "Update"}
             </button>
@@ -4824,14 +5181,17 @@ export const Certifications: React.FC<{
     name: "",
     institution: "",
     date: new Date(),
-    _id: generateUniqueId(),
+    id: generateUniqueId(),
   });
   const [loading, setLoading] = useState(false);
   const handleUpdateProfile = async (data: any) => {
     setLoading(true);
     try {
       const resp = await updateProfile(profileData?._id, data);
-      setProfileData(resp?.data?.profile);
+      setProfileData({
+        ...resp?.data?.profile,
+        suggestedSkills: profileData?.suggestedSkills,
+      });
       toast.success("Successfull!");
     } catch (err: any) {
       toast.error(err?.message || "Request Failed");
@@ -4907,11 +5267,11 @@ export const Certifications: React.FC<{
       <Modal
         show={newItemModal}
         onHide={() => setNewItemModal(false)}
-        title="Education"
+        title="Add New Certification/Training"
         size="max-w-[700px] w-full"
       >
         <div>
-          <div className="no-scrollbar h-[65vh] max-sm:h-[70vh] overflow-y-auto pr-2">
+          <div className="no-scrollbar max-sm:h-[70vh] overflow-y-auto pr-2">
             <div className="mb-6">
               <label
                 htmlFor="title"
@@ -5001,7 +5361,7 @@ export const Certifications: React.FC<{
                   certifications: [...profileData?.certifications, certData],
                 });
               }}
-              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-2 px-5 font-medium"
             >
               {loading ? "Loading..." : "Save"}
             </button>
@@ -5013,7 +5373,7 @@ export const Certifications: React.FC<{
         onHide={() => {
           setEditModal(false);
         }}
-        title="Edit Certification Data"
+        title="Edit Certification/Training Data"
         size="max-w-[700px] w-full"
       >
         <div>
@@ -5149,7 +5509,7 @@ export const ProfessionalReference: React.FC<{
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [referenceData, setReferenceData] = useState({
-    _id: generateUniqueId(),
+    id: generateUniqueId(),
     name: "",
     title: "",
     company: "",
@@ -5162,7 +5522,10 @@ export const ProfessionalReference: React.FC<{
     setLoading(true);
     try {
       const resp = await updateProfile(profileData?._id, data);
-      setProfileData(resp?.data?.profile);
+      setProfileData({
+        ...resp?.data?.profile,
+        suggestedSkills: profileData?.suggestedSkills,
+      });
       toast.success("Successfull!");
     } catch (err: any) {
       toast.error(err?.message || "Request Failed");
@@ -5417,7 +5780,7 @@ export const ProfessionalReference: React.FC<{
                   references: [...profileData?.references, referenceData],
                 });
               }}
-              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              className="bg-primary disabled:bg-opacity-50 rounded-md text-white hover:scale-105 py-2 px-5 font-medium"
             >
               {loading ? "Loading..." : "Save"}
             </button>
@@ -5597,7 +5960,7 @@ export const ProfessionalReference: React.FC<{
                   references: updatedData,
                 });
               }}
-              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-2 px-5 font-medium"
             >
               {loading ? "Loading..." : "Update"}
             </button>
@@ -5640,14 +6003,17 @@ export const Memberships: React.FC<{
     startDate: new Date(),
     endDate: new Date(),
     active: false,
-    _id: generateUniqueId(),
+    id: generateUniqueId(),
   });
   const [loading, setLoading] = useState(false);
   const handleUpdateProfile = async (data: any) => {
     setLoading(true);
     try {
       const resp = await updateProfile(profileData?._id, data);
-      setProfileData(resp?.data?.profile);
+      setProfileData({
+        ...resp?.data?.profile,
+        suggestedSkills: profileData?.suggestedSkills,
+      });
       toast.success("Successfull!");
     } catch (err: any) {
       toast.error(err?.message || "Request Failed");
@@ -5726,11 +6092,11 @@ export const Memberships: React.FC<{
       <Modal
         show={newItemModal}
         onHide={() => setNewItemModal(false)}
-        title="Membership & Affiliations"
+        title="Add New Membership/Affiliation"
         size="max-w-[700px] w-full"
       >
         <div>
-          <div className="no-scrollbar h-[65vh] max-sm:h-[70vh] overflow-y-auto pr-2">
+          <div className="no-scrollbar max-sm:h-[70vh] overflow-y-auto pr-2">
             <div className="mb-6">
               <label
                 htmlFor="title"
@@ -5855,7 +6221,7 @@ export const Memberships: React.FC<{
                   membership: [...profileData?.membership, membershipData],
                 });
               }}
-              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              className="bg-primary disabled:bg-opacity-50 rounded-md text-white hover:scale-105 py-2 px-5 font-medium"
             >
               {loading ? "Loading..." : "Save"}
             </button>
@@ -5871,7 +6237,7 @@ export const Memberships: React.FC<{
         size="max-w-[700px] w-full"
       >
         <div>
-          <div className="no-scrollbar h-[65vh] max-sm:h-[70vh] overflow-y-auto pr-2">
+          <div className="no-scrollbar max-sm:h-[70vh] overflow-y-auto pr-2">
             <div className="mb-6">
               <label
                 htmlFor="title"
@@ -5999,7 +6365,7 @@ export const Memberships: React.FC<{
                   membership: updatedData,
                 });
               }}
-              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              className="bg-primary disabled:bg-opacity-50 rounded-md text-white hover:scale-105 py-2 px-5 font-medium"
             >
               {loading ? "Loading..." : "Update"}
             </button>

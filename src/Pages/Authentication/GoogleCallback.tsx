@@ -135,7 +135,7 @@ const GoogleCallback: React.FC = () => {
                           width="w-[80%]"
                           height="14"
                           onClick={() => {
-                            navigate("/app/candidate/profile");
+                            navigate("/app/candidate/smart-cv");
                           }}
                         >
                           Go to Dashbord

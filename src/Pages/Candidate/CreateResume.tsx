@@ -65,12 +65,13 @@ import EntryPDF from "../../components/PDFTemplates/EntryPDF";
 import ProfessionalPDF from "../../components/PDFTemplates/ProfessionalPDF";
 import typographyIcon from "../../assets/svg/typography-icon.svg"
 import TailorResume from "./TailorResume";
+import { useNavigate } from "react-router-dom";
 
 const primaryColors = ["#0077B5", "#CC0074", "#FF7D00", "#00C196", "#000000"];
 
 const CreateLiveResume: React.FC = () => {
   const { user } = useApp();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [value, setValue] = useState("");
   const [active, setActive] = useState<string | null>(null);
   const [profileLoading, setProfileLoading] = useState(false);
@@ -1342,9 +1343,10 @@ const CreateLiveResume: React.FC = () => {
 
                 <div
                   onClick={() => {
-                    setConfig(mockEmptyResume?.config);
-                    setResumeData(mockEmptyResume);
-                    setUploadOption(false);
+                    // setConfig(mockEmptyResume?.config);
+                    // setResumeData(mockEmptyResume);
+                    // setUploadOption(false);
+                    navigate(`/app/candidate/cv-builder/create`)
                   }}
                   className="px-4 py-5 bg-white border border-[#DBEAFE] cursor-pointer rounded-xl"
                 >

@@ -111,14 +111,14 @@ const ProfessionalPDF = ({ data }: any) => {
       borderColor: data?.style?.primaryColor,
     },
     name: {
-      fontSize: 18,
+      fontSize: 14,
       fontWeight: 500,
       textTransform: "uppercase",
       color: data?.style?.primaryColor,
       maxWidth: "60%",
     },
     role: {
-      fontSize: 13,
+      fontSize: 12,
       fontWeight: 500,
       textTransform: "uppercase",
     },

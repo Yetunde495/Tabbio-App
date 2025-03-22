@@ -18,7 +18,7 @@ const AccountSettings: React.FC = () => {
         <div className="flex flex-grow bg-[#F2F4F6] items-center gap-3 py-3 px-4 md:px-6 2xl:px-11">
           <div>
             <button
-              onClick={() => navigate(`/app/candidate/profile`)}
+              onClick={() => navigate(`/app/candidate/smart-cv`)}
               className="flex group items-center gap-2 font-semibold"
             >
               <FaArrowLeft className="group-hover:-translate-x-2 duration-150 ease-out" />{" "}

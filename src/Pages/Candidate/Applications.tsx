@@ -287,18 +287,19 @@ const Applications: React.FC = () => {
                                 setPreviewModal(true);
                               }}
                             />
+                           
                             <AnimatedOption
-                              text="Edit Application Name"
-                              onClick={() => {
-                                setEditNameModal(true);
-                              }}
-                            />
-                            <AnimatedOption
-                              text="Edit Resume"
+                              text="Edit Application"
                               onClick={() => {
                                 navigate(
-                                  `/app/candidate/edit-resume/${val?.resume?._id}`
+                                  `/app/candidate/cv-builder/edit-application/${val?._id}`
                                 );
+                              }}
+                            />
+                             <AnimatedOption
+                              text="Change Application Name"
+                              onClick={() => {
+                                setEditNameModal(true);
                               }}
                             />
                             <AnimatedOption
@@ -430,19 +431,20 @@ const Applications: React.FC = () => {
                               }}
                             />
                             <AnimatedOption
-                              text="Edit Application Name"
+                              text="Edit Application"
+                              onClick={() => {
+                                navigate(
+                                  `/app/candidate/cv-builder/edit-application/${val?._id}`
+                                );
+                              }}
+                            />
+                            <AnimatedOption
+                              text="Change Application Name"
                               onClick={() => {
                                 setEditNameModal(true);
                               }}
                             />
-                            <AnimatedOption
-                              text="Edit Resume"
-                              onClick={() => {
-                                navigate(
-                                  `/app/candidate/edit-resume/${val?.resume?._id}`
-                                );
-                              }}
-                            />
+                            
                             <AnimatedOption
                               text="Delete"
                               onClick={() => {

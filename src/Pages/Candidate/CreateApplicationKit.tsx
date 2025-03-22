@@ -3,15 +3,17 @@ import ReactDOM from "react-dom";
 import {
   FaArrowRightLong,
   FaCircle,
-  FaRegFile,
+  FaCircleCheck,
+  FaRegCircleCheck,
   FaRegStar,
 } from "react-icons/fa6";
-import { RiRobot2Line } from "react-icons/ri";
+import { RiLoader4Fill, RiRobot2Line } from "react-icons/ri";
 import { RxCross2 } from "react-icons/rx";
 import { VscWand } from "react-icons/vsc";
 import { TextArea } from "../../components/form";
 import Stepper from "../../components/Stepper";
 import { IoDocumentTextOutline, IoSparklesOutline } from "react-icons/io5";
+import smartcvIcon from "../../assets/svg/smartCV-white.svg";
 import { SelectFileBox } from "../General/ResumeUpload";
 import { FiUpload } from "react-icons/fi";
 import { motion } from "framer-motion";
@@ -56,7 +58,7 @@ const CreateApplicationKit: React.FC<Props> = ({
   const [loading, setLoading] = useState(false);
 
   const stepRefs = useRef<HTMLDivElement[]>([]);
-
+  const [currentSubStep, setCurrentSubStep] = useState(0);
   const [tabData] = useState([
     {
       stepNumber: 1,
@@ -73,11 +75,11 @@ const CreateApplicationKit: React.FC<Props> = ({
       label: "Generating",
       icon: <VscWand />,
     },
-    // {
-    //   stepNumber: 3,
-    //   label: "Complete",
-    //   icon: <FaCheck />,
-    // },
+    {
+      stepNumber: 3,
+      label: "Complete",
+      icon: <FaRegCircleCheck />,
+    },
   ]);
 
   const steps = [
@@ -89,7 +91,7 @@ const CreateApplicationKit: React.FC<Props> = ({
         "Analyzing experience relevance",
         "Evaluating skill matches",
       ],
-      bgColor: "bg-primary",
+      bgColor: "custom-bg-gradient",
       icon: <RiRobot2Line />,
     },
     {
@@ -111,15 +113,6 @@ const CreateApplicationKit: React.FC<Props> = ({
       icon: <LuCrown />,
     },
   ];
-
-  const listVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: { delay: i * 0.8, duration: 0.5 },
-    }),
-  };
 
   const fetchProfileResume = async () => {
     setProfileLoading(true);
@@ -150,16 +143,20 @@ const CreateApplicationKit: React.FC<Props> = ({
     }
     formData.append("jobDescription", value);
 
-    // Start the interval to increment loading steps
-    const id = setInterval(() => {
-      setLoadingStep((prev) => {
-        const nextStep = prev < steps.length - 1 ? prev + 1 : prev;
-        const newProgress = ((nextStep + 1) / steps.length) * 100;
-        setProgress(newProgress > 95 ? 95 : newProgress);
-        return nextStep;
-      });
-    }, 13000); // Adjust the interval time as needed
-    setIntervalId(id);
+    const processSteps = async (stepIndex: number) => {
+      if (stepIndex >= steps.length) return;
+
+      setLoadingStep(stepIndex);
+      setProgress((prev) => Math.min(prev + 98 / steps.length, 98)); // Cap at 95%
+
+      if (stepIndex !== 0) {
+        // Move normally for other steps
+        setTimeout(() => processSteps(stepIndex + 1), stepIndex !== 0 ? 7000 : 12000);
+      }
+    };
+
+    // Start processing steps
+    processSteps(0);
 
     try {
       const resp = await generateApplication(formData);
@@ -174,6 +171,7 @@ const CreateApplicationKit: React.FC<Props> = ({
         clearInterval(intervalId);
         setIntervalId(null);
       }
+      onHide()
     }
   };
 
@@ -185,6 +183,24 @@ const CreateApplicationKit: React.FC<Props> = ({
       });
     }
   }, [loadingStep]);
+
+  useEffect(() => {
+    if (activeStep === 2 && loadingStep === 0) {
+      const stepDetails = steps[loadingStep]?.details || [];
+      let subStepIndex = 0;
+
+      const subStepInterval = setInterval(() => {
+        if (subStepIndex < stepDetails.length - 1) {
+          setCurrentSubStep((prev) => prev + 1);
+          subStepIndex++;
+        } else {
+          clearInterval(subStepInterval);
+        }
+      }, 4000); // Adjust duration per sub-step
+
+      return () => clearInterval(subStepInterval);
+    }
+  }, [activeStep, loadingStep]);
 
   useEffect(() => {
     if (tailor) {
@@ -206,7 +222,7 @@ const CreateApplicationKit: React.FC<Props> = ({
         <div className="flex flex-col justify-center relative">
           <div className="flex items-center md:px-6 px-4">
             <div className="flex items-center gap-2">
-              <span className="bg-primary rounded-full text-white w-9 h-9 flex items-center justify-center">
+              <span className="custom-bg-gradient  rounded-lg text-white w-9 h-9 flex items-center justify-center">
                 <RiRobot2Line />
               </span>
               <div>
@@ -246,21 +262,26 @@ const CreateApplicationKit: React.FC<Props> = ({
                   }}
                   className="px-4 py-5 bg-gradient-to-r from-[#EFF6FF] to-[#EEF2FF] border border-[#DBEAFE] cursor-pointer rounded-xl"
                 >
-                  <div className="flex items-center max-sm:items-start w-full gap-2">
-                    <span className="bg-primary rounded-xl text-white max-sm:h-8 max-sm:w-8 max-sm:rounded-full w-12 h-12 flex items-center justify-center">
-                      <RiRobot2Line
-                        size={24}
-                        className={`${profileLoading && "animate-pulse"}`}
-                      />
+                  <div className=" flex justify-end items-start">
+                    <span className="bg-[#C28F2C] text-white rounded-full font-medium text-[10px] py-0.5 px-1">
+                      Recommended
                     </span>
+                  </div>
+                  <div className="flex items-center max-sm:items-start w-full gap-2.5">
+                    <div className="custom-bg-gradient rounded-full text-white max-sm:h-8 max-sm:w-8 w-10 h-10 flex items-center justify-center">
+                      <img
+                        src={smartcvIcon}
+                        className={`${profileLoading && "animate-pulse w-2"}`}
+                      />
+                    </div>
                     <div>
                       <h3 className="font-semibold text-black dark:text-white mb-0">
-                        Continue with SmartResume™
+                        Continue with SmartCV™
                       </h3>
                       <p className="text-zinc-500 text-sm">
                         {profileLoading
-                          ? "Use your existing optimized resume with AI enhancement"
-                          : "Loading up your existing optimized resume data"}
+                          ? "Loading up your existing optimized resume data"
+                          : "Use your existing optimized resume with AI enhancement"}
                       </p>
                     </div>
                     <span className="text-primary ml-auto max-md:w-8">
@@ -280,18 +301,18 @@ const CreateApplicationKit: React.FC<Props> = ({
                       setActiveStep(activeStep + 1);
                     }}
                   >
-                    <p className="font-bold text-neutral-700 text-center text-lg pt-4">
+                    <p className="font-semibold text-black text-center text-base pt-4">
                       Drag & drop your resume here
                     </p>
 
-                    <p className="text-neutral-500 text-center text-base">
+                    <p className="text-neutral-500 text-center text-sm">
                       or click to browse your files
                     </p>
 
-                    <div className="flex gap-5 text-sm text-neutral-500 items-center justify-center w-full mt-3">
+                    <div className="flex gap-5 text-xs text-neutral-500 items-center justify-center w-full mt-3">
                       <p className="flex items-center gap-1">
                         <span>
-                          <FaRegFile />
+                          <IoDocumentTextOutline />
                         </span>
                         PDF, DOC, DOCX
                       </p>
@@ -389,10 +410,18 @@ const CreateApplicationKit: React.FC<Props> = ({
               </div>
             ) : activeStep === 2 ? (
               <div>
-                <div className="flex items-center justify-center gap-2">
-                  <span className="bg-primary rounded-full text-white w-14 h-14 flex items-center justify-center">
-                    <RiRobot2Line size={28} />
-                  </span>
+                <div className="flex w-full justify-center items-center">
+                  <div className="relative flex items-center justify-center w-24 h-24 rounded-full bg-white shadow-inner">
+                    {/* Spinning Shadow */}
+                    <div className="absolute w-full h-full rounded-full animate-spin bs">
+                      <div className="absolute inset-0 w-full h-full rounded-full"></div>
+                    </div>
+
+                    {/* Progress Display (Static) */}
+                    <div className="relative z-10 flex items-center justify-center w-22 h-22 rounded-full bg-white">
+                      <span className="text-lg font-bold">{progress}%</span>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-5 my-8">
@@ -402,22 +431,22 @@ const CreateApplicationKit: React.FC<Props> = ({
                       ref={(el) => (stepRefs.current[index] = el!)}
                       initial={{ opacity: 0.3 }}
                       animate={{ opacity: index <= loadingStep ? 1 : 0.3 }}
-                      transition={{ duration: 0.7 }}
-                      className={`bg-[#F9FAFB] rounded-xl px-5 py-6 flex items-start relative gap-3 mb-5 ${
+                      transition={{ duration: 8 }}
+                      className={`bg-[#F9FAFB] rounded-lg px-5 py-6 flex items-start relative gap-3 mb-5 ${
                         index === loadingStep ? "shadow-lg" : ""
                       }`}
                     >
                       <div className="flex max-sm:flex-col gap-2 mb-2 items-start">
                         <span
-                          className={`${step.bgColor} rounded-xl text-white max-sm:w-6 max-sm:h-6 w-12 h-12 flex items-center justify-center`}
+                          className={`${step.bgColor} rounded-xl text-white max-sm:w-6 max-sm:h-6 w-9 h-9 flex items-center justify-center`}
                         >
                           {step.icon}
                         </span>
                         <div className="text-primary max-sm:w-full">
-                          <h6 className="text-slate-600 font-semibold mb-0.5">
+                          <h6 className="text-[#111827] font-semibold mb-0.5">
                             {step.title}
                           </h6>
-                          <p className="text-[15px] text-slate-500">
+                          <p className="text-sm font-normal text-[#4B5563]">
                             {step.description}
                           </p>
                           {step.details && (
@@ -426,14 +455,21 @@ const CreateApplicationKit: React.FC<Props> = ({
                               animate={
                                 index <= loadingStep ? "visible" : "hidden"
                               }
-                              className="text-sm list-item list-disc font-semibold ml-4.5 space-y-2 my-2"
+                              className="text-sm font-normal space-y-2 my-2"
                             >
-                              {step.details.map((detail, i) => (
+                              {step?.details?.map((detail, i) => (
                                 <motion.li
                                   key={i}
-                                  variants={listVariants}
                                   custom={i}
+                                  className="flex items-start gap-1.5"
                                 >
+                                  <span className="mt-0.5">
+                                    {loadingStep === 0 && i === currentSubStep ? (
+                                      <RiLoader4Fill className="animate-spin text-black" />
+                                    ) : i <= currentSubStep ? (
+                                      <FaCircleCheck className="text-success" />
+                                    ) : null}
+                                  </span>{" "}
                                   <span>{detail}</span>
                                 </motion.li>
                               ))}
@@ -462,7 +498,7 @@ const CreateApplicationKit: React.FC<Props> = ({
                 </div>
 
                 {/* Progress Div */}
-                <div className="py-4">
+                <div className="py-4 hidden">
                   <div className="mb-1.5">
                     <ProgressBar percent={progress} />
                   </div>

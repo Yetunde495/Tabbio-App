@@ -61,7 +61,7 @@ const Signin: React.FC = () => {
         ...resp2?.data?.userData,
       });
       if (response?.data?.user?.verified) {
-        navigate(`/app/candidate/profile`);
+        navigate(`/app/candidate/smart-cv`);
       } else {
         sendOTP();
       }
@@ -96,7 +96,7 @@ const Signin: React.FC = () => {
       parsedData?.is_active
     ) {
       signIn(JSON.parse(userData));
-      navigate(`/app/candidate/profile`);
+      navigate(`/app/candidate/smart-cv`);
     }
   }, []);
 

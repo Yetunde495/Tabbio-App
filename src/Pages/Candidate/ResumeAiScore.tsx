@@ -6,10 +6,8 @@ import { RxCross2 } from "react-icons/rx";
 import { toast } from "react-toastify";
 import {
   analyzeResume,
-  createResume,
   fixAllResumeIssues,
   fixSingleResumeIssue,
-  updateResume,
 } from "../../services/resumeServices";
 import { RiErrorWarningLine, RiRobot2Line } from "react-icons/ri";
 import { LuWand2 } from "react-icons/lu";
@@ -176,8 +174,6 @@ const ResumeAiScore: React.FC<Props> = ({
   onHide,
   resumeData,
   setResumeData,
-  config,
-  setConfig,
 }) => {
   const [activeTab, setActiveTab] = useState<
     "content" | "format" | "optimization" | "bestPractices" | "applicationReady"
@@ -232,40 +228,8 @@ const ResumeAiScore: React.FC<Props> = ({
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleCreateResume = async () => {
-    try {
-      const resp = await createResume({
-        ...resumeData,
-        config: config,
-      });
-      setResumeData(resp?.data?.resume);
-      setConfig(resp?.data?.resume?.config);
-    } catch (err: any) {
-      toast.error(err?.message || "Request Failed! Please try again");
-    }
-  };
-
-  const handleUpdateResume = async () => {
-    try {
-      const resp = await updateResume(resumeData?._id, {
-        ...resumeData,
-        config: config,
-      });
-      setResumeData(resp?.data?.resume);
-      setConfig(resp?.data?.resume?.config);
-    } catch (err: any) {
-      toast.error(err?.message || "Request Failed");
-    }
-  };
-
   const handleAnalyzeResume = async () => {
     try {
-      if (!resumeData?._id) {
-        await handleCreateResume();
-      } else {
-        await handleUpdateResume();
-      }
-
       const resp = await analyzeResume(
         {
           resumeId: resumeData?._id,
