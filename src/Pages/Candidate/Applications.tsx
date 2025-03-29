@@ -1,9 +1,9 @@
-import { FaCircleCheck, FaPlus, FaRegClock, FaRegStar } from "react-icons/fa6";
+import { FaBriefcase, FaCircleCheck, FaPlus, FaRegClock, FaRegStar } from "react-icons/fa6";
 import { useApp } from "../../context/AppContext";
 import DefaultLayout from "../../layout/DefaultLayout";
 import { useEffect, useState } from "react";
 import ResumeAnalytics from "./ResumeAnalytics";
-import { LuBriefcase, LuBuilding2, LuPuzzle } from "react-icons/lu";
+import { LuBuilding2, LuPuzzle } from "react-icons/lu";
 import { MdCancel, MdOutlineErrorOutline } from "react-icons/md";
 import { TbSearch } from "react-icons/tb";
 import { RiAwardLine, RiRobot2Line } from "react-icons/ri";
@@ -33,6 +33,7 @@ import {
 } from "../../services/api/applicationManagement";
 import Delete from "../../components/modal/Delete";
 import TailorResume from "./TailorResume";
+import Button from "../../components/Button";
 
 const Applications: React.FC = () => {
   const { user } = useApp();
@@ -226,8 +227,8 @@ const Applications: React.FC = () => {
             {isLoading ? (
               <div className="w-full flex justify-center items-center">
                 <div className="bg-white shadow-3 rounded-lg py-8 px-4 flex flex-col items-center gap-6 justify-center w-full md:w-[60%]">
-                  <div className="rounded-full text-primary bg-primary/5 flex items-center animate-pulse justify-center w-12 h-12">
-                    <LuBriefcase size={32} />
+                  <div className="rounded-full text-black bg-light flex items-center animate-pulse justify-center w-14 h-14">
+                    <FaBriefcase size={32} />
                   </div>
                   <div className="text-center mb-3">
                     <h4 className="text-zinc-950 text-xl font-bold mb-2.5">
@@ -280,7 +281,7 @@ const Applications: React.FC = () => {
                         </div>
 
                         <div>
-                          <StaggeredDropDown>
+                          <StaggeredDropDown props={{style: '-left-9 min-w-45'}}>
                             <AnimatedOption
                               text="Preview Application"
                               onClick={() => {
@@ -299,6 +300,7 @@ const Applications: React.FC = () => {
                              <AnimatedOption
                               text="Change Application Name"
                               onClick={() => {
+                                setName(val?.name)
                                 setEditNameModal(true);
                               }}
                             />
@@ -320,6 +322,7 @@ const Applications: React.FC = () => {
                         )}
                         <div>
                           <StaggeredDropDown
+                             props={{style: 'md:left-4 left-16 min-w-40'}}
                             styles={classNames(
                               "rounded-full px-3 py-1.5 flex items-center gap-2",
                               {
@@ -423,7 +426,7 @@ const Applications: React.FC = () => {
                         )}
 
                         <div className="ml-auto md:block hidden">
-                          <StaggeredDropDown>
+                          <StaggeredDropDown props={{style: '-left-4 min-w-45'}}>
                             <AnimatedOption
                               text="Preview Application"
                               onClick={() => {
@@ -441,6 +444,7 @@ const Applications: React.FC = () => {
                             <AnimatedOption
                               text="Change Application Name"
                               onClick={() => {
+                                setName(val?.name)
                                 setEditNameModal(true);
                               }}
                             />
@@ -497,8 +501,8 @@ const Applications: React.FC = () => {
             ) : (
               <div className="w-full flex justify-center items-center">
                 <div className="bg-white shadow-3 rounded-lg py-8 px-4 flex flex-col items-center gap-6 justify-center w-full md:w-[60%]">
-                  <div className="rounded-full text-primary bg-primary/5 flex items-center justify-center w-12 h-12">
-                    <LuBriefcase size={32} />
+                  <div className="rounded-full text-black bg-light flex items-center justify-center w-14 h-14">
+                     <FaBriefcase size={32} />
                   </div>
                   <div className="text-center">
                     <h4 className="text-zinc-950 text-xl font-bold mb-2.5">
@@ -513,12 +517,11 @@ const Applications: React.FC = () => {
                     </p>
                   </div>
 
-                  <button
+                  <Button
                     onClick={() => setCreateModal(true)}
-                    className="flex gap-2 items-center justify-center px-6 py-2.5 mb-3 rounded-md hover:scale-95 duration-150 text-white bg-primary"
                   >
                     <FaPlus /> New Application
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}

@@ -66,7 +66,7 @@ const EditResume: React.FC = () => {
   const paletteRef = useOutsideClick(() => setShowPalette(false));
   const [config, setConfig] = useState<any>(mockEmptyResume?.config || null);
   const [shareModal, setShareModal] = useState(false);
-  const [resumeData, setResumeData] = useState<any>(mockEmptyResume);
+  const [resumeData, setResumeData] = useState<any>(null);
   const [showPalette, setShowPalette] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
   const [resultModal, setResultModal] = useState(false);
@@ -663,7 +663,7 @@ const EditResume: React.FC = () => {
                   </div>
                 </div>
 
-                <section className="bg-white flex flex-col space-y-5 md:px-4 px-1.5 py-5 max-sm:py-3 w-full h-full">
+                {resumeData && <section className="bg-white flex flex-col space-y-5 md:px-4 px-1.5 py-5 max-sm:py-3 w-full h-full">
                   <BasicDetails CvData={resumeData} setCvData={setResumeData} />
                   <ProfessionalSummary
                     resumeData={resumeData}
@@ -709,7 +709,8 @@ const EditResume: React.FC = () => {
                     resumeData={resumeData}
                     setResumeData={setResumeData}
                   />
-                </section>
+                </section>}
+
               </div>
               <div className="max-xl:hidden ml-auto h-full">
                 <div className="bg-white w-full min-w-[319px] 3xl:min-w-[380px] h-full">

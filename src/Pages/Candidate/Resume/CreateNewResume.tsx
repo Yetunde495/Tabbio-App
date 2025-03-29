@@ -77,7 +77,7 @@ const CreateNewResume: React.FC = () => {
   const paletteRef = useOutsideClick(() => setShowPalette(false));
   const [config, setConfig] = useState<any>(mockEmptyResume?.config || null);
   const [shareModal, setShareModal] = useState(false);
-  const [resumeData, setResumeData] = useState<any>(mockEmptyResume);
+  const [resumeData, setResumeData] = useState<any>(null);
   const [showPalette, setShowPalette] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
   const [resultModal, setResultModal] = useState(false);
@@ -184,7 +184,7 @@ const CreateNewResume: React.FC = () => {
   }, [resumeData?.role]);
   return (
     <DefaultLayout>
-      {applicationKitData && (
+      {applicationKitData && resumeData && (
         <section className="w-full">
           <div className="bg-zinc-50/90 md:px-6 px-2 py-3 mb-6 mt-3 w-full">
             <div className="flex max-xl:flex-col gap-3 gap-y-1.5  relative w-full z-99">
@@ -791,6 +791,7 @@ const CreateNewResume: React.FC = () => {
                     setResumeData={setResumeData}
                   />
                 </section>
+
               </div>
               <div className="max-xl:hidden ml-auto h-full">
                 <div className="bg-white w-full min-w-[319px] 3xl:min-w-[380px] h-full">

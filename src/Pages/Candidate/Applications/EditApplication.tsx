@@ -10,11 +10,10 @@ import { Menu, MenuItem } from "../../../AnimatedUi/AnimatedNav";
 import { FiLayout } from "react-icons/fi";
 import { Icons } from "../../../components/icons";
 import { RiRobot2Line } from "react-icons/ri";
-import { FaCheck, FaDownload, FaFileMedical } from "react-icons/fa6";
+import { FaCheck, FaDownload, FaEye, FaFileMedical } from "react-icons/fa6";
 import { IoMdColorFilter } from "react-icons/io";
 import { PiSlidersHorizontalBold } from "react-icons/pi";
 import { Sketch } from "@uiw/react-color";
-import { BsEye } from "react-icons/bs";
 import { LuInfo } from "react-icons/lu";
 import { TbWorld } from "react-icons/tb";
 import Drawer from "../../../components/Drawer";
@@ -191,7 +190,7 @@ const EditApplication: React.FC = () => {
         </div>
       ) : (
         <section className="w-full">
-          <div className="bg-zinc-50/90 md:px-6 px-2 py-3 mb-6 mt-3 w-full">
+          <div className="bg-zinc-50/90 md:px-6 px-1 py-3 mb-6 mt-3 w-full">
             <div className="flex max-xl:flex-col gap-3 gap-y-1.5  relative w-full z-99">
               <Menu setActive={setActive}>
                 <MenuItem
@@ -199,7 +198,7 @@ const EditApplication: React.FC = () => {
                   active={active}
                   position="max-sm:-translate-x-[25%]"
                   item={
-                    <div className="flex space-x-[2px] max-sm:text-[12px] text-[15px] sm:space-x-2 items-center">
+                    <div className="flex space-x-[2px] max-sm:text-[11px] text-[15px] sm:space-x-2 items-center">
                       <FiLayout />
                       <span>Template</span>
                       <Icons.arrowDown />
@@ -215,7 +214,7 @@ const EditApplication: React.FC = () => {
                   active={active}
                   position="max-sm:-translate-x-[40%]"
                   item={
-                    <div className="flex space-x-[2px] max-sm:text-[12px] text-[15px] sm:space-x-2 items-center">
+                    <div className="flex space-x-[2px] max-sm:text-[11px] text-[15px] sm:space-x-2 items-center">
                       <img className="w-4" src={typographyIcon} />
                       <span>Typography</span>
                       <Icons.arrowDown />
@@ -311,7 +310,7 @@ const EditApplication: React.FC = () => {
                     active={active}
                     position="max-sm:-translate-x-[62%]"
                     item={
-                      <div className="flex space-x-[2px] max-sm:text-[12px] text-[15px] sm:space-x-2 items-center">
+                      <div className="flex space-x-[2px] max-sm:text-[11px] text-[15px] sm:space-x-2 items-center">
                         <MdOutlineColorLens />
                         <span>Color</span>
                         <Icons.arrowDown />
@@ -382,7 +381,7 @@ const EditApplication: React.FC = () => {
                   active={active}
                   position="max-sm:-translate-x-[90.5%]"
                   item={
-                    <div className="flex space-x-[2px] max-sm:text-[12px] text-[15px] sm:space-x-2 items-center">
+                    <div className="flex space-x-[2px] max-sm:text-[11px] text-[15px] sm:space-x-2 items-center">
                       <PiSlidersHorizontalBold />
                       <span>Sections</span>
                       <Icons.arrowDown />
@@ -691,12 +690,15 @@ const EditApplication: React.FC = () => {
 
                 <button
                   onClick={() => setShareModal(true)}
-                  className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center text-[#333333] gap-1 hover:scale-x-105 "
+                  className="py-1 px-0.5 max-sm:text-[12px] flex items-center text-[#333333] gap-1 hover:scale-x-105 "
                 >
                   <FaShareAlt /> <span className="max-sm:hidden">Share</span>
                 </button>
+                <button onClick={() => setResultModal(true)} className="font-medium py-1 px-0.5 hover:scale-105 hidden items-center gap-1 text-[#333333]">
+                  <FaEye /><span className="hidden">View</span>
+                </button>
                 <button className="flex items-center py-1 px-1 gap-1 max-sm:text-[12px] hover:scale-105 duration-150 text-[#333333]">
-                  <TbWorld /> <span className="max-sm:hidden">EN</span>
+                  <TbWorld /> <span className="">EN</span>
                 </button>
                 <button
                   onClick={() => navigate(`/app/candidate/cv-builder`)}
@@ -719,22 +721,14 @@ const EditApplication: React.FC = () => {
             <div className="w-full flex xl:flex-row flex-col gap-5 justify-center">
               <div className="w-full">
                 <div className="w-full flex justify-between gap-6 mb-3 items-end">
-                  <button className="font-medium flex items-center gap-1 text-zinc-600">
-                    <span className="flex items-center gap-1">
-                      <BsEye />
-                      Preview
-                    </span>
-                    <span className="font-semibold font-sans max-sm:hidden">
-                      ({resumeData?.resumeName})
-                    </span>
-                  </button>
+                  
 
                   <div className="flex gap-3 items-center">
                     <button
                       onClick={() => {
                         setShowDrawer(true);
                       }}
-                      className="text-center group hover:scale-105 font-medium xl:hidden flex items-center gap-1 text-zinc-600"
+                      className="text-center group ml-auto hover:scale-105 font-medium xl:hidden flex items-center gap-1 text-zinc-600"
                     >
                       Tailor Resume{" "}
                       <span className="mt-1">

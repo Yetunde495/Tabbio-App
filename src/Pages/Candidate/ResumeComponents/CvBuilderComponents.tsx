@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useApp } from "../../../context/AppContext";
 import { LuPencil } from "react-icons/lu";
 import Modal from "../../../components/modal";
@@ -504,6 +504,10 @@ export const KeySkills: React.FC<{
     }
   };
 
+  useEffect(() => {
+    setSkills(resumeData?.skills || [])
+  },[])
+
   return (
     <div className="relative border border-stroke rounded-xl bg-gradient-3 py-4 max-sm:px-2 px-4">
       <div className="flex w-full border-b border-stroke pb-1 justify-between items-center mb-2">
@@ -512,13 +516,12 @@ export const KeySkills: React.FC<{
         </h6>
       </div>
       <div className="py-2 w-full flex gap-2 mb-4 items-center flex-wrap">
-        {skills?.length > 0 &&
+        {skills?.length > 0 ?
           skills?.map((val: string, index: number) => (
             <Pill key={index}>{val}</Pill>
-          ))}
-        {skills?.length === 0 && (
-          <p className="text-center">Add your core professional skills</p>
-        )}
+          )) : (
+            <p className="text-center">Add your core professional skills</p>
+          )}
       </div>
       <button
         onClick={() => {

@@ -9,7 +9,8 @@ const StaggeredDropDown: React.FC<{
   buttonIcon?: React.ReactNode;
   showButton?: boolean;
   styles?: string;
-}> = ({ children, buttonText, buttonIcon, styles, showButton=true }) => {
+  props?: any;
+}> = ({ children, buttonText, buttonIcon, styles, showButton=true, props }) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -30,7 +31,8 @@ const StaggeredDropDown: React.FC<{
           variants={wrapperVariants}
           style={{ originY: "top", translateX: "-50%" }}
           onClick={() => setOpen(false)}
-          className="flex flex-col z-999 gap-2 p-2 rounded-lg bg-white/90 shadow-3 absolute top-[120%] left-4 min-w-40 w-full overflow-hidden"
+          className={`flex flex-col z-999 gap-2 p-2 rounded-lg bg-white/90 shadow-3 absolute top-[120%] ${props?.style ? props?.style : 'left-4 min-w-40'} w-full overflow-hidden`}
+
         >
           {children}
           {/* <Option setOpen={setOpen} Icon={FiEdit} text="Edit" /> */}

@@ -320,7 +320,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             </div>
           </div>
         </div>
-        <div className="bg-gradient-to-r from-[#F9FAFB] to-[#F9FAFB] border border-[#F3F4F6] py-2.5 px-4.5 text-sm flex flex-wrap sm:gap-2 lg:items-center justify-between gap-3">
+        <div className="bg-gradient-to-r from-[#F9FAFB] to-[#F9FAFB] border border-[#F3F4F6] py-2.5 max-xs:px-1 px-1.5 md:px-4.5 text-sm flex flex-wrap sm:gap-2 lg:items-center justify-between gap-3">
           <div className="flex items-center gap-4 max-sm:justify-between">
             <div className="flex items-center gap-1">
               <FaCircle

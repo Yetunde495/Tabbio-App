@@ -991,7 +991,7 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
             <div className="flex w-full justify-center items-center pb-6">
               <div
                 ref={targetRef}
-                className="xl:max-w-[70%] lg:max-w-[90%] w-full"
+                className="max-w-[800px] w-full"
               >
                 <ResumePreview resumeData={applicationData?.resume} />
                 {/* <PDFViewer
