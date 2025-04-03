@@ -71,7 +71,7 @@ export const BasicDetails: React.FC<{
     role: CvData?.role,
     phone: CvData?.phone,
     linkedIn: CvData?.linkedIn,
-    name: CvData?.name,
+    name: CvData?.name
   });
   const handleUpdateProfile = async (data: any) => {
     setLoading(true);
@@ -100,6 +100,13 @@ export const BasicDetails: React.FC<{
                 {" "}
                 <button
                   onClick={() => {
+                    setBasicDetails({
+                      email: CvData?.email,
+                      role: CvData?.role,
+                      phone: CvData?.phone,
+                      linkedIn: CvData?.linkedIn,
+                      name: CvData?.name, 
+                    })
                     setShowModal(true);
                   }}
                   className="hover:bg-slate-100/50 rounded-full max-md:py-0 p-2"
@@ -516,8 +523,8 @@ export const KeySkills: React.FC<{
         </h6>
       </div>
       <div className="py-2 w-full flex gap-2 mb-4 items-center flex-wrap">
-        {skills?.length > 0 ?
-          skills?.map((val: string, index: number) => (
+        {resumeData?.skills?.length > 0 ?
+          resumeData?.skills?.map((val: string, index: number) => (
             <Pill key={index}>{val}</Pill>
           )) : (
             <p className="text-center">Add your core professional skills</p>
@@ -525,6 +532,7 @@ export const KeySkills: React.FC<{
       </div>
       <button
         onClick={() => {
+          setSkills(resumeData?.skills || [])
           setEditMode(true);
         }}
         className="hover:bg-slate-100/50 w-full flex justify-center font-medium text-[#242424] rounded-md border border-[#B1B1B1] border-dashed p-2"

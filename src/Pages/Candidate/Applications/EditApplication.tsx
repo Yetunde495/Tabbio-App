@@ -397,7 +397,7 @@ const EditApplication: React.FC = () => {
                       Toggle the switches to control which sections appear on
                       your CV
                     </p>
-                    <div className="grid grid-cols-2 gap-8 max-sm:gap-3 justify-between text-sm border-b-2 border-stroke pb-3.5">
+                    <div className="grid grid-cols-2 gap-8 max-sm:gap-3 justify-between text-sm max-sm:text-[10px] border-b-2 border-stroke pb-3.5">
                       <div>
                         <h6 className="mb-2">Basic Details</h6>
                         <ul className="space-y-2.5">
@@ -694,7 +694,7 @@ const EditApplication: React.FC = () => {
                 >
                   <FaShareAlt /> <span className="max-sm:hidden">Share</span>
                 </button>
-                <button onClick={() => setResultModal(true)} className="font-medium py-1 px-0.5 hover:scale-105 hidden items-center gap-1 text-[#333333]">
+                <button onClick={() => setResultModal(true)} className="font-medium py-1 px-0.5 hover:scale-105 flex items-center gap-1 text-[#333333]">
                   <FaEye /><span className="hidden">View</span>
                 </button>
                 <button className="flex items-center py-1 px-1 gap-1 max-sm:text-[12px] hover:scale-105 duration-150 text-[#333333]">

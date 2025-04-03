@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import { FiDownload, FiExternalLink } from "react-icons/fi";
 import { MdShare } from "react-icons/md";
 import ShareResume from "../Candidate/ShareResume";
-import { PDFDownloadLink } from "@react-pdf/renderer";
+import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import ProfessionalPDF from "../../components/PDFTemplates/ProfessionalPDF";
 import EntryPDF from "../../components/PDFTemplates/EntryPDF";
 
@@ -28,7 +28,7 @@ const LiveResume: React.FC = () => {
         const resp = await getResumeDataByName(`${resumeName}`);
         setResumeData(resp?.data?.resume);
       } catch (err: any) {
-        if (err?.message !== "Profile not found") {
+        if (err?.message !== "Resume not found") {
           toast.error(err?.message || "Request Failed");
           // setResumeData(mockResData);
           setErrMessage(err?.message);
@@ -61,13 +61,13 @@ const LiveResume: React.FC = () => {
               Switch Template
             </button>
             <div className="max-w-4xl w-full">
-              {/* <PDFViewer width="100%" height="800px">
+              <PDFViewer width="100%" height="500px">
               {resumeData?.template === "professional" ? (
                 <ProfessionalPDF data={resumeData} />
               ) : (
                 <EntryPDF data={resumeData} />
               )}
-            </PDFViewer> */}
+            </PDFViewer>
               <ResumePreview resumeData={resumeData} />
             </div>
           </section>

@@ -339,7 +339,7 @@ const EditSmartCV: React.FC = () => {
                     onClick={(e) => e.stopPropagation()}
                     className="px-2 py-1 md:w-[500px] max-sm:w-[330px] w-full"
                   >
-                    <div className="grid grid-cols-2 gap-8 max-sm:gap-3 justify-between text-sm border-b-2 border-stroke pb-5">
+                    <div className="grid grid-cols-2 gap-8 max-sm:gap-3 justify-between text-sm max-sm:text-[10px] border-b-2 border-stroke pb-5">
                       <div>
                         <h6 className="mb-2">Basic Details</h6>
                         <ul className="space-y-2.5">

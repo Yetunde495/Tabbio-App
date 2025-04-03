@@ -4,6 +4,7 @@ import ReactDOM from "react-dom";
 import { LuBuilding2, LuCrown } from "react-icons/lu";
 import { RxCross2 } from "react-icons/rx";
 import { ContentAccordion } from "../../components/Accordion";
+import sparkleIcon from "../../assets/svg/ai-sparkle.svg";
 import { FaArrowRightLong, FaRegStar } from "react-icons/fa6";
 import {
   IoCopyOutline,
@@ -25,8 +26,7 @@ import { usePDF } from "react-to-pdf";
 import LiveResumeDoc from "../PageComponents/ResumeDocument";
 import { pdf, PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import MDEditor from "@uiw/react-md-editor";
-import { FiDownload } from "react-icons/fi";
-import { HiOutlineSparkles } from "react-icons/hi";
+import { FiDownload, FiEdit3 } from "react-icons/fi";
 import { TbArrowBigRightLinesFilled } from "react-icons/tb";
 import { IoIosArrowForward, IoIosArrowUp, IoIosLink } from "react-icons/io";
 import CreateApplicationKit from "./CreateApplicationKit";
@@ -45,6 +45,7 @@ import { capitalizeFirstLetter } from "../../lib/utils";
 import ProfessionalPDF from "../../components/PDFTemplates/ProfessionalPDF";
 import EntryPDF from "../../components/PDFTemplates/EntryPDF";
 import ShareResume from "./ShareResume";
+import { useNavigate } from "react-router-dom";
 
 type ApplicationResultProps = {
   show: boolean;
@@ -79,6 +80,7 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
   const [companyInfo, setCompanyInfo] = useState<any>(null);
   const [coverLetterData, setCoverLetterData] = useState<string>(``);
   const { targetRef } = usePDF({ filename: "page.pdf" });
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
   const [errorText, setErrorText] = useState("");
@@ -456,22 +458,69 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
                       <div className="grid md:grid-cols-2 grid-cols-1 gap-4">
                         <ContentAccordion
                           title={
-                            <div className="flex gap-2 items-center">
-                              <span>
-                                <RiRobot2Line
-                                  size={18}
-                                  className="text-primary"
-                                />
-                              </span>
-                              <p className="font-medium text-zinc-800">
-                                AI Optimized Resume
-                              </p>
+                            <div className="flex gap-3 justify-between items-center">
+                              <div className="flex gap-1 items-center">
+                                <span>
+                                  <RiRobot2Line
+                                    size={18}
+                                    className="text-primary"
+                                  />
+                                </span>
+                                <p className="font-medium text-sm text-zinc-900">
+                                  AI-Optimized CV
+                                </p>
+                              </div>
+
+                              <div className="flex gap-2.5 items-center">
+                                <button
+                                  onClick={() => {
+                                    setMainview(false);
+                                    setResumeView(true);
+                                  }}
+                                  className="text-center hover:scale-105 duration-150 text-sm flex items-center gap-1 text-zinc-500"
+                                >
+                                  <BsEye />
+                                </button>
+                                <PDFDownloadLink
+                                  document={
+                                    applicationData?.resume?.template ===
+                                    "entry" ? (
+                                      <EntryPDF
+                                        data={applicationData?.resume}
+                                      />
+                                    ) : (
+                                      <ProfessionalPDF
+                                        data={applicationData?.resume}
+                                      />
+                                    )
+                                  }
+                                  fileName={
+                                    applicationData?.resume?.resumeName ||
+                                    "Tabbio ATS Resume"
+                                  }
+                                >
+                                  <button className="text-center hover:scale-105 duration-150 text-sm flex items-center gap-1 text-zinc-500">
+                                    <BsDownload />
+                                  </button>
+                                </PDFDownloadLink>
+                                <button
+                                  onClick={() => {
+                                    navigate(
+                                      `/app/candidate/cv-builder/edit-application/${applicationData?._id}`
+                                    );
+                                    onHide();
+                                  }}
+                                  className="text-center hover:scale-105 duration-150 text-sm flex items-center gap-1 text-zinc-500"
+                                >
+                                  <FiEdit3 />
+                                </button>
+                              </div>
                             </div>
                           }
                         >
                           <div>
                             <div>
-                              <ul className="text-sm font-medium text-zinc-500 space-y-2 mb-6">
+                              <ul className="text-sm font-normal text-zinc-700 space-y-2 mb-6">
                                 <li className="flex items-center gap-1">
                                   <span>
                                     <FaRegStar className="text-yellow-400" />
@@ -495,43 +544,40 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
                                 </li>
                               </ul>
 
-                              <div className="bg-[#DBEAFE80] rounded-lg mb-3 p-3 flex flex-col gap-2 items-center justify-center">
-                                <button
-                                  onClick={() => {
-                                    setMainview(false);
-                                    setResumeView(true);
-                                  }}
-                                  className="text-center hover:scale-105 duration-150 text-sm flex items-center gap-1 text-zinc-600"
-                                >
-                                  <span>
-                                    <BsEye />
-                                  </span>{" "}
+                              <div className="bg-[#DBEAFE80] rounded-lg mb-3 p-3 flex flex-col gap-2 items-center justify-center h-full">
+                                <p className="text-center text-sm font-semibold text-zinc-800">
                                   Preview
-                                </button>
-                                <div className="w-full min-h-[220px] max-h-[250px] 2xl:max-h-[300px] 3xl:max-h-[350px] 4xl:max-h-[550px] overflow-auto custom-scrollbar h-full bg-white">
+                                </p>
+                                <div className="w-full min-h-[220px] max-h-[250px] 2xl:max-h-[300px] 3xl:max-h-[350px] overflow-hidden 4xl:max-h-[550px] h-full bg-white">
                                   {/* <ResumePreview
                                     resumeData={applicationData?.resume}
                                   /> */}
-                                  <PDFViewer
-                                    style={{
-                                      minHeight: "210px",
-                                      width: "100%",
-                                      height: "100%",
-                                    }}
-                                  >
-                                    {applicationData?.resume?.level ===
-                                    "entry" ? (
-                                      <EntryPDF
-                                        data={applicationData?.resume}
-                                      />
-                                    ) : (
-                                      <ProfessionalPDF
-                                        data={applicationData?.resume}
-                                      />
-                                    )}
-                                  </PDFViewer>
+                                  <div className="">
+                                    <PDFViewer
+                                      style={{
+                                        minHeight: "350px",
+                                        width: "100%",
+                                        height: "100%",
+                                        maxHeight: "550px",
+                                        backgroundColor: "#ffffff",
+                                      }}
+                                      showToolbar={false}
+                                      className="pdf-preview"
+                                    >
+                                      {applicationData?.resume?.level ===
+                                      "entry" ? (
+                                        <EntryPDF
+                                          data={applicationData?.resume}
+                                        />
+                                      ) : (
+                                        <ProfessionalPDF
+                                          data={applicationData?.resume}
+                                        />
+                                      )}
+                                    </PDFViewer>
+                                  </div>
                                 </div>
-                                <p className="text-center text-sm text-zinc-600">
+                                <p className="text-center text-sm text-zinc-600 bg-[#DBEAFE80] w-full">
                                   Click on the eye icon to view full preview
                                 </p>
                               </div>
@@ -541,19 +587,58 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
 
                         <ContentAccordion
                           title={
-                            <div className="flex gap-2 items-center">
-                              <span>
-                                <VscWand size={18} className="text-[#9333EA]" />
-                              </span>
-                              <p className="font-medium text-zinc-800">
-                                Smart Cover Letter
-                              </p>
+                            <div className="flex gap-3 justify-between items-center">
+                              <div className="flex gap-1 items-center">
+                                <span>
+                                  <VscWand
+                                    size={18}
+                                    className="text-[#9333EA]"
+                                  />
+                                </span>
+                                <p className="font-medium text-sm text-zinc-900">
+                                  Smart Cover Letter
+                                </p>
+                              </div>
+
+                              <div className="flex gap-2.5 items-center">
+                                <button
+                                  onClick={() => {
+                                    setMainview(false);
+                                    setCoverLetter(true);
+                                  }}
+                                  className="text-center hover:scale-105 duration-150 text-sm flex items-center gap-1 text-zinc-500"
+                                >
+                                  <BsEye />
+                                </button>
+                                <PDFDownloadLink
+                                  document={
+                                    applicationData?.resume?.template ===
+                                    "entry" ? (
+                                      <EntryPDF
+                                        data={applicationData?.resume}
+                                      />
+                                    ) : (
+                                      <ProfessionalPDF
+                                        data={applicationData?.resume}
+                                      />
+                                    )
+                                  }
+                                  fileName={
+                                    applicationData?.resume?.resumeName ||
+                                    "Tabbio ATS Resume"
+                                  }
+                                >
+                                  <button className="text-center hover:scale-105 duration-150 text-sm flex items-center gap-1 text-zinc-500">
+                                    <BsDownload />
+                                  </button>
+                                </PDFDownloadLink>
+                              </div>
                             </div>
                           }
                         >
                           <div>
                             <div>
-                              <ul className="text-sm font-medium text-zinc-500 space-y-2 mb-6">
+                              <ul className="text-sm font-normal text-zinc-700 space-y-2 mb-6">
                                 <li className="flex items-center gap-1">
                                   <span>
                                     <FaRegStar className="text-yellow-400" />
@@ -576,18 +661,9 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
                               </ul>
 
                               <div className="bg-[#DBEAFE80] rounded-lg mb-3 p-3 flex flex-col gap-2 items-center justify-center">
-                                <button
-                                  onClick={() => {
-                                    setMainview(false);
-                                    setCoverLetter(true);
-                                  }}
-                                  className="text-center hover:scale-105 duration-150 text-sm flex items-center gap-1 text-zinc-600"
-                                >
-                                  <span>
-                                    <BsEye />
-                                  </span>{" "}
+                                <p className="text-center text-sm font-semibold text-zinc-800">
                                   Preview
-                                </button>
+                                </p>
                                 <div className="w-full min-h-[220px] max-h-[250px] 2xl:max-h-[300px] 3xl:max-h-[350px] 4xl:max-h-[550px] overflow-auto custom-scrollbar h-full">
                                   <p className="text-[12px] px-2 py-2">
                                     {coverLetterData}
@@ -611,22 +687,36 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
                         {companyInfo && (
                           <ContentAccordion
                             title={
-                              <div className="flex gap-2 items-center">
-                                <span>
-                                  <LuBuilding2
-                                    size={18}
-                                    className="text-[#D97706]"
-                                  />
-                                </span>
-                                <p className="font-medium text-zinc-800">
-                                  Company Intelligence
-                                </p>
+                              <div className="flex gap-3 justify-between items-center">
+                                <div className="flex gap-1 items-center">
+                                  <span>
+                                    <LuBuilding2
+                                      size={18}
+                                      className="text-[#D97706]"
+                                    />
+                                  </span>
+                                  <p className="font-medium text-sm text-zinc-900">
+                                    Company Intelligence
+                                  </p>
+                                </div>
+
+                                <div className="flex gap-2.5 items-center">
+                                  <button
+                                    onClick={() => {
+                                      setMainview(false);
+                                      setIntelligence(true);
+                                    }}
+                                    className="text-center hover:scale-105 duration-150 text-sm flex items-center gap-1 text-zinc-500"
+                                  >
+                                    <BsEye />
+                                  </button>
+                                </div>
                               </div>
                             }
                           >
                             <div>
                               <div>
-                                <ul className="text-sm font-medium text-zinc-500 space-y-2 mb-6">
+                                <ul className="text-sm font-normal text-zinc-700 space-y-2 mb-6">
                                   <li className="flex items-center gap-1">
                                     <span>
                                       <FaRegStar className="text-yellow-400" />
@@ -649,18 +739,9 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
                                 </ul>
 
                                 <div className="bg-[#DBEAFE80] rounded-lg mb-3 p-3 flex flex-col gap-2 items-center justify-center">
-                                  <button
-                                    onClick={() => {
-                                      setMainview(false);
-                                      setIntelligence(true);
-                                    }}
-                                    className="text-center hover:scale-105 duration-150 text-sm flex items-center gap-1 text-zinc-600"
-                                  >
-                                    <span>
-                                      <BsEye />
-                                    </span>{" "}
+                                  <p className="text-center text-sm font-semibold text-zinc-800">
                                     Preview
-                                  </button>
+                                  </p>
                                   <div className="w-full min-h-[220px] max-h-[250px] 2xl:max-h-[300px] 3xl:max-h-[350px] 4xl:max-h-[550px] overflow-auto custom-scrollbar h-full">
                                     <div className="text-[12px] space-y-4 px-2 py-2">
                                       {companyInfo?.description && (
@@ -778,16 +859,30 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
                         {interviewTips && (
                           <ContentAccordion
                             title={
-                              <div className="flex gap-2 items-center">
-                                <span>
-                                  <RiRobot2Line
-                                    size={18}
-                                    className="text-success"
-                                  />
-                                </span>
-                                <p className="font-medium text-zinc-800">
-                                  Interview Success Kit
-                                </p>
+                              <div className="flex gap-3 justify-between items-center">
+                                <div className="flex gap-1 items-center">
+                                  <span>
+                                    <RiRobot2Line
+                                      size={18}
+                                      className="text-success"
+                                    />
+                                  </span>
+                                  <p className="font-medium text-sm text-zinc-900">
+                                    Interview Success Kit
+                                  </p>
+                                </div>
+
+                                <div className="flex gap-2.5 items-center">
+                                  <button
+                                    onClick={() => {
+                                      setMainview(false);
+                                      setSuccessKit(true);
+                                    }}
+                                    className="text-center hover:scale-105 duration-150 text-sm flex items-center gap-1 text-zinc-500"
+                                  >
+                                    <BsEye />
+                                  </button>
+                                </div>
                               </div>
                             }
                           >
@@ -816,18 +911,9 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
                                 </ul>
 
                                 <div className="bg-[#DBEAFE80] rounded-lg mb-3 p-3 flex flex-col gap-2 items-center justify-center">
-                                  <button
-                                    onClick={() => {
-                                      setMainview(false);
-                                      setSuccessKit(true);
-                                    }}
-                                    className="text-center hover:scale-105 duration-150 text-sm flex items-center gap-1 text-zinc-600"
-                                  >
-                                    <span>
-                                      <BsEye />
-                                    </span>{" "}
+                                  <p className="text-center text-sm font-semibold text-zinc-800">
                                     Preview
-                                  </button>
+                                  </p>
                                   <div className="w-full min-h-[220px] max-h-[250px] 2xl:max-h-[300px] 3xl:max-h-[350px] 4xl:max-h-[550px] overflow-auto custom-scrollbar h-full">
                                     <div className="w-full px-3 py-4">
                                       {interviewTips &&
@@ -989,10 +1075,7 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
               <span>Back</span>
             </button>
             <div className="flex w-full justify-center items-center pb-6">
-              <div
-                ref={targetRef}
-                className="max-w-[800px] w-full"
-              >
+              <div ref={targetRef} className="max-w-[800px] w-full">
                 <ResumePreview resumeData={applicationData?.resume} />
                 {/* <PDFViewer
                   showToolbar={false}
@@ -1094,14 +1177,13 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
                         GenerateCoverLetter();
                       }}
                       disabled={loading}
-                      className="relative inline-flex items-center justify-center p-[2.5px] mb-2 me-2 overflow-hidden font-medium rounded-lg group bg-gradient-to-b from-[#5272EA] to-[#394FC0] disabled:from-[#394FC0] disabled:to-[#5272EA] disabled:bg-opacity-60 group-hover:from-[#394FC0] group-hover:to-[#5272EA] hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800"
+                      type="button"
+                      className="ai-button px-6 me-2 rounded-lg py-3 text-center mb-2 flex justify-center items-center gap-2"
                     >
-                      <span className="relative px-8 py-2 transition-all ease-in duration-75 bg-white rounded-md group-hover:bg-opacity-0">
-                        <p className="text-center gap-1 items-center bg-gradient-to-b group-hover:text-white text-transparent bg-clip-text from-[#5272EA] to-[#394FC0] inline-flex">
-                          <HiOutlineSparkles className="text-primary group-hover:text-white" />{" "}
-                          {loading ? "Generating..." : "Regenerate"}
-                        </p>
+                      <span>
+                        <img src={sparkleIcon} />
                       </span>
+                      {loading ? "Generating..." : "Regenerate"}
                     </button>
                   </div>
                 </div>
@@ -1204,14 +1286,13 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
                         GenerateCompanyInfo();
                       }}
                       disabled={loading}
-                      className="relative inline-flex items-center justify-center p-[2.5px] mb-2 me-2 overflow-hidden font-medium rounded-lg group bg-gradient-to-b from-[#5272EA] to-[#394FC0] disabled:from-[#394FC0] disabled:to-[#5272EA] disabled:bg-opacity-60 group-hover:from-[#394FC0] group-hover:to-[#5272EA] hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800"
+                      type="button"
+                      className="ai-button px-6 me-2 rounded-lg py-3 text-center mb-2 flex justify-center items-center gap-2"
                     >
-                      <span className="relative px-8 py-2 transition-all ease-in duration-75 bg-white rounded-md group-hover:bg-opacity-0">
-                        <p className="text-center gap-1 items-center bg-gradient-to-b group-hover:text-white text-transparent bg-clip-text from-[#5272EA] to-[#394FC0] inline-flex">
-                          <HiOutlineSparkles className="text-primary group-hover:text-white" />{" "}
-                          {loading ? "Generating..." : "Regenerate"}
-                        </p>
+                      <span>
+                        <img src={sparkleIcon} />
                       </span>
+                      {loading ? "Generating..." : "Regenerate"}
                     </button>
                   </div>
                 </div>
@@ -1396,14 +1477,13 @@ const ApplicationResult: React.FC<ApplicationResultProps> = ({
                         GenerateInterviewTips();
                       }}
                       disabled={loading}
-                      className="relative inline-flex items-center justify-center p-[2.5px] mb-2 me-2 overflow-hidden font-medium rounded-lg group bg-gradient-to-b from-[#5272EA] to-[#394FC0] disabled:from-[#394FC0] disabled:to-[#5272EA] disabled:bg-opacity-60 group-hover:from-[#394FC0] group-hover:to-[#5272EA] hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800"
+                      type="button"
+                      className="ai-button px-6 me-2 rounded-lg py-3 text-center mb-2 flex justify-center items-center gap-2"
                     >
-                      <span className="relative px-8 py-2 transition-all ease-in duration-75 bg-white rounded-md group-hover:bg-opacity-0">
-                        <p className="text-center gap-1 items-center bg-gradient-to-b group-hover:text-white text-transparent bg-clip-text from-[#5272EA] to-[#394FC0] inline-flex">
-                          <HiOutlineSparkles className="text-primary group-hover:text-white" />{" "}
-                          {loading ? "Generating..." : "Regenerate"}
-                        </p>
+                      <span>
+                        <img src={sparkleIcon} />
                       </span>
+                      {loading ? "Generating..." : "Regenerate"}
                     </button>
                   </div>
                 </div>

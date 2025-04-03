@@ -1,21 +1,9 @@
-import { FaCircle } from "react-icons/fa6";
 import { formatMonthYear } from "../../lib/utils/formatters";
 import { useSpring, animated } from "@react-spring/web";
 import { createUseGesture, dragAction, pinchAction } from "@use-gesture/react";
 import { useEffect, useRef, useState } from "react";
 
 const useGesture = createUseGesture([dragAction, pinchAction]);
-
-const fontSizeMap = {
-  small: "14px",
-  medium: "16px",
-  large: "18px",
-};
-const fontSizeSmMap = {
-  small: "13px",
-  medium: "14px",
-  large: "15px",
-};
 
 export const ResumeDocument: React.FC<{ resumeData: any }> = ({
   resumeData,
@@ -95,13 +83,15 @@ export const ResumeDocument: React.FC<{ resumeData: any }> = ({
                 {resumeData?.name}
               </h1>
               {resumeData?.config?.role && (
-                <p className={`max-sm:text-sm  text-center text-black px-4`}>
+                <p
+                  className={`max-sm:text-[11px]  text-xs  text-center text-black/90 px-4`}
+                >
                   {resumeData?.role}
                 </p>
               )}
-              <div className="w-full max-w-[90%] py-3">
-                <div className="flex flex-wrap justify-center text-[11px] gap-x-1 divide-x gap-y-2 items-center">
-                  {["email", "phone", "location", "linkedin", "website"]
+              <div className="w-full md:max-w-[90%] py-3">
+                <div className="flex flex-wrap gap-1 text-[10px] items-center justify-center gap-x-1 gap-y-2">
+                  {["email", "phone", "location", "linkedIn", "website"]
                     .filter(
                       (field) =>
                         resumeData?.config[
@@ -109,13 +99,13 @@ export const ResumeDocument: React.FC<{ resumeData: any }> = ({
                         ]
                     )
                     ?.map((field) => (
-                      <div key={field} className="flex gap-1 items-center px-2">
+                      <div key={field} className="flex gap-1 items-center">
                         <span className="font-semibold">
                           {field.charAt(0).toUpperCase()}:
                         </span>
 
                         <span className="">
-                          {resumeData[field] || `Unspecified`}
+                          {resumeData[field] + " " + " " + " " + " |" || `-`}
                         </span>
                       </div>
                     ))}
@@ -124,45 +114,53 @@ export const ResumeDocument: React.FC<{ resumeData: any }> = ({
             </div>
 
             <div className="border-b pb-6 border-stroke mb-6">
-              <div className=" rounded-md px-3">
+              <div className=" px-3">
                 <h6
-                  className="font-semibold mb-2 text-sm"
-                  style={{ color: resumeData?.style?.primaryColor }}
+                  className={`font-semibold mb-2 max-sm:text-[11px] text-sm py-1 `}
+                  style={{
+                    color: resumeData?.style?.primaryColor,
+                    borderColor: resumeData?.style?.primaryColor,
+                  }}
                 >
                   PROFESSIONAL SUMMARY
                 </h6>
-                <p className={`font-medium text-black text-[11px] w-full`}>
+                <p className="font-medium text-black text-[11px] max-sm:text-[9px]">
                   {resumeData?.professionalSummary}
                 </p>
               </div>
             </div>
 
             {/* Skills/Areas of Expertise */}
-            {resumeData?.config?.skills && resumeData?.skills.length > 0 && (
-              <div className=" border-b border-stroke pt-4 pb-6">
-                <div className="rounded-md px-2 py-3">
-                  <div className="w-full flex justify-between">
-                    <h6
-                      className="font-semibold mb-2 px-3 text-sm uppercase"
-                      style={{ color: resumeData?.style?.primaryColor }}
-                    >
-                      Areas of Expertise
-                    </h6>
-                  </div>
 
-                  <ul className="inline-flex items-center gap-3 px-2.5 divide-x flex-wrap">
-                    {resumeData?.skills?.map((item: string, index: number) => (
-                      <li
-                        key={index}
-                        className={`item  relative  text-zinc-800 py-0`}
-                      >
-                        <span className="px-1.5 text-[11px] font-medium">
-                          {item}
+            {resumeData?.config?.skills && resumeData?.skills.length > 0 && (
+              <div className="border-b border-stroke pb-6">
+                <h6
+                  className="font-semibold uppercase text-sm max-sm:text-[11px] py-1 w-full"
+                  style={{
+                    color: resumeData?.style?.primaryColor,
+                    borderColor: resumeData?.style?.primaryColor,
+                  }}
+                >
+                  Areas of Expertise
+                </h6>
+                <ul className="gap-1.5 max-sm:gap-1 flex flex-wrap">
+                  {resumeData?.skills?.map((item: any, index: number) => (
+                    <li
+                      key={index}
+                      className={`item relative  text-zinc-800 py-0`}
+                    >
+                      <div className="mb-1 py-1">
+                        <span className="text-[11px] max-sm:text-[9px] font-medium">
+                          {item.name}
+                          {item}{" "}
+                          {resumeData?.skills?.length > 1 &&
+                            index + 1 !== resumeData?.skills?.length &&
+                            "|"}
                         </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
             {/* Skills/Areas of Expertise */}
@@ -170,61 +168,88 @@ export const ResumeDocument: React.FC<{ resumeData: any }> = ({
             {/* Education */}
             {resumeData?.config?.education &&
               resumeData?.education.length > 0 && (
-                <div className="border-b border-stroke py-6">
-                  <div>
-                    <h6
-                      className="font-semibold text-sm uppercase pl-4.5 mb-3"
-                      style={{ color: resumeData?.style?.primaryColor }}
-                    >
-                      Education
-                    </h6>
-                    <div className="flex flex-col gap-4">
-                      {resumeData?.education?.map(
-                        (item: any, _index: number) => (
-                          <div
-                            key={item?._id}
-                            className={`item px-2 relative  text-black w-full py-1 `}
-                            draggable="true"
-                          >
-                            <div className="w-full flex items-start py-2 ml-3 pr-1">
-                              <FaCircle
-                                size={6}
-                                className="rounded-full mt-2"
-                              />
-                              <div className="w-full">
-                                <div className="flex gap-6 w-full items-start">
-                                  <p
-                                    className={`text-[13px] max-sm:text-[11px] text-black px-2`}
-                                  >
-                                    {item?.institution}
-                                  </p>
-                                  <div className="ml-auto">
-                                    <p
-                                      className={`text-[10px] text-right font-medium text-black  px-2`}
-                                    >
-                                      {item?.startDate &&
-                                        formatMonthYear(item?.startDate)}
-                                      -
-                                      {item?.active
-                                        ? "Present"
-                                        : item?.endDate &&
-                                          formatMonthYear(item?.endDate)}
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="">
-                                  <p
-                                    className={`w-full text-[13px] max-sm:text-[11px] uppercase font-semibold text-zinc-800 px-2`}
-                                  >
-                                    {item?.degree}
-                                  </p>
-                                </div>
-                              </div>
+                <div className="py-6 border-b border-stroke">
+                  <h6
+                    className="font-semibold text-sm max-sm:text-[11px] uppercase py-1 mb-2 w-full"
+                    style={{
+                      color: resumeData?.style?.primaryColor,
+                      borderColor: resumeData?.style?.primaryColor,
+                    }}
+                  >
+                    Education{" "}
+                  </h6>
+                  <div className="flex flex-col gap-4">
+                    {resumeData?.education?.map((item: any, _index: number) => (
+                      <div
+                        key={item.id}
+                        className={`relative  text-black w-full py-1 `}
+                      >
+                        <div className="w-full py-2 pr-1">
+                          <div className="flex justify-between gap-6 items-center">
+                            <div className="text-xs max-sm:text-[10px] text-zinc-800">
+                              <span className="uppercase font-semibold">
+                                {item?.institution}
+                              </span>
+                              {item?.location && (
+                                <span className="italic text-[13px]">
+                                  , {item?.location}
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="ml-auto">
+                              <p
+                                className={`text-[11px] max-sm:text-[9px] text-right font-medium text-black px-2`}
+                              >
+                                {item?.startDate &&
+                                  formatMonthYear(item?.startDate)}
+                                {item?.hideEndDate && (
+                                  <span>
+                                    -{" "}
+                                    {item?.endDate
+                                      ? "Present"
+                                      : item?.endDate &&
+                                        formatMonthYear(item?.endDate)}
+                                  </span>
+                                )}
+                              </p>
                             </div>
                           </div>
-                        )
-                      )}
-                    </div>
+
+                          <div className="mb-1.5">
+                            <span className="text-xs max-sm:text-[10px] uppercase font-semibold text-zinc-800">
+                              {item?.degree}
+                              {item?.gpa && (
+                                <span className=""> ({item?.gpa})</span>
+                              )}
+                            </span>
+                          </div>
+                          <div className=" text-zinc-800 text-[0.8rem]">
+                            <span className="font-semibold ">Minors: </span>
+                            <span>{item?.minors}</span>
+                          </div>
+
+                          <div className=" text-zinc-800">
+                            <ul className="text-[0.8rem] flex flex-wrap gap-0.5 font-medium">
+                              <span className="font-semibold">
+                                Relevant Coursework:{" "}
+                              </span>
+                              {item?.relevantCourseWork?.map(
+                                (val: string, index: number) => (
+                                  <li key={index}>
+                                    {val}{" "}
+                                    {item?.relevantCourseWork?.length > 1 &&
+                                      index + 1 !==
+                                        item?.relevantCourseWork?.length &&
+                                      ","}
+                                  </li>
+                                )
+                              )}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
@@ -232,150 +257,92 @@ export const ResumeDocument: React.FC<{ resumeData: any }> = ({
 
             {/* CERtifications */}
             {resumeData?.config?.certifications &&
-              resumeData?.certifications.length > 0 && (
-                <div className="border-b border-stroke py-6">
-                  <div>
-                    <h6
-                      className="font-semibold text-sm uppercase pl-4.5 mb-3"
-                      style={{ color: resumeData?.style?.primaryColor }}
-                    >
-                      Certifications
-                    </h6>
-                    <div className="flex flex-col gap-4">
-                      {resumeData?.certifications?.map(
-                        (item: any, _index: number) => (
-                          <div
-                            key={item?._id}
-                            className={`item px-2 relative  text-black w-full py-1 `}
-                            draggable="true"
-                          >
-                            <div className="w-full flex items-start py-2 ml-3 pr-1">
-                              <FaCircle
-                                size={6}
-                                className="rounded-full mt-2"
-                              />
-                              <div className="w-full">
-                                <div className="flex gap-6 w-full items-start">
-                                  <p
-                                    className={`text-[13px] max-sm:text-[11px] text-black px-2`}
-                                  >
-                                    {item?.institution}
-                                  </p>
-                                  <div className="ml-auto">
-                                    {item?.date && (
-                                      <p
-                                        className={`text-[10px] text-right font-medium text-black  px-2`}
-                                      >
-                                        {formatMonthYear(item?.date)}
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
-                                <div className="">
-                                  <p
-                                    className={`w-full text-[13px] max-sm:text-[11px] uppercase font-semibold text-zinc-800 px-2`}
-                                  >
-                                    {item?.name}
-                                  </p>
-                                </div>
+              resumeData?.certifications?.length > 0 && (
+                <div className="py-6 border-b border-stroke">
+                  <h6
+                    className="font-semibold max-sm:text-[11px] text-sm uppercase py-1 mb-2 w-full"
+                    style={{
+                      color: resumeData?.style?.primaryColor,
+                      borderColor: resumeData?.style?.primaryColor,
+                    }}
+                  >
+                    Certifications & Trainings
+                  </h6>
+                  <div className="flex flex-col gap-2.5">
+                    {resumeData?.certifications?.map(
+                      (item: any, _index: number) => (
+                        <div
+                          key={item._id}
+                          className={`item relative  text-black w-full py-1 `}
+                        >
+                          <div className="w-full pr-1">
+                            <div className="flex justify-between gap-6 items-center">
+                              <div>
+                                <span className="text-[13px] max-sm:text-[11px] font-semibold text-zinc-800">
+                                  {item?.name}
+                                </span>
+                              </div>
+
+                              <div className="ml-auto">
+                                <span
+                                  className={`text-[10px] text-right font-medium text-black px-2`}
+                                >
+                                  {formatMonthYear(item?.date)}
+                                </span>
                               </div>
                             </div>
+                            <div className="">
+                              <span className="text-[13px] max-sm:text-[11px] text-zinc-800">
+                                {item?.institution}
+                              </span>
+                            </div>
                           </div>
-                        )
-                      )}
-                    </div>
+                        </div>
+                      )
+                    )}
                   </div>
                 </div>
               )}
             {/* CERtifications */}
 
-            {/*Relevant Courses  */}
-            {resumeData?.config?.relevantCourses &&
-              resumeData?.relevantCourses.length > 0 && (
-                <div className="border-b border-stroke py-6">
-                  <div className=" px-2 py-3">
-                    <div className="w-full flex justify-between">
-                      <h6
-                        className="font-semibold mb-2 px-3 text-lg uppercase"
-                        style={{ color: resumeData?.style?.primaryColor }}
-                      >
-                        RELEVANT COURSES
-                      </h6>
-                    </div>
-
-                    <ul className="grid grid-cols-3 items-center gap-3 px-2">
-                      {resumeData?.relevantCourses?.map(
-                        (item: string, index: number) => (
-                          <li
-                            key={index}
-                            className={`item relative  text-zinc-800 py-0`}
-                          >
-                            <div className="py-1">
-                              <span className="px-1 text-base font-medium">
-                                {item}
-                              </span>
-                            </div>
-                          </li>
-                        )
-                      )}
-                    </ul>
-                  </div>
-                </div>
-              )}
-            {/*Relevant Courses */}
-
             {/* Projects */}
-            {resumeData?.config?.projects &&
-              resumeData?.projects.length > 0 && (
-                <div className="border-b border-stroke py-6">
-                  <div className="flex mb-3 gap-3  justify-between items-center">
-                    <h6
-                      className="font-semibold text-sm uppercase pl-4.5"
-                      style={{ color: resumeData?.style?.primaryColor }}
-                    >
-                      Projects{" "}
-                    </h6>
-                  </div>
 
-                  <div className="flex flex-col gap-9">
+            {resumeData?.config?.projects &&
+              resumeData?.projects?.length > 0 && (
+                <div className="py-6 border-b border-stroke">
+                  <h6
+                    className="font-semibold max-sm:text-[11px] text-sm uppercase py-1 mb-2 w-full"
+                    style={{
+                      color: resumeData?.style?.primaryColor,
+                      borderColor: resumeData?.style?.primaryColor,
+                    }}
+                  >
+                    Projects
+                  </h6>
+                  <div className="flex flex-col gap-2.5">
                     {resumeData?.projects?.map((item: any, _index: number) => (
                       <div
                         key={item._id}
-                        className={`item px-2 relative  text-black w-full py-1 `}
+                        className={`item relative  text-black w-full py-1.5 `}
                       >
-                        <div className="w-full">
-                          <div className="flex w-full justify-between items-start">
-                            <p
-                              className={`text-[13px] max-sm:text-[11px] font-semibold text-black px-2 mb-2`}
-                            >
-                              {item?.name}
-                            </p>
-                            <p
-                              className={`text-[11px] font-medium text-black px-2`}
-                            >
-                              {item?.technology}
-                            </p>
-                          </div>
-
-                          <div className="flex items-center ml-[3px]">
-                            <p className="px-1.5 text-[13px] max-sm:text-[11px] font-medium">
-                              {item?.description}
-                            </p>
-                          </div>
-
-                          {item?.link && (
-                            <div className={`pb-1 pt-3 border-stroke`}>
-                              <div className="flex">
-                                <a
-                                  className="px-1.5 text-[12px] cursor-pointer text-blue-600 font-medium"
-                                  href={item?.link || ""}
-                                  target="_blank"
-                                >
-                                  {item?.link}
-                                </a>
-                              </div>
+                        <div className="w-full pr-1">
+                          <div className="">
+                            <div>
+                              <span className="text-[13px] max-sm:text-[11px] font-semibold text-zinc-800">
+                                {item?.name}
+                              </span>
                             </div>
-                          )}
+                            <div>
+                              <span className="text-xs max-sm:text-[9px] font-medium text-zinc-800">
+                                {item?.description}
+                              </span>
+                            </div>
+                          </div>
+                          <div>
+                            <span className="text-blue-500 sm:text-xs text-[0.6rem]">
+                              {item?.link}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -387,63 +354,66 @@ export const ResumeDocument: React.FC<{ resumeData: any }> = ({
             {/* Work Experience */}
             {resumeData?.config?.workExperience &&
               resumeData?.workExperience.length > 0 && (
-                <div className="border-b py-9 border-stroke mb-4">
-                  <div className="flex mb-3 gap-3  justify-between items-center">
-                    <h6
-                      className="font-semibold text-sm uppercase pl-4.5"
-                      style={{ color: resumeData?.style?.primaryColor }}
-                    >
-                      Professional Experience{" "}
-                    </h6>
-                  </div>
-
-                  <div className="flex flex-col gap-9">
+                <div className="py-6 border-b border-stroke">
+                  <h6
+                    className="font-semibold max-sm:text-[11px] text-sm uppercase py-1 mb-2 w-full"
+                    style={{
+                      color: resumeData?.style?.primaryColor,
+                      borderColor: resumeData?.style?.primaryColor,
+                    }}
+                  >
+                    Professional Experience{" "}
+                  </h6>
+                  <div className="flex flex-col gap-9 max-sm:gap-5">
                     {resumeData?.workExperience?.map(
                       (item: any, _index: number) => (
                         <div
-                          key={item.id}
-                          className={`item px-2 relative  text-black w-full py-1 `}
+                          key={item?.id}
+                          className={`item relative  text-black w-full py-1 `}
                         >
                           <div className="w-full">
-                            <div className="flex w-full justify-between items-start">
-                              <p
-                                className={`text-[13px] max-sm:text-[11px] font-semibold text-black px-2 mb-2`}
-                              >
-                                {item?.company}
-                              </p>
-                              <p
-                                className={`text-[11px] font-medium text-black px-2`}
-                              >
-                                {item?.startDate &&
-                                  formatMonthYear(item?.startDate)}
-                                -
-                                {item?.active
-                                  ? "Present"
-                                  : item?.endDate &&
-                                    formatMonthYear(item?.endDate)}
-                              </p>
+                            <div className="w-full">
+                              <div className="w-full sm:my-1.5">
+                                <div className="flex w-full justify-between items-center max-sm:mb-1.5">
+                                  <p
+                                    className={`text-[13px] max-sm:text-[10px] font-semibold text-black`}
+                                  >
+                                    {item?.company}
+                                  </p>
+
+                                  <div className="ml-auto">
+                                    <p className="text-sm max-sm:text-[9px] text-zinc-500 lg:mr-2">
+                                      {item?.startDate &&
+                                        formatMonthYear(item?.startDate)}
+                                      {item?.active
+                                        ? "- Present"
+                                        : item?.endDate &&
+                                          "- " + formatMonthYear(item?.endDate)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div>
+                                  <span className="text-[13px] max-sm:text-[10px] uppercase font-semibold text-zinc-700">
+                                    {item?.title}
+                                  </span>
+                                </div>
+                              </div>
                             </div>
 
-                            <div className="flex items-center mb-2 ml-[3px">
-                              <p
-                                className={`text-[13px] max-sm:text-[11px] uppercase font-semibold text-zinc-700 px-2`}
-                              >
-                                {item?.title}
+                            <div className="flex items-center mb-4">
+                              <p className="sm:px-1.5 text-[11px] max-sm:text-[9px] cursor-text font-medium">
+                                {item?.description || ""}
                               </p>
                             </div>
 
                             <div>
-                              <ul className="text-[10px] w-full font-normal space-y-2 px-2.5">
+                              <ul className="text-[11px] max-sm:text-[9px] w-full font-normal space-y-2 px-1">
                                 {item?.keyAchievements?.map(
                                   (achievement: string, index: number) => (
                                     <li
-                                      className="flex w-full items-center max-sm:items-start gap-1"
+                                      className="w-full list-disc list-item items-center ml-4 max-sm:items-start gap-1"
                                       key={index}
                                     >
-                                      <FaCircle
-                                        size={6}
-                                        className="rounded-full max-sm:mt-2"
-                                      />
                                       {achievement}{" "}
                                     </li>
                                   )
@@ -461,141 +431,67 @@ export const ResumeDocument: React.FC<{ resumeData: any }> = ({
 
             {/* Internships */}
             {resumeData?.config?.internships &&
-              resumeData?.internships.length > 0 && (
-                <div className="border-b py-9 border-stroke mb-4">
-                  <div>
-                    <div className="flex mb-3 gap-3  justify-between items-center">
-                      <h6
-                        className="font-semibold text-lg uppercase pl-4.5"
-                        style={{ color: resumeData?.style?.primaryColor }}
-                      >
-                        Internships{" "}
-                      </h6>
-                    </div>
-
-                    <div className="flex flex-col gap-9">
-                      {resumeData?.internships?.map(
-                        (item: any, _index: number) => (
-                          <div
-                            key={item.id}
-                            className={`item px-2 relative  text-black w-full py-1 `}
-                          >
-                            <div className="w-full">
-                              <div className="flex w-full justify-between items-start">
-                                <p
-                                  className={`text-[13px] max-sm:text-[11px] font-semibold text-black px-2 mb-2`}
-                                >
-                                  {item?.company}
-                                </p>
-                                <p
-                                  className={`text-[11px] font-medium text-black px-2`}
-                                >
-                                  {item?.startDate &&
-                                    formatMonthYear(item?.startDate)}
-                                  -
-                                  {item?.active
-                                    ? "Present"
-                                    : item?.endDate &&
-                                      formatMonthYear(item?.endDate)}
-                                </p>
-                              </div>
-
-                              <div className="flex items-center mb-2 ml-[3px">
-                                <p
-                                  className={`text-[13px] max-sm:text-[11px] uppercase font-semibold text-zinc-700 px-2`}
-                                >
-                                  {item?.title}
-                                </p>
-                              </div>
-
-                              <div>
-                                <ul className="text-[10px] w-full font-normal space-y-2 px-2.5">
-                                  {item?.keyAchievements?.map(
-                                    (achievement: string, index: number) => (
-                                      <li
-                                        className="flex w-full items-center max-sm:items-start gap-1"
-                                        key={index}
-                                      >
-                                        <FaCircle
-                                          size={6}
-                                          className="rounded-full max-sm:mt-2"
-                                        />
-                                        {achievement}{" "}
-                                      </li>
-                                    )
-                                  )}
-                                </ul>
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-            {/* Internships */}
-
-            {/* Volunteer Experience */}
-            {resumeData?.volunteerExperience?.length > 0 && (
-              <div className="border-b py-9 border-stroke mb-4">
-                <div>
-                  <div className="flex mb-3 gap-3  justify-between items-center">
-                    <h6
-                      className="font-semibold text-sm uppercase pl-4.5"
-                      style={{ color: resumeData?.style?.primaryColor }}
-                    >
-                      Volunteer Experience{" "}
-                    </h6>
-                  </div>
-
-                  <div className="flex flex-col gap-9">
-                    {resumeData?.volunteerExperience?.map(
+              resumeData?.internships?.length > 0 && (
+                <div className="py-6 border-b border-stroke">
+                  <h6
+                    className="font-semibold max-sm:text-[11px] text-sm uppercase py-1 mb-2 w-full"
+                    style={{
+                      color: resumeData?.style?.primaryColor,
+                      borderColor: resumeData?.style?.primaryColor,
+                    }}
+                  >
+                    Internships{" "}
+                  </h6>
+                  <div className="flex flex-col gap-9 max-sm:gap-5">
+                    {resumeData?.internships?.map(
                       (item: any, _index: number) => (
                         <div
-                          key={item._id}
-                          className={`item px-2 relative  text-black w-full py-1 `}
+                          key={item?.id}
+                          className={`item relative  text-black w-full py-1 `}
                         >
                           <div className="w-full">
-                            <div className="flex w-full justify-between items-start">
-                              <p
-                                className={`text-[13px] max-sm:text-[11px] font-semibold text-black px-2 mb-2`}
-                              >
-                                {item?.company}
-                              </p>
-                              <p
-                                className={`text-[11px] font-medium text-black px-2`}
-                              >
-                                {item?.startDate &&
-                                  formatMonthYear(item?.startDate)}
-                                -
-                                {item?.active
-                                  ? "Present"
-                                  : item?.endDate &&
-                                    formatMonthYear(item?.endDate)}
-                              </p>
+                            <div className="w-full">
+                              <div className="w-full sm:my-1.5">
+                                <div className="flex w-full justify-between items-center max-sm:mb-1.5">
+                                  <p
+                                    className={`text-[13px] max-sm:text-[10px] font-semibold text-black`}
+                                  >
+                                    {item?.company}
+                                  </p>
+
+                                  <div className="ml-auto">
+                                    <p className="text-[0.7rem] max-sm:text-[0.6rem] text-zinc-500 lg:mr-2">
+                                      {item?.startDate &&
+                                        formatMonthYear(item?.startDate)}
+                                      {item?.active
+                                        ? "- Present"
+                                        : item?.endDate &&
+                                          "- " + formatMonthYear(item?.endDate)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div>
+                                  <span className="text-[0.8rem] max-sm:text-[0.6rem] uppercase font-semibold text-zinc-700">
+                                    {item?.title}
+                                  </span>
+                                </div>
+                              </div>
                             </div>
 
-                            <div className="flex items-center mb-2 ml-[3px">
-                              <p
-                                className={`text-[13px] max-sm:text-[11px] uppercase font-semibold text-zinc-700 px-2`}
-                              >
-                                {item?.title}
+                            <div className="flex items-center mb-4">
+                              <p className="text-[11px] max-sm:text-[9px] cursor-text font-medium">
+                                {item?.description || ""}
                               </p>
                             </div>
 
                             <div>
-                              <ul className="text-[10px] w-full font-normal space-y-2 px-2.5">
+                              <ul className="text-[11px] max-sm:text-[9px] w-full font-normal space-y-2 px-1">
                                 {item?.keyAchievements?.map(
                                   (achievement: string, index: number) => (
                                     <li
-                                      className="flex w-full items-center max-sm:items-start gap-1"
+                                      className="w-full list-disc list-item items-center ml-4 max-sm:items-start gap-1"
                                       key={index}
                                     >
-                                      <FaCircle
-                                        size={6}
-                                        className="rounded-full max-sm:mt-2"
-                                      />
                                       {achievement}{" "}
                                     </li>
                                   )
@@ -608,9 +504,150 @@ export const ResumeDocument: React.FC<{ resumeData: any }> = ({
                     )}
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            {/* Internships */}
+
             {/* Volunteer Experience */}
+            {resumeData?.config?.volunteerExperience &&
+              resumeData?.volunteerExperience?.length > 0 && (
+                <div className="py-6 border-b border-stroke">
+                  <h6
+                    className="font-semibold max-sm:text-[11px] text-sm uppercase  py-1 mb-2 w-full"
+                    style={{
+                      color: resumeData?.style?.primaryColor,
+                      borderColor: resumeData?.style?.primaryColor,
+                    }}
+                  >
+                    Volunteer Experience{" "}
+                  </h6>
+                  <div className="flex flex-col gap-9 max-sm:gap-5">
+                    {resumeData?.workExperience?.map(
+                      (item: any, _index: number) => (
+                        <div
+                          key={item?.id}
+                          className={`item relative  text-black w-full py-1 `}
+                        >
+                          <div className="w-full">
+                            <div className="w-full">
+                              <div className="w-full sm:my-1.5">
+                                <div className="flex w-full justify-between items-center max-sm:mb-1.5">
+                                  <p
+                                    className={`text-[0.8rem] max-sm:text-[0.6rem] font-semibold text-black`}
+                                  >
+                                    {item?.company}
+                                  </p>
+
+                                  <div className="ml-auto">
+                                    <p className="text-[0.6rem] text-zinc-500 lg:mr-2">
+                                      {item?.startDate &&
+                                        formatMonthYear(item?.startDate)}
+                                      {item?.active
+                                        ? "- Present"
+                                        : item?.endDate &&
+                                          "- " + formatMonthYear(item?.endDate)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div>
+                                  <span className="text-[0.8rem] max-sm:text-[0.6rem] uppercase font-semibold text-zinc-700">
+                                    {item?.title}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center mb-4">
+                              <p className="text-[0.7rem] max-sm:text-[0.6rem] cursor-text font-medium">
+                                {item?.description || ""}
+                              </p>
+                            </div>
+
+                            <div>
+                              <ul className="text-[11px] max-sm:text-[9px] w-full font-normal space-y-2 px-1">
+                                {item?.keyAchievements?.map(
+                                  (achievement: string, index: number) => (
+                                    <li
+                                      className="w-full list-disc list-item items-center ml-4 max-sm:items-start gap-1"
+                                      key={index}
+                                    >
+                                      {achievement}{" "}
+                                    </li>
+                                  )
+                                )}
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+              )}
+            {/* Volunteer Experience */}
+
+            {resumeData?.config?.references &&
+              resumeData?.references?.length > 0 && (
+                <div className="py-6">
+                  <h6
+                    className="font-semibold max-sm:text-[11px] text-sm uppercase py-1 mb-2 w-full"
+                    style={{
+                      color: resumeData?.style?.primaryColor,
+                      borderColor: resumeData?.style?.primaryColor,
+                    }}
+                  >
+                    Referees
+                  </h6>
+                  <div className="flex flex-col gap-2.5">
+                    {resumeData?.references?.map(
+                      (item: any, _index: number) => (
+                        <div
+                          key={item._id}
+                          className={`item relative  text-black w-full py-1 `}
+                        >
+                          <div className="w-full py-2 pr-1">
+                            <div className="flex justify-between gap-6 items-start">
+                              <div>
+                                <span className="text-[13px] max-sm:text-[11px] font-semibold text-zinc-800">
+                                  {item?.name}
+                                </span>
+                              </div>
+
+                              <div className="ml-auto">
+                                <span
+                                  className={`text-xs italic text-right font-medium text-black px-2`}
+                                >
+                                  {item?.relationship}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div>
+                              <span className="text-[13px] max-sm:text-[11px] text-zinc-800">
+                                {item?.title} at {item?.company}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-[13px] text-blue-500 max-sm:text-[11px]  ">
+                                Contact Information:{" "}
+                                {item?.email && (
+                                  <span className="text-zinc-800 italic">
+                                    (E)- {item?.email}
+                                  </span>
+                                )}
+                                {item?.phone && (
+                                  <span className="ml-2 text-zinc-800 italic">
+                                    (P)- {item?.phone}
+                                  </span>
+                                )}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+              )}
           </div>
         ) : (
           <div
@@ -625,15 +662,17 @@ export const ResumeDocument: React.FC<{ resumeData: any }> = ({
                 }}
                 className="w-full flex divide-x-2 border-b-2 gap-3 pb-1 items-center mt-9"
               >
-                <h1 className="font-medium uppercase text-sm max-sm:text-[11px]">
-                  {resumeData?.name}
+                <h1 className="text-sm max-sm:text-[11px] font-medium uppercase">
+                  {resumeData?.name}{" "}
+                  {resumeData?.config.role && (
+                    <span className="text-zinc-900 px-1">|</span>
+                  )}{" "}
+                  {resumeData?.config.role && (
+                    <span className="text-sm max-sm:text-[10px] text-zinc-900 uppercase font-medium">
+                      {resumeData?.role}
+                    </span>
+                  )}
                 </h1>
-
-                {resumeData?.config.role && (
-                  <h3 className="text-black px-2 text-sm max-sm:text-[10px] uppercase font-medium">
-                    {resumeData?.role}
-                  </h3>
-                )}
               </div>
               <div className="w-full py-3">
                 <div className="flex flex-wrap gap-1 text-[10px] items-center">
@@ -1291,12 +1330,6 @@ export const ResumeDocument: React.FC<{ resumeData: any }> = ({
 export const ResumePreview: React.FC<{ resumeData: any }> = ({
   resumeData,
 }) => {
-  const fontSize =
-    fontSizeMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
-    "16px";
-  const fontSizeSm =
-    fontSizeSmMap[resumeData?.style?.fontSize as keyof typeof fontSizeMap] ||
-    "14px";
   const [_userInteracted, _setUserInteracted] = useState(false);
   const [style, api] = useSpring(() => ({
     x: 0,
@@ -1351,38 +1384,10 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
       document.removeEventListener("gestureend", handler);
     };
   }, []);
-  // Function to apply the initial zoom
-  // const applyInitialZoom = () => {
-  //   if (ref.current) {
-  //     const { width, height, x, y } = ref.current.getBoundingClientRect();
-  //     const viewportWidth = window.innerWidth;
-
-  //     const initialScale = viewportWidth / width;
-
-  //     const ox = x + width / 2;
-  //     const oy = y + height / 2;
-  //     const tx = ox - (x + width / 2);
-  //     const ty = oy - (y + height / 2);
-
-  //     api.start({
-  //       scale: initialScale,
-  //       x: -tx * (initialScale - 1),
-  //       y: -ty * (initialScale - 1),
-  //     });
-
-  //     console.log("Auto Zoom Applied:", { width, viewportWidth, initialScale });
-  //   }
-  // };
-
-  // // Auto-zoom on page load
-  // useEffect(() => {
-  //   requestAnimationFrame(applyInitialZoom);
-  // }, []);
   return (
     <section className="w-full bg-white">
       <animated.div
         ref={ref}
-        // style={{ touchAction: "none" }}
         className={`w-full max-w-[1200px]`}
       >
         {resumeData?.template === "entry" ? (
@@ -1392,21 +1397,21 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
           >
             <div className="flex flex-col w-full justify-center items-center  mb-8 border-b pb-2 border-stroke">
               <h1
-                className={`text-center px-3 font-medium text-[30px]`}
+                className={`text-center md:text-lg px-3 font-semibold max-sm:text-sm`}
                 style={{ color: resumeData?.style?.primaryColor }}
               >
                 {resumeData?.name}
               </h1>
               {resumeData?.config?.role && (
                 <p
-                  className={`text-lg  text-center text-black px-4 font-semibold`}
+                  className={`max-sm:text-[11px] md:text-[15px] text-center font-semibold text-black/90 px-4`}
                 >
                   {resumeData?.role}
                 </p>
               )}
-              <div className="w-full max-w-[90%] py-3">
-                <div className="flex flex-wrap justify-center gap-x-2 divide-x gap-y-3 items-center">
-                  {["email", "phone", "location", "linkedin", "website"]
+              <div className="w-full md:max-w-[90%] py-3">
+                <div className="flex flex-wrap gap-1 text-[10px] md:text-xs items-center justify-center gap-x-1 gap-y-2">
+                  {["email", "phone", "location", "linkedIn", "website"]
                     .filter(
                       (field) =>
                         resumeData?.config[
@@ -1414,17 +1419,13 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                         ]
                     )
                     ?.map((field) => (
-                      <div
-                        key={field}
-                        className="flex gap-1 items-center px-2"
-                        style={{ fontSize: fontSizeSm }}
-                      >
+                      <div key={field} className="flex gap-1 items-center">
                         <span className="font-semibold">
                           {field.charAt(0).toUpperCase()}:
                         </span>
 
                         <span className="">
-                          {resumeData[field] || `Unspecified`}
+                          {resumeData[field] + " " + " " + " " + " |" || `-`}
                         </span>
                       </div>
                     ))}
@@ -1433,25 +1434,27 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
             </div>
 
             <div className="border-b pb-6 border-stroke mb-6">
-              <div className=" rounded-md px-3">
+              <div className=" px-3">
                 <h6
-                  className="font-semibold mb-2 text-lg"
-                  style={{ color: resumeData?.style?.primaryColor }}
+                  className={`font-semibold md:text-lg mb-2 max-sm:text-[11px] text-sm py-1 `}
+                  style={{
+                    color: resumeData?.style?.primaryColor,
+                    borderColor: resumeData?.style?.primaryColor,
+                  }}
                 >
                   PROFESSIONAL SUMMARY
                 </h6>
-                <p
-                  style={{ fontSize: fontSize }}
-                  className={`font-medium text-black text-base w-full`}
-                >
+                <p className="font-medium text-black text-[11px] md:text-base max-sm:text-[9px]">
                   {resumeData?.professionalSummary}
                 </p>
               </div>
             </div>
 
+           
+
             {/* Skills/Areas of Expertise */}
-            {resumeData?.config?.areaOfExpertise &&
-              resumeData?.areaOfExpertise.length > 0 && (
+            {resumeData?.config?.skills &&
+              resumeData?.skills?.skills > 0 && (
                 <div className=" border-b border-stroke pt-4 pb-6">
                   <div className="rounded-md px-2 py-3">
                     <div className="w-full flex justify-between">
@@ -1463,91 +1466,114 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                       </h6>
                     </div>
 
-                    <ul className="inline-flex items-center gap-3 px-2.5 divide-x flex-wrap">
-                      {resumeData?.areaOfExpertise?.map(
-                        (item: string, index: number) => (
-                          <li
-                            key={index}
-                            className={`item  relative  text-zinc-800 py-0`}
-                          >
-                            <div className="py-1 rounded-md">
-                              <span
-                                style={{ fontSize: fontSizeSm }}
-                                className="px-1.5 text-[15px] font-medium"
-                              >
-                                {item}
-                              </span>
-                            </div>
-                          </li>
-                        )
-                      )}
-                    </ul>
+                    <ul className="gap-1.5 max-sm:gap-1 flex flex-wrap">
+                  {resumeData?.skills?.map((item: any, index: number) => (
+                    <li
+                      key={index}
+                      className={`item relative  text-zinc-800 py-0`}
+                    >
+                      <div className="mb-1 py-1">
+                        <span className="text-[11px] md:text-xs max-sm:text-[9px] font-medium">
+                          {item.name}
+                          {item}{" "}
+                          {resumeData?.skills?.length > 1 &&
+                            index + 1 !== resumeData?.skills?.length &&
+                            "|"}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
                   </div>
                 </div>
               )}
             {/* Skills/Areas of Expertise */}
-
+            
             {/* Education */}
             {resumeData?.config?.education &&
               resumeData?.education.length > 0 && (
-                <div className="border-b border-stroke py-6">
-                  <div>
-                    <h6
-                      className="font-semibold text-lg uppercase pl-4.5 mb-3"
-                      style={{ color: resumeData?.style?.primaryColor }}
-                    >
-                      Education
-                    </h6>
-                    <div className="flex flex-col gap-4">
-                      {resumeData?.education?.map(
-                        (item: any, _index: number) => (
-                          <div
-                            key={item?._id}
-                            className={`item px-2 relative  text-black w-full py-1 `}
-                            draggable="true"
-                          >
-                            <div className="w-full flex items-start py-2 ml-3 pr-1">
-                              <FaCircle
-                                size={6}
-                                className="rounded-full mt-2"
-                              />
-                              <div className="w-full">
-                                <div className="flex gap-6 w-full items-start">
-                                  <p
-                                    style={{ fontSize: fontSize }}
-                                    className={`text-base text-black px-2`}
-                                  >
-                                    {item?.institution}
-                                  </p>
-                                  <div className="ml-auto">
-                                    <p
-                                      className={`text-sm text-right font-medium text-black  px-2`}
-                                      style={{ fontSize: fontSizeSm }}
-                                    >
-                                      {item?.startDate &&
-                                        formatMonthYear(item?.startDate)}
-                                      -
-                                      {item?.active
-                                        ? "Present"
-                                        : item?.endDate &&
-                                          formatMonthYear(item?.endDate)}
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="">
-                                  <p
-                                    className={`w-full text-base uppercase font-semibold text-zinc-800 px-2`}
-                                    style={{ fontSize: fontSizeSm }}
-                                  >
-                                    {item?.degree}
-                                  </p>
-                                </div>
-                              </div>
+                <div className="py-6 border-b border-stroke">
+                  <h6
+                    className="font-semibold text-sm md:text-lg max-sm:text-[11px] uppercase py-1 mb-2 w-full"
+                    style={{
+                      color: resumeData?.style?.primaryColor,
+                      borderColor: resumeData?.style?.primaryColor,
+                    }}
+                  >
+                    Education{" "}
+                  </h6>
+                  <div className="flex flex-col gap-4">
+                    {resumeData?.education?.map((item: any, _index: number) => (
+                      <div
+                        key={item.id}
+                        className={`relative  text-black w-full py-1 `}
+                      >
+                        <div className="w-full pr-1">
+                          <div className="flex justify-between gap-6 items-center">
+                            <div className="max-md:text-sm max-sm:text-[10px] text-zinc-800">
+                              <span className="uppercase font-semibold">
+                                {item?.institution}
+                              </span>
+                              {item?.location && (
+                                <span className="italic text-[13px] md:text-sm">
+                                  , {item?.location}
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="ml-auto">
+                              <p
+                                className={`text-sm max-sm:text-[9px] text-right font-medium text-zinc-500 px-2`}
+                              >
+                                {item?.startDate &&
+                                  formatMonthYear(item?.startDate)}
+                                {item?.hideEndDate && (
+                                  <span>
+                                    -{" "}
+                                    {item?.endDate
+                                      ? "Present"
+                                      : item?.endDate &&
+                                        formatMonthYear(item?.endDate)}
+                                  </span>
+                                )}
+                              </p>
                             </div>
                           </div>
-                        )
-                      )}
-                    </div>
+
+                          <div className="mb-1.5">
+                            <span className="text-xs max-sm:text-[10px] uppercase font-semibold text-zinc-800">
+                              {item?.degree}
+                              {item?.gpa && (
+                                <span className=""> ({item?.gpa})</span>
+                              )}
+                            </span>
+                          </div>
+                          <div className=" text-zinc-800 md:text-sm text-[0.8rem]">
+                            <span className="font-semibold ">Minors: </span>
+                            <span>{item?.minors}</span>
+                          </div>
+
+                          <div className=" text-zinc-800">
+                            <ul className="text-[0.8rem] md:text-sm flex flex-wrap gap-0.5 font-medium">
+                              <span className="font-semibold">
+                                Relevant Coursework:{" "}
+                              </span>
+                              {item?.relevantCourseWork?.map(
+                                (val: string, index: number) => (
+                                  <li key={index}>
+                                    {val}{" "}
+                                    {item?.relevantCourseWork?.length > 1 &&
+                                      index + 1 !==
+                                        item?.relevantCourseWork?.length &&
+                                      ","}
+                                  </li>
+                                )
+                              )}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
@@ -1555,162 +1581,92 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
 
             {/* CERtifications */}
             {resumeData?.config?.certifications &&
-              resumeData?.certifications.length > 0 && (
-                <div className="border-b border-stroke py-6">
-                  <div>
-                    <h6
-                      className="font-semibold text-lg uppercase pl-4.5 mb-3"
-                      style={{ color: resumeData?.style?.primaryColor }}
-                    >
-                      Certifications
-                    </h6>
-                    <div className="flex flex-col gap-4">
-                      {resumeData?.certifications?.map(
-                        (item: any, _index: number) => (
-                          <div
-                            key={item?._id}
-                            className={`item px-2 relative  text-black w-full py-1 `}
-                            draggable="true"
-                          >
-                            <div className="w-full flex items-start py-2 ml-3 pr-1">
-                              <FaCircle
-                                size={6}
-                                className="rounded-full mt-2"
-                              />
-                              <div className="w-full">
-                                <div className="flex gap-6 w-full items-start">
-                                  <p
-                                    style={{ fontSize: fontSize }}
-                                    className={`text-base text-black px-2`}
-                                  >
-                                    {item?.institution}
-                                  </p>
-                                  <div className="ml-auto">
-                                    {item?.date && (
-                                      <p
-                                        className={`text-sm text-right font-medium text-black  px-2`}
-                                        style={{ fontSize: fontSizeSm }}
-                                      >
-                                        {formatMonthYear(item?.date)}
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
-                                <div className="">
-                                  <p
-                                    className={`w-full text-base uppercase font-semibold text-zinc-800 px-2`}
-                                    style={{ fontSize: fontSize }}
-                                  >
-                                    {item?.name}
-                                  </p>
-                                </div>
+              resumeData?.certifications?.length > 0 && (
+                <div className="py-6 border-b border-stroke">
+                  <h6
+                    className="font-semibold max-sm:text-[11px] md:text-lg text-sm uppercase py-1 mb-2 w-full"
+                    style={{
+                      color: resumeData?.style?.primaryColor,
+                      borderColor: resumeData?.style?.primaryColor,
+                    }}
+                  >
+                    Certifications & Trainings
+                  </h6>
+                  <div className="flex flex-col gap-2.5">
+                    {resumeData?.certifications?.map(
+                      (item: any, _index: number) => (
+                        <div
+                          key={item._id}
+                          className={`item relative  text-black w-full py-1 `}
+                        >
+                          <div className="w-full pr-1">
+                            <div className="flex justify-between gap-6 items-center">
+                              <div>
+                                <span className="text-sm  max-sm:text-[11px] font-semibold text-zinc-800">
+                                  {item?.name}
+                                </span>
+                              </div>
+
+                              <div className="ml-auto">
+                                <span
+                                  className={`text-[10px] md:text-sm text-right font-medium text-zinc-500 px-2`}
+                                >
+                                  {formatMonthYear(item?.date)}
+                                </span>
                               </div>
                             </div>
+                            <div className="">
+                              <span className="text-sm max-sm:text-[11px] text-zinc-800">
+                                {item?.institution}
+                              </span>
+                            </div>
                           </div>
-                        )
-                      )}
-                    </div>
+                        </div>
+                      )
+                    )}
                   </div>
                 </div>
               )}
             {/* CERtifications */}
 
-            {/*Relevant Courses  */}
-            {resumeData?.config?.relevantCourses &&
-              resumeData?.relevantCourses.length > 0 && (
-                <div className="border-b border-stroke py-6">
-                  <div className=" px-2 py-3">
-                    <div className="w-full flex justify-between">
-                      <h6
-                        className="font-semibold mb-2 px-3 text-lg uppercase"
-                        style={{ color: resumeData?.style?.primaryColor }}
-                      >
-                        RELEVANT COURSES
-                      </h6>
-                    </div>
-
-                    <ul className="grid grid-cols-3 items-center gap-3 px-2">
-                      {resumeData?.relevantCourses?.map(
-                        (item: string, index: number) => (
-                          <li
-                            key={index}
-                            className={`item relative  text-zinc-800 py-0`}
-                          >
-                            <div className="py-1">
-                              <span
-                                style={{ fontSize: fontSize }}
-                                className="px-1 text-base font-medium"
-                              >
-                                {item}
-                              </span>
-                            </div>
-                          </li>
-                        )
-                      )}
-                    </ul>
-                  </div>
-                </div>
-              )}
-            {/*Relevant Courses */}
-
             {/* Projects */}
-            {resumeData?.config?.projects &&
-              resumeData?.projects.length > 0 && (
-                <div className="border-b border-stroke py-6">
-                  <div className="flex mb-3 gap-3  justify-between items-center">
-                    <h6
-                      className="font-semibold text-lg uppercase pl-4.5"
-                      style={{ color: resumeData?.style?.primaryColor }}
-                    >
-                      Projects{" "}
-                    </h6>
-                  </div>
 
-                  <div className="flex flex-col gap-9">
+            {resumeData?.config?.projects &&
+              resumeData?.projects?.length > 0 && (
+                <div className="py-6 border-b border-stroke">
+                  <h6
+                    className="font-semibold max-sm:text-[11px] md:text-lg text-sm uppercase py-1 mb-2 w-full"
+                    style={{
+                      color: resumeData?.style?.primaryColor,
+                      borderColor: resumeData?.style?.primaryColor,
+                    }}
+                  >
+                    Projects
+                  </h6>
+                  <div className="flex flex-col gap-2.5">
                     {resumeData?.projects?.map((item: any, _index: number) => (
                       <div
                         key={item._id}
-                        className={`item px-2 relative  text-black w-full py-1 `}
+                        className={`item relative  text-black w-full py-1.5 `}
                       >
-                        <div className="w-full">
-                          <div className="flex w-full justify-between items-start">
-                            <p
-                              className={`text-base font-semibold text-black px-2 mb-2`}
-                              style={{ fontSize: fontSize }}
-                            >
-                              {item?.name}
-                            </p>
-                            <p
-                              className={`text-sm font-medium text-black px-2`}
-                              style={{ fontSize: fontSizeSm }}
-                            >
-                              {item?.technology}
-                            </p>
-                          </div>
-
-                          <div className="flex items-center ml-[3px]">
-                            <p
-                              style={{ fontSize: fontSize }}
-                              className="px-1.5 text-[15px] font-medium"
-                            >
-                              {item?.description}
-                            </p>
-                          </div>
-
-                          {item?.link && (
-                            <div className={`pb-1 pt-3 border-stroke`}>
-                              <div className="flex">
-                                <a
-                                  className="px-1.5 text-[15px] cursor-pointer text-blue-600 font-medium"
-                                  style={{ fontSize: fontSize }}
-                                  href={item?.link || ""}
-                                  target="_blank"
-                                >
-                                  {item?.link}
-                                </a>
-                              </div>
+                        <div className="w-full pr-1">
+                          <div className="">
+                            <div>
+                              <span className="max-sm:text-[11px] font-semibold text-zinc-800">
+                                {item?.name}
+                              </span>
                             </div>
-                          )}
+                            <div>
+                              <span className="text-sm max-sm:text-[9px] font-medium text-zinc-800">
+                                {item?.description}
+                              </span>
+                            </div>
+                          </div>
+                          <div>
+                            <span className="text-blue-500 sm:text-sm text-[0.6rem]">
+                              {item?.link}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -1722,69 +1678,66 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
             {/* Work Experience */}
             {resumeData?.config?.workExperience &&
               resumeData?.workExperience.length > 0 && (
-                <div className="border-b py-9 border-stroke mb-4">
-                  <div className="flex mb-3 gap-3  justify-between items-center">
-                    <h6
-                      className="font-semibold text-lg uppercase pl-4.5"
-                      style={{ color: resumeData?.style?.primaryColor }}
-                    >
-                      Professional Experience{" "}
-                    </h6>
-                  </div>
-
-                  <div className="flex flex-col gap-9">
+                <div className="py-6 border-b border-stroke">
+                  <h6
+                    className="font-semibold max-sm:text-[11px] md:text-lg text-sm uppercase py-1 mb-2 w-full"
+                    style={{
+                      color: resumeData?.style?.primaryColor,
+                      borderColor: resumeData?.style?.primaryColor,
+                    }}
+                  >
+                    Professional Experience{" "}
+                  </h6>
+                  <div className="flex flex-col gap-9 max-sm:gap-5">
                     {resumeData?.workExperience?.map(
                       (item: any, _index: number) => (
                         <div
-                          key={item.id}
-                          className={`item px-2 relative  text-black w-full py-1 `}
+                          key={item?.id}
+                          className={`item relative  text-black w-full py-1 `}
                         >
                           <div className="w-full">
-                            <div className="flex w-full justify-between items-start">
-                              <p
-                                className={`text-base font-semibold text-black px-2 mb-2`}
-                                style={{ fontSize: fontSize }}
-                              >
-                                {item?.company}
-                              </p>
-                              <p
-                                className={`text-sm font-medium text-black px-2`}
-                                style={{ fontSize: fontSizeSm }}
-                              >
-                                {item?.startDate &&
-                                  formatMonthYear(item?.startDate)}
-                                -
-                                {item?.active
-                                  ? "Present"
-                                  : item?.endDate &&
-                                    formatMonthYear(item?.endDate)}
-                              </p>
+                            <div className="w-full">
+                              <div className="w-full sm:my-1.5">
+                                <div className="flex w-full justify-between items-center max-sm:mb-1.5">
+                                  <p
+                                    className={`text-sm max-sm:text-[10px] font-semibold text-black`}
+                                  >
+                                    {item?.company}
+                                  </p>
+
+                                  <div className="ml-auto">
+                                    <p className="text-sm max-sm:text-[9px] text-zinc-500 lg:mr-2">
+                                      {item?.startDate &&
+                                        formatMonthYear(item?.startDate)}
+                                      {item?.active
+                                        ? "- Present"
+                                        : item?.endDate &&
+                                          "- " + formatMonthYear(item?.endDate)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div>
+                                  <span className="text-[13px] max-sm:text-[10px] uppercase font-semibold text-zinc-700">
+                                    {item?.title}
+                                  </span>
+                                </div>
+                              </div>
                             </div>
 
-                            <div className="flex items-center mb-2 ml-[3px">
-                              <p
-                                className={`text-base uppercase font-semibold text-zinc-700 px-2`}
-                                style={{ fontSize: fontSize }}
-                              >
-                                {item?.title}
+                            <div className="flex items-center mb-4">
+                              <p className="sm:px-1.5 text-sm max-sm:text-[9px] cursor-text font-medium">
+                                {item?.description || ""}
                               </p>
                             </div>
 
                             <div>
-                              <ul
-                                style={{ fontSize: fontSizeSm }}
-                                className="text-sm w-full font-normal space-y-2 px-2.5"
-                              >
+                              <ul className="text-sm max-sm:text-[9px] w-full font-normal space-y-2 px-1">
                                 {item?.keyAchievements?.map(
                                   (achievement: string, index: number) => (
                                     <li
-                                      className="flex w-full items-center max-sm:items-start gap-1"
+                                      className="w-full list-disc list-item items-center ml-4 max-sm:items-start gap-1"
                                       key={index}
                                     >
-                                      <FaCircle
-                                        size={6}
-                                        className="rounded-full max-sm:mt-2"
-                                      />
                                       {achievement}{" "}
                                     </li>
                                   )
@@ -1802,153 +1755,67 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
 
             {/* Internships */}
             {resumeData?.config?.internships &&
-              resumeData?.internships.length > 0 && (
-                <div className="border-b py-9 border-stroke mb-4">
-                  <div>
-                    <div className="flex mb-3 gap-3  justify-between items-center">
-                      <h6
-                        className="font-semibold text-lg uppercase pl-4.5"
-                        style={{ color: resumeData?.style?.primaryColor }}
-                      >
-                        Internships{" "}
-                      </h6>
-                    </div>
-
-                    <div className="flex flex-col gap-9">
-                      {resumeData?.internships?.map(
-                        (item: any, _index: number) => (
-                          <div
-                            key={item.id}
-                            className={`item px-2 relative  text-black w-full py-1 `}
-                          >
-                            <div className="w-full">
-                              <div className="flex w-full justify-between items-start">
-                                <p
-                                  className={`text-base font-semibold text-black px-2 mb-2`}
-                                  style={{ fontSize: fontSize }}
-                                >
-                                  {item?.company}
-                                </p>
-                                <p
-                                  className={`text-sm font-medium text-black px-2`}
-                                  style={{ fontSize: fontSizeSm }}
-                                >
-                                  {item?.startDate &&
-                                    formatMonthYear(item?.startDate)}
-                                  -
-                                  {item?.active
-                                    ? "Present"
-                                    : item?.endDate &&
-                                      formatMonthYear(item?.endDate)}
-                                </p>
-                              </div>
-
-                              <div className="flex items-center mb-2 ml-[3px">
-                                <p
-                                  className={`text-base uppercase font-semibold text-zinc-700 px-2`}
-                                  style={{ fontSize: fontSize }}
-                                >
-                                  {item?.title}
-                                </p>
-                              </div>
-
-                              <div>
-                                <ul
-                                  style={{ fontSize: fontSizeSm }}
-                                  className="text-sm w-full font-normal space-y-2 px-2.5"
-                                >
-                                  {item?.keyAchievements?.map(
-                                    (achievement: string, index: number) => (
-                                      <li
-                                        className="flex w-full items-center max-sm:items-start gap-1"
-                                        key={index}
-                                      >
-                                        <FaCircle
-                                          size={6}
-                                          className="rounded-full max-sm:mt-2"
-                                        />
-                                        {achievement}{" "}
-                                      </li>
-                                    )
-                                  )}
-                                </ul>
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-            {/* Internships */}
-
-            {/* Volunteer Experience */}
-            {resumeData?.volunteerExperience?.length > 0 && (
-              <div className="border-b py-9 border-stroke mb-4">
-                <div>
-                  <div className="flex mb-3 gap-3  justify-between items-center">
-                    <h6
-                      className="font-semibold text-lg uppercase pl-4.5"
-                      style={{ color: resumeData?.style?.primaryColor }}
-                    >
-                      Volunteer Experience{" "}
-                    </h6>
-                  </div>
-
-                  <div className="flex flex-col gap-9">
-                    {resumeData?.volunteerExperience?.map(
+              resumeData?.internships?.length > 0 && (
+                <div className="py-6 border-b border-stroke">
+                  <h6
+                    className="font-semibold max-sm:text-[11px] md:text-lg text-sm uppercase py-1 mb-2 w-full"
+                    style={{
+                      color: resumeData?.style?.primaryColor,
+                      borderColor: resumeData?.style?.primaryColor,
+                    }}
+                  >
+                    Internships{" "}
+                  </h6>
+                  <div className="flex flex-col gap-9 max-sm:gap-5">
+                    {resumeData?.internships?.map(
                       (item: any, _index: number) => (
                         <div
-                          key={item._id}
-                          className={`item px-2 relative  text-black w-full py-1 `}
+                          key={item?.id}
+                          className={`item relative  text-black w-full py-1 `}
                         >
                           <div className="w-full">
-                            <div className="flex w-full justify-between items-start">
-                              <p
-                                className={`text-base font-semibold text-black px-2 mb-2`}
-                                style={{ fontSize: fontSize }}
-                              >
-                                {item?.company}
-                              </p>
-                              <p
-                                className={`text-sm font-medium text-black px-2`}
-                                style={{ fontSize: fontSizeSm }}
-                              >
-                                {item?.startDate &&
-                                  formatMonthYear(item?.startDate)}
-                                -
-                                {item?.active
-                                  ? "Present"
-                                  : item?.endDate &&
-                                    formatMonthYear(item?.endDate)}
-                              </p>
+                            <div className="w-full">
+                              <div className="w-full sm:my-1.5">
+                                <div className="flex w-full justify-between items-center max-sm:mb-1.5">
+                                  <p
+                                    className={`text-sm max-sm:text-[10px] font-semibold text-black`}
+                                  >
+                                    {item?.company}
+                                  </p>
+
+                                  <div className="ml-auto">
+                                    <p className="md:text-sm max-sm:text-[0.6rem] text-zinc-500 lg:mr-2">
+                                      {item?.startDate &&
+                                        formatMonthYear(item?.startDate)}
+                                      {item?.active
+                                        ? "- Present"
+                                        : item?.endDate &&
+                                          "- " + formatMonthYear(item?.endDate)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div>
+                                  <span className="text-sm max-sm:text-[0.6rem] uppercase font-semibold text-zinc-700">
+                                    {item?.title}
+                                  </span>
+                                </div>
+                              </div>
                             </div>
 
-                            <div className="flex items-center mb-2 ml-[3px">
-                              <p
-                                className={`text-base uppercase font-semibold text-zinc-700 px-2`}
-                                style={{ fontSize: fontSize }}
-                              >
-                                {item?.title}
+                            <div className="flex items-center mb-4">
+                              <p className="text-sm max-sm:text-[9px] cursor-text font-medium">
+                                {item?.description || ""}
                               </p>
                             </div>
 
                             <div>
-                              <ul
-                                style={{ fontSize: fontSizeSm }}
-                                className="text-sm w-full font-normal space-y-2 px-2.5"
-                              >
+                              <ul className="text-sm max-sm:text-[9px] w-full font-normal space-y-2 px-1">
                                 {item?.keyAchievements?.map(
                                   (achievement: string, index: number) => (
                                     <li
-                                      className="flex w-full items-center max-sm:items-start gap-1"
+                                      className="w-full list-disc list-item items-center ml-4 max-sm:items-start gap-1"
                                       key={index}
                                     >
-                                      <FaCircle
-                                        size={6}
-                                        className="rounded-full max-sm:mt-2"
-                                      />
                                       {achievement}{" "}
                                     </li>
                                   )
@@ -1961,14 +1828,159 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                     )}
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            {/* Internships */}
+
             {/* Volunteer Experience */}
+            {resumeData?.config?.volunteerExperience &&
+              resumeData?.volunteerExperience?.length > 0 && (
+                <div className="py-6 border-b border-stroke">
+                  <h6
+                    className="font-semibold max-sm:text-[11px] md:text-lg uppercase  py-1 mb-2 w-full"
+                    style={{
+                      color: resumeData?.style?.primaryColor,
+                      borderColor: resumeData?.style?.primaryColor,
+                    }}
+                  >
+                    Volunteer Experience{" "}
+                  </h6>
+                  <div className="flex flex-col gap-9 max-sm:gap-5">
+                    {resumeData?.workExperience?.map(
+                      (item: any, _index: number) => (
+                        <div
+                          key={item?.id}
+                          className={`item relative  text-black w-full py-1 `}
+                        >
+                          <div className="w-full">
+                            <div className="w-full">
+                              <div className="w-full sm:my-1.5">
+                                <div className="flex w-full justify-between items-center max-sm:mb-1.5">
+                                  <p
+                                    className={`text-sm max-sm:text-[0.6rem] font-semibold text-black`}
+                                  >
+                                    {item?.company}
+                                  </p>
+
+                                  <div className="ml-auto">
+                                    <p className="text-[0.6rem] md:text-sm text-zinc-500 lg:mr-2">
+                                      {item?.startDate &&
+                                        formatMonthYear(item?.startDate)}
+                                      {item?.active
+                                        ? "- Present"
+                                        : item?.endDate &&
+                                          "- " + formatMonthYear(item?.endDate)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div>
+                                  <span className="text-sm max-sm:text-[0.6rem] uppercase font-semibold text-zinc-700">
+                                    {item?.title}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center mb-4">
+                              <p className="text-sm max-sm:text-[0.6rem] cursor-text font-medium">
+                                {item?.description || ""}
+                              </p>
+                            </div>
+
+                            <div>
+                              <ul className="text-sm max-sm:text-[9px] w-full font-normal space-y-2 px-1">
+                                {item?.keyAchievements?.map(
+                                  (achievement: string, index: number) => (
+                                    <li
+                                      className="w-full list-disc list-item items-center ml-4 max-sm:items-start gap-1"
+                                      key={index}
+                                    >
+                                      {achievement}{" "}
+                                    </li>
+                                  )
+                                )}
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+              )}
+            {/* Volunteer Experience */}
+
+            {resumeData?.config?.references &&
+              resumeData?.references?.length > 0 && (
+                <div className="py-6">
+                  <h6
+                    className="font-semibold max-sm:text-[11px] md:text-lg text-sm uppercase py-1 mb-2 w-full"
+                    style={{
+                      color: resumeData?.style?.primaryColor,
+                      borderColor: resumeData?.style?.primaryColor,
+                    }}
+                  >
+                    Referees
+                  </h6>
+                  <div className="flex flex-col gap-2.5">
+                    {resumeData?.references?.map(
+                      (item: any, _index: number) => (
+                        <div
+                          key={item._id}
+                          className={`item relative  text-black w-full py-1 `}
+                        >
+                          <div className="w-full py-2 pr-1">
+                            <div className="flex justify-between gap-6 items-start">
+                              <div>
+                                <span className="text-sm max-sm:text-[11px] font-semibold text-zinc-800">
+                                  {item?.name}
+                                </span>
+                              </div>
+
+                              <div className="ml-auto">
+                                <span
+                                  className={`text-sm italic text-right font-medium text-black px-2`}
+                                >
+                                  {item?.relationship}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div>
+                              <span className="text-sm max-sm:text-[11px] text-zinc-800">
+                                {item?.title} at {item?.company}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-[13px] text-blue-500 max-sm:text-[11px]  ">
+                                Contact Information:{" "}
+                                {item?.email && (
+                                  <span className="text-zinc-800 italic">
+                                    (E)- {item?.email}
+                                  </span>
+                                )}
+                                {item?.phone && (
+                                  <span className="ml-2 text-zinc-800 italic">
+                                    (P)- {item?.phone}
+                                  </span>
+                                )}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+              )}
+          
+
+          
+
           </div>
         ) : (
           <div
             style={{ fontFamily: resumeData?.style?.fontFamily || "" }}
-            className="bg-white p-8 w-full overflow-x-auto custom-scrollbar"
+            className="bg-white xl:px-12 lg:px-8 py-8 px-4 w-full overflow-x-auto custom-scrollbar"
           >
             <div className="w-full  mb-15">
               <div
@@ -1976,21 +1988,23 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                   color: resumeData?.style?.primaryColor,
                   borderColor: resumeData?.style?.primaryColor,
                 }}
-                className="w-full flex divide-x-2 border-b-2 gap-3 items-center mt-15"
+                className="w-full border-b-2 gap-3 items-center mt-15"
               >
-                <h1 className="2xl:text-[30px] lg:text-2xl md:text-xl text-lg font-medium uppercase">
-                  {resumeData?.name}
+                <h1 className="md:text-lg max-sm:text-[11px] font-medium uppercase">
+                  {resumeData?.name}{" "}
+                  {resumeData?.config.role && (
+                    <span className="text-zinc-900 px-1">|</span>
+                  )}{" "}
+                  {resumeData?.config.role && (
+                    <span className="md:text-lg max-sm:text-[10px] text-zinc-900 uppercase font-medium">
+                      {resumeData?.role}
+                    </span>
+                  )}
                 </h1>
-
-                {resumeData?.config.role && (
-                  <h3 className="md:text-lg text-black px-2 uppercase font-medium">
-                    {resumeData?.role}
-                  </h3>
-                )}
               </div>
-              <div className="w-full max-w-[90%] py-3">
-                <div className="flex flex-wrap gap-x-2 divide-x gap-y-3 items-center">
-                  {["email", "phone", "location", "linkedin", "website"]
+              <div className="w-full lg:max-w-[90%] py-3">
+                <div className="flex flex-wrap gap-1 max-sm:text-[10px] text-xs items-center">
+                  {["email", "phone", "location", "linkedIn", "website"]
                     .filter(
                       (field) =>
                         resumeData?.config[
@@ -2000,8 +2014,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                     ?.map((field) => (
                       <div
                         key={field}
-                        className="flex gap-1 items-center md:text-sm text-[10px] px-2"
-                        style={{ fontSize: fontSizeSm }}
+                        className="flex gap-1 items-center px-1 max-sm:px-0.5"
                       >
                         <span className="font-semibold">
                           {field.charAt(0).toUpperCase() + field.slice(1)}:
@@ -2018,7 +2031,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
             {resumeData?.config.professionalSummary && (
               <div className="mb-4">
                 <h6
-                  className={`font-semibold mb-2 md:text-lg border-b-2 py-1 ml-3 `}
+                  className={`font-semibold mb-2 max-sm:text-[11px] md:text-lg border-b-2 py-1 `}
                   style={{
                     color: resumeData?.style?.primaryColor,
                     borderColor: resumeData?.style?.primaryColor,
@@ -2026,10 +2039,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                 >
                   PROFESSIONAL SUMMARY
                 </h6>
-                <p
-                  style={{ fontSize: fontSize }}
-                  className=" px-3 font-medium text-black md:text-base text-sm"
-                >
+                <p className="font-medium text-black md:text-base text-[10px] sm:text-sm">
                   {resumeData?.professionalSummary}
                 </p>
               </div>
@@ -2037,7 +2047,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
             {resumeData?.config?.skills && resumeData?.skills.length > 0 && (
               <div className="pb-4">
                 <h6
-                  className="font-semibold md:text-lg uppercase border-b-2 ml-3 py-1 w-full"
+                  className="font-semibold max-sm:text-[11px] md:text-lg uppercase border-b-2 py-1 w-full"
                   style={{
                     color: resumeData?.style?.primaryColor,
                     borderColor: resumeData?.style?.primaryColor,
@@ -2045,25 +2055,20 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                 >
                   Key Skills
                 </h6>
-                <ul className="gap-2.5 px-1.5 flex flex-wrap">
+                <ul className="gap-1.5 max-sm:gap-1 flex flex-wrap">
                   {resumeData?.skills?.map((item: any, index: number) => (
                     <li
                       key={index}
-                      className={`item relative  text-zinc-800 py-0 px-1.5`}
+                      className={`item relative  text-zinc-800 py-0`}
                     >
-                      <div className="py-1 rounded-md flex flex-col mb-1">
-                        <div className="">
-                          <span
-                            style={{ fontSize: fontSize }}
-                            className="md:text-[15px] text-sm font-medium"
-                          >
-                            {item.name}
-                            {item}{" "}
-                            {resumeData?.skills?.length > 1 &&
-                              index + 1 !== resumeData?.skills?.length &&
-                              "|"}
-                          </span>
-                        </div>
+                      <div className="mb-1 py-1">
+                        <span className="text-xs md:text-sm max-sm:text-[9px] font-medium">
+                          {item.name}
+                          {item}{" "}
+                          {resumeData?.skills?.length > 1 &&
+                            index + 1 !== resumeData?.skills?.length &&
+                            "|"}
+                        </span>
                       </div>
                     </li>
                   ))}
@@ -2075,7 +2080,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                 <div className="pb-4">
                   <div className="flex mb-3 gap-3  justify-between items-center">
                     <h6
-                      className="font-semibold text-lg uppercase border-b-2 ml-3 py-1 mb-2 w-full"
+                      className="font-semibold max-sm:text-[11px] md:text-lg uppercase border-b-2 py-1 mb-2 w-full"
                       style={{
                         color: resumeData?.style?.primaryColor,
                         borderColor: resumeData?.style?.primaryColor,
@@ -2084,28 +2089,24 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                       Career Highlights{" "}
                     </h6>
                   </div>
-                  <div className="flex flex-col gap-5">
+                  <div className="flex flex-col gap-3">
                     {resumeData?.careerHighlights?.map(
                       (item: any, _index: number) => (
                         <div
                           key={item.id}
-                          className={`item hover:border border-stroke hover:my-5 border-space rounded-md border-spacing-1 px-2 relative  text-black w-full py-1 `}
+                          className={`item relative  text-black w-full py-1 `}
                         >
                           <div className="w-full">
                             <div className="flex w-full">
                               <p
-                                className={`text-base font-semibold text-black px-2 mb-2`}
-                                style={{ fontSize: fontSize }}
+                                className={`max-sm:text-[10px] font-semibold text-black mb-2`}
                               >
                                 {item?.title}
                               </p>
                             </div>
 
-                            <div className="flex items-center ml-[3px]">
-                              <p
-                                className="px-1.5 text-[15px] font-medium"
-                                style={{ fontSize: fontSize }}
-                              >
+                            <div className="flex items-center">
+                              <p className="text-sm max-sm:text-[9px] font-medium">
                                 {item?.description || ""}
                               </p>
                             </div>
@@ -2114,8 +2115,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                               <div className={`pb-1 pt-3 border-stroke`}>
                                 <div className="flex">
                                   <a
-                                    className="px-1.5 text-[15px] cursor-text text-blue-600 font-medium"
-                                    style={{ fontSize: fontSizeSm }}
+                                    className="max-sm:text-[11px] cursor-text text-blue-600 font-medium"
                                     href={item?.link}
                                     target="_blank"
                                   >
@@ -2136,7 +2136,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                 <div className="py-5  mb-4">
                   <div className="mb-3 gap-3">
                     <h6
-                      className="font-semibold text-lg uppercase border-b-2 ml-3 py-1 mb-2 w-full"
+                      className="font-semibold max-sm:text-[11px] md:text-lg uppercase border-b-2 py-1 mb-2 w-full"
                       style={{
                         color: resumeData?.style?.primaryColor,
                         borderColor: resumeData?.style?.primaryColor,
@@ -2150,50 +2150,51 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                       (item: any, _index: number) => (
                         <div
                           key={item?.id}
-                          className={`item  hover:border border-stroke border-space rounded-md border-spacing-1 px-2 relative  text-black w-full py-1 `}
+                          className={`item relative  text-black w-full py-1 `}
                         >
                           <div className="w-full">
                             <div className="w-full">
                               <div className="w-full my-1.5">
-                                <div className="flex w-full justify-between items-start">
+                                <div className="flex w-full justify-between items-center max-sm:mb-1.5">
+                                  <span className="max-sm:text-[10px] uppercase font-semibold text-zinc-700">
+                                    {item?.title}
+                                  </span>
+
+                                  <div className="ml-auto">
+                                    <p className="text-sm max-sm:text-[9px] text-zinc-500 lg:mr-2">
+                                      {item?.startDate &&
+                                        formatMonthYear(item?.startDate)}
+                                      {item?.active
+                                        ? "- Present"
+                                        : item?.endDate &&
+                                          "- " + formatMonthYear(item?.endDate)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div>
                                   <p
-                                    className={`text-base font-semibold text-black px-2 mb-2`}
+                                    className={`max-sm:text-[10px] font-semibold text-black`}
                                   >
                                     {item?.company}
                                   </p>
-                                  <div className="flex items-center gap-2 ml-auto">
-                                    <span className="text-base uppercase font-semibold text-zinc-700">
-                                      {item?.title}
-                                    </span>
-
-                                    <span>|</span>
-
-                                    <p className="text-sm text-zinc-500 lg:mr-4">
-                                      {item?.duration}
-                                    </p>
-                                  </div>
                                 </div>
                               </div>
                             </div>
 
-                            <div className="flex items-center ml-[3px] mb-4">
-                              <p className="px-1.5 text-[15px] cursor-text font-medium">
+                            <div className="flex items-center mb-4">
+                              <p className="text-[15px] max-sm:text-[9px] cursor-text font-medium">
                                 {item?.description || ""}
                               </p>
                             </div>
 
                             <div>
-                              <ul className="text-sm w-full font-normal space-y-2 px-2.5">
+                              <ul className="text-sm max-sm:text-[9px] w-full font-normal space-y-2 px-1">
                                 {item?.keyAchievements?.map(
                                   (achievement: string, index: number) => (
                                     <li
-                                      className="flex w-full items-center max-sm:items-start gap-1"
+                                      className="w-full list-disc list-item items-center ml-4 max-sm:items-start gap-1"
                                       key={index}
                                     >
-                                      <FaCircle
-                                        size={6}
-                                        className="rounded-full max-sm:mt-2"
-                                      />
                                       {achievement}{" "}
                                     </li>
                                   )
@@ -2211,7 +2212,7 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
               resumeData?.education.length > 0 && (
                 <div className="py-6">
                   <h6
-                    className="font-semibold text-lg uppercase border-b-2 ml-3 py-1 mb-2 w-full"
+                    className="font-semibold md:text-lg max-sm:text-[11px] border-b-2 border-primary uppercase py-1 mb-2 w-full"
                     style={{
                       color: resumeData?.style?.primaryColor,
                       borderColor: resumeData?.style?.primaryColor,
@@ -2223,38 +2224,309 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                     {resumeData?.education?.map((item: any, _index: number) => (
                       <div
                         key={item.id}
-                        className={`px-2 relative  text-black w-full py-1 `}
+                        className={`relative  text-black w-full py-1 `}
                       >
-                        <div className="w-full py-2 ml-3 pr-1">
+                        <div className="w-full">
                           <div className="flex justify-between gap-6 items-center">
-                            <div className="flex items-center gap-2 divide-x divide-zinc-600">
-                              <div>
-                                <span className="text-base uppercase font-semibold text-zinc-800">
-                                  {item?.institution}
-                                </span>
-                              </div>
-
-                              <span className="font-semibold uppercase hidden">
-                                |
+                            <div>
+                              <span className="text-sm max-sm:text-[10px] uppercase font-semibold text-zinc-800">
+                                {item?.degree}
+                                {item?.gpa && (
+                                  <span className=""> ({item?.gpa})</span>
+                                )}
                               </span>
-                              <div className="pl-2">
-                                <span className="text-base uppercase font-semibold text-zinc-800">
-                                  {item?.degree}
-                                </span>
-                              </div>
                             </div>
+
                             <div className="ml-auto">
                               <p
-                                className={`text-sm text-right font-medium text-black px-2`}
+                                className={`text-sm max-sm:text-[9px] text-zinc-500 lg:pr-2`}
                               >
-                                {item?.duration}
+                                {item?.startDate &&
+                                  formatMonthYear(item?.startDate)}
+                                {item?.hideEndDate && (
+                                  <span>
+                                    -{" "}
+                                    {item?.endDate
+                                      ? "Present"
+                                      : item?.endDate &&
+                                        formatMonthYear(item?.endDate)}
+                                  </span>
+                                )}
                               </p>
                             </div>
                           </div>
 
-                          <div className="py-2">
-                            <span className="text-[15px] font-medium">
-                              {item?.description}
+                          <div className="text-sm max-sm:text-[10px] text-zinc-800 mb-1.5">
+                            <span className="uppercase font-semibold">
+                              {item?.institution}
+                            </span>
+                            {item?.location && (
+                              <span className="italic max-md:text-[13px]">
+                                , {item?.location}
+                              </span>
+                            )}
+                          </div>
+                          <div className=" text-zinc-800 text-sm max-md:text-[0.8rem]">
+                            <span className="font-semibold ">Minors: </span>
+                            <span>{item?.minors}</span>
+                          </div>
+
+                          <div className=" text-zinc-800">
+                            <ul className="max-md:text-[0.8rem] text-sm flex flex-wrap gap-0.5 font-medium">
+                              <span className="font-semibold">
+                                Relevant Coursework:{" "}
+                              </span>
+                              {item?.relevantCourseWork?.map(
+                                (val: string, index: number) => (
+                                  <li key={index}>
+                                    {val}{" "}
+                                    {item?.relevantCourseWork?.length > 1 &&
+                                      index + 1 !==
+                                        item?.relevantCourseWork?.length &&
+                                      ","}
+                                  </li>
+                                )
+                              )}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            {resumeData?.config?.internships &&
+              resumeData?.internships.length > 0 && (
+                <div className="py-5  mb-4">
+                  <div className="mb-3 gap-3">
+                    <h6
+                      className="font-semibold max-sm:text-[11px] text-lg uppercase border-b-2 py-1 mb-2 w-full"
+                      style={{
+                        color: resumeData?.style?.primaryColor,
+                        borderColor: resumeData?.style?.primaryColor,
+                      }}
+                    >
+                      Internships{" "}
+                    </h6>
+                  </div>
+                  <div className="flex flex-col gap-9">
+                    {resumeData?.internships?.map(
+                      (item: any, _index: number) => (
+                        <div
+                          key={item?.id}
+                          className={`item relative  text-black w-full py-1 `}
+                        >
+                          <div className="w-full">
+                            <div className="w-full">
+                              <div className="w-full my-1.5">
+                                <div className="flex w-full justify-between items-center max-sm:mb-1.5">
+                                  <span className="max-sm:text-[10px] uppercase font-semibold text-zinc-700">
+                                    {item?.title}
+                                  </span>
+
+                                  <div className="ml-auto">
+                                    <p className="text-sm max-sm:text-[9px] text-zinc-500 lg:mr-2">
+                                      {item?.startDate &&
+                                        formatMonthYear(item?.startDate)}
+                                      {item?.active
+                                        ? "- Present"
+                                        : item?.endDate &&
+                                          "- " + formatMonthYear(item?.endDate)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div>
+                                  <p
+                                    className={`max-sm:text-[10px] font-semibold text-black`}
+                                  >
+                                    {item?.company}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center mb-4">
+                              <p className="text-[15px] max-sm:text-[9px] cursor-text font-medium">
+                                {item?.description || ""}
+                              </p>
+                            </div>
+
+                            <div>
+                              <ul className="text-sm max-sm:text-[9px] w-full font-normal space-y-2 px-1">
+                                {item?.keyAchievements?.map(
+                                  (achievement: string, index: number) => (
+                                    <li
+                                      className="w-full list-disc list-item items-center ml-4 max-sm:items-start gap-1"
+                                      key={index}
+                                    >
+                                      {achievement}{" "}
+                                    </li>
+                                  )
+                                )}
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+              )}
+            {resumeData?.config?.volunteerExperience &&
+              resumeData?.volunteerExperience.length > 0 && (
+                <div className="py-5  mb-4">
+                  <div className="mb-3 gap-3">
+                    <h6
+                      className="font-semibold md:text-lg max-sm:text-[11px] uppercase border-b-2 py-1 mb-2 w-full"
+                      style={{
+                        color: resumeData?.style?.primaryColor,
+                        borderColor: resumeData?.style?.primaryColor,
+                      }}
+                    >
+                      Volunteer Experience{" "}
+                    </h6>
+                  </div>
+                  <div className="flex flex-col gap-9">
+                    {resumeData?.volunteerExperience?.map(
+                      (item: any, _index: number) => (
+                        <div
+                          key={item?.id}
+                          className={`item relative  text-black w-full py-1 `}
+                        >
+                          <div className="w-full">
+                            <div className="w-full">
+                              <div className="w-full my-1.5">
+                                <div className="flex w-full justify-between items-center max-sm:mb-1.5">
+                                  <span className="max-sm:text-[10px] uppercase font-semibold text-zinc-700">
+                                    {item?.title}
+                                  </span>
+
+                                  <div className="ml-auto">
+                                    <p className="text-sm max-sm:text-[9px] text-zinc-500 lg:mr-2">
+                                      {item?.startDate &&
+                                        formatMonthYear(item?.startDate)}
+                                      {item?.active
+                                        ? "- Present"
+                                        : item?.endDate &&
+                                          "- " + formatMonthYear(item?.endDate)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div>
+                                  <p
+                                    className={`max-sm:text-[10px] font-semibold text-black`}
+                                  >
+                                    {item?.company}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center mb-4">
+                              <p className="text-[15px] max-sm:text-[9px] cursor-text font-medium">
+                                {item?.description || ""}
+                              </p>
+                            </div>
+
+                            <div>
+                              <ul className="text-sm max-sm:text-[9px] w-full font-normal space-y-2 px-1">
+                                {item?.keyAchievements?.map(
+                                  (achievement: string, index: number) => (
+                                    <li
+                                      className="w-full list-disc list-item items-center ml-4 max-sm:items-start gap-1"
+                                      key={index}
+                                    >
+                                      {achievement}{" "}
+                                    </li>
+                                  )
+                                )}
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+              )}
+            <div className="py-6">
+              <h6
+                className="font-semibold max-sm:text-[11px] md:text-lg uppercase border-b-2 py-1 mb-2 w-full"
+                style={{
+                  color: resumeData?.style?.primaryColor,
+                  borderColor: resumeData?.style?.primaryColor,
+                }}
+              >
+                Certifications & Trainings
+              </h6>
+              <div className="flex flex-col gap-2.5">
+                {resumeData?.certifications?.map(
+                  (item: any, _index: number) => (
+                    <div
+                      key={item._id}
+                      className={`item px-2 relative  text-black w-full py-1 `}
+                    >
+                      <div className="w-full">
+                        <div className="flex justify-between gap-6 items-center">
+                          <div>
+                            <span className="max-sm:text-[11px] font-semibold text-zinc-800">
+                              {item?.name}
+                            </span>
+                          </div>
+
+                          <div className="ml-auto">
+                            <span
+                              className={`text-sm max-sm:text-[9px] text-zinc-500 lg:mr-2`}
+                            >
+                              {formatMonthYear(item?.date)}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="">
+                          <span className="max-sm:text-[11px] text-zinc-800">
+                            {item?.institution}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+            </div>
+            {resumeData?.config?.projects &&
+              resumeData?.projects?.length > 0 && (
+                <div className="py-6">
+                  <h6
+                    className="font-semibold max-sm:text-[11px] md:text-lg uppercase border-b-2 py-1 mb-2 w-full"
+                    style={{
+                      color: resumeData?.style?.primaryColor,
+                      borderColor: resumeData?.style?.primaryColor,
+                    }}
+                  >
+                    Projects
+                  </h6>
+                  <div className="flex flex-col gap-2.5">
+                    {resumeData?.projects?.map((item: any, _index: number) => (
+                      <div
+                        key={item._id}
+                        className={`item relative  text-black w-full py-1.5 `}
+                      >
+                        <div className="w-full">
+                          <div className="">
+                            <div>
+                              <span className="max-sm:text-[11px] font-semibold text-zinc-800">
+                                {item?.name}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-sm max-sm:text-[9px] font-medium text-zinc-800">
+                                {item?.description}
+                              </span>
+                            </div>
+                          </div>
+                          <div>
+                            <span className="text-blue-500 sm:text-sm text-[0.6rem]">
+                              {item?.link}
                             </span>
                           </div>
                         </div>
@@ -2263,105 +2535,123 @@ export const ResumePreview: React.FC<{ resumeData: any }> = ({
                   </div>
                 </div>
               )}
-            {resumeData?.config?.trainings &&
-              resumeData?.trainings.length > 0 && (
+            {resumeData?.config?.memberships &&
+              resumeData?.membership?.length > 0 && (
                 <div className="py-6">
                   <h6
-                    className="font-semibold text-lg uppercase border-b-2 ml-3 py-1 mb-2 w-full"
+                    className="font-semibold max-sm:text-[11px] md:text-lg uppercase border-b-2 py-1 mb-2 w-full"
                     style={{
                       color: resumeData?.style?.primaryColor,
                       borderColor: resumeData?.style?.primaryColor,
                     }}
                   >
-                    TRAINING
+                    Memberships
                   </h6>
                   <div className="flex flex-col gap-2.5">
-                    {resumeData?.trainings?.map((item: any, _index: number) => (
-                      <div
-                        key={item._id}
-                        className={`item px-2 relative  text-black w-full py-1 `}
-                      >
-                        <div className="w-full py-2 ml-3 pr-1">
-                          <div className="flex justify-between gap-6 items-center">
-                            <div className="flex items-center gap-2 divide-x divide-zinc-600">
-                              <div>
-                                <span className="text-base font-semibold text-zinc-800">
-                                  {item?.degree}
+                    {resumeData?.membership?.map(
+                      (item: any, _index: number) => (
+                        <div
+                          key={item._id}
+                          className={`item relative  text-black w-full py-1 `}
+                        >
+                          <div className="w-full">
+                            <div className="flex justify-between gap-6 items-center">
+                              <div className="">
+                                <span className="font-semibold max-sm:text-[11px] text-zinc-800">
+                                  {item?.role}
                                 </span>
                               </div>
-
-                              <span className="font-semibold hidden">|</span>
-                              <div className="pl-2">
-                                <span className="text-base text-zinc-800">
-                                  {item?.institution}
+                              <div className="ml-auto">
+                                <span
+                                  className={`text-[10px] text-right font-medium text-black px-2`}
+                                >
+                                  {item?.startDate &&
+                                    formatMonthYear(item?.startDate)}{" "}
+                                  -{" "}
+                                  {item?.endDate
+                                    ? "Present"
+                                    : item?.endDate &&
+                                      formatMonthYear(item?.endDate)}
                                 </span>
                               </div>
                             </div>
-                            <div className="ml-auto">
-                              <span
-                                className={`text-sm text-right font-medium text-black px-2`}
-                              >
-                                {item?.year}
+
+                            <div>
+                              <span className="max-sm:text-[11px] font-medium italic text-zinc-800">
+                                {item?.title}
                               </span>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      )
+                    )}
                   </div>
                 </div>
               )}
-            {resumeData?.certifications?.length.length > 0 && (
-              <div className="py-6">
-                <h6
-                  className="font-semibold text-lg uppercase border-b-2 ml-3 py-1 mb-2 w-full"
-                  style={{
-                    color: resumeData?.style?.primaryColor,
-                    borderColor: resumeData?.style?.primaryColor,
-                  }}
-                >
-                  CERTIFICATIONS
-                </h6>
-                <div className="flex flex-col gap-2.5">
-                  {resumeData?.certifications?.map(
-                    (item: any, _index: number) => (
-                      <div
-                        key={item._id}
-                        className={`item px-2 relative  text-black w-full py-1 `}
-                      >
-                        <div className="w-full py-2 ml-3 pr-1">
-                          <div className="flex justify-between gap-6 items-center">
-                            <div className="flex items-center gap-2 divide-x divide-zinc-600">
+
+            {resumeData?.config?.references &&
+              resumeData?.references?.length > 0 && (
+                <div className="py-6">
+                  <h6
+                    className="font-semibold max-sm:text-[11px] md:text-lg uppercase border-b-2 py-1 mb-2 w-full"
+                    style={{
+                      color: resumeData?.style?.primaryColor,
+                      borderColor: resumeData?.style?.primaryColor,
+                    }}
+                  >
+                    Professional References
+                  </h6>
+                  <div className="flex flex-col gap-2.5">
+                    {resumeData?.references?.map(
+                      (item: any, _index: number) => (
+                        <div
+                          key={item._id}
+                          className={`item relative  text-black w-full py-1 `}
+                        >
+                          <div className="w-full py-2">
+                            <div className="flex justify-between gap-6 items-start">
                               <div>
-                                <span className="text-base font-semibold text-zinc-800">
+                                <span className="max-sm:text-[11px] font-semibold text-zinc-800">
                                   {item?.name}
                                 </span>
                               </div>
 
-                              <span className="font-semibold hidden">|</span>
-                              <div className="pl-2">
-                                <span className="text-base font-semibold text-zinc-800">
-                                  {item?.institution}
+                              <div className="ml-auto">
+                                <span
+                                  className={`max-sm:text-xs text-sm italic text-right font-medium text-black px-2`}
+                                >
+                                  {item?.relationship}
                                 </span>
                               </div>
                             </div>
-                            <div className="ml-auto">
-                              {item?.date && (
-                                <span
-                                  className={`text-sm text-right font-medium text-black px-2`}
-                                >
-                                  {formatMonthYear(item?.date)}
-                                </span>
-                              )}
+
+                            <div>
+                              <span className="max-sm:text-[11px] text-zinc-800">
+                                {item?.title} at {item?.company}
+                              </span>
+                            </div>
+                            <div>
+                              <span className=" text-blue-500 max-sm:text-[11px]  ">
+                                Contact Information:{" "}
+                                {item?.email && (
+                                  <span className="text-zinc-800 italic">
+                                    (E)- {item?.email}
+                                  </span>
+                                )}
+                                {item?.phone && (
+                                  <span className="ml-2 text-zinc-800 italic">
+                                    (P)- {item?.phone}
+                                  </span>
+                                )}
+                              </span>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    )
-                  )}
+                      )
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
           </div>
         )}
       </animated.div>
