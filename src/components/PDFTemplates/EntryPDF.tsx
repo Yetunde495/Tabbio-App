@@ -10,109 +10,6 @@ import {
 } from "@react-pdf/renderer";
 import { formatMonthYear } from "../../lib/utils/formatters";
 
-// Font.register({
-//   family: "Helvetica-Bold",
-//   src: "https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-bold-webfont.ttf",
-// });
-// Font.register({
-//   family: "Times New Roman",
-//   src: "https://fonts.gstatic.com/s/liberationserif/v13/jizDREVItHgc8qDIbSTKq4XkRiUf2zI.ttf",
-// });
-//
-// const styles = StyleSheet.create({
-//   page: {
-//     backgroundColor: "white",
-//     padding: 30,
-//     fontFamily: "Helvetica",
-//   },
-//   container: {
-//     maxWidth: 1200,
-//     width: "100%",
-//   },
-//   section: {
-//     marginBottom: 20,
-//     paddingBottom: 10,
-//     borderBottomWidth: 1,
-//     borderBottomColor: "#e5e7eb",
-//   },
-//   header: {
-//     borderBottomWidth: 1,
-//     borderBottomColor: "#e5e7eb",
-//     paddingBottom: 10,
-//     marginBottom: 20,
-//     alignItems: "center",
-//   },
-//   name: {
-//     fontSize: 32,
-//     fontWeight: "bold",
-//     marginBottom: 4,
-//   },
-//   role: {
-//     fontSize: 18,
-//     fontWeight: "bold",
-//     color: "#000000",
-//     marginBottom: 8,
-//   },
-//   contactInfo: {
-//     flexDirection: "row",
-//     flexWrap: "wrap",
-//     justifyContent: "center",
-//     gap: 8,
-//   },
-//   contactItem: {
-//     flexDirection: "row",
-//     ailignItems: "center",
-//     paddingHorizontal: 8,
-//   },
-//   sectionTitle: {
-//     fontSize: 16,
-//     fontWeight: "semibold",
-//     marginBottom: 8,
-//     textTransform: "uppercase",
-//   },
-//   bulletList: {
-//     marginLeft: 12,
-//   },
-//   bulletItem: {
-//     flexDirection: "row",
-//     alignItems: "flex-start",
-//     marginBottom: 4,
-//   },
-//   bulletPoint: {
-//     width: 6,
-//     height: 6,
-//     borderRadius: 3,
-//     marginTop: 2,
-//     marginRight: 4,
-//   },
-//   educationItem: {
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     marginBottom: 12,
-//   },
-//   projectItem: {
-//     marginBottom: 16,
-//   },
-//   dateText: {
-//     fontSize: 10,
-//   },
-//   entryHeader: {
-//     flexDirection: "row",
-//     borderBottomWidth: 2,
-//     marginBottom: 12,
-//   },
-//   entryName: {
-//     fontSize: 32,
-//     fontWeight: "medium",
-//     paddingRight: 8,
-//   },
-//   entryRole: {
-//     fontSize: 16,
-//     fontWeight: "semibold",
-//     paddingLeft: 8,
-//   },
-// });
-//
 const fontSizeMap = {
   small: 10,
   medium: 12,
@@ -140,15 +37,6 @@ const EntryPDF = ({ data }: any) => {
   const baseFontSrc = data?.style?.fontSrc
     ? `${window.location.origin}${data.style.fontSrc}`
     : DEFAULT_FONTS[fontFamily];
-
-  // const fontConfig = data?.style?.fontSrc
-  //   ? {
-  //       regular: `${window.location.origin}${data.style.fontSrc}`,
-  //       bold: `${window.location.origin}${data.style.fontSrc.replace('.ttf', '-bold.ttf')}`,
-  //       italic: `${window.location.origin}${data.style.fontSrc.replace('.ttf', '-italic.ttf')}`,
-  //       boldItalic: `${window.location.origin}${data.style.fontSrc.replace('.ttf', '-bold-italic.ttf')}`
-  //     }
-  //   : DEFAULT_FONTS[fontFamily];
 
   // Define font variants based on naming convention
   const fontVariants = {
@@ -200,9 +88,9 @@ const EntryPDF = ({ data }: any) => {
 
   // Dynamic font sizes
   const fontSize =
-    fontSizeMap[data?.style?.fontSize as keyof typeof fontSizeMap] || 12;
+    fontSizeMap[data?.style?.fontSize as keyof typeof fontSizeMap] || "11px";
   const fontSizeSm =
-    fontSizeSmMap[data?.style?.fontSize as keyof typeof fontSizeSmMap] || 10;
+    fontSizeSmMap[data?.style?.fontSize as keyof typeof fontSizeSmMap] || "9px";
 
   // Create dynamic styles
   const styles = StyleSheet.create({
@@ -211,7 +99,7 @@ const EntryPDF = ({ data }: any) => {
       padding: 30,
       // fontFamily: data?.style?.fontFamily || "Helvetica",
       fontFamily: fontFamily,
-      border: 0
+      border: 0,
     },
     container: {
       maxWidth: 1200,
@@ -231,31 +119,40 @@ const EntryPDF = ({ data }: any) => {
       alignItems: "center",
     },
     name: {
-      fontSize: 30,
-      fontWeight: "medium",
-      marginBottom: 2,
+      fontSize: 16,
+      fontWeight: 600,
+      marginBottom: 10,
       color: data?.style?.primaryColor,
     },
     role: {
-      fontSize: 18,
+      fontSize: 14,
       fontWeight: "semibold",
       color: "#000000",
-      marginBottom: 8,
+      marginBottom: 10,
+    },
+    text: {
+      fontSize: fontSize,
+      fontWeight: 500,
+      color: "#000000",
+      lineHeight: 1.5,
     },
     contactInfo: {
       flexDirection: "row",
       flexWrap: "wrap",
       justifyContent: "center",
-      gap: 8,
+      gap: 2,
+      marginBottom: 12,
     },
     contactItem: {
       flexDirection: "row",
       alignItems: "center",
-      paddingHorizontal: 8,
+      paddingHorizontal: 2,
+      gap: 2,
+      fontSize: fontSize,
     },
     sectionTitle: {
-      fontSize: 14,
-      fontWeight: "semibold",
+      fontSize: 12,
+      fontWeight: 600,
       marginBottom: "12px",
       textTransform: "uppercase",
       color: data?.style?.primaryColor,
@@ -305,7 +202,7 @@ const EntryPDF = ({ data }: any) => {
   });
 
   return (
-    <Document style={{border: 0}}>
+    <Document style={{ border: 0 }}>
       <Page size="A4" style={styles.page}>
         <View style={styles.container}>
           <View>
@@ -324,7 +221,7 @@ const EntryPDF = ({ data }: any) => {
                       key={field}
                       style={[styles.contactItem, { fontSize: fontSizeSm }]}
                     >
-                      <Text style={{ fontWeight: "semibold" }}>
+                      <Text style={{ fontWeight: "semibold", marginBottom: 2 }}>
                         {field.charAt(0).toUpperCase()}:{" "}
                       </Text>
                       <Text>{data[field] || "Unspecified"}</Text>
@@ -335,7 +232,7 @@ const EntryPDF = ({ data }: any) => {
 
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>PROFESSIONAL SUMMARY</Text>
-              <Text style={{ fontSize }}>{data?.professionalSummary}</Text>
+              <Text style={styles.text}>{data?.professionalSummary}</Text>
             </View>
 
             {data?.config?.areaOfExpertise && (
@@ -349,324 +246,570 @@ const EntryPDF = ({ data }: any) => {
                   AREAS OF EXPERTISE
                 </Text>
                 <View
-                  style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}
+                  style={{ flexDirection: "row", flexWrap: "wrap", gap: 4 }}
                 >
-                  {data?.areaOfExpertise?.map((item: string, index: number) => (
+                  {data?.skills?.map((item: string, index: number) => (
                     <Text style={{ fontSize: fontSizeSm }} key={index}>
-                      {item}{" "}
-                      {index + 1 !== data?.areaOfExpertise?.length && " | "}
+                      {item} {index + 1 !== data?.skills?.length && " | "}
                     </Text>
                   ))}
                 </View>
               </View>
             )}
 
-            {data?.config?.education && (
+            {data?.config.education && (
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>EDUCATION</Text>
-                {data?.education?.map((item: any) => (
-                  <View key={item?._id} style={styles.educationItem}>
-                    <View>
-                      <View style={styles.bulletItem}>
-                        <View style={styles.bulletPoint} />
-                        <Text style={{ fontSize }}>{item?.institution}</Text>
-                      </View>
-                      <View style={{ marginLeft: 10 }}>
-                        <Text
-                          style={[
-                            { color: "#393942" },
-                            { fontSize: fontSizeSm },
-                          ]}
-                        >
-                          {item?.degree}
-                        </Text>
-                      </View>
-                    </View>
-                    <Text style={[styles.dateText, { fontSize: fontSizeSm }]}>
-                      {item?.duration}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            )}
-
-            {/* Certifications */}
-            {data?.config?.certifications && (
-              <View style={styles.section}>
-                <Text
-                  style={[
-                    styles.sectionTitle,
-                    { color: data?.style?.primaryColor },
-                  ]}
-                >
-                  CERTIFICATIONS
-                </Text>
-                {data?.certifications?.map((item: any) => (
-                  <View key={item?.id} style={styles.educationItem}>
-                    <View>
-                      <View style={styles.bulletItem}>
-                        <View style={styles.bulletPoint} />
-                        <Text style={{ fontSize }}>{item?.institution}</Text>
-                      </View>
-                      <View style={{ marginLeft: 10 }}>
-                        <Text
-                          style={[
-                            { color: "#393942" },
-                            { fontSize: fontSizeSm },
-                          ]}
-                        >
-                          {item?.name}
-                        </Text>
-                      </View>
-                    </View>
-                    <Text style={[styles.dateText, { fontSize: fontSizeSm }]}>
-                      {formatMonthYear(item?.date)}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            )}
-
-            {/* Relevant Courses */}
-            {data?.config?.relevantCourses && (
-              <View style={styles.section}>
-                <Text
-                  style={[
-                    styles.sectionTitle,
-                    { color: data?.style?.primaryColor },
-                  ]}
-                >
-                  RELEVANT COURSES
-                </Text>
                 <View
                   style={{
-                    flexDirection: "row",
-                    flexWrap: "wrap",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 12,
+                    marginBottom: 8,
                   }}
                 >
-                  {data?.relevantCourses?.map((item: string, index: number) => (
-                    <Text
-                      style={{ fontSize: fontSize, color: "#393942" }}
-                      key={index}
-                    >
-                      {item}
-                      {index + 1 !== data?.relevantCourses?.length && " | "}
-                    </Text>
+                  {data?.education?.map((item: any) => (
+                    <View key={item.id} style={{ marginBottom: 8 }}>
+                      <View
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <View
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            gap: 4,
+                            marginBottom: 8,
+                          }}
+                        >
+                          <Text style={{ fontSize: fontSize }}>
+                            {item.institution}
+                          </Text>
+                          {item?.location && (
+                            <Text
+                              style={{
+                                fontStyle: "italic",
+                                fontSize: fontSize,
+                              }}
+                            >
+                              , {item?.location}
+                            </Text>
+                          )}
+                        </View>
+
+                        <Text
+                          style={{ fontSize: fontSizeSm, color: "#71717A" }}
+                        >
+                          {item?.startDate && formatMonthYear(item?.startDate)}
+                          {item?.hideEndDate && (
+                            <span>
+                              -{" "}
+                              {item?.endDate
+                                ? "Present"
+                                : item?.endDate &&
+                                  formatMonthYear(item?.endDate)}
+                            </span>
+                          )}
+                        </Text>
+                      </View>
+
+                      <View
+                        style={{
+                          lineHeight: 6,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: fontSize,
+                            fontWeight: 600,
+                            lineHeight: "0.8rem",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          {item?.degree} {item?.gpa && "(" + item?.gpa + ")"}
+                        </Text>
+                      </View>
+
+                      {item?.minors && (
+                        <View
+                          style={{
+                            fontSize: fontSize,
+                            marginBottom: 8,
+                            display: "flex",
+                            flexWrap: "wrap",
+                            flexDirection: "row",
+                            gap: 2,
+                          }}
+                        >
+                          <Text
+                            style={{ fontWeight: "semibold", marginTop: 2 }}
+                          >
+                            Minors:
+                          </Text>
+                          <Text>{item?.minors}</Text>
+                        </View>
+                      )}
+                      {item?.relevantCourseWork?.length > 0 && (
+                        <View
+                          style={{
+                            fontSize: fontSize,
+                            display: "flex",
+                            flexDirection: "row",
+                            flexWrap: "wrap",
+                            gap: 2,
+                          }}
+                        >
+                          <Text
+                            style={{ fontWeight: "semibold", marginTop: 2 }}
+                          >
+                            Relevant Coursework:{" "}{" "}
+                          </Text>
+                          <View
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                             
+                              gap: 2,
+                            }}
+                          >
+                            {item?.relevantCourseWork?.map(
+                              (val: string, index: number) => (
+                                <Text key={index}>
+                                  {val}
+                                  {item?.relevantCourseWork?.length > 1 &&
+                                    index + 1 !==
+                                      item?.relevantCourseWork?.length &&
+                                    "," + " "}
+                                </Text>
+                              )
+                            )}
+                          </View>
+                        </View>
+                      )}
+                    </View>
                   ))}
                 </View>
               </View>
             )}
 
-            {/* Projects */}
-            {data?.config?.projects && (
+            {data?.config?.certifications &&
+              data?.certifications?.length > 0 && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionTitle}>
+                    CERTIFICATIONS & TRAININGS
+                  </Text>
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 16,
+                    }}
+                  >
+                    {data?.certifications?.map((item: any) => (
+                      <View key={item.id} style={{ marginBottom: 8 }}>
+                        <View
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            marginBottom: 8,
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: fontSize,
+                              fontWeight: "semibold",
+                              color: "#3F3F46",
+                              textTransform: "uppercase",
+                            }}
+                          >
+                            {item.name}
+                          </Text>
+
+                          <Text
+                            style={{ fontSize: fontSizeSm, color: "#71717A" }}
+                          >
+                            {formatMonthYear(item?.date)}
+                          </Text>
+                        </View>
+                        <View>
+                          <Text
+                            style={{
+                              fontSize: fontSize,
+                              color: "#3F3F46",
+                            }}
+                          >
+                            {item.institution}
+                          </Text>
+                        </View>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              )}
+
+            {data?.config.projects && data?.projects?.length > 0 && (
               <View style={styles.section}>
-                <Text
-                  style={[
-                    styles.sectionTitle,
-                    { color: data?.style?.primaryColor },
-                  ]}
+                <Text style={styles.sectionTitle}>PROJECTS</Text>
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 8,
+                    marginBottom: 16,
+                  }}
                 >
-                  PROJECTS
-                </Text>
-                {data?.projects?.map((item: any) => (
-                  <View key={item?._id} style={{ marginBottom: 16 }}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "flex-start",
-                      }}
-                    >
+                  {data?.projects?.map((item: any) => (
+                    <View key={item.id} style={{}}>
                       <Text
-                        style={[
-                          {
-                            fontWeight: "semibold",
-                            color: "#000000",
-                            padding: "",
-                          },
-                          { fontSize: fontSize },
-                        ]}
+                        style={{
+                          fontSize: fontSize,
+                          fontWeight: "bold",
+                          marginBottom: 8,
+                        }}
                       >
                         {item?.name}
                       </Text>
-                      <Text
-                        style={[
-                          {
-                            color: "#000000",
-                            paddingBottom: "3px",
-                          },
-                          { fontSize: fontSizeSm },
-                        ]}
-                      >
-                        {item?.tools}
+                      <Text style={{ fontSize: fontSize, marginBottom: 8 }}>
+                        {item?.description}
                       </Text>
+                      {item?.link && (
+                        <Link
+                          src={item.link}
+                          style={{
+                            fontSize: fontSize,
+                            fontWeight: "semibold",
+                            color: "#2563eb",
+                            textDecoration: "none",
+                          }}
+                        >
+                          {item.link}
+                        </Link>
+                      )}
                     </View>
-                    <Text
-                      style={[
-                        {
-                          paddingBottom: "3px",
-                          marginVertical: 4,
-                        },
-                        { fontSize: fontSizeSm },
-                      ]}
-                      // style={{ marginVertical: 4 }}
-                    >
-                      {item?.description}
-                    </Text>
-                    {item?.link && (
-                      <Link
-                        src={item?.link}
-                        style={[{ color: "blue" }, { fontSize }]}
-                      >
-                        {item?.link}
-                      </Link>
-                    )}
-                  </View>
-                ))}
+                  ))}
+                </View>
               </View>
             )}
 
-            {/* Work Experience */}
-            {data?.config?.workExperience && (
-              <View style={styles.section}>
-                <Text
-                  style={[
-                    styles.sectionTitle,
-                    { color: data?.style?.primaryColor },
-                  ]}
-                >
-                  PROFESSIONAL EXPERIENCE
-                </Text>
-                {data?.workExperience?.map((item: any) => (
-                  <View key={item?._id} style={{ marginBottom: 16 }}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <Text style={[{ fontWeight: "semibold" }, { fontSize }]}>
-                        {item?.company}
-                      </Text>
-                      <Text style={[styles.dateText, { fontSize: fontSizeSm }]}>
-                        {item?.duration}
-                      </Text>
-                    </View>
-                    <Text
-                      style={[{ marginVertical: 4 }, { fontSize: fontSize }]}
-                    >
-                      {item?.title}
-                    </Text>
-                    <View style={styles.bulletList}>
-                      {item?.keyAchievements?.map(
-                        (achievement: any, index: number) => (
-                          <View key={index} style={styles.bulletItem}>
-                            <View style={styles.bulletPoint} />
-                            <Text style={{ fontSize: fontSizeSm }}>
-                              {achievement}
-                            </Text>
-                          </View>
-                        )
-                      )}
-                    </View>
+            {/* Professional Experience */}
+            {data?.config?.workExperience &&
+              data?.workExperience?.length > 0 && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionTitle}>
+                    PROFESSIONAL EXPERIENCE
+                  </Text>
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 16,
+                    }}
+                  >
+                    {data?.workExperience?.map((item: any) => (
+                      <View key={item.id} style={{ marginBottom: 8 }}>
+                        <View
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            marginBottom: 8,
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: fontSize,
+                              fontWeight: "semibold",
+                            }}
+                          >
+                            {item.company}
+                          </Text>
+
+                          <Text
+                            style={{ fontSize: fontSizeSm, color: "#71717A" }}
+                          >
+                            {item?.startDate &&
+                              formatMonthYear(item?.startDate)}
+                            {item?.active
+                              ? "- Present"
+                              : item?.endDate &&
+                                "- " + formatMonthYear(item?.endDate)}
+                          </Text>
+                        </View>
+                        <View>
+                          <Text
+                            style={{
+                              fontSize: fontSize,
+                              fontWeight: "semibold",
+                              color: "#3F3F46",
+                              textTransform: "uppercase",
+                            }}
+                          >
+                            {item.title}
+                          </Text>
+                        </View>
+                        <Text style={{ fontSize: fontSize, marginTop: "10px" }}>
+                          {item.description}
+                        </Text>
+                        <View style={{ marginTop: "12px" }}>
+                          {item.keyAchievements?.map(
+                            (achievement: any, index: number) => (
+                              <Text
+                                key={index}
+                                style={{
+                                  fontSize: fontSize,
+                                  marginBottom: "7px",
+                                }}
+                              >
+                                • {achievement}
+                              </Text>
+                            )
+                          )}
+                        </View>
+                      </View>
+                    ))}
                   </View>
-                ))}
+                </View>
+              )}
+            {data?.config?.internships && data?.internships?.length > 0 && (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>INTERNSHIPS</Text>
+                <View
+                  style={{ display: "flex", flexDirection: "column", gap: 16 }}
+                >
+                  {data?.internships?.map((item: any) => (
+                    <View key={item.id} style={{ marginBottom: 8 }}>
+                      <View
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: 8,
+                        }}
+                      >
+                        <Text
+                          style={{ fontSize: fontSize, fontWeight: "semibold" }}
+                        >
+                          {item.company}
+                        </Text>
+
+                        <Text
+                          style={{ fontSize: fontSizeSm, color: "#71717A" }}
+                        >
+                          {item?.startDate && formatMonthYear(item?.startDate)}
+                          {item?.active
+                            ? "- Present"
+                            : item?.endDate &&
+                              "- " + formatMonthYear(item?.endDate)}
+                        </Text>
+                      </View>
+                      <View>
+                        <Text
+                          style={{
+                            fontSize: fontSize,
+                            fontWeight: "semibold",
+                            color: "#3F3F46",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          {item.title}
+                        </Text>
+                      </View>
+                      <Text style={{ fontSize: fontSize, marginTop: "10px" }}>
+                        {item.description}
+                      </Text>
+                      <View style={{ marginTop: "12px" }}>
+                        {item.keyAchievements?.map(
+                          (achievement: any, index: number) => (
+                            <Text
+                              key={index}
+                              style={{
+                                fontSize: fontSize,
+                                marginBottom: "7px",
+                              }}
+                            >
+                              • {achievement}
+                            </Text>
+                          )
+                        )}
+                      </View>
+                    </View>
+                  ))}
+                </View>
               </View>
             )}
 
-            {/* Internships */}
-            {data?.config?.internships && (
-              <View style={styles.section}>
-                <Text
-                  style={[
-                    styles.sectionTitle,
-                    { color: data?.style?.primaryColor },
-                  ]}
-                >
-                  INTERNSHIPS
-                </Text>
-                {data?.internships?.map((item: any) => (
-                  <View key={item?._id} style={{ marginBottom: 16 }}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <Text
-                        style={{ fontWeight: "semibold", fontSize: fontSizeSm }}
-                      >
-                        {item?.company}
-                      </Text>
-                      <Text style={styles.dateText}>
-                        {item?.duration}
-                      </Text>
-                    </View>
-                    <Text style={{ marginVertical: 4, fontSize }}>
-                      {item?.title}
-                    </Text>
-                    <View style={styles.bulletList}>
-                      {item?.keyAchievements?.map(
-                        (achievement: string, index: number) => (
-                          <View key={index} style={styles.bulletItem}>
-                            <View style={styles.bulletPoint} />
-                            <Text style={{ fontSize: fontSizeSm }}>
-                              {achievement}
-                            </Text>
-                          </View>
-                        )
-                      )}
-                    </View>
-                  </View>
-                ))}
-              </View>
-            )}
+            {data?.config?.volunteerExperience &&
+              data?.volunteerExperience?.length > 0 && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionTitle}>VOLUNTEER EXPERIENCE</Text>
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 16,
+                    }}
+                  >
+                    {data?.volunteerExperience?.map((item: any) => (
+                      <View key={item.id} style={{ marginBottom: 8 }}>
+                        <View
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            marginBottom: 8,
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: fontSize,
+                              fontWeight: "semibold",
+                            }}
+                          >
+                            {item.company}
+                          </Text>
 
-            {/* Volunteer Experience */}
-            {data?.volunteerExperience?.length > 0 && (
-              <View style={styles.section}>
-                <Text
-                  style={[
-                    styles.sectionTitle,
-                    { color: data?.style?.primaryColor },
-                  ]}
-                >
-                  VOLUNTEER EXPERIENCE
-                </Text>
-                {data?.volunteerExperience?.map((item: any) => (
-                  <View key={item?._id} style={{ marginBottom: 16 }}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <Text
-                        style={{ fontWeight: "semibold", fontSize: fontSize }}
-                      >
-                        {item?.company}
-                      </Text>
-                      <Text style={styles.dateText}>
-                        {item?.duration}
-                      </Text>
-                    </View>
-                    <Text style={{ marginVertical: 4, fontSize }}>
-                      {item?.title}
-                    </Text>
-                    <View style={styles.bulletList}>
-                      {item?.keyAchievements?.map(
-                        (achievement: string, index: number) => (
-                          <View key={index} style={styles.bulletItem}>
-                            <View style={styles.bulletPoint} />
-                            <Text style={{ fontSize: fontSizeSm }}>
-                              {achievement}
-                            </Text>
-                          </View>
-                        )
-                      )}
-                    </View>
+                          <Text
+                            style={{ fontSize: fontSizeSm, color: "#71717A" }}
+                          >
+                            {item?.startDate &&
+                              formatMonthYear(item?.startDate)}
+                            {item?.active
+                              ? "- Present"
+                              : item?.endDate &&
+                                "- " + formatMonthYear(item?.endDate)}
+                          </Text>
+                        </View>
+                        <View>
+                          <Text
+                            style={{
+                              fontSize: fontSize,
+                              fontWeight: "semibold",
+                              color: "#3F3F46",
+                              textTransform: "uppercase",
+                            }}
+                          >
+                            {item.title}
+                          </Text>
+                        </View>
+                        <Text style={{ fontSize: fontSize, marginTop: "10px" }}>
+                          {item.description}
+                        </Text>
+                        <View style={{ marginTop: "12px" }}>
+                          {item.keyAchievements?.map(
+                            (achievement: any, index: number) => (
+                              <Text
+                                key={index}
+                                style={{
+                                  fontSize: fontSize,
+                                  marginBottom: "7px",
+                                }}
+                              >
+                                • {achievement}
+                              </Text>
+                            )
+                          )}
+                        </View>
+                      </View>
+                    ))}
                   </View>
-                ))}
+                </View>
+              )}
+
+            {data?.config?.references && data?.references?.length > 0 && (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>REFEREES</Text>
+                <View
+                  style={{ display: "flex", flexDirection: "column", gap: 16 }}
+                >
+                  {data?.references?.map((item: any) => (
+                    <View key={item.id} style={{ marginBottom: 8 }}>
+                      <View
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: 8,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: fontSize,
+                            fontWeight: "semibold",
+                            color: "#3F3F46",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          {item?.name}
+                        </Text>
+
+                        <Text
+                          style={{
+                            fontSize: fontSizeSm,
+                            color: "#000000d6",
+                            fontStyle: "italic",
+                          }}
+                        >
+                          {item?.relationship}
+                        </Text>
+                      </View>
+                      <View style={{ marginBottom: 8 }}>
+                        <Text
+                          style={{
+                            fontSize: fontSize,
+                            color: "#3F3F46",
+                          }}
+                        >
+                          {item?.title} at {item?.company}
+                        </Text>
+                      </View>
+
+                      <View
+                        style={{
+                          fontSize: fontSize,
+                          marginBottom: 8,
+                          display: "flex",
+                          flexDirection: "row",
+                          gap: 4,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontWeight: "semibold",
+                            marginTop: 2,
+                            color: "#1b38dd",
+                          }}
+                        >
+                          Contact Information:
+                        </Text>
+
+                        {item?.email && (
+                          <Text
+                            style={{ fontStyle: "italic", color: "#353232" }}
+                          >
+                            (E)- {item?.email}
+                          </Text>
+                        )}
+                        {item?.phone && (
+                          <Text
+                            style={{ fontStyle: "italic", color: "#353232" }}
+                          >
+                            (P)- {item?.phone}
+                          </Text>
+                        )}
+                      </View>
+                    </View>
+                  ))}
+                </View>
               </View>
             )}
           </View>

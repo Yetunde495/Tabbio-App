@@ -114,7 +114,7 @@ export const ResumeDocument: React.FC<{ resumeData: any }> = ({
             </div>
 
             <div className="border-b pb-6 border-stroke mb-6">
-              <div className=" px-3">
+              <div className="">
                 <h6
                   className={`font-semibold mb-2 max-sm:text-[11px] text-sm py-1 `}
                   style={{

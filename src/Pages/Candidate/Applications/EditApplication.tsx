@@ -236,23 +236,37 @@ const EditApplication: React.FC = () => {
                       <select
                         className="border border-stroke rounded-md p-2 text-sm w-full focus:outline-none focus:border-primary"
                         onChange={(e) => {
+                          const fontFamily = e.target.value;
+                          const fontSrcMap: { [key: string]: string } = {
+                            Arial: "/fonts/arial/arial.ttf",
+                            "Times New Roman":
+                              "/fonts/timesnewroman/times-new-roman.ttf",
+                            Georgia: "/fonts/georgia/georgia.ttf",
+                            Calibri: "/fonts/calibri/calibri.ttf",
+                          };
                           setResumeData((resumeData: any) => ({
                             ...resumeData,
                             style: {
                               ...resumeData.style,
                               fontFamily: e.target.value,
+                              fontSrc:
+                                fontSrcMap[fontFamily] ||
+                                "/fonts/timesnewroman/times-new-roman.ttf",
                             },
                           }));
                         }}
                         name="fontFamily"
                       >
+                        <option selected disabled value={``}>
+                          {resumeData?.style?.fontFamily}
+                        </option>
                         <option value={`Arial`}>Arial</option>
                         <option value={`Times New Roman`}>
                           Times New Roman
                         </option>
                         <option value={`Georgia`}>Georgia</option>
                         <option value={`Calibri`}>Calibri</option>
-                        <option value={`Helvetica`}>Helvetica</option>
+                        {/* <option value={`Helvetica`}>Helvetica</option> */}
                       </select>
                     </div>
 
@@ -276,6 +290,9 @@ const EditApplication: React.FC = () => {
                         }}
                         name="fontSize"
                       >
+                        <option selected disabled value={``}>
+                          {resumeData?.style?.fontSize}
+                        </option>
                         <option value={`medium`}>Medium</option>
                         <option value={`large`}>Large</option>
                         <option value={`small`}>Small</option>
@@ -330,7 +347,7 @@ const EditApplication: React.FC = () => {
                                     primaryColor: val,
                                   },
                                 });
-                                setActive(null)
+                                setActive(null);
                               }}
                               key={index}
                               className={`h-9 w-9 rounded-full flex justify-center items-center cursor-pointer`}
@@ -694,8 +711,12 @@ const EditApplication: React.FC = () => {
                 >
                   <FaShareAlt /> <span className="max-sm:hidden">Share</span>
                 </button>
-                <button onClick={() => setResultModal(true)} className="font-medium py-1 px-0.5 hover:scale-105 flex items-center gap-1 text-[#333333]">
-                  <FaEye /><span className="hidden">View</span>
+                <button
+                  onClick={() => setResultModal(true)}
+                  className="font-medium py-1 px-0.5 hover:scale-105 flex items-center gap-1 text-[#333333]"
+                >
+                  <FaEye />
+                  <span className="hidden">View</span>
                 </button>
                 <button className="flex items-center py-1 px-1 gap-1 max-sm:text-[12px] hover:scale-105 duration-150 text-[#333333]">
                   <TbWorld /> <span className="">EN</span>
@@ -721,8 +742,6 @@ const EditApplication: React.FC = () => {
             <div className="w-full flex xl:flex-row flex-col gap-5 justify-center">
               <div className="w-full">
                 <div className="w-full flex justify-between gap-6 mb-3 items-end">
-                  
-
                   <div className="flex gap-3 items-center">
                     <button
                       onClick={() => {
@@ -959,6 +978,11 @@ const EditApplication: React.FC = () => {
               }}
               resumeData={resumeData}
               setResumeData={setResumeData}
+              handleUpdateResume={(template: string) => {
+                handleUpdateResume({
+                  template: template,
+                });
+              }}
             />
           )}
         </section>

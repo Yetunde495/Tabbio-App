@@ -2,14 +2,12 @@ import { Fragment, useMemo, useState } from "react";
 import { PageLoader } from "../../components/Loader";
 import EmptyImg from "../../assets/svg/empty-animate.svg";
 import { useNavigate, useParams } from "react-router-dom";
-import { ResumePreview } from "../PageComponents/Resume";
 import { getResumeDataByName } from "../../services/resumeServices";
 import { toast } from "react-toastify";
-// import { mockResData } from "../../data/mockData";
 import { FiDownload, FiExternalLink } from "react-icons/fi";
 import { MdShare } from "react-icons/md";
 import ShareResume from "../Candidate/ShareResume";
-import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import ProfessionalPDF from "../../components/PDFTemplates/ProfessionalPDF";
 import EntryPDF from "../../components/PDFTemplates/EntryPDF";
 
@@ -60,7 +58,7 @@ const LiveResume: React.FC = () => {
             >
               Switch Template
             </button>
-            <div className="max-w-4xl w-full">
+            {/* <div className="max-w-4xl w-full">
               <PDFViewer width="100%" height="500px">
               {resumeData?.template === "professional" ? (
                 <ProfessionalPDF data={resumeData} />
@@ -69,7 +67,7 @@ const LiveResume: React.FC = () => {
               )}
             </PDFViewer>
               <ResumePreview resumeData={resumeData} />
-            </div>
+            </div> */}
           </section>
         </Fragment>
       ) : (

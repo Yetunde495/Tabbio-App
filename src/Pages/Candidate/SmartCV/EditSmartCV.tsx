@@ -50,7 +50,7 @@ import {
   VolunteerExperience,
 } from "../ResumeComponents/CvBuilderComponents";
 import { FaShareAlt } from "react-icons/fa";
-import ResumeTemplateMenu from "../ResumeComponents/TemplateMenu";
+import { SmartCVTemplateMenu } from "../ResumeComponents/TemplateMenu";
 import Button from "../../../components/Button";
 
 const primaryColors = ["#0077B5", "#007CFF", "#FF7D00", "#00C196", "#000000"];
@@ -200,11 +200,22 @@ const EditSmartCV: React.FC = () => {
                       <select
                         className="border border-stroke rounded-md p-2 text-sm w-full focus:outline-none focus:border-primary"
                         onChange={(e) => {
+                          const fontFamily = e.target.value;
+                          const fontSrcMap: { [key: string]: string } = {
+                            Arial: "/fonts/arial/arial.ttf",
+                            "Times New Roman":
+                              "/fonts/timesnewroman/times-new-roman.ttf",
+                            Georgia: "/fonts/georgia/georgia.ttf",
+                            Calibri: "/fonts/calibri/calibri.ttf",
+                          };
                           setResumeData((resumeData: any) => ({
                             ...resumeData,
                             style: {
                               ...resumeData.style,
                               fontFamily: e.target.value,
+                              fontSrc:
+                                fontSrcMap[fontFamily] ||
+                                "/fonts/timesnewroman/times-new-roman.ttf",
                             },
                           }));
                         }}
@@ -217,7 +228,6 @@ const EditSmartCV: React.FC = () => {
                         </option>
                         <option value={`Georgia`}>Georgia</option>
                         <option value={`Calibri`}>Calibri</option>
-                        <option value={`Helvetica`}>Helvetica</option>
                       </select>
                     </div>
 
@@ -831,7 +841,7 @@ const EditSmartCV: React.FC = () => {
           )}
 
           {templateModal && (
-            <ResumeTemplateMenu
+            <SmartCVTemplateMenu
               show={templateModal}
               onHide={() => {
                 setTemplateModal(false);

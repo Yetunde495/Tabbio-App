@@ -179,7 +179,7 @@ const SmartResume: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center flex-wrap gap-3 xl:ml-auto max-sm:pl-2">
+                <div className="flex items-center max-sm:justify-center flex-wrap gap-3 xl:ml-auto max-sm:pl-2">
                   <div className="max-w-[280px] relative font-normal">
                     <Dropdown2
                       buttonContent={
@@ -339,7 +339,7 @@ const SmartResume: React.FC = () => {
           </header>
 
           <section className="w-full flex flex-col xl:py-[9%] py-[10rem] max-sm:pt-[16rem] justify-center items-center">
-            <div className="bg-white shadow-lg px-6 max-sm:px-3 py-5 w-full h-full lg:max-w-[70%] xl:max-w-[65%]">
+            <div className="bg-white shadow-lg px-6 max-sm:px-2 py-5 w-full h-full lg:max-w-[70%] xl:max-w-[65%]">
               <div className="flex flex-col gap-y-6">
                 <Accordion2
                   title={

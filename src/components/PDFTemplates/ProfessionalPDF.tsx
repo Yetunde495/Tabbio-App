@@ -111,15 +111,15 @@ const ProfessionalPDF = ({ data }: any) => {
       borderColor: data?.style?.primaryColor,
     },
     name: {
-      fontSize: 12,
-      fontWeight: 500,
+      fontSize: 14,
+      fontWeight: 600,
       textTransform: "uppercase",
       color: data?.style?.primaryColor,
       maxWidth: "60%",
     },
     role: {
-      fontSize: 10,
-      fontWeight: 500,
+      fontSize: 12,
+      fontWeight: 600,
       textTransform: "uppercase",
     },
     contactInfo: {
@@ -169,18 +169,16 @@ const ProfessionalPDF = ({ data }: any) => {
         {/* Header Section */}
         <View style={styles.section}>
           <View style={styles.header}>
-            <Text style={styles.name}>{data?.name}</Text>
-            <View
-              style={{
-                width: 1,
-                height: "80%",
-                borderLeftWidth: 1,
-                borderColor: "#3F3F46",
-                marginLeft: 8,
-                marginRight: 8,
-              }}
-            ></View>
-            {data?.config.role && <Text style={styles.role}>{data?.role}</Text>}
+            <Text style={styles.name}>
+              {data?.name} {data?.config?.role && " "}
+            </Text>
+
+            {data?.config.role && (
+              <Text style={styles.role}>
+                {data?.config?.role && " " + "|" + " "}
+                {data?.role}
+              </Text>
+            )}
           </View>
           <View style={styles.contactInfo}>
             {["email", "phone", "location", "linkedIn", "website"]
@@ -239,18 +237,32 @@ const ProfessionalPDF = ({ data }: any) => {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>CAREER HIGHLIGHTS</Text>
               <View
-                style={{ display: "flex", flexDirection: "column", gap: 8 }}
+                style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}
               >
                 {data?.careerHighlights?.map((item: any) => (
                   <View key={item.id} style={{}}>
-                    <Text style={{ fontSize: fontSize, fontWeight: "bold", marginBottom: 8 }}>
+                    <Text
+                      style={{
+                        fontSize: fontSize,
+                        fontWeight: "bold",
+                        marginBottom: 8,
+                      }}
+                    >
                       {item?.title}
                     </Text>
                     <Text style={{ fontSize: fontSize, marginBottom: 10 }}>
                       {item?.description}
                     </Text>
                     {item?.link && (
-                      <Link src={item.link} style={styles.link}>
+                      <Link
+                        src={item.link}
+                        style={{
+                          fontSize: fontSize,
+                          fontWeight: "semibold",
+                          color: "#2563eb",
+                          textDecoration: "none",
+                        }}
+                      >
                         {item.link}
                       </Link>
                     )}
@@ -327,7 +339,14 @@ const ProfessionalPDF = ({ data }: any) => {
         {data?.config.education && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>EDUCATION</Text>
-            <View style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 12,
+                marginBottom: 8,
+              }}
+            >
               {data?.education?.map((item: any) => (
                 <View key={item.id} style={{ marginBottom: 8 }}>
                   <View
@@ -339,12 +358,7 @@ const ProfessionalPDF = ({ data }: any) => {
                   >
                     <View
                       style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
                         lineHeight: 6,
-                        // justifyContent: "flex-s<",
-                        width: "75%",
                       }}
                     >
                       <Text
@@ -353,38 +367,98 @@ const ProfessionalPDF = ({ data }: any) => {
                           fontWeight: 600,
                           lineHeight: "0.8rem",
                           textTransform: "uppercase",
-                          width: "50%",
                         }}
                       >
-                        {item.institution}
+                        {item?.degree} {item?.gpa && "(" + item?.gpa + ")"}
+                      </Text>
+                    </View>
+                    <Text style={{ fontSize: fontSizeSm, color: "#71717A" }}>
+                      {item?.startDate && formatMonthYear(item?.startDate)}
+                      {item?.hideEndDate && (
+                        <span>
+                          -{" "}
+                          {item?.endDate
+                            ? "Present"
+                            : item?.endDate && formatMonthYear(item?.endDate)}
+                        </span>
+                      )}
+                    </Text>
+                  </View>
+
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      gap: 4,
+                      marginBottom: 8,
+                    }}
+                  >
+                    <Text style={{ fontSize: fontSize }}>
+                      {item.institution}
+                    </Text>
+                    {item?.location && (
+                      <Text
+                        style={{
+                          fontStyle: "italic",
+                          fontSize: fontSize,
+                        }}
+                      >
+                        , {item?.location}
+                      </Text>
+                    )}
+                  </View>
+
+                  {item?.minors && (
+                    <View
+                      style={{
+                        fontSize: fontSize,
+                        marginBottom: 8,
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: 2,
+                      }}
+                    >
+                      <Text style={{ fontWeight: "semibold", marginTop: 2 }}>
+                        Minors:
+                      </Text>
+                      <Text>{item?.minors}</Text>
+                    </View>
+                  )}
+                  {item?.relevantCourseWork?.length > 0 && (
+                    <View
+                      style={{
+                        fontSize: fontSize,
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: 2,
+                      }}
+                    >
+                      <Text style={{ fontWeight: "semibold", marginTop: 2 }}>
+                        Relevant Coursework:
                       </Text>
                       <View
                         style={{
-                          width: 1,
-                          height: "100%",
-                          borderLeftWidth: 1,
-                          borderColor: "#3F3F46",
-                          marginLeft: 4,
-                          marginRight: 4,
-                        }}
-                      ></View>
-                      <Text
-                        style={{
-                          fontSize: fontSize,
-                          fontWeight: "semibold",
-                          textTransform: "uppercase",
-                          width: "50%",
-                          lineHeight: "0.8rem",
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          flexWrap: "wrap",
+                          gap: 2,
                         }}
                       >
-                        {item.degree}
-                      </Text>
+                        {item?.relevantCourseWork?.map(
+                          (val: string, index: number) => (
+                            <Text key={index}>
+                              {val}{" "}
+                              {item?.relevantCourseWork?.length > 1 &&
+                                index + 1 !==
+                                  item?.relevantCourseWork?.length &&
+                                ","}
+                            </Text>
+                          )
+                        )}
+                      </View>
                     </View>
-                    <Text style={{ fontSize: fontSizeSm }}>
-                      {item?.duration}
-                    </Text>
-                  </View>
-                  <Text style={{ fontSize: fontSize }}>{item.description}</Text>
+                  )}
                 </View>
               ))}
             </View>
@@ -564,7 +638,175 @@ const ProfessionalPDF = ({ data }: any) => {
           </View>
         )}
 
-       
+        {data?.config.projects && data?.projects?.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>PROJECTS</Text>
+            <View style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
+              {data?.projects?.map((item: any) => (
+                <View key={item.id} style={{}}>
+                  <Text
+                    style={{
+                      fontSize: fontSize,
+                      fontWeight: "bold",
+                      marginBottom: 8,
+                    }}
+                  >
+                    {item?.name}
+                  </Text>
+                  <Text style={{ fontSize: fontSize, marginBottom: 8 }}>
+                    {item?.description}
+                  </Text>
+                  {item?.link && (
+                    <Link
+                      src={item.link}
+                      style={{
+                        fontSize: fontSize,
+                        fontWeight: "semibold",
+                        color: "#2563eb",
+                        textDecoration: "none",
+                      }}
+                    >
+                      {item.link}
+                    </Link>
+                  )}
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {data?.config?.memberships && data?.membership?.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>MEMBERSHIPS</Text>
+            <View style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              {data?.membership?.map((item: any) => (
+                <View key={item.id} style={{ marginBottom: 8 }}>
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: 8,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: fontSize,
+                        fontWeight: "semibold",
+                        color: "#3F3F46",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {item.role}
+                    </Text>
+
+                    <Text style={{ fontSize: fontSizeSm, color: "#71717A" }}>
+                      {item?.startDate && formatMonthYear(item?.startDate)} -{" "}
+                      {item?.endDate
+                        ? "Present"
+                        : item?.endDate && formatMonthYear(item?.endDate)}
+                    </Text>
+                  </View>
+                  <View>
+                    <Text
+                      style={{
+                        fontSize: fontSize,
+                        color: "#3F3F46",
+                        marginBottom: 8,
+                      }}
+                    >
+                      {item.title}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+        {data?.config?.references && data?.references?.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>PROFESSIONAL REFERENCES</Text>
+            <View style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              {data?.references?.map((item: any) => (
+                <View key={item.id} style={{ marginBottom: 8 }}>
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: 8,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: fontSize,
+                        fontWeight: "semibold",
+                        color: "#3F3F46",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {item?.name}
+                    </Text>
+
+                    <Text
+                      style={{
+                        fontSize: fontSizeSm,
+                        color: "#000000d6",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      {item?.relationship}
+                    </Text>
+                  </View>
+                  <View style={{ marginBottom: 8 }}>
+                    <Text
+                      style={{
+                        fontSize: fontSize,
+                        color: "#3F3F46",
+                      }}
+                    >
+                      {item?.title} at {item?.company}
+                    </Text>
+                  </View>
+
+                  <View
+                    style={{
+                      fontSize: fontSize,
+                      marginBottom: 8,
+                      display: "flex",
+                      flexDirection: "row",
+                      gap: 4,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontWeight: "semibold",
+                        marginTop: 2,
+                        color: "#1b38dd",
+                      }}
+                    >
+                      Contact Information:
+                    </Text>
+                  
+                      {item?.email && (
+                        <Text style={{ fontStyle: "italic", color: "#353232" }}>
+                          (E)- {item?.email}
+                        </Text>
+                      )}
+                      {item?.phone && (
+                        <Text style={{ fontStyle: "italic", color: "#353232" }}>
+                          (P)- {item?.phone}
+                        </Text>
+                      )}
+                  
+                  </View>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
       </Page>
     </Document>
   );
