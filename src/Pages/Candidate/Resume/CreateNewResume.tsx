@@ -13,6 +13,7 @@ import {
   FaArrowRight,
   FaCheck,
   FaDownload,
+  FaEye,
   FaFileMedical,
   FaPencil,
 } from "react-icons/fa6";
@@ -186,7 +187,7 @@ const CreateNewResume: React.FC = () => {
     <DefaultLayout>
       {applicationKitData && resumeData && (
         <section className="w-full">
-          <div className="bg-zinc-50/90 md:px-6 px-2 py-3 mb-6 mt-3 w-full">
+          <div className="bg-zinc-50/90 md:px-6 px-1 py-3 mb-6 mt-3 w-full">
             <div className="flex max-xl:flex-col gap-3 gap-y-1.5  relative w-full z-99">
               <Menu setActive={setActive}>
                 <MenuItem
@@ -194,7 +195,7 @@ const CreateNewResume: React.FC = () => {
                   active={active}
                   position="max-sm:-translate-x-[25%]"
                   item={
-                    <div className="flex space-x-[2px] max-sm:text-[12px] text-[15px] sm:space-x-2 items-center">
+                    <div className="flex space-x-[2px] max-sm:text-[11px] text-[15px] sm:space-x-2 items-center">
                       <FiLayout />
                       <span>Template</span>
                       <Icons.arrowDown />
@@ -210,7 +211,7 @@ const CreateNewResume: React.FC = () => {
                   active={active}
                   position="max-sm:-translate-x-[40%]"
                   item={
-                    <div className="flex space-x-[2px] max-sm:text-[12px] text-[15px] sm:space-x-2 items-center">
+                    <div className="flex space-x-[2px] max-sm:text-[11px] text-[15px] sm:space-x-2 items-center">
                       <img className="w-4" src={typographyIcon} />
                       <span>Typography</span>
                       <Icons.arrowDown />
@@ -232,23 +233,37 @@ const CreateNewResume: React.FC = () => {
                       <select
                         className="border border-stroke rounded-md p-2 text-sm w-full focus:outline-none focus:border-primary"
                         onChange={(e) => {
+                          const fontFamily = e.target.value;
+                          const fontSrcMap: { [key: string]: string } = {
+                            Arial: "/fonts/arial/arial.ttf",
+                            "Times New Roman":
+                              "/fonts/timesnewroman/times-new-roman.ttf",
+                            Georgia: "/fonts/georgia/georgia.ttf",
+                            Calibri: "/fonts/calibri/calibri.ttf",
+                          };
                           setResumeData((resumeData: any) => ({
                             ...resumeData,
                             style: {
                               ...resumeData.style,
                               fontFamily: e.target.value,
+                              fontSrc:
+                                fontSrcMap[fontFamily] ||
+                                "/fonts/timesnewroman/times-new-roman.ttf",
                             },
                           }));
                         }}
                         name="fontFamily"
                       >
+                        <option selected disabled value={``}>
+                          {resumeData?.style?.fontFamily}
+                        </option>
                         <option value={`Arial`}>Arial</option>
                         <option value={`Times New Roman`}>
                           Times New Roman
                         </option>
                         <option value={`Georgia`}>Georgia</option>
                         <option value={`Calibri`}>Calibri</option>
-                        <option value={`Helvetica`}>Helvetica</option>
+                        {/* <option value={`Helvetica`}>Helvetica</option> */}
                       </select>
                     </div>
 
@@ -272,11 +287,15 @@ const CreateNewResume: React.FC = () => {
                         }}
                         name="fontSize"
                       >
+                        <option selected disabled value={``}>
+                          {resumeData?.style?.fontSize}
+                        </option>
                         <option value={`medium`}>Medium</option>
                         <option value={`large`}>Large</option>
                         <option value={`small`}>Small</option>
                       </select>
                     </div>
+
                     <div className="flex w-full justify-between gap-3 py-2">
                       <button
                         onClick={() => setActive(null)}
@@ -305,7 +324,7 @@ const CreateNewResume: React.FC = () => {
                     active={active}
                     position="max-sm:-translate-x-[62%]"
                     item={
-                      <div className="flex space-x-[2px] max-sm:text-[12px] text-[15px] sm:space-x-2 items-center">
+                      <div className="flex space-x-[2px] max-sm:text-[11px] text-[15px] sm:space-x-2 items-center">
                         <MdOutlineColorLens />
                         <span>Color</span>
                         <Icons.arrowDown />
@@ -321,7 +340,7 @@ const CreateNewResume: React.FC = () => {
                               onClick={() => {
                                 handleUpdateResume({
                                   style: {
-                                    ...resumeData.style,
+                                    ...resumeData?.style,
                                     primaryColor: val,
                                   },
                                 });
@@ -357,15 +376,15 @@ const CreateNewResume: React.FC = () => {
                     >
                       <Sketch
                         color={resumeData?.style?.primaryColor}
-                        onChange={(color) => {
-                          handleUpdateResume({
+                        onChange={(color) =>
+                          setResumeData((d: any) => ({
+                            ...d,
                             style: {
-                              ...resumeData.style,
+                              ...d.style,
                               primaryColor: color.hex,
                             },
-                          });
-                          setActive(null);
-                        }}
+                          }))
+                        }
                       />
                     </div>
                   )}
@@ -376,7 +395,7 @@ const CreateNewResume: React.FC = () => {
                   active={active}
                   position="max-sm:-translate-x-[90.5%]"
                   item={
-                    <div className="flex space-x-[2px] max-sm:text-[12px] text-[15px] sm:space-x-2 items-center">
+                    <div className="flex space-x-[2px] max-sm:text-[11px] text-[15px] sm:space-x-2 items-center">
                       <PiSlidersHorizontalBold />
                       <span>Sections</span>
                       <Icons.arrowDown />
@@ -392,8 +411,9 @@ const CreateNewResume: React.FC = () => {
                       Toggle the switches to control which sections appear on
                       your CV
                     </p>
-                    <div className="grid grid-cols-2 gap-8 max-sm:gap-3 justify-between text-sm border-b-2 border-stroke pb-3.5">
+                    <div className="grid grid-cols-2 gap-8 max-sm:gap-3 justify-between text-sm max-sm:text-[10px] border-b-2 border-stroke pb-3.5">
                       <div>
+                        <h6 className="mb-2">Basic Details</h6>
                         <ul className="space-y-2.5">
                           <li>
                             <Switch
@@ -684,22 +704,29 @@ const CreateNewResume: React.FC = () => {
 
                 <button
                   onClick={() => setShareModal(true)}
-                  className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center text-[#333333] gap-1 hover:scale-x-105 "
+                  className="py-1 px-0.5 max-sm:text-[12px] flex items-center text-[#333333] gap-1 hover:scale-x-105 "
                 >
                   <FaShareAlt /> <span className="max-sm:hidden">Share</span>
                 </button>
+                <button
+                  onClick={() => setResultModal(true)}
+                  className="font-medium py-1 px-0.5 hover:scale-105 flex items-center gap-1 text-[#333333]"
+                >
+                  <FaEye />
+                  <span className="hidden">View</span>
+                </button>
                 <button className="flex items-center py-1 px-1 gap-1 max-sm:text-[12px] hover:scale-105 duration-150 text-[#333333]">
-                  <TbWorld /> <span className="max-sm:hidden">EN</span>
+                  <TbWorld /> <span className="">EN</span>
                 </button>
                 <button
-                  onClick={() => setUploadOption(true)}
+                  onClick={() => navigate(`/app/candidate/cv-builder`)}
                   className="py-1 px-1 md:ml-1 max-md:pl-0 max-sm:text-[12px] flex items-center gap-1 text-[#333333] hover:scale-x-105 "
                 >
                   <span className="">Create New</span> <FaFileMedical />
                 </button>
 
                 <button
-                  onClick={() => setUploadOption(true)}
+                  onClick={() => navigate(`/app/candidate/cv-builder`)}
                   className="hidden items-center gap-2 max-sm:text-xs p-1 hover:scale-105 duration-150 text-[#333333]"
                 >
                   Create New <FaFileMedical />
@@ -959,6 +986,11 @@ const CreateNewResume: React.FC = () => {
               }}
               resumeData={resumeData}
               setResumeData={setResumeData}
+              handleUpdateResume={(template: string) => {
+                handleUpdateResume({
+                  template: template,
+                });
+              }}
             />
           )}
         </section>

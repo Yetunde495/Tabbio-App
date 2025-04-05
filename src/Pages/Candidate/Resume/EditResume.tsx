@@ -857,6 +857,7 @@ const EditResume: React.FC = () => {
               }}
               resumeData={resumeData}
               setResumeData={setResumeData}
+              handleUpdateResume={() => {}}
             />
           )}
         </section>
