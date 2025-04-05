@@ -46,7 +46,9 @@ const TabbioScore: React.FC<TabbioScoreProps> = ({ score, onClick }) => {
       </div>
 
       {/* Label */}
-      <span className="text-zinc-800 max-sm:text-[12px] text-sm font-medium">View my Tabbio score</span>
+      <span className="text-zinc-800 max-sm:hidden text-sm font-medium">View my Tabbio score</span>
+      <span className="text-zinc-800 text-[11px] hidden max-sm:block font-medium">Tabbio score</span>
+
     </div>
   );
 };

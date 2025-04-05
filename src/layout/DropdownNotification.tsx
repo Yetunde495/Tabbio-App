@@ -1,12 +1,55 @@
 import { useEffect, useRef, useState } from "react";
-import { FiBell } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { GoBell } from "react-icons/go";
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { useApp } from "../context/AppContext";
+import { FaEnvelope, FaEnvelopeOpen } from "react-icons/fa6";
+import { Tooltip2 } from "../components/Tooltip";
+import ComponentLoader from "../components/componentLoader";
+import { formatDateToString2 } from "../lib/utils/formatters";
+import { useReadNotification } from "../services/api/notifications";
+import { fetchUserNotifications } from "../services/notificationServices";
+import SlideTab, { Cursor } from "../AnimatedUi/SlideTabs";
+import { IoCheckmarkDone } from "react-icons/io5";
+
+type Position = {
+  left: number;
+  width: number;
+  opacity: number;
+};
 
 const DropdownNotification = () => {
+  const { user } = useApp();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const navigate = useNavigate();
+  const [notifications, setNotifications] = useState<any>([]);
+  const [status, setStatus] = useState<any>(null);
+  const [tab, setTab] = useState("All");
+  const [position, setPosition] = useState<Position>({
+    left: 0,
+    width: 0,
+    opacity: 0,
+  });
+  const [hover, setHover] = useState(false);
 
-  const trigger = useRef<HTMLAnchorElement | null>(null);
+  const trigger = useRef<HTMLDivElement | null>(null);
   const dropdown = useRef<HTMLDivElement | null>(null);
+
+  const { data, isLoading } = useQuery(
+    ["USER_NOTIFICATIONS", 1, 10, status],
+    fetchUserNotifications,
+    {
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
+      enabled: !!user,
+      onSuccess: (data: any) => {
+        setNotifications(data?.items || []);
+      },
+    }
+  );
+
+  const { mutate: ReadNotification, isLoading: requestLoading } =
+    useReadNotification();
 
   useEffect(() => {
     const clickHandler = ({ target }: any) => {
@@ -39,99 +82,191 @@ const DropdownNotification = () => {
   }, []);
 
   return (
-    <li className="relative">
-      <Link
+    <div className="relative">
+      <div
         ref={trigger}
         onClick={() => setDropdownOpen(!dropdownOpen)}
-        to="#"
-        className="relative text-black/80 text-lg flex h-8.5 w-8.5 items-center justify-center rounded-md border-[0.5px] border-stroke hover:text-primary dark:border-strokedark dark:bg-meta-4 dark:text-white"
+        className="relative flex  text-slate-500 hover:scale-105 cursor-pointer  dark:text-white"
       >
-        <span className="absolute -top-0.5 right-0 z-1 h-2 w-2 rounded-full bg-meta-1">
-          <span className="absolute -z-1 inline-flex h-full w-full animate-ping rounded-full bg-meta-1 opacity-75"></span>
-        </span>
+        {notifications.some((item: any) => item.read === false) && (
+          <span className="absolute -top-0.5 right-0 z-1 h-2 w-2 rounded-full bg-meta-1">
+            <span className="absolute -z-1 inline-flex h-full w-full animate-ping rounded-full bg-meta-1 opacity-75"></span>
+          </span>
+        )}
 
-        <FiBell />
-      </Link>
+        <GoBell size={20} />
+      </div>
 
       <div
         ref={dropdown}
         onFocus={() => setDropdownOpen(true)}
         onBlur={() => setDropdownOpen(false)}
-        className={`absolute -right-27 mt-2.5 flex h-90 w-75 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark sm:right-0 sm:w-80 ${
+        className={`absolute right-3 mt-2.5 flex h-100 w-80 flex-col rounded-2xl border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark sm:right-0 sm:w-90 ${
           dropdownOpen === true ? "block" : "hidden"
         }`}
       >
         <div className="px-4.5 py-3">
-          <h5 className="text-sm font-medium text-bodydark2">Notification</h5>
+          <h5 className="text-sm font-medium text-bodydark2 dark:text-white">
+            Recent Notifications
+          </h5>
         </div>
 
-        <ul className="flex h-auto flex-col overflow-y-auto custom-scrollbar">
-          <li>
-            <Link
-              className="flex flex-col gap-2.5 border-t border-stroke px-4.5 py-3 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4"
-              to="#"
+        <div className="mb-2 px-2">
+          <ul
+            onMouseLeave={() => {
+              setPosition((pv) => ({
+                ...pv,
+                opacity: 0,
+              }));
+              setHover(false);
+            }}
+            onMouseEnter={() => {
+              setHover(true);
+            }}
+            className="relative flex w-full py-0.5 rounded-md shadow-zinc-300/80 bg-[#F5F6FD]"
+          >
+            <SlideTab
+              activeTab={tab}
+              tab="All"
+              onChange={(tab) => {
+                setTab(tab);
+                setStatus(null);
+              }}
+              setPosition={setPosition}
+              noBg={hover}
+              landing={false}
+              activeColor="text-zinc-600"
             >
-              <p className="text-sm">
-                <span className="text-black dark:text-white">
-                  Edit your information in a swipe
-                </span>{" "}
-                Sint occaecat cupidatat non proident, sunt in culpa qui officia
-                deserunt mollit anim.
-              </p>
-
-              <p className="text-xs">12 May, 2025</p>
-            </Link>
-          </li>
-          <li>
-            <Link
-              className="flex flex-col gap-2.5 border-t border-stroke px-4.5 py-3 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4"
-              to="#"
+              <div className="flex gap-1.5 text-sm items-center">
+                <span className="font-normal gap-1.5">View All</span>
+              </div>
+            </SlideTab>
+            <SlideTab
+              activeTab={tab}
+              onChange={(tab) => {
+                setTab(tab);
+                setStatus(false);
+              }}
+              tab="Unread"
+              setPosition={setPosition}
+              noBg={hover}
+              landing={false}
+              activeColor="text-zinc-600"
             >
-              <p className="text-sm">
-                <span className="text-black dark:text-white">
-                  It is a long established fact
-                </span>{" "}
-                that a reader will be distracted by the readable.
-              </p>
-
-              <p className="text-xs">24 Feb, 2025</p>
-            </Link>
-          </li>
-          <li>
-            <Link
-              className="flex flex-col gap-2.5 border-t border-stroke px-4.5 py-3 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4"
-              to="#"
+              <div className=" text-sm">
+                <span className="items-center font-normal">Unread</span>
+              </div>
+            </SlideTab>
+            <SlideTab
+              activeTab={tab}
+              onChange={(tab) => {
+                setTab(tab);
+                setStatus(true);
+              }}
+              tab="read"
+              setPosition={setPosition}
+              noBg={hover}
+              landing={false}
+              activeColor="text-zinc-600"
             >
-              <p className="text-sm">
-                <span className="text-black dark:text-white">
-                  There are many variations
-                </span>{" "}
-                of passages of Lorem Ipsum available, but the majority have
-                suffered
-              </p>
+              <div className=" text-sm">
+                <span className="gap-1.5 font-normal items-center">Read</span>
+              </div>
+            </SlideTab>
 
-              <p className="text-xs">04 Jan, 2025</p>
-            </Link>
-          </li>
-          <li>
-            <Link
-              className="flex flex-col gap-2.5 border-t border-stroke px-4.5 py-3 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4"
-              to="#"
-            >
-              <p className="text-sm">
-                <span className="text-black dark:text-white">
-                  There are many variations
-                </span>{" "}
-                of passages of Lorem Ipsum available, but the majority have
-                suffered
-              </p>
+            <Cursor position={position} landing={false} />
+          </ul>
+        </div>
 
-              <p className="text-xs">01 Dec, 2024</p>
-            </Link>
-          </li>
-        </ul>
+        {isLoading ? (
+          <div className="flex h-full w-full items-center justify-center">
+            <ComponentLoader
+              show={isLoading}
+              size={"w-[2.5em] h-[2.5em] border-[4px]"}
+            />
+          </div>
+        ) : data === undefined ||
+          data === null ||
+          notifications.length === 0 ? (
+          <div className="flex h-full flex-col items-center justify-center rounded-sm bg-white dark:bg-boxdark pb-10">
+            <div className="py-3">
+              <GoBell size={24} />
+            </div>
+
+            <div className="text-center">
+              <h2 className="font-medium text-black dark:text-white">
+                You're all caught up
+              </h2>
+              <p className="font-normal text-zinc-800 text-sm px-2">
+                Nothing new at the moment. Check back later for updates on your
+                activity.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <ul className="flex h-auto flex-col overflow-y-auto custom-scrollbar mb-8">
+            {notifications.map((val: any, index: number) => (
+              <li key={index}>
+                <div
+                  className="flex gap-3 border-t  relative text-slate-700 dark:text-slate-100 border-stroke px-4.5 py-3  dark:border-strokedark"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  <div className="mt-1">
+                    <button
+                      onClick={() => {
+                        ReadNotification({
+                          notificationId: val._id,
+                          payload: {
+                            read: !val?.read,
+                          },
+                        });
+                      }}
+                      disabled={requestLoading}
+                    >
+                      {val?.read ? (
+                        <Tooltip2 text="Mark as Unread">
+                          <FaEnvelopeOpen />
+                        </Tooltip2>
+                      ) : (
+                        <Tooltip2 text="Mark as Read">
+                          <FaEnvelope />
+                        </Tooltip2>
+                      )}
+                    </button>
+                  </div>
+                  <div className="flex flex-col gap-2.5">
+                    <p
+                      className="text-sm mb-2 text-slate-700 font-normal"
+                    >
+                      {val.message}
+                    </p>
+
+                    <p className="text-xs font-medium text-black dark:text-white/90 ">
+                      {formatDateToString2(val.createdAt)}
+                    </p>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <div className="flex items-center justify-between px-2 py-1.5 absolute bottom-2 w-full border-t border-stroke bg-white">
+          <button
+            onClick={() => navigate(`/app/all-notifications`)}
+            className="focus:outline-none bg-white flex items-center gap-1  p-1  hover:text-primary text-slate-700 text-xs"
+          >
+            <IoCheckmarkDone /> Mark all as read
+          </button>{" "}
+          <button
+            onClick={() => navigate(`/app/all-notifications`)}
+            className="border-none  py-1 px-2 bg-primary text-white rounded-md hover:bg-primary/90 text-xs"
+          >
+            View all notifications
+          </button>
+        </div>
       </div>
-    </li>
+    </div>
   );
 };
 

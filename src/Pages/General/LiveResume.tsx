@@ -2,10 +2,8 @@ import { Fragment, useMemo, useState } from "react";
 import { PageLoader } from "../../components/Loader";
 import EmptyImg from "../../assets/svg/empty-animate.svg";
 import { useNavigate, useParams } from "react-router-dom";
-import { ResumePreview } from "../PageComponents/Resume";
 import { getResumeDataByName } from "../../services/resumeServices";
 import { toast } from "react-toastify";
-// import { mockResData } from "../../data/mockData";
 import { FiDownload, FiExternalLink } from "react-icons/fi";
 import { MdShare } from "react-icons/md";
 import ShareResume from "../Candidate/ShareResume";
@@ -28,7 +26,7 @@ const LiveResume: React.FC = () => {
         const resp = await getResumeDataByName(`${resumeName}`);
         setResumeData(resp?.data?.resume);
       } catch (err: any) {
-        if (err?.message !== "Profile not found") {
+        if (err?.message !== "Resume not found") {
           toast.error(err?.message || "Request Failed");
           // setResumeData(mockResData);
           setErrMessage(err?.message);
@@ -60,16 +58,16 @@ const LiveResume: React.FC = () => {
             >
               Switch Template
             </button>
-            <div className="max-w-4xl w-full">
-              {/* <PDFViewer width="100%" height="800px">
+            {/* <div className="max-w-4xl w-full">
+              <PDFViewer width="100%" height="500px">
               {resumeData?.template === "professional" ? (
                 <ProfessionalPDF data={resumeData} />
               ) : (
                 <EntryPDF data={resumeData} />
               )}
-            </PDFViewer> */}
+            </PDFViewer>
               <ResumePreview resumeData={resumeData} />
-            </div>
+            </div> */}
           </section>
         </Fragment>
       ) : (

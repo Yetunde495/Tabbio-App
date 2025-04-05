@@ -17,10 +17,10 @@ import brandIcons from "../../data/icons";
 import { SiSimpleanalytics } from "react-icons/si";
 import { LuAward, LuFileSearch, LuUsers } from "react-icons/lu";
 import { CgFileDocument } from "react-icons/cg";
-import useColorMode from "../../hooks/useColorMode";
 import { FiBriefcase, FiTarget } from "react-icons/fi";
 import { BiBrain } from "react-icons/bi";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useInView } from "react-intersection-observer";
 import { IoFlashOutline } from "react-icons/io5";
 import { Ratings } from "../../components/Rating";
 import { BsBrowserChrome } from "react-icons/bs";
@@ -29,55 +29,45 @@ import { useApp } from "../../context/AppContext";
 import { useTranslation } from "react-i18next";
 import Modal from "../../components/modal";
 import { Carousel } from "../../components/Carousel";
-import img1 from "../../assets/images/hiw-1.png"
-import img2 from "../../assets/images/hiw-2.png"
-import img3 from "../../assets/images/hiw-3.png"
-
+import img1 from "../../assets/images/hiw-1.png";
+import img2 from "../../assets/images/hiw-2.png";
+import img3 from "../../assets/images/hiw-3.png";
 
 const ProfessionalLandingpage: React.FC = () => {
   const navigate = useNavigate();
   const { setParsedResume } = useApp();
-  const [colorMode, setColorMode] = useColorMode();
-  const [hasEntered, setHasEntered] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const { t } = useTranslation();
 
   const demoData = [
     {
       image: img1,
-      text:"Simply drag and drop your existing CV",
-      title:"Upload Your CV"
+      text: "Simply drag and drop your existing CV",
+      title: "Upload Your CV",
     },
     {
-      image:img2,
-      text:"Your CV is instantly transformed",
-      title:"Get your smart CV"
+      image: img2,
+      text: "Your CV is instantly transformed",
+      title: "Get your smart CV",
     },
     {
-      image:img3,
-      text:"Apply Anywhere",
-      title:"One click to apply everywhere"
+      image: img3,
+      text: "Apply Anywhere",
+      title: "One click to apply everywhere",
     },
-  ]
+  ];
 
-  useEffect(() => {
-    if (!hasEntered) {
-      if (typeof setColorMode === "function" && colorMode === "dark") {
-        setColorMode("light");
-      }
-    }
-  }, [hasEntered]);
+  // Inside your component
+  const [ref, inView] = useInView({
+    threshold: 0.2,
+  });
+  const [ref2, inView2] = useInView({
+    threshold: 0.1,
+  });
+
   return (
     <Layout>
-      <motion.section
-        onViewportEnter={() => {
-          if (typeof setColorMode === "function" && colorMode === "dark") {
-            setHasEntered(false);
-            setColorMode("light");
-          }
-        }}
-        className="p-8 max-sm:px-4 md:py-22 text grid grid-cols-1 gap-12 xl:max-w-7xl 2xl:max-w-full 2xl:px-[12rem] 4xl:px-[3rem] w-full mx-auto"
-      >
+      <motion.section className="p-8 max-sm:px-4 md:py-22 text grid grid-cols-1 gap-12 xl:max-w-7xl 2xl:max-w-full 2xl:px-[12rem] 4xl:px-[3rem] w-full mx-auto">
         <div className="text-center text-lg text-zinc-500">
           <p className="text-[#DC2626] bg-red-100/50 inline-flex rounded-full sm:items-center px-4 py-2 mb-6 max-sm:text-[12px] text-sm gap-2">
             <span>
@@ -135,7 +125,10 @@ const ProfessionalLandingpage: React.FC = () => {
             <span>Get Started</span>
             <FaArrowRightLong className="group-hover:translate-x-1.5" />
           </Button>
-          <button onClick={() => setShowModal(true)} className="hover:scale-105 bg-gradient-to-b from-[#3B82F60D] to-[#A855F70D] text-black py-3 px-8 rounded-md">
+          <button
+            onClick={() => setShowModal(true)}
+            className="hover:scale-105 bg-gradient-to-b from-[#3B82F60D] to-[#A855F70D] text-black py-3 px-8 rounded-md"
+          >
             Watch Demo
           </button>
         </div>
@@ -151,11 +144,32 @@ const ProfessionalLandingpage: React.FC = () => {
         />
       </div>
 
-      <section className="pb-20 pt-10 bg-white dark:bg-[#111827]">
+      <section className="pb-20 pt-20 bg-white">
         <div className="">
           <section className="overflow-hidden flex flex-col justify-center items-center relative">
+            <div className="h-[10vh] z-0 py-10">
+              <motion.div
+                ref={ref2}
+                className="z-2 w-full h-full"
+                initial={{
+                  scaleY: 0,
+                }}
+                animate={{
+                  // backgroundColor: inView ? "white" : "transparent",
+                  width: inView2 ? "100%" : "0%",
+                  scaleY: inView2 ? 1.5 : 0,
+                }}
+                transition={{
+                  delay: 0.1,
+                  duration: 1.2,
+                  ease: "easeOut",
+                }}
+              ></motion.div>
+            </div>
             <motion.div
-              className="pb-[64px] relative flex justify-center items-center py-[10rem] px-8 max-sm:px-4 lg:px-[4rem] 4xl:px-[3rem] 2xl:px-[12rem]"
+              className={` ${
+                inView2 ? "bg-white" : "bg-transparent"
+              } z-20 relative flex flex-col justify-center items-center py-[10rem] px-8 max-sm:px-4 lg:px-[4rem] 4xl:px-[3rem] 2xl:px-[12rem]`}
               initial={{ y: 100, width: "90%" }}
               whileInView={{
                 y: -20,
@@ -167,22 +181,7 @@ const ProfessionalLandingpage: React.FC = () => {
                   ease: "easeInOut",
                 },
               }}
-              onViewportEnter={() => {
-                if (
-                  typeof setColorMode === "function" &&
-                  colorMode === "dark"
-                ) {
-                  setHasEntered(false);
-                  setColorMode("light");
-                }
-              }}
             >
-              <motion.div
-                className=" hidden h-40 w-full"
-                whileInView={{
-                  className: " block",
-                }}
-              ></motion.div>
               <div className="w-full">
                 <div className="mb-8">
                   <h1 className="font-bold text-center lg:text-3xl text-2xl">
@@ -242,8 +241,28 @@ const ProfessionalLandingpage: React.FC = () => {
               </div>
             </motion.div>
 
+            <div className="absolute h-full w-full z-0">
+              <motion.div
+                ref={ref}
+                className="z-2 rounded-[30px] w-full h-full"
+                initial={{
+                  scaleY: 0,
+                }}
+                animate={{
+                  backgroundColor: inView2 ? "transparent" : "#111827",
+                  width: inView ? "100%" : "100%",
+                  scaleY: inView ? 1.5 : 0,
+                }}
+                transition={{
+                  delay: 0.1,
+                  duration: 1.2,
+                  ease: "easeInOut",
+                }}
+              ></motion.div>
+            </div>
+
             <motion.div
-              className="pb-[64px] mt-[80px] max-sm:px-4 relative flex flex-col justify-center items-center rounded-[18px] bg-[#111827] py-[5rem] px-8 lg:px-[4rem] 4xl:px-[3rem] 2xl:px-[12rem]"
+              className="pb-[64px] z-20 mt-[20px] max-sm:px-4 relative flex flex-col bg-[#111827] justify-center items-center rounded-[18px]  py-[5rem] px-8 lg:px-[4rem] 4xl:px-[3rem] 2xl:px-[12rem]"
               initial={{ y: 100, width: "80%" }}
               whileInView={{
                 y: -30,
@@ -254,23 +273,7 @@ const ProfessionalLandingpage: React.FC = () => {
                   ease: "easeInOut",
                 },
               }}
-              onViewportEnter={() => {
-                if (
-                  typeof setColorMode === "function" &&
-                  colorMode === "dark"
-                ) {
-                  setHasEntered(false);
-                  setColorMode("light");
-                }
-              }}
             >
-              <motion.div
-                className="h-30 w-full"
-                initial={{ className: "hidden" }}
-                whileInView={{
-                  className: " block",
-                }}
-              ></motion.div>
               <div className="w-full">
                 <div className="mb-8 md:mb-14">
                   <h1 className="font-bold text-center text-white lg:text-3xl text-2xl">
@@ -346,11 +349,13 @@ const ProfessionalLandingpage: React.FC = () => {
               </div>
             </motion.div>
 
+           
             <motion.div
-              className="pb-[64px] max-sm:px-4 relative flex justify-center items-center py-[10rem] px-8 lg:px-[4rem] 4xl:px-[3rem] 2xl:px-[12rem]"
-              initial={{ y: 100, width: "90%" }}
+              className={` pb-[64px] bg-white z-20 max-sm:px-4 relative flex justify-center items-center py-[10rem] px-8 lg:px-[4rem] 4xl:px-[3rem] 2xl:px-[12rem]`}
+
+              initial={{ y: 100, width: "100%" }}
               whileInView={{
-                y: -20,
+                y: 10,
                 // scaleY: 1,
                 width: "100%",
                 transition: {
@@ -358,15 +363,6 @@ const ProfessionalLandingpage: React.FC = () => {
                   duration: 1,
                   ease: "easeInOut",
                 },
-              }}
-              onViewportEnter={() => {
-                if (
-                  typeof setColorMode === "function" &&
-                  colorMode === "dark"
-                ) {
-                  setHasEntered(false);
-                  setColorMode("light");
-                }
               }}
             >
               <motion.div
@@ -397,7 +393,9 @@ const ProfessionalLandingpage: React.FC = () => {
                     </p>
                     <div className="flex items-center gap-2">
                       <span className="h-1 w-[45px] rounded-full bg-gradient-to-r from-[#5272EA] to-[#394FC0]"></span>
-                      <span className="text-[13px] text-primary">Solution: Real-time tracking & analytics</span>
+                      <span className="text-[13px] text-primary">
+                        Solution: Real-time tracking & analytics
+                      </span>
                     </div>
                   </div>
                   <div className="shadow-lg hover:shadow-xl h-full rounded-xl w-full px-4 py-4 space-y-3 flex-col flex justify-center">
@@ -412,7 +410,9 @@ const ProfessionalLandingpage: React.FC = () => {
                     </p>
                     <div className="flex items-center gap-2">
                       <span className="h-1 w-[45px] rounded-full bg-gradient-to-r from-[#5272EA] to-[#394FC0]"></span>
-                      <span className="text-[13px] text-primary">Solution: AI-powered optimization</span>
+                      <span className="text-[13px] text-primary">
+                        Solution: AI-powered optimization
+                      </span>
                     </div>
                   </div>
                   <div className="shadow-lg hover:shadow-xl h-full rounded-xl w-full px-4 py-4 space-y-3 flex-col flex justify-center">
@@ -427,7 +427,9 @@ const ProfessionalLandingpage: React.FC = () => {
                     </p>
                     <div className="flex items-center gap-2">
                       <span className="h-1 w-[45px] rounded-full bg-gradient-to-r from-[#5272EA] to-[#394FC0]"></span>
-                      <span className="text-[13px] text-primary">Solution: One-click customization</span>
+                      <span className="text-[13px] text-primary">
+                        Solution: One-click customization
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -609,14 +611,10 @@ const ProfessionalLandingpage: React.FC = () => {
           </div>
         </div>
       </section>
-      <Modal
-       show={showModal}
-       onHide={() => setShowModal(false)}
-
-      >
-      <section>
-      <Carousel showControls={true} carouselContent={demoData} />
-    </section>
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <section>
+          <Carousel showControls={true} carouselContent={demoData} />
+        </section>
       </Modal>
     </Layout>
   );

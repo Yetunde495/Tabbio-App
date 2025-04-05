@@ -1,7 +1,7 @@
 import { useApp } from "../../context/AppContext";
 import DefaultLayout from "../../layout/DefaultLayout";
 import { ResumeUpload } from "../General/ResumeUpload";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Modal from "../../components/modal";
 import { Switch } from "../../components/form/Switch";
 import { CiEdit } from "react-icons/ci";
@@ -13,14 +13,11 @@ import {
 } from "react-icons/md";
 import Drawer from "../../components/Drawer";
 import Button from "../../components/Button";
-import { FaCheck, FaRegCalendar } from "react-icons/fa6";
+import { FaArrowRight, FaCheck, FaRegCalendar } from "react-icons/fa6";
 import { LuBriefcase, LuContact, LuPencil } from "react-icons/lu";
-import { CgFileDocument } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
-import { FiExternalLink } from "react-icons/fi";
 import { SlSettings } from "react-icons/sl";
 import { TbCopy, TbWorld } from "react-icons/tb";
-import { mockProfileData } from "../../data/mockData";
 import {
   BasicDetails,
   CareerHighlight,
@@ -41,9 +38,11 @@ import {
 } from "../../services/profileServices";
 import { toast } from "react-toastify";
 import { PageLoader } from "../../components/Loader";
-import { RiLoader3Fill } from "react-icons/ri";
+import { RiLoader3Fill, RiSettings5Fill } from "react-icons/ri";
 import { useQuery } from "@tanstack/react-query";
 import ErrorTimeoutImg from "../../assets/svg/gateway-error.svg";
+import SmartIcon from "../../assets/svg/smartCV-1.svg";
+import { generateResumeSkills } from "../../services/resumeServices";
 
 const SmartResumeSettings: React.FC<{
   profileData: any;
@@ -116,42 +115,332 @@ const SmartResumeSettings: React.FC<{
   return (
     <section className="bg-white w-full min-w-[319px] sticky top-30 h-screen overflow-y-auto no-scrollbar">
       <div className="pb-30">
-      <div className="bg-zinc-50/90 flex items-center gap-1.5 py-2 px-3">
-        <SlSettings /> Settings
-      </div>
-      <div className="p-3">
-        {!editLink && (
-          <div className="bg-gradient-to-l from-[#EFF6FF] to-[#DBEAFE] rounded-lg px-2 py-2.5">
-            <div
-              onClick={() => setKey("isLive")}
-              className="flex items-center gap-2"
-            >
-              <span>
-                {" "}
-                <TbWorld className="text-primary" size={18} />
-              </span>
-
-              <div className="flex flex-col">
-                <span className="text-sm font-semibold">Smart CV</span>
-                <span className="text-xs text-zinc-600">
-                  Your Smart CV is{" "}
-                  {profileData?.config?.isLive ? "discoverable" : "hidden"}
+        <div className="bg-zinc-50/90 flex items-center font-semibold text-[#111827] gap-1.5 py-3.5 px-3">
+          <RiSettings5Fill size={16} /> Settings
+        </div>
+        <div className="p-3">
+          {!editLink && (
+            <div className="bg-gradient-to-l from-[#EFF6FF] to-[#DBEAFE] rounded-lg px-2 py-2.5">
+              <div
+                onClick={() => setKey("isLive")}
+                className="flex items-center gap-2"
+              >
+                <span>
+                  {" "}
+                  <TbWorld className="text-primary" size={18} />
                 </span>
+
+                <div className="flex flex-col">
+                  <span className="text-sm font-semibold">Smart CV Public</span>
+                  <span className="text-xs text-zinc-600 w-[80%]">
+                    Your Smart CV is{" "}
+                    {profileData?.config?.isLive ? "discoverable" : "hidden"}
+                  </span>
+                </div>
+                <div className="ml-auto">
+                  {loading && key === "isLive" ? (
+                    <span>
+                      <RiLoader3Fill className="animate-spin" />
+                    </span>
+                  ) : (
+                    <Switch
+                      value={profileData?.config?.isLive}
+                      checked={profileData?.config?.isLive}
+                      onChange={(value) => {
+                        handleUpdateProfile({
+                          config: {
+                            ...profileData?.config,
+                            isLive: value,
+                          },
+                        });
+                      }}
+                      size="sm"
+                    />
+                  )}
+                </div>
+              </div>
+              <div className="bg-white flex items-center gap-1 py-2 px-2 rounded-md border border-slate-200 my-3">
+                <div className="flex items-center gap-2 text-primary">
+                  <MdInsertLink className="" />
+                  <span className="text-xs break-words w-[150px]">
+                    {user?.tabbioLink}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 ml-auto">
+                  <button
+                    className="text-primary"
+                    onClick={() => {
+                      navigator.clipboard
+                        .writeText(user?.tabbioLink)
+                        .then(() => {
+                          alert("Tabbio link Copied!");
+                        });
+                    }}
+                  >
+                    <TbCopy />
+                  </button>
+                  <button
+                    className="text-primary"
+                    onClick={() => setEditLink(true)}
+                  >
+                    <CiEdit size={18} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {editLink && user?.tabbioLink && (
+            <div className="bg-gradient-to-l from-[#EFF6FF] to-[#DBEAFE] rounded-lg px-2 py-2.5">
+              <div className="flex items-center gap-2">
+                <TbWorld className="text-primary" size={14} />
+                <div className="flex flex-col">
+                  <span className="text-sm">Edit your custom URL</span>
+                  <span className="text-xs">
+                    Personalize the URL for your profile.
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-col items-center justify-center gap-4 py-2 px-2 my-3">
+                <input
+                  type="text"
+                  value={inputValue}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const inputValue = e.target.value;
+                    // Prevent the user from modifying the prefix
+                    if (!inputValue.startsWith(prefix)) {
+                      return;
+                    }
+
+                    // Update the state but keep the prefix intact
+                    setInputValue(inputValue);
+                  }}
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                    const inputValue = e.currentTarget.value;
+                    // Prevent deleting the prefix using Backspace or Delete keys
+                    if (
+                      (e.key === "Backspace" || e.key === "Delete") &&
+                      inputValue.length === prefix.length
+                    ) {
+                      e.preventDefault();
+                    }
+                  }}
+                  placeholder="your-name"
+                  className={` outline-none w-full px-2 bg-white ml-1 border border-slate-300 rounded-lg py-2 focus:border-primary`}
+                />
+                <button
+                  className="bg-primary disabled:bg-opacity-50 px-6 py-2.5 rounded-md text-white hover:scale-95 w-full font-medium"
+                  disabled={loading || inputValue === "tabbio.link-"}
+                  onClick={() => {
+                    handleUpdateLink({
+                      tabbioLink: inputValue,
+                    });
+                  }}
+                >
+                  {loading ? "Loading..." : "Save"}
+                </button>
+                <button
+                  className="bg-transparent px-6 py-2.5 rounded-md border text-zinc-800 border-zinc-500 hover:scale-95 w-full font-medium"
+                  onClick={() => {
+                    setInputValue(user?.tabbioLink);
+                    setEditLink(false);
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="p-3">
+          <div className="bg-gradient-to-l from-[#EFF6FF] to-[#DBEAFE] rounded-lg py-4 px-3">
+            <div className="flex items-center gap-2">
+              <div>
+                <IoDocumentTextOutline className="text-primary" size={18} />
+              </div>
+              <div className="">
+                <p className="text-sm font-semibold">Edit Downloadable CV</p>
+                <p className="text-xs max-w-[60%] text-zinc-600">
+                  The ATS-friendly CV recruiters can download from your profile.
+                </p>
               </div>
               <div className="ml-auto">
-                {loading && key === "isLive" ? (
+                <button
+                  onClick={() => navigate(`/app/candidate/smart-cv/edit/${profileData?._id}`)}
+                  className="text-zinc-500"
+                >
+                  <LuPencil />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-3">
+          <div className="flex items-center gap-2 border-t border-zinc-100 py-4 px-3 mb-5 shadow rounded-lg">
+            <span>
+              <LuBriefcase className="text-primary" size={16} />
+            </span>
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold">Open to Work</span>
+              <span className="text-xs text-zinc-600">
+                Let recruiters know your location and availability
+              </span>
+            </div>
+            <div className="ml-auto">
+              <button
+                onClick={() => setInfoModal(true)}
+                className="text-zinc-500"
+              >
+                <LuPencil />
+              </button>
+            </div>
+          </div>
+          <div
+            onClick={() => setKey("lastUpdate")}
+            className="flex items-center border-t border-zinc-100 gap-2 py-4 px-3 mb-5 shadow rounded-lg"
+          >
+            <FaRegCalendar className="text-primary" size={16} />
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold">Last Update Status</span>
+              <span className="text-xs text-zinc-600">
+                Let recruiters know your update time
+              </span>
+            </div>
+            <div className="ml-auto">
+              {loading && key === "lastUpdate" ? (
+                <span>
+                  <RiLoader3Fill className="animate-spin" />
+                </span>
+              ) : (
+                <Switch
+                  value={profileData?.config?.lastUpdate}
+                  checked={profileData?.config?.lastUpdate}
+                  onChange={(value) => {
+                    handleUpdateProfile({
+                      config: {
+                        ...profileData?.config,
+                        lastUpdate: value,
+                      },
+                    });
+                  }}
+                  size="sm"
+                />
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="p-3">
+          <div className="flex items-center text-base font-semibold gap-1.5 mb-3">
+            <BsShield className="text-primary" /> Privacy Controls
+          </div>
+          <div className="flex items-center gap-2 border-t border-zinc-100 py-4 px-3 mb-5 shadow rounded-lg">
+            <LuContact className="text-primary" size={16} />
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold">Contact Privacy</span>
+              <span className="text-xs text-zinc-600">
+                Showing all contact details
+              </span>
+            </div>
+            <div className="ml-auto">
+              <button
+                onClick={() => setContactPrivacyModal(true)}
+                className="text-zinc-500"
+              >
+                <LuPencil />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-3">
+          <div className="flex items-center text-base font-semibold gap-1.5 mb-3">
+            <BsDatabaseGear className="text-primary" /> Controls
+          </div>
+
+          <div className="flex flex-col gap-4 border-t border-zinc-100 py-4 px-3 mb-5 shadow rounded-lg">
+            <div
+              onClick={() => setKey("professionalSummary")}
+              className="flex text-sm items-center gap-3 justify-between"
+            >
+              <p>Profile Summary</p>
+              <div className="ml-auto flex items-center gap-1">
+                <span
+                  className="text-lg cursor-pointer"
+                  onClick={() => {
+                    updateUser({
+                      ...user,
+                      profileConfig: {
+                        ...user?.profileConfig,
+                        professionalSummary:
+                          !user?.profileConfig?.professionalSummary,
+                      },
+                    });
+                    setConfig({
+                      ...user?.profileConfig,
+                      professionalSummary:
+                        !user?.profileConfig?.professionalSummary,
+                    });
+                  }}
+                >
+                  {user?.profileConfig?.professionalSummary ? "+" : "-"}
+                </span>
+                {loading && key === "professionalSummary" ? (
                   <span>
-                    <RiLoader3Fill className="animate-spin" />
+                    <RiLoader3Fill className="animate-spin text-lg" />
                   </span>
                 ) : (
                   <Switch
-                    value={profileData?.config?.isLive}
-                    checked={profileData?.config?.isLive}
+                    value={status}
+                    checked={profileData?.config?.professionalSummary}
+                    onChange={(value) => {
+                      setStatus(value);
+                    }}
+                    size="sm"
+                  />
+                )}
+              </div>
+            </div>
+            <div
+              onClick={() => setKey("role")}
+              className="flex text-sm items-center gap-3 justify-between"
+            >
+              <p>Professional Title</p>
+              <div className="ml-auto flex items-center gap-1">
+                <span
+                  className="text-lg cursor-pointer"
+                  onClick={() => {
+                    updateUser({
+                      ...user,
+                      profileConfig: {
+                        ...user?.profileConfig,
+                        role: !user?.profileConfig?.role,
+                      },
+                    });
+                    setConfig({
+                      ...user?.profileConfig,
+                      role: !user?.profileConfig?.role,
+                    });
+                  }}
+                >
+                  {user?.profileConfig?.role ? "+" : "-"}
+                </span>
+
+                {loading && key === "role" ? (
+                  <span>
+                    <RiLoader3Fill className="animate-spin text-lg" />
+                  </span>
+                ) : (
+                  <Switch
+                    value={profileData?.config?.role}
+                    checked={profileData?.config?.role}
                     onChange={(value) => {
                       handleUpdateProfile({
                         config: {
                           ...profileData?.config,
-                          isLive: value,
+                          role: value,
                         },
                       });
                     }}
@@ -160,668 +449,381 @@ const SmartResumeSettings: React.FC<{
                 )}
               </div>
             </div>
-            <div className="bg-white flex items-center gap-1 py-2 px-2 rounded-md border border-slate-200 my-3">
-              <div className="flex items-center gap-2 ">
-                <MdInsertLink className="text-primary" />
-                <span className="text-sm break-words w-[150px]">
-                  {user?.tabbioLink}
-                </span>
-              </div>
-              <div className="flex items-center gap-2 ml-auto">
-                <button
-                  className="text-primary"
+            <div
+              onClick={() => setKey("careerHighlight")}
+              className="flex text-sm items-center gap-3 justify-between"
+            >
+              <p>Career Highlights</p>
+              <div className="ml-auto flex items-center gap-1">
+                <span
+                  className="text-lg cursor-pointer"
                   onClick={() => {
-                    navigator.clipboard.writeText(user?.tabbioLink).then(() => {
-                      alert("Tabbio link Copied!");
-                    });
-                  }}
-                >
-                  <TbCopy />
-                </button>
-                <button
-                  className="text-primary"
-                  onClick={() => setEditLink(true)}
-                >
-                  <CiEdit size={18} />
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {editLink && user?.tabbioLink && (
-          <div className="bg-gradient-to-l from-[#EFF6FF] to-[#DBEAFE] rounded-lg px-2 py-2.5">
-            <div className="flex items-center gap-2">
-              <TbWorld className="text-primary" size={14} />
-              <div className="flex flex-col">
-                <span className="text-sm">Edit your custom URL</span>
-                <span className="text-xs">
-                  Personalize the URL for your profile.
-                </span>
-              </div>
-            </div>
-            <div className="flex flex-col items-center justify-center gap-4 py-2 px-2 my-3">
-              <input
-                type="text"
-                value={inputValue}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  const inputValue = e.target.value;
-                  // Prevent the user from modifying the prefix
-                  if (!inputValue.startsWith(prefix)) {
-                    return;
-                  }
-
-                  // Update the state but keep the prefix intact
-                  setInputValue(inputValue);
-                }}
-                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                  const inputValue = e.currentTarget.value;
-                  // Prevent deleting the prefix using Backspace or Delete keys
-                  if (
-                    (e.key === "Backspace" || e.key === "Delete") &&
-                    inputValue.length === prefix.length
-                  ) {
-                    e.preventDefault();
-                  }
-                }}
-                placeholder="your-name"
-                className={` outline-none w-full px-2 bg-white ml-1 border border-slate-300 rounded-lg py-2 focus:border-primary`}
-              />
-              <button
-                className="bg-primary disabled:bg-opacity-50 px-6 py-2.5 rounded-md text-white hover:scale-95 w-full font-medium"
-                disabled={loading || inputValue === "tabbio.link-"}
-                onClick={() => {
-                  handleUpdateLink({
-                    tabbioLink: inputValue,
-                  });
-                }}
-              >
-                {loading ? "Loading..." : "Save"}
-              </button>
-              <button
-                className="bg-transparent px-6 py-2.5 rounded-md border text-zinc-800 border-zinc-500 hover:scale-95 w-full font-medium"
-                onClick={() => {
-                  setInputValue(user?.tabbioLink);
-                  setEditLink(false);
-                }}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="p-3">
-        <div className="bg-gradient-to-l from-[#EFF6FF] to-[#DBEAFE] rounded-lg py-4 px-3">
-          <div className="flex items-center gap-2">
-            <div>
-              <IoDocumentTextOutline className="text-primary" size={18} />
-            </div>
-            <div className="">
-              <p className="text-sm font-semibold">Edit Downloadable CV</p>
-              <p className="text-xs max-w-[60%] text-zinc-600">
-                The ATS-friendly CV recruiters can download from your profile.
-              </p>
-            </div>
-            <div className="ml-auto">
-              <button
-                onClick={() => navigate(`edit-cv/${profileData?._id}`)}
-                className="text-zinc-500"
-              >
-                <LuPencil />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="p-3">
-        <div className="flex items-center gap-2 border-t border-zinc-100 py-4 px-3 mb-5 shadow rounded-lg">
-          <span>
-            <LuBriefcase className="text-primary" size={16} />
-          </span>
-          <div className="flex flex-col">
-            <span className="text-sm font-semibold">Open to</span>
-            <span className="text-xs text-zinc-600">
-              Let recruiters know your availability
-            </span>
-          </div>
-          <div className="ml-auto">
-            <button
-              onClick={() => setInfoModal(true)}
-              className="text-zinc-500"
-            >
-              <LuPencil />
-            </button>
-          </div>
-        </div>
-        <div
-          onClick={() => setKey("lastUpdate")}
-          className="flex items-center border-t border-zinc-100 gap-2 py-4 px-3 mb-5 shadow rounded-lg"
-        >
-          <FaRegCalendar className="text-primary" size={16} />
-          <div className="flex flex-col">
-            <span className="text-sm font-semibold">Last Update Status</span>
-            <span className="text-xs text-zinc-600">
-              Let recruiters know your update time
-            </span>
-          </div>
-          <div className="ml-auto">
-            {loading && key === "lastUpdate" ? (
-              <span>
-                <RiLoader3Fill className="animate-spin" />
-              </span>
-            ) : (
-              <Switch
-                value={profileData?.config?.lastUpdate}
-                checked={profileData?.config?.lastUpdate}
-                onChange={(value) => {
-                  handleUpdateProfile({
-                    config: {
-                      ...profileData?.config,
-                      lastUpdate: value,
-                    },
-                  });
-                }}
-                size="sm"
-              />
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="p-3">
-        <div className="flex items-center text-base font-semibold gap-1.5 mb-3">
-          <BsShield className="text-primary" /> Privacy Controls
-        </div>
-        <div className="flex items-center gap-2 border-t border-zinc-100 py-4 px-3 mb-5 shadow rounded-lg">
-          <LuContact className="text-primary" size={16} />
-          <div className="flex flex-col">
-            <span className="text-sm font-semibold">Contact Privacy</span>
-            <span className="text-xs text-zinc-600">
-              Showing all contact details
-            </span>
-          </div>
-          <div className="ml-auto">
-            <button
-              onClick={() => setContactPrivacyModal(true)}
-              className="text-zinc-500"
-            >
-              <LuPencil />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="p-3">
-        <div className="flex items-center text-base font-semibold gap-1.5 mb-3">
-          <BsDatabaseGear className="text-primary" /> Controls
-        </div>
-
-        <div className="flex flex-col gap-4 border-t border-zinc-100 py-4 px-3 mb-5 shadow rounded-lg">
-          <div
-            onClick={() => setKey("professionalSummary")}
-            className="flex text-sm items-center gap-3 justify-between"
-          >
-            <p>Profile Summary</p>
-            <div className="ml-auto flex items-center gap-1">
-              <span
-                className="text-lg cursor-pointer"
-                onClick={() => {
-                  updateUser({
-                    ...user,
-                    profileConfig: {
-                      ...user?.profileConfig,
-                      professionalSummary:
-                        !user?.profileConfig?.professionalSummary,
-                    },
-                  });
-                  setConfig({
-                    ...user?.profileConfig,
-                    professionalSummary:
-                      !user?.profileConfig?.professionalSummary,
-                  });
-                }}
-              >
-                {user?.profileConfig?.professionalSummary ? "+" : "-"}
-              </span>
-              {loading && key === "professionalSummary" ? (
-                <span>
-                  <RiLoader3Fill className="animate-spin text-lg" />
-                </span>
-              ) : (
-                <Switch
-                  value={status}
-                  checked={profileData?.config?.professionalSummary}
-                  onChange={(value) => {
-                    setStatus(value);
-                  }}
-                  size="sm"
-                />
-              )}
-            </div>
-          </div>
-          <div
-            onClick={() => setKey("role")}
-            className="flex text-sm items-center gap-3 justify-between"
-          >
-            <p>Professional Title</p>
-            <div className="ml-auto flex items-center gap-1">
-              <span
-                className="text-lg cursor-pointer"
-                onClick={() => {
-                  updateUser({
-                    ...user,
-                    profileConfig: {
-                      ...user?.profileConfig,
-                      role: !user?.profileConfig?.role,
-                    },
-                  });
-                  setConfig({
-                    ...user?.profileConfig,
-                    role: !user?.profileConfig?.role,
-                  });
-                }}
-              >
-                {user?.profileConfig?.role ? "+" : "-"}
-              </span>
-
-              {loading && key === "role" ? (
-                <span>
-                  <RiLoader3Fill className="animate-spin text-lg" />
-                </span>
-              ) : (
-                <Switch
-                  value={profileData?.config?.role}
-                  checked={profileData?.config?.role}
-                  onChange={(value) => {
-                    handleUpdateProfile({
-                      config: {
-                        ...profileData?.config,
-                        role: value,
+                    updateUser({
+                      ...user,
+                      profileConfig: {
+                        ...user?.profileConfig,
+                        careerHighlights:
+                          !user?.profileConfig?.careerHighlights,
                       },
                     });
-                  }}
-                  size="sm"
-                />
-              )}
-            </div>
-          </div>
-          <div
-            onClick={() => setKey("careerHighlight")}
-            className="flex text-sm items-center gap-3 justify-between"
-          >
-            <p>Career Highlights</p>
-            <div className="ml-auto flex items-center gap-1">
-              <span
-                className="text-lg cursor-pointer"
-                onClick={() => {
-                  updateUser({
-                    ...user,
-                    profileConfig: {
+                    setConfig({
                       ...user?.profileConfig,
                       careerHighlights: !user?.profileConfig?.careerHighlights,
-                    },
-                  });
-                  setConfig({
-                    ...user?.profileConfig,
-                    careerHighlights: !user?.profileConfig?.careerHighlights,
-                  });
-                }}
-              >
-                {user?.profileConfig?.careerHighlights ? "+" : "-"}
-              </span>
-
-              {loading && key === "careerHighlight" ? (
-                <span>
-                  <RiLoader3Fill className="animate-spin text-lg" />
-                </span>
-              ) : (
-                <Switch
-                  value={profileData?.config?.careerHighlights}
-                  checked={profileData?.config?.careerHighlights}
-                  onChange={(value) => {
-                    handleUpdateProfile({
-                      config: {
-                        ...profileData?.config,
-                        careerHighlights: value,
-                      },
                     });
                   }}
-                  size="sm"
-                />
-              )}
+                >
+                  {user?.profileConfig?.careerHighlights ? "+" : "-"}
+                </span>
+
+                {loading && key === "careerHighlight" ? (
+                  <span>
+                    <RiLoader3Fill className="animate-spin text-lg" />
+                  </span>
+                ) : (
+                  <Switch
+                    value={profileData?.config?.careerHighlights}
+                    checked={profileData?.config?.careerHighlights}
+                    onChange={(value) => {
+                      handleUpdateProfile({
+                        config: {
+                          ...profileData?.config,
+                          careerHighlights: value,
+                        },
+                      });
+                    }}
+                    size="sm"
+                  />
+                )}
+              </div>
             </div>
-          </div>
-          <div
-            onClick={() => setKey("workExperience")}
-            className="flex text-sm items-center gap-3 justify-between"
-          >
-            <p>Work Experience</p>
-            <div className="ml-auto flex items-center gap-1">
-              <span
-                className="text-lg cursor-pointer"
-                onClick={() => {
-                  updateUser({
-                    ...user,
-                    profileConfig: {
+            <div
+              onClick={() => setKey("workExperience")}
+              className="flex text-sm items-center gap-3 justify-between"
+            >
+              <p>Work Experience</p>
+              <div className="ml-auto flex items-center gap-1">
+                <span
+                  className="text-lg cursor-pointer"
+                  onClick={() => {
+                    updateUser({
+                      ...user,
+                      profileConfig: {
+                        ...user?.profileConfig,
+                        workExperience: !user?.profileConfig?.workExperience,
+                      },
+                    });
+                    setConfig({
                       ...user?.profileConfig,
                       workExperience: !user?.profileConfig?.workExperience,
-                    },
-                  });
-                  setConfig({
-                    ...user?.profileConfig,
-                    workExperience: !user?.profileConfig?.workExperience,
-                  });
-                }}
-              >
-                {user?.profileConfig?.workExperience ? "+" : "-"}
-              </span>
-
-              {loading && key === "workExperience" ? (
-                <span>
-                  <RiLoader3Fill className="animate-spin text-lg" />
-                </span>
-              ) : (
-                <Switch
-                  value={profileData?.config?.workExperience}
-                  checked={profileData?.config?.workExperience}
-                  onChange={(value) => {
-                    handleUpdateProfile({
-                      config: {
-                        ...profileData?.config,
-                        workExperience: value,
-                      },
                     });
                   }}
-                  size="sm"
-                />
-              )}
+                >
+                  {user?.profileConfig?.workExperience ? "+" : "-"}
+                </span>
+
+                {loading && key === "workExperience" ? (
+                  <span>
+                    <RiLoader3Fill className="animate-spin text-lg" />
+                  </span>
+                ) : (
+                  <Switch
+                    value={profileData?.config?.workExperience}
+                    checked={profileData?.config?.workExperience}
+                    onChange={(value) => {
+                      handleUpdateProfile({
+                        config: {
+                          ...profileData?.config,
+                          workExperience: value,
+                        },
+                      });
+                    }}
+                    size="sm"
+                  />
+                )}
+              </div>
             </div>
-          </div>
-          <div
-            onClick={() => setKey("volunteerExperience")}
-            className="flex text-sm items-center gap-3 justify-between"
-          >
-            <p>Volunteer Experience</p>
-            <div className="ml-auto flex items-center gap-1">
-              <span
-                className="text-lg cursor-pointer"
-                onClick={() => {
-                  updateUser({
-                    ...user,
-                    profileConfig: {
+            <div
+              onClick={() => setKey("volunteerExperience")}
+              className="flex text-sm items-center gap-3 justify-between"
+            >
+              <p>Volunteer Experience</p>
+              <div className="ml-auto flex items-center gap-1">
+                <span
+                  className="text-lg cursor-pointer"
+                  onClick={() => {
+                    updateUser({
+                      ...user,
+                      profileConfig: {
+                        ...user?.profileConfig,
+                        volunteerExperience:
+                          !user?.profileConfig?.volunteerExperience,
+                      },
+                    });
+                    setConfig({
                       ...user?.profileConfig,
                       volunteerExperience:
                         !user?.profileConfig?.volunteerExperience,
-                    },
-                  });
-                  setConfig({
-                    ...user?.profileConfig,
-                    volunteerExperience:
-                      !user?.profileConfig?.volunteerExperience,
-                  });
-                }}
-              >
-                {user?.profileConfig?.volunteerExperience ? "+" : "-"}
-              </span>
-
-              {loading && key === "volunteerExperience" ? (
-                <span>
-                  <RiLoader3Fill className="animate-spin text-lg" />
-                </span>
-              ) : (
-                <Switch
-                  value={profileData?.config?.volunteerExperience}
-                  checked={profileData?.config?.volunteerExperience}
-                  onChange={(value) => {
-                    handleUpdateProfile({
-                      config: {
-                        ...profileData?.config,
-                        volunteerExperience: value,
-                      },
                     });
                   }}
-                  size="sm"
-                />
-              )}
+                >
+                  {user?.profileConfig?.volunteerExperience ? "+" : "-"}
+                </span>
+
+                {loading && key === "volunteerExperience" ? (
+                  <span>
+                    <RiLoader3Fill className="animate-spin text-lg" />
+                  </span>
+                ) : (
+                  <Switch
+                    value={profileData?.config?.volunteerExperience}
+                    checked={profileData?.config?.volunteerExperience}
+                    onChange={(value) => {
+                      handleUpdateProfile({
+                        config: {
+                          ...profileData?.config,
+                          volunteerExperience: value,
+                        },
+                      });
+                    }}
+                    size="sm"
+                  />
+                )}
+              </div>
             </div>
-          </div>
-          <div
-            onClick={() => setKey("internships")}
-            className="flex text-sm items-center gap-3 justify-between"
-          >
-            <p>Internships</p>
-            <div className="ml-auto flex items-center gap-1">
-              <span
-                className="text-lg cursor-pointer"
-                onClick={() => {
-                  updateUser({
-                    ...user,
-                    profileConfig: {
+            <div
+              onClick={() => setKey("internships")}
+              className="flex text-sm items-center gap-3 justify-between"
+            >
+              <p>Internships</p>
+              <div className="ml-auto flex items-center gap-1">
+                <span
+                  className="text-lg cursor-pointer"
+                  onClick={() => {
+                    updateUser({
+                      ...user,
+                      profileConfig: {
+                        ...user?.profileConfig,
+                        internships: !user?.profileConfig?.internships,
+                      },
+                    });
+                    setConfig({
                       ...user?.profileConfig,
                       internships: !user?.profileConfig?.internships,
-                    },
-                  });
-                  setConfig({
-                    ...user?.profileConfig,
-                    internships: !user?.profileConfig?.internships,
-                  });
-                }}
-              >
-                {user?.profileConfig?.internships ? "+" : "-"}
-              </span>
-
-              {loading && key === "internships" ? (
-                <span>
-                  <RiLoader3Fill className="animate-spin text-lg" />
-                </span>
-              ) : (
-                <Switch
-                  value={profileData?.config?.internships}
-                  checked={profileData?.config?.internships}
-                  onChange={(value) => {
-                    handleUpdateProfile({
-                      config: {
-                        ...profileData?.config,
-                        internships: value,
-                      },
                     });
                   }}
-                  size="sm"
-                />
-              )}
+                >
+                  {user?.profileConfig?.internships ? "+" : "-"}
+                </span>
+
+                {loading && key === "internships" ? (
+                  <span>
+                    <RiLoader3Fill className="animate-spin text-lg" />
+                  </span>
+                ) : (
+                  <Switch
+                    value={profileData?.config?.internships}
+                    checked={profileData?.config?.internships}
+                    onChange={(value) => {
+                      handleUpdateProfile({
+                        config: {
+                          ...profileData?.config,
+                          internships: value,
+                        },
+                      });
+                    }}
+                    size="sm"
+                  />
+                )}
+              </div>
             </div>
-          </div>
-          <div
-            onClick={() => setKey("education")}
-            className="flex text-sm items-center gap-3 justify-between"
-          >
-            <p>Education</p>
-            <div className="ml-auto flex items-center gap-1">
-              <span
-                className="text-lg cursor-pointer"
-                onClick={() => {
-                  updateUser({
-                    ...user,
-                    profileConfig: {
+            <div
+              onClick={() => setKey("education")}
+              className="flex text-sm items-center gap-3 justify-between"
+            >
+              <p>Education</p>
+              <div className="ml-auto flex items-center gap-1">
+                <span
+                  className="text-lg cursor-pointer"
+                  onClick={() => {
+                    updateUser({
+                      ...user,
+                      profileConfig: {
+                        ...user?.profileConfig,
+                        education: !user?.profileConfig?.education,
+                      },
+                    });
+                    setConfig({
                       ...user?.profileConfig,
                       education: !user?.profileConfig?.education,
-                    },
-                  });
-                  setConfig({
-                    ...user?.profileConfig,
-                    education: !user?.profileConfig?.education,
-                  });
-                }}
-              >
-                {user?.profileConfig?.education ? "+" : "-"}
-              </span>
-
-              {loading && key === "education" ? (
-                <span>
-                  <RiLoader3Fill className="animate-spin text-lg" />
-                </span>
-              ) : (
-                <Switch
-                  value={profileData?.config?.education}
-                  checked={profileData?.config?.education}
-                  onChange={(value) => {
-                    handleUpdateProfile({
-                      config: {
-                        ...profileData?.config,
-                        education: value,
-                      },
                     });
                   }}
-                  size="sm"
-                />
-              )}
+                >
+                  {user?.profileConfig?.education ? "+" : "-"}
+                </span>
+
+                {loading && key === "education" ? (
+                  <span>
+                    <RiLoader3Fill className="animate-spin text-lg" />
+                  </span>
+                ) : (
+                  <Switch
+                    value={profileData?.config?.education}
+                    checked={profileData?.config?.education}
+                    onChange={(value) => {
+                      handleUpdateProfile({
+                        config: {
+                          ...profileData?.config,
+                          education: value,
+                        },
+                      });
+                    }}
+                    size="sm"
+                  />
+                )}
+              </div>
             </div>
-          </div>
-          <div
-            onClick={() => setKey("certifications")}
-            className="flex text-sm items-center gap-3 justify-between"
-          >
-            <p>Certifications and Trainings</p>
-            <div className="ml-auto flex items-center gap-1">
-              <span
-                className="text-lg cursor-pointer"
-                onClick={() => {
-                  updateUser({
-                    ...user,
-                    profileConfig: {
+            <div
+              onClick={() => setKey("certifications")}
+              className="flex text-sm items-center gap-3 justify-between"
+            >
+              <p>Certifications and Trainings</p>
+              <div className="ml-auto flex items-center gap-1">
+                <span
+                  className="text-lg cursor-pointer"
+                  onClick={() => {
+                    updateUser({
+                      ...user,
+                      profileConfig: {
+                        ...user?.profileConfig,
+                        certifications: !user?.profileConfig?.certifications,
+                      },
+                    });
+                    setConfig({
                       ...user?.profileConfig,
                       certifications: !user?.profileConfig?.certifications,
-                    },
-                  });
-                  setConfig({
-                    ...user?.profileConfig,
-                    certifications: !user?.profileConfig?.certifications,
-                  });
-                }}
-              >
-                {user?.profileConfig?.certifications ? "+" : "-"}
-              </span>
-
-              {loading && key === "certifications" ? (
-                <span>
-                  <RiLoader3Fill className="animate-spin text-lg" />
-                </span>
-              ) : (
-                <Switch
-                  value={profileData?.config?.certifications}
-                  checked={profileData?.config?.certifications}
-                  onChange={(value) => {
-                    handleUpdateProfile({
-                      config: {
-                        ...profileData?.config,
-                        certifications: value,
-                      },
                     });
                   }}
-                  size="sm"
-                />
-              )}
+                >
+                  {user?.profileConfig?.certifications ? "+" : "-"}
+                </span>
+
+                {loading && key === "certifications" ? (
+                  <span>
+                    <RiLoader3Fill className="animate-spin text-lg" />
+                  </span>
+                ) : (
+                  <Switch
+                    value={profileData?.config?.certifications}
+                    checked={profileData?.config?.certifications}
+                    onChange={(value) => {
+                      handleUpdateProfile({
+                        config: {
+                          ...profileData?.config,
+                          certifications: value,
+                        },
+                      });
+                    }}
+                    size="sm"
+                  />
+                )}
+              </div>
             </div>
-          </div>
-          <div
-            onClick={() => setKey("memberships")}
-            className="flex text-sm items-center gap-3 justify-between"
-          >
-            <p>Membership & Affiliation</p>
-            <div className="ml-auto flex items-center gap-1">
-              <span
-                className="text-lg cursor-pointer"
-                onClick={() => {
-                  updateUser({
-                    ...user,
-                    profileConfig: {
+            <div
+              onClick={() => setKey("memberships")}
+              className="flex text-sm items-center gap-3 justify-between"
+            >
+              <p>Membership & Affiliation</p>
+              <div className="ml-auto flex items-center gap-1">
+                <span
+                  className="text-lg cursor-pointer"
+                  onClick={() => {
+                    updateUser({
+                      ...user,
+                      profileConfig: {
+                        ...user?.profileConfig,
+                        memberships: !user?.profileConfig?.memberships,
+                      },
+                    });
+                    setConfig({
                       ...user?.profileConfig,
                       memberships: !user?.profileConfig?.memberships,
-                    },
-                  });
-                  setConfig({
-                    ...user?.profileConfig,
-                    memberships: !user?.profileConfig?.memberships,
-                  });
-                }}
-              >
-                {user?.profileConfig?.memberships ? "+" : "-"}
-              </span>
-
-              {loading && key === "memberships" ? (
-                <span>
-                  <RiLoader3Fill className="animate-spin text-lg" />
-                </span>
-              ) : (
-                <Switch
-                  value={profileData?.config?.memberships}
-                  checked={profileData?.config?.memberships}
-                  onChange={(value) => {
-                    handleUpdateProfile({
-                      config: {
-                        ...profileData?.config,
-                        memberships: value,
-                      },
                     });
                   }}
-                  size="sm"
-                />
-              )}
+                >
+                  {user?.profileConfig?.memberships ? "+" : "-"}
+                </span>
+
+                {loading && key === "memberships" ? (
+                  <span>
+                    <RiLoader3Fill className="animate-spin text-lg" />
+                  </span>
+                ) : (
+                  <Switch
+                    value={profileData?.config?.memberships}
+                    checked={profileData?.config?.memberships}
+                    onChange={(value) => {
+                      handleUpdateProfile({
+                        config: {
+                          ...profileData?.config,
+                          memberships: value,
+                        },
+                      });
+                    }}
+                    size="sm"
+                  />
+                )}
+              </div>
             </div>
-          </div>
-          <div
-            onClick={() => setKey("references")}
-            className="flex text-sm items-center gap-3 justify-between"
-          >
-            <p>Professional Reference</p>
-            <div className="ml-auto flex items-center gap-1">
-              <span
-                className="text-lg cursor-pointer"
-                onClick={() => {
-                  updateUser({
-                    ...user,
-                    profileConfig: {
+            <div
+              onClick={() => setKey("references")}
+              className="flex text-sm items-center gap-3 justify-between"
+            >
+              <p>Professional Reference</p>
+              <div className="ml-auto flex items-center gap-1">
+                <span
+                  className="text-lg cursor-pointer"
+                  onClick={() => {
+                    updateUser({
+                      ...user,
+                      profileConfig: {
+                        ...user?.profileConfig,
+                        references: !user?.profileConfig?.references,
+                      },
+                    });
+                    setConfig({
                       ...user?.profileConfig,
                       references: !user?.profileConfig?.references,
-                    },
-                  });
-                  setConfig({
-                    ...user?.profileConfig,
-                    references: !user?.profileConfig?.references,
-                  });
-                }}
-              >
-                {user?.profileConfig?.references ? "+" : "-"}
-              </span>
-
-              {loading && key === "references" ? (
-                <span>
-                  <RiLoader3Fill className="animate-spin text-lg" />
-                </span>
-              ) : (
-                <Switch
-                  value={profileData?.config?.references}
-                  checked={profileData?.config?.references}
-                  onChange={(value) => {
-                    handleUpdateProfile({
-                      config: {
-                        ...profileData?.config,
-                        references: value,
-                      },
                     });
                   }}
-                  size="sm"
-                />
-              )}
+                >
+                  {user?.profileConfig?.references ? "+" : "-"}
+                </span>
+
+                {loading && key === "references" ? (
+                  <span>
+                    <RiLoader3Fill className="animate-spin text-lg" />
+                  </span>
+                ) : (
+                  <Switch
+                    value={profileData?.config?.references}
+                    checked={profileData?.config?.references}
+                    onChange={(value) => {
+                      handleUpdateProfile({
+                        config: {
+                          ...profileData?.config,
+                          references: value,
+                        },
+                      });
+                    }}
+                    size="sm"
+                  />
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
-      </div>
-      
+
       <Modal
         show={linkModal}
         onHide={() => {
@@ -974,7 +976,7 @@ const SmartResumeSettings: React.FC<{
       <Modal
         show={infoModal}
         onHide={() => setInfoModal(false)}
-        title={profileData?.name}
+        title="Edit Location and Availability"
         size="max-w-[600px] w-full"
       >
         <div>
@@ -1013,21 +1015,21 @@ const SmartResumeSettings: React.FC<{
                     className={`px-4 py-1.5 rounded-full flex gap-2 font-normal items-center border border-stroke focus:outline-none  transition 
               ${
                 basicDetails?.locationType?.includes(type)
-                  ? "bg-primary text-white"
+                  ? "bg-[#16A34A] text-white"
                   : "bg-white text-zinc-700"
               }`}
                   >
-                    {basicDetails?.locationType?.includes(type) ? (
+                    {type}{" "} {basicDetails?.locationType?.includes(type) ? (
                       <FaCheck />
                     ) : (
                       <BsPlusLg />
-                    )}{" "}
-                    {type}
+                    )}
+                   
                   </button>
                 ))}
               </div>
             </div>
-            <div className="mb-6">
+            <div className="mb-6 w-full">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Relocation
               </label>
@@ -1058,7 +1060,7 @@ const SmartResumeSettings: React.FC<{
                 ))}
               </div>
             </div>
-            <div className="mb-6">
+            <div className="mb-6 w-full">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Availability
               </label>
@@ -1089,6 +1091,7 @@ const SmartResumeSettings: React.FC<{
                 ))}
               </div>
             </div>
+           
           </div>
           <div className="w-full border-t flex bg-white mt-3 pt-4 justify-between items-center border-stroke">
             <button
@@ -1104,7 +1107,7 @@ const SmartResumeSettings: React.FC<{
                 handleUpdateProfile(basicDetails);
               }}
               disabled={loading}
-              className="bg-primary disabled:bg-opacity-50 rounded-full text-white hover:scale-105 py-1.5 px-4 font-medium"
+              className="bg-primary disabled:bg-opacity-50 rounded-md text-white hover:scale-105 py-2 px-5 font-medium"
             >
               {loading ? "Loading..." : "Save"}
             </button>
@@ -1121,6 +1124,7 @@ const Profile: React.FC = () => {
   const [active, setActive] = useState(user?.profile);
   const [profileData, setProfileData] = useState<any | null>(null);
   const [showDrawer, setShowDrawer] = useState(false);
+
 
   const [config, setConfig] = useState(
     user?.profileConfig || {
@@ -1159,7 +1163,7 @@ const Profile: React.FC = () => {
       toast.error(err?.message || "Request Failed");
     }
   };
-
+  // !!user?.profile
   const { isFetching, isError } = useQuery(
     ["PROFESSIONAL_PROFILE", user?._id],
     () => getUserProfile(),
@@ -1200,6 +1204,22 @@ const Profile: React.FC = () => {
       });
     }
   }, []);
+
+   const handleGenerateSkills = async () => {
+      try {
+        const resp = await generateResumeSkills({
+          skillType: '',
+          role: profileData?.role,
+        });
+        setProfileData((data:any) => ({...data, suggestedSkills: resp?.data?.skills}))
+      } catch (err:any) {
+        toast.error(err?.message)
+      }
+    };
+  
+    useMemo(() => {
+     handleGenerateSkills()
+    }, [profileData?.role])
   return (
     <DefaultLayout>
       {isFetching && user?.profile ? (
@@ -1227,7 +1247,7 @@ const Profile: React.FC = () => {
         </div>
       ) : (
         <section className="w-full flex justify-center items-center">
-          <div className="px-2 py-4 md:pl-8 md:pr-2 3xl:max-w-[1600px]">
+          <div className="px-2 max-sm:px-1 py-4 md:pl-8 md:pr-2 3xl:max-w-[1600px]">
             {active && (
               <div className="xl:hidden flex justify-end items-center">
                 <button
@@ -1238,7 +1258,7 @@ const Profile: React.FC = () => {
                 </button>
               </div>
             )}
-            {active ? (
+            {active && profileData ? (
               <div className="w-full flex xl:flex-row flex-col gap-5">
                 <div className="xl:min-w-[68%]">
                   <section className="bg-white flex flex-col space-y-10 px-6 max-sm:px-2.5 py-5 max-sm:py-3 w-full h-full ">
@@ -1315,17 +1335,19 @@ const Profile: React.FC = () => {
               </div>
             ) : (
               <div className="">
-                <div className="flex w-full min-h-[85vh] flex-col items-center justify-center py-20">
-                  <div className="bg-white flex flex-col gap-3.5 justify-center items-center rounded-xl py-5 px-4 lg:w-[70%] w-[90%]">
-                    <span className="p-2 w-12 h-12 rounded-full flex justify-center items-center text-primary bg-primary/10">
-                      <CgFileDocument size={28} />
-                    </span>
-                    <h2 className="text-xl text-center font-semibold text-black dark:text-white">
-                      Create Your Profile
-                    </h2>
-                    <p className="text-neutral-500 mb-3 text-center">
-                      Upload your existing resume or create a new one
-                    </p>
+                <div className="flex w-full min-h-[85vh] flex-col items-center justify-center py-20 max-sm:py-10">
+                  <div className="bg-white flex flex-col gap-3.5 justify-center items-center rounded-xl py-7 px-4 w-[90%] sm:min-w-[600px]  lg:min-w-[700px] xl:min-w-[800px]">
+                    <img src={SmartIcon} className="mt-3" />
+
+                    <div>
+                      <h2 className="text-lg text-center font-semibold text-[#111827] dark:text-white">
+                        Create Your Public Profile
+                      </h2>
+                      <p className="text-neutral-500 mb-3 text-sm font-medium text-center">
+                        Start by uploading your CV or Create from scratch
+                      </p>
+                    </div>
+
                     <div className="px-5 max-sm:px-0.5 w-full mb-4">
                       <ResumeUpload
                         onSuccess={(response: any) => {
@@ -1335,17 +1357,18 @@ const Profile: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="my-6 flex flex-col gap-4 w-full justify-center items-center">
-                    <p>OR</p>
+                  <div className="my-6 flex flex-col w-full justify-center items-center">
                     <button
                       onClick={() => {
-                        navigate(`/app/candidate/resume-builder`);
-                        setProfileData(mockProfileData);
-                        setActive(true);
+                        navigate("/app/candidate/setup-smartcv");
                       }}
-                      className="text-lg text-primary flex items-center gap-2 hover:scale-x-105"
+                      className="text-lg group font-semibold text-black-2 flex items-center gap-2 hover:scale-x-105"
                     >
-                      Create from Scratch <FiExternalLink />
+                      Create from Scratch{" "}
+                      <FaArrowRight
+                        fontWeight={600}
+                        className="group-hover:translate-x-2 duration-150 ease-in-out"
+                      />
                     </button>
                   </div>
                 </div>

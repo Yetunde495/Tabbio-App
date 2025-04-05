@@ -402,8 +402,8 @@ export const mockResData = {
 };
 
 export const mockEmptyResume = {
-  name: "Your Name",
-  role: "Professional Role",
+  name: "",
+  role: "",
   template: "professional",
   config: {
     photo: false,
@@ -422,6 +422,8 @@ export const mockEmptyResume = {
     role: true,
     internships: true,
     careerHighlights: true,
+    references:true,
+    memberships:true,
     trainings: true,
     certifications: true,
   },
@@ -432,23 +434,59 @@ export const mockEmptyResume = {
     fontSrc: "/fonts/timesnewroman/times-new-roman.ttf",
   },
   professionalSummary: ``,
-  location: "Enter Address",
-  address: "Enter Address",
-  email: "Email",
-  phone: "Phone Number",
-  website: "Website",
-  linkedIn: "Linkedin Url",
+  location: "",
+  address: "",
+  email: "",
+  phone: "",
+  website: "",
+  linkedIn: "",
   areaOfExpertise: [],
   skills: [],
   relevantCourses: [],
   workExperience: [],
   internships: [],
   certifications: [],
+  memberships: [],
+  references: [],
   education: [],
   projects: [],
   careerHighlights: [],
   trainings: [],
 };
+
+export const mocknotifications = [
+  {
+    _id: "1",
+    read: false,
+    message: "Welcome to the platform!",
+    createdAt: "2025-04-05T10:15:00Z"
+  },
+  {
+    _id: "2",
+    read: true,
+    message: "Your profile has been updated successfully.",
+    createdAt: "2025-04-04T14:30:00Z"
+  },
+  {
+    _id: "3",
+    read: false,
+    message: "You have a new message.",
+    createdAt: "2025-04-03T09:45:00Z"
+  },
+  {
+    _id: "4",
+    read: true,
+    message: "Password changed successfully.",
+    createdAt: "2025-04-02T17:00:00Z"
+  },
+  {
+    _id: "5",
+    read: false,
+    message: "New login detected from a new device.",
+    createdAt: "2025-04-01T21:20:00Z"
+  }
+];
+
 
 export const mockEmpty = {
   name: "",
@@ -962,7 +1000,7 @@ export const mockEmptyProfileData = {
   config: {
     location: true,
     role: true,
-    isLive: false,
+    isLive: true,
     lastUpdate: true,
     workExperience: true,
     professionalSummary: true,
@@ -970,9 +1008,9 @@ export const mockEmptyProfileData = {
     phone: true,
     skills: true,
     links: true,
-    volunteerExperience: true,
+    volunteerExperience: false,
     careerHighlights: false,
-    internships: true,
+    internships: false,
     education: true,
     memberships: false,
     references: false,
@@ -982,21 +1020,20 @@ export const mockEmptyProfileData = {
   name: "",
   role: "",
   level: "",
+  workAvailability: true,
   yearsOfExperience: "",
   majorSkill: "",
-  resume: "",
   professionalSummary: "",
-  areasOfExpertise: [],
+  areaOfExpertise: [],
   photo_url: "",
   location: "",
   email: "",
-  phone_number: "",
+  phone: "",
   website: "",
   linkedIn: "",
-  tabbioLink: "",
   locationType: [],
   language: "EN",
-  relocation: "",
+  relocation: true,
   skills: [],
   hobbies: [],
   languages: [],
@@ -1013,6 +1050,7 @@ export const mockEmptyProfileData = {
   references: [],
   awards: [],
   trainings: [],
+  tabbioLink: ""
 };
 
 export const faqData = [

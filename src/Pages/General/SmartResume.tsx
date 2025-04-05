@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { LuBriefcase, LuBuilding2 } from "react-icons/lu";
 import { IoLocationOutline } from "react-icons/io5";
 import { FiExternalLink } from "react-icons/fi";
@@ -27,28 +27,32 @@ import { PageLoader } from "../../components/Loader";
 import { useApp } from "../../context/AppContext";
 import EmptyImg from "../../assets/svg/empty-animate.svg";
 import { formatMonthYear } from "../../lib/utils/formatters";
+import { ShareCandidateCV } from "../Candidate/ShareResume";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import ProfessionalPDF from "../../components/PDFTemplates/ProfessionalPDF";
+import EntryPDF from "../../components/PDFTemplates/EntryPDF";
+import { getResumeById } from "../../services/resumeServices";
 
 const SmartResume: React.FC = () => {
   const { user } = useApp();
   const { tabbioLink } = useParams();
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState<any | null>(null);
+  const [resumeData, setResumeData] = useState<any | null>(null);
+  const [actionPerformed, setActionPerformed] = useState(false);
   const [showCompetencies, setShowCompetencies] = useState(false);
   const [showAllCareer, setShowAllCareer] = useState(false);
   const [selectedCareer, setSelectedCareer] = useState<any>(null);
   const [careerModal, setCareerModal] = useState(false);
   const [errMessage, setErrMessage] = useState("");
-
-  const technicalSkill = profileData?.skills.find(
-    (skill: any) => skill?.name === "technical"
-  );
   const [loading, setLoading] = useState(false);
+  const [shareModal, setShareModal] = useState(false);
 
-  const copyToClipboard = (text:string) => {
+  const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
   };
 
-  const openNewTab = (url:string) => {
+  const openNewTab = (url: string) => {
     window.open(url, "_blank");
   };
 
@@ -60,20 +64,36 @@ const SmartResume: React.FC = () => {
     }
   };
 
-  useMemo(async () => {
+  const fetchResumeData = async (resumeId: any) => {
+    try {
+      const resp = await getResumeById(resumeId);
+      setResumeData(resp?.data?.resume);
+    } catch (err: any) {
+      if (err?.message !== "Profile not found") {
+        toast.error(err?.message || "Request Failed");
+        setErrMessage(err?.message);
+      }
+    }
+  };
+
+  const fetchProfileData = async () => {
     if (tabbioLink) {
       try {
         setLoading(true);
         const resp = await getProfileByTabbiolink(`${tabbioLink}`);
         setProfileData(resp?.data?.profile);
-        handleProfileActions({
-          userId: resp?.data?.profile?.user,
-          company: user
-            ? user?.companyName || user?.firstName + user?.lastName
-            : "Anonymous",
-          action: "view",
-        });
-        console.log(resp.data?.profile);
+        if (!actionPerformed) {
+          // Check if action has already been performed
+          handleProfileActions({
+            userId: resp?.data?.profile?.user,
+            company: user
+              ? user?.companyName || user?.firstName +  " " + user?.lastName
+              : "Anonymous",
+            action: "view",
+          });
+          setActionPerformed(true);
+        }
+        await fetchResumeData(resp?.data?.profile?.resume);
       } catch (err: any) {
         if (err?.message !== "Profile not found") {
           toast.error(err?.message || "Request Failed");
@@ -83,7 +103,11 @@ const SmartResume: React.FC = () => {
         setLoading(false);
       }
     }
-  }, [tabbioLink]);
+  };
+
+  useEffect(() => {
+    fetchProfileData();
+  }, []);
 
   return (
     <section className="h-screen bg-[#F9FAFB]">
@@ -155,7 +179,7 @@ const SmartResume: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center flex-wrap gap-3 xl:ml-auto max-sm:pl-2">
+                <div className="flex items-center max-sm:justify-center flex-wrap gap-3 xl:ml-auto max-sm:pl-2">
                   <div className="max-w-[280px] relative font-normal">
                     <Dropdown2
                       buttonContent={
@@ -177,7 +201,7 @@ const SmartResume: React.FC = () => {
                         </div>
                       </div>
                       <div
-                         onClick={() => {
+                        onClick={() => {
                           copyToClipboard(profileData?.phone);
                         }}
                         className="flex gap-2 mx-2 mt-1 rounded-md font-normal text-zinc-700 text-center items-center justify-center px-3 text-sm py-1.5 cursor-pointer hover:bg-primary/5 hover:text-primary"
@@ -201,7 +225,7 @@ const SmartResume: React.FC = () => {
                         </div>
                       </div>
                       <div
-                         onClick={() => {
+                        onClick={() => {
                           copyToClipboard(profileData?.email);
                           openNewTab(`mailto:${profileData?.email}`);
                         }}
@@ -231,7 +255,9 @@ const SmartResume: React.FC = () => {
                       <div
                         onClick={() => {
                           copyToClipboard(profileData?.linkedIn);
-                          openNewTab(`https://www.linkedin.com/in/${profileData?.linkedin}`);
+                          openNewTab(
+                            `https://www.linkedin.com/in/${profileData?.linkedin}`
+                          );
                         }}
                         className="flex gap-2 mx-2 mt-1 rounded-md font-normal text-zinc-700 text-center items-center justify-center px-3 text-sm py-1.5 cursor-pointer hover:bg-primary/5 hover:text-primary"
                       >
@@ -245,20 +271,56 @@ const SmartResume: React.FC = () => {
                     </Dropdown2>
                   </div>
 
-                  {user && <button className="flex items-center justify-center gap-2 text-primary bg-primary/10 rounded-md py-2 text-sm px-4">
-                    <span className="max-sm:hidden">
-                      <BsBookmarkPlus />
-                    </span>
-                    <span> Save to ShareList</span>
-                  </button>}
-                  <button className="flex items-center justify-center hover:bg-zinc-200 gap-2 text-zinc-800 bg-[#F3F4F6] rounded-md py-2 text-sm px-4">
-                    <span className="max-sm:hidden">
-                      <LiaFileDownloadSolid />
-                    </span>
-                    <span>Download CV</span>
-                  </button>
+                  {user && (
+                    <button className="flex items-center justify-center gap-2 text-primary bg-primary/10 rounded-md py-2 text-sm px-4">
+                      <span className="max-sm:hidden">
+                        <BsBookmarkPlus />
+                      </span>
+                      <span> Save to ShareList</span>
+                    </button>
+                  )}
+                  <PDFDownloadLink
+                    document={
+                      resumeData?.template === "professional" ? (
+                        <ProfessionalPDF data={resumeData} />
+                      ) : (
+                        <EntryPDF data={resumeData} />
+                      )
+                    }
+                    fileName={resumeData?.name || "Tabbio ATS Resume"}
+                  >
+                    <button onClick={() => {
+                      handleProfileActions({
+                        userId: profileData?.user,
+                        company: user
+                          ? user?.companyName ||
+                            user?.firstName + " " + user?.lastName
+                          : "Anonymous",
+                        action: "download",
+                      });
+                    }} className="flex items-center justify-center hover:bg-zinc-200 gap-2 text-zinc-800 bg-[#F3F4F6] rounded-md py-2 text-sm px-4">
+                      <span className="max-sm:hidden">
+                        <LiaFileDownloadSolid />
+                      </span>
+                      <span>Download CV</span>
+                    </button>
+                  </PDFDownloadLink>
+
                   <div className="flex items-center gap-3 text-zinc-600">
-                    <button className="">
+                    <button
+                      onClick={() => {
+                        setShareModal(true);
+                        handleProfileActions({
+                          userId: profileData?.user,
+                          company: user
+                            ? user?.companyName ||
+                              user?.firstName + " " + user?.lastName
+                            : "Anonymous",
+                          action: "share",
+                        });
+                      }}
+                      className=""
+                    >
                       <MdShare size={18} />
                     </button>
 
@@ -277,7 +339,7 @@ const SmartResume: React.FC = () => {
           </header>
 
           <section className="w-full flex flex-col xl:py-[9%] py-[10rem] max-sm:pt-[16rem] justify-center items-center">
-            <div className="bg-white shadow-lg px-6 max-sm:px-3 py-5 w-full h-full lg:max-w-[70%] xl:max-w-[65%]">
+            <div className="bg-white shadow-lg px-6 max-sm:px-2 py-5 w-full h-full lg:max-w-[70%] xl:max-w-[65%]">
               <div className="flex flex-col gap-y-6">
                 <Accordion2
                   title={
@@ -323,7 +385,7 @@ const SmartResume: React.FC = () => {
                       </button>
                       {showCompetencies && (
                         <div className="py-2 border-t border-stroke w-full flex gap-2 items-center flex-wrap">
-                          {technicalSkill?.items?.map(
+                          {profileData?.skills?.map(
                             (val: string, index: number) => (
                               <Pill key={index}>{val}</Pill>
                             )
@@ -917,6 +979,13 @@ const SmartResume: React.FC = () => {
             </button>
           </div>
         </div>
+      )}
+      {shareModal && (
+        <ShareCandidateCV
+          show={shareModal}
+          setShow={() => setShareModal(false)}
+          resumeData={profileData}
+        />
       )}
     </section>
   );

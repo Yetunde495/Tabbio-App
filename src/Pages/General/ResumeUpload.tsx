@@ -11,7 +11,8 @@ import { FiUpload } from "react-icons/fi";
 import { ParseCV } from "../../services/profileServices";
 import { uploadFile } from "../../services/authServices";
 import { ParseResumeCV } from "../../services/resumeServices";
-import { FaCircle, FaRegFile } from "react-icons/fa6";
+import { FaCircle, FaCloudArrowUp, FaUpload } from "react-icons/fa6";
+import { IoDocumentTextOutline } from "react-icons/io5";
 
 const mainVariant = {
   initial: {
@@ -23,6 +24,21 @@ const mainVariant = {
     y: -10,
     opacity: 0.9,
   },
+};
+
+const getFileType = (mimeType: string) => {
+  const mimeMap: Record<string, string> = {
+    "application/pdf": "PDF",
+    "application/msword": "DOC",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+      "DOCX",
+    "image/jpeg": "JPG",
+    "image/png": "PNG",
+    "image/gif": "GIF",
+    "image/webp": "WEBP",
+  };
+
+  return mimeMap[mimeType] || "Unknown File Type";
 };
 
 export const UploadResume = ({
@@ -568,7 +584,7 @@ export const ResumeUpload = ({
           loading ? "opacity-60 cursor-not-allowed" : "cursor-pointer"
         } ${
           maxWidth ? maxWidth : "max-w-[800px]"
-        }  shadow-md bg-white flex flex-col justify-center border border-spacing-10 min-h-[170px] border-stroke border-dashed w-full relative overflow-hidden`}
+        }  shadow-sm bg-white flex flex-col justify-center border-2 min-h-[170px] border-stroke border-dashed w-full relative overflow-hidden`}
       >
         <input
           ref={fileInputRef}
@@ -609,13 +625,14 @@ export const ResumeUpload = ({
                   )}
                 </motion.div>
               )}
-              <button className="font-semibold text-white bg-primary rounded-lg hover:scale-105 duration-150 py-2.5 px-6 text-center text-lg">
-                Select from Device
+              <button className="font-semibold mb-3 flex items-center justify-center gap-2.5 text-white bg-primary rounded-lg hover:scale-105 duration-150 py-2.5 px-6 text-center max-sm:px-3 max-sm:py-1.5">
+                <FaUpload fontWeight={600} /> Select from Device
               </button>
 
-              <p className="text-neutral-500 text-center pt-2 text-lg">
+              <p className="text-neutral-500 text-center pt-2">
                 Supported Format: PDF, DOC, DOCX
               </p>
+              <p className="text-neutral-500 text-center pt-2">Up to 10MB</p>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center relative">
@@ -793,11 +810,11 @@ export const ResumeFileUpload = ({
           }
         }}
         whileHover="animate"
-        className={`px-10 py-6 group/file block rounded-3xl ${
+        className={`px-10 py-6 group/file block rounded-2xl ${
           loading ? "opacity-60 cursor-not-allowed" : "cursor-pointer"
         } ${
-          maxWidth ? maxWidth : "max-w-[800px]"
-        }  shadow-sm bg-white border min-h-[250px] border-stroke border-dashed  w-full relative overflow-hidden`}
+          maxWidth && maxWidth
+        }  shadow-sm bg-white border min-h-[200px] border-stroke border-dashed  w-full relative overflow-hidden`}
       >
         <input
           ref={fileInputRef}
@@ -826,7 +843,7 @@ export const ResumeFileUpload = ({
                     ""
                   )}
                 >
-                  {isDragActive && (
+                  {isDragActive ? (
                     <motion.p
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -835,21 +852,25 @@ export const ResumeFileUpload = ({
                       Drop it
                       <MdOutlineFileUpload className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
                     </motion.p>
+                  ) : (
+                    <span className="px-3 py-3 rounded-full text-black flex justify-center items-center bg-[#F3F4F6]">
+                      <FaCloudArrowUp size={30} />
+                    </span>
                   )}
                 </motion.div>
               )}
-              <p className="font-bold text-neutral-700 text-center text-lg pt-4">
+              <p className="font-semibold text-black text-center text-base pt-4">
                 Drag & drop your resume here
               </p>
 
-              <p className="text-neutral-500 text-center text-base">
+              <p className="text-neutral-500 text-center text-sm">
                 or click to browse your files
               </p>
 
-              <div className="flex gap-5 text-sm text-neutral-500 items-center justify-center w-full mt-3">
+              <div className="flex gap-5 text-xs text-neutral-500 items-center justify-center w-full mt-3">
                 <p className="flex items-center gap-1">
                   <span>
-                    <FaRegFile />
+                    <IoDocumentTextOutline />
                   </span>
                   PDF, DOC, DOCX
                 </p>
@@ -877,7 +898,7 @@ export const ResumeFileUpload = ({
                         idx === 0 ? "file-upload" : "file-upload-" + idx
                       }
                       className={cn(
-                        "relative overflow-hidden border-t border-stroke/60 z-40 bg-white dark:bg-neutral-900 flex flex-col items-start justify-start md:h-24 p-4 my-4 w-full mx-auto rounded-md",
+                        "relative overflow-hidden border-t border-stroke/60 z-40 bg-white dark:bg-neutral-900 flex flex-col items-start justify-start  p-4 my-4 w-full mx-auto rounded-md",
                         "shadow-lg"
                       )}
                     >
@@ -918,7 +939,7 @@ export const ResumeFileUpload = ({
                           layout
                           className="px-1 py-0.5 rounded-md bg-gray-100 dark:bg-neutral-800 "
                         >
-                          {file.type}
+                          File Type: {getFileType(file.type)}
                         </motion.p>
 
                         <motion.p
@@ -926,7 +947,7 @@ export const ResumeFileUpload = ({
                           animate={{ opacity: 1 }}
                           layout
                         >
-                          modified{" "}
+                          Last modified:{" "}
                           {new Date(file.lastModified).toLocaleDateString()}
                         </motion.p>
                       </div>
@@ -1013,7 +1034,7 @@ export const SelectFileBox = ({
           handleClick();
         }}
         whileHover="animate"
-        className={`px-10 py-6 group/file block rounded-3xl ${
+        className={`px-10 py-6 group/file block rounded-xl ${
           maxWidth ? maxWidth : "max-w-[800px]"
         }  shadow-sm bg-white border min-h-[250px] border-stroke border-dashed cursor-pointer w-full relative overflow-hidden`}
       >
@@ -1053,8 +1074,8 @@ export const SelectFileBox = ({
                       <MdOutlineFileUpload className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
                     </motion.p>
                   ) : (
-                    <span className="px-3 py-3 rounded-xl text-zinc-400 flex justify-center items-center bg-zinc-100">
-                      <FiUpload size={30} />
+                    <span className="px-3 py-3 rounded-full text-black flex justify-center items-center bg-[#F3F4F6]">
+                      <FaCloudArrowUp size={30} />
                     </span>
                   )}
                 </motion.div>

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useApp } from "../context/AppContext";
 import logo1 from "../assets/brand/logo-1.svg";
 import Modal from "../components/modal";
-import { IoBuildOutline, IoDocumentTextOutline } from "react-icons/io5";
+import { IoBriefcaseOutline, IoBuildOutline } from "react-icons/io5";
 import {
   iconVariants,
   itemVariants,
@@ -16,8 +16,10 @@ import {
   IoIosArrowForward,
   IoIosArrowUp,
 } from "react-icons/io";
-import { LuBriefcase, LuLogOut, LuUsers } from "react-icons/lu";
+import { LuLogOut, LuUsers } from "react-icons/lu";
 import icon from "../assets/svg/t-icon.svg";
+import CvIcon from "../assets/svg/smartCV.svg";
+import CvIconFilled from "../assets/svg/smartCV-filled.svg";
 import ExtensionModal from "../Pages/PageComponents/ExtensionModal";
 import DropdownUser from "./DropdownUser";
 
@@ -91,10 +93,10 @@ const Sidebar = ({
   }, [sidebarExpanded]);
 
   useEffect(() => {
-   if (pathname.includes(`/app/candidate/profile`)) {
-    setOpen(false)
-   }
-  }, [pathname])
+    if (pathname.includes(`/app/candidate/smart-cv`)) {
+      setOpen(false);
+    }
+  }, [pathname]);
 
   return (
     <aside
@@ -106,7 +108,7 @@ const Sidebar = ({
       }`}
     >
       {/* <!-- SIDEBAR HEADER --> */}
-      <div className="lg:flex items-center lg:justify-center w-full gap-2 px-6 pt-7 pb-10">
+      <div className="lg:flex items-center lg:justify-center w-full gap-2 px-6 pt-6 pb-5">
         <img
           src={logo1}
           alt="Logo"
@@ -127,20 +129,20 @@ const Sidebar = ({
         {/* <!-- Sidebar Menu --> */}
         <nav className={`p-2 ${sidebarOpen ? "px-0" : "px-2"}`}>
           <Fragment>
-            <ul className="gap-4 sm:mb-1 flex flex-col ">
-            <li>
+            <ul className="gap-2 sm:mb-1 flex flex-col ">
+              <li>
                 <NavLink
                   to={
                     category === "Candidate"
-                      ? `/app/candidate/profile`
+                      ? `/app/candidate/smart-cv`
                       : `/app/business/portal`
                   }
-                  className={`group relative flex items-center gap-1 max-lg:mx-2 font-medium rounded-lg  ${
+                  className={`group relative flex items-center gap-2 max-lg:mx-2 font-semibold rounded-lg mb-1  ${
                     !sidebarOpen ? "px-4 py-2" : "pl-5 py-2"
-                  } font-medium duration-300 ease-in-out  ${
+                  } duration-300 ease-in-out  ${
                     pathname.includes(
                       category === "Candidate"
-                        ? `/app/candidate/profile`
+                        ? `/app/candidate/smart-cv`
                         : `/app/company/portal`
                     )
                       ? ` text-primary
@@ -152,19 +154,26 @@ const Sidebar = ({
                 >
                   {category === "Candidate" ? (
                     <span className={``}>
-                      <IoDocumentTextOutline size={20} />{" "}
+                      {pathname.includes(`/app/candidate/smart-cv`) ? (
+                        <img src={CvIconFilled} />
+                      ) : (
+                        <img src={CvIcon} />
+                      )}
                     </span>
                   ) : (
-                    <span> <LuUsers size={20} />{" "}</span>
+                    <span>
+                      {" "}
+                      <LuUsers size={20} />{" "}
+                    </span>
                   )}
-                  {category === "Candidate" ? "Profile" : "Portal"}
+                  {category === "Candidate" ? "Smart CV" : "Portal"}
                 </NavLink>
               </li>
               {category === "Candidate" && (
                 <li>
                   <p
-                    className={`relative uppercase w-full items-center text-sm font-medium duration-300  py-2 
-                       text-zinc-400 mb-1`}
+                    className={`relative uppercase w-full items-center text-[12px] font-semibold py-1 pl-1.5
+                       text-zinc-500`}
                   >
                     CAREER TOOLS
                   </p>
@@ -177,7 +186,7 @@ const Sidebar = ({
                         setOpen(!open);
                         navigate(`/app/candidate/applications`);
                       }}
-                      className={`group relative flex w-full items-center hover:bg-primary/15 hover:text-primary font-medium whitespace-nowrap rounded-md gap-2.5 text-sm duration-300  ease-in-out  px-4 py-2 
+                      className={`group relative flex w-full items-center hover:bg-primary/15 hover:text-primary font-semibold whitespace-nowrap rounded-md gap-2.5 text-sm duration-300  ease-in-out  px-4 py-2 
                         ${
                           pathname.includes(`/app/candidate/applications`)
                             ? ` text-primary
@@ -191,7 +200,7 @@ const Sidebar = ({
                       <span className="flex items-center gap-2 ">
                         {" "}
                         <span>
-                          <LuBriefcase />{" "}
+                          <IoBriefcaseOutline size={18} fontWeight={600} />{" "}
                         </span>{" "}
                         Application
                       </span>
@@ -213,10 +222,10 @@ const Sidebar = ({
                       <motion.li
                         variants={itemVariants}
                         onClick={() =>
-                          navigate(`/app/candidate/resume-builder`)
+                          navigate(`/app/candidate/cv-builder`)
                         }
                         className={`flex items-center gap-2 py-2 px-1.5 font-medium hover:bg-primary/15 hover:text-primary whitespace-nowrap rounded-md   transition-colors cursor-pointer ${
-                          pathname.includes(`/app/candidate/resume-builder`)
+                          pathname.includes(`/app/candidate/cv-builder`)
                             ? ` text-primary
                                        bg-primary/15
                                          hover:text-white hover:bg-primary

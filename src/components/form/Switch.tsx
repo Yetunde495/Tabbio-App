@@ -59,7 +59,7 @@ export const Switch: React.FC<SwitchProps> = ({
           </span>
         </span>
       </label>
-      {label && <label className="ml-2">{label}</label>}
+      {label && <label className="ml-2 max-sm:m-1">{label}</label>}
     </div>
   );
 };

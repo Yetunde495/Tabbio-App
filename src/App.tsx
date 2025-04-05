@@ -10,6 +10,7 @@ import { Loader } from "./components/Loader";
 import AuthPages from "./Pages/Authentication/Index";
 import CompanyPages from "./Pages/Company/Index";
 import AccountSettings from "./Pages/AccountSettings/AccountSettings";
+import NotificationsPage from "./Pages/Notifications/Index";
 
 axios.defaults.baseURL = import.meta.env.VITE_PUBLIC_TABBIO_API_URL;
 
@@ -106,17 +107,25 @@ function App() {
             {/* Candidate Pages */}
             <>
               <Route path="/app" element={<RouteLayout />}>
+              <Route
+                  path="/app/all-notifications"
+                  element={<NotificationsPage />}
+                />
                 <Route
-                  path="/app/candidate/profile"
+                  path="/app/candidate/smart-cv"
                   element={<CandidatePages.Profile />}
                 />
                
+               <Route
+                  path="/app/candidate/setup-smartcv"
+                  element={<CandidatePages.CreateSmartCV />}
+                />
                 <Route
-                  path="/app/candidate/profile/edit-cv/:profileId"
+                  path="/app/candidate/smart-cv/edit/:profileId"
                   element={<CandidatePages.EditSmartResume />}
                 />
                 <Route
-                  path="/app/candidate/profile/preview-cv"
+                  path="/app/candidate/preview-smart-cv"
                   element={<CandidatePages.ProfilePreview />}
                 />
                 <Route
@@ -124,8 +133,20 @@ function App() {
                   element={<CandidatePages.Applications />}
                 />
                 <Route
-                  path="/app/candidate/resume-builder"
+                  path="/app/candidate/cv-builder"
                   element={<CandidatePages.CreateLiveResume />}
+                />
+                <Route
+                  path="/app/candidate/cv-builder/create"
+                  element={<CandidatePages.CreateResumeFromScratch />}
+                />
+                 <Route
+                  path="/app/candidate/cv-builder/edit/:resumeId"
+                  element={<CandidatePages.EditCV />}
+                />
+                 <Route
+                  path="/app/candidate/cv-builder/edit-application/:applicationId"
+                  element={<CandidatePages.EditApplication />}
                 />
                 <Route
                   path="/app/user-account/settings"

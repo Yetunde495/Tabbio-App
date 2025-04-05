@@ -44,6 +44,15 @@ const Stepper: React.FC<StepperProps> = ({ steps, activeStep, setActiveStep, con
               <span className="text-white">{step.stepNumber}</span>
             )}
           </div>
+          {index !== 0 - 0 && (
+                <span className="hidden sm:inline-block">
+                  <div
+                    className={` connector absolute h-0.5 -mt-3 mr-5  ${
+                      index < activeStep ? "bg-primary" : "bg-stroke"
+                    } `}
+                  />
+                </span>
+              )}
           {/* {index < steps.length - 1 && <div className="h-px bg-slate-600 w-16" />} */}
           <div className="ml-2">{step.label}</div>
           

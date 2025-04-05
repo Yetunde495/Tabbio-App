@@ -45,6 +45,20 @@ export function generateUniqueId(): string {
   return `${timestamp}-${randomString}`; // Combine the timestamp and random string to create the ID
 }
 
+export function getTimeAgo(dateInput: Date | string): string {
+  const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  
+  if (diffDays < 1) return "Today";
+  if (diffDays === 1) return "1d ago";
+  if (diffDays < 7) return `${diffDays} days ago`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)} week${Math.floor(diffDays / 7) > 1 ? 's' : ''} ago`;
+  if (diffDays < 365) return `${Math.floor(diffDays / 30)} month${Math.floor(diffDays / 30) > 1 ? 's' : ''} ago`;
+  return `${Math.floor(diffDays / 365)} yr${Math.floor(diffDays / 365) > 1 ? 's' : ''} ago`;
+}
+
 export function paginate(totalItems: number, page: number, pageLimit: number) {
   const totalPages = Math.ceil(totalItems / pageLimit);
   const nextPage = page < totalPages ? page + 1 : null;

@@ -5,6 +5,7 @@ import { FaStarOfLife } from "react-icons/fa6";
 
 type TextareaProps = {
   label: string;
+  subLabel?: string | React.ReactNode;
   name: string;
   rules?: any;
   classNames?: string;
@@ -27,6 +28,7 @@ const Textarea: React.FC<TextareaProps> = ({
   classNames,
   defaultValue,
   placeholder,
+  subLabel,
 }) => {
   const { field, fieldState } = useController({ name, rules, defaultValue });
   const { onChange, onBlur, value, ref } = field;
@@ -49,9 +51,9 @@ const Textarea: React.FC<TextareaProps> = ({
     <div className={containerClass}>
       <label
         htmlFor={name}
-        className="mb-3 text-black dark:text-white flex items-center gap-1"
+        className="mb-[0.4rem] text-[#242424] text-base dark:text-white flex items-center gap-1"
       >
-        {label}{" "}
+        {label} {subLabel}
         {isRequired && (
           <span>
             <FaStarOfLife className="text-danger" size={8} />

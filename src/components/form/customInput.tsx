@@ -3,7 +3,8 @@ import { FieldValues, useController } from "react-hook-form";
 import { FaStarOfLife } from "react-icons/fa6";
 
 type InputProps = {
-  label: string;
+  label: string | React.ReactNode;
+  sublabel?: string | React.ReactNode;
   type?:string;
   name: string;
   rules?: any;
@@ -18,7 +19,8 @@ type InputProps = {
 
 type TextInputProps = {
   type?:string;
-  label: string;
+  label: string | React.ReactNode;
+  sublabel?: string | React.ReactNode;
   name: keyof FieldValues;
   classNames?: string;
   rules?: any;
@@ -30,7 +32,7 @@ type TextInputProps = {
   disabled?: boolean;
 }
 
-export const AutoInput: React.FC<TextInputProps> = ({ type, isRequired, disabled=false, defValue, label, name,  classNames, placeholder, defaultValue, rules }) => {
+export const AutoInput: React.FC<TextInputProps> = ({ type, sublabel, isRequired, disabled=false, defValue, label, name,  classNames, placeholder, defaultValue, rules }) => {
   
 
   const { field, fieldState } = useController({ name, defaultValue,  rules });
@@ -43,8 +45,8 @@ export const AutoInput: React.FC<TextInputProps> = ({ type, isRequired, disabled
   
   return (
     <div className={containerClass}>
-      <label htmlFor={name} className="mb-[0.4rem] text-black dark:text-white flex items-center gap-1">
-        {label} {isRequired && <span><FaStarOfLife className="text-danger" size={8} /></span>}
+      <label htmlFor={name} className="mb-[0.4rem] text-[#242424] text-base dark:text-white flex items-center gap-1">
+        {label} {sublabel} {isRequired && <span><FaStarOfLife className="text-danger" size={8} /></span>}
       </label>
       <input
         {...field}
