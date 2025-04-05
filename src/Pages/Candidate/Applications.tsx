@@ -46,7 +46,7 @@ const Applications: React.FC = () => {
   const [createModal, setCreateModal] = useState(false);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [itemsPerPage, setItemsPerPage] = useState(6);
   const [errorMessage, setErrorMessage] = useState("");
   const [tailorResume, setTailorResume] = useState(false);
   const [selectedApplication, setApplication] = useState<any>(null);

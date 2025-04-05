@@ -10,12 +10,13 @@ import {
   fixSingleResumeIssue,
 } from "../../services/resumeServices";
 import { RiErrorWarningLine, RiRobot2Line } from "react-icons/ri";
-import { LuWand2 } from "react-icons/lu";
-import { FaCircle, FaRegStar } from "react-icons/fa6";
+import { LuSparkles, LuWand2 } from "react-icons/lu";
+import { FaCircleCheck, FaRegStar } from "react-icons/fa6";
 import { MdOutlineErrorOutline } from "react-icons/md";
 import ProgressBar from "../../components/ProgressBar";
-import botImg from "../../assets/svg/tb-score-bot.svg";
 import { motion } from "framer-motion";
+import { FaFileAlt } from "react-icons/fa";
+import { BiLoaderAlt } from "react-icons/bi";
 
 type Props = {
   show?: boolean;
@@ -498,16 +499,16 @@ const ResumeAiScore: React.FC<Props> = ({
   return ReactDOM.createPortal(
     <div className="w-screen h-screen z-9999 bg-black bg-opacity-50 fixed top-0 flex md:items-center justify-center text-[#444444] overflow-x-auto">
       <div
-        className={` bg-white py-5  flex flex-col lg:max-w-[60%]  md:rounded-2xl justify-center md:mx-6 md:my-auto mx-0`}
+        className={` bg-white py-5  flex flex-col lg:max-w-[60%] lg:min-w-[45%] md:rounded-2xl justify-center md:mx-6 md:my-auto mx-0`}
       >
         <div className="flex flex-col md:justify-center relative">
           <div className="flex items-center md:px-6 px-4">
             <div>
               <h3 className="text-xl font-semibold text-black dark:text-white sm:text-2xl mb-0">
-                Tabbio ATS Score
+                Your CV needs Improvements
               </h3>
-              <p className="text-zinc-500">
-                Analyse and Improve your CV with Tabbio AI-powered tools
+              <p className="text-zinc-500 font-normal">
+                {resumeData?.resumeName}
               </p>
             </div>
 
@@ -556,22 +557,35 @@ const ResumeAiScore: React.FC<Props> = ({
           ) : fixLoading && selectedIssue === null ? (
             <div className="max-h-[75vh] lg:max-h-[80vh] overflow-y-auto custom-scrollbar">
               <div className="py-5 px-3">
-                <div className="flex items-center w-full justify-center gap-2">
-                  <img src={botImg} className="animate-pulse" />
+                <div className="flex relative items-center w-full justify-center gap-2">
+                  <span className="absolute top-1 right-[40%] text-yellow-300 p-1">
+                    <LuSparkles size={20} />
+                  </span>
+                  <div className="relative flex items-center justify-center w-24 h-24 rounded-full bg-white shadow-inner">
+                    {/* Spinning Shadow */}
+                    <div className="absolute w-full h-full rounded-full animate-spin bs">
+                      <div className="absolute inset-0 w-full h-full rounded-full"></div>
+                    </div>
+
+                    {/* Progress Display (Static) */}
+                    <div className="relative z-10 flex items-center justify-center w-22 h-22 rounded-full bg-white">
+                      <FaFileAlt size={36} className="text-indigo-700" />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="my-4 text-center">
                   <h3 className="text-lg font-semibold text-zinc-800">
                     Fixing all CV issues
                   </h3>
-                  <p className="text-center text-zinc-600">
+                  <p className="text-center font-normal text-zinc-600">
                     Our AI is analyzing and fixing issues in your CV. This will{" "}
                     <br />
                     only take a moment.
                   </p>
                 </div>
 
-                <div className="space-y-1 my-8">
+                <div className="space-y-1 my-8 px-2">
                   {steps.map((step, index) => (
                     <motion.div
                       key={index}
@@ -584,20 +598,14 @@ const ResumeAiScore: React.FC<Props> = ({
                       <p
                         className={`${
                           index <= loadingStep && index !== loadingStep
-                            ? "text-primary"
-                            : "text-[#9CA3AF]"
-                        } text-sm flex gap-1 items-center`}
+                            ? "text-zinc-600"
+                            : "text-primary"
+                        } text-sm flex gap-2 items-center`}
                       >
                         {index <= loadingStep && index !== loadingStep ? (
-                          <FaCircle
-                            size={6}
-                            className="rounded-full text-primary"
-                          />
+                          <FaCircleCheck className="text-success" size={16} />
                         ) : (
-                          <FaCircle
-                            size={6}
-                            className="rounded-full text-zinc-200"
-                          />
+                          <BiLoaderAlt className="animate-spin" size={16} />
                         )}{" "}
                         <span className="text-[15px]">{step}</span>
                       </p>
@@ -606,13 +614,13 @@ const ResumeAiScore: React.FC<Props> = ({
                 </div>
 
                 {/* Progress Div */}
-                <div className="py-4">
-                  <div className="mb-1.5">
-                    <ProgressBar percent={progress} />
-                  </div>
-                  <div className="flex w-full justify-between gap-6 text-sm text-zinc-500">
+                <div className="py-4 w-full rounded-lg shadow-sm px-2 bg-light">
+                  <div className="flex w-full justify-between mb-1.5 gap-6 text-sm text-zinc-500">
                     <p>Optimizing your CV</p>
-                    <p className="text-primary">{progress}%</p>
+                    <p className="text-zinc-800">{progress}%</p>
+                  </div>
+                  <div className="">
+                    <ProgressBar percent={progress} />
                   </div>
                 </div>
               </div>
@@ -656,11 +664,15 @@ const ResumeAiScore: React.FC<Props> = ({
                   </button>
                 ))}
               </div>
-              {contentData && (
-                <div className="p-4 rounded bg-gray-50">{renderContent()}</div>
-              )}
+              <div>
+                {contentData && (
+                  <div className="p-4 rounded bg-gray-50">
+                    {renderContent()}
+                  </div>
+                )}
+              </div>
 
-              <div className="w-full border-t flex bg-white mt-3 pt-4 justify-between items-center border-stroke">
+              <div className="w-full border-t flex bg-zinc-200 mt-3 pt-4 justify-between items-center border-stroke">
                 <button
                   onClick={() => {
                     onHide();

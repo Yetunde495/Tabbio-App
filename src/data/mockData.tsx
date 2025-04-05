@@ -454,6 +454,40 @@ export const mockEmptyResume = {
   trainings: [],
 };
 
+export const mocknotifications = [
+  {
+    _id: "1",
+    read: false,
+    message: "Welcome to the platform!",
+    createdAt: "2025-04-05T10:15:00Z"
+  },
+  {
+    _id: "2",
+    read: true,
+    message: "Your profile has been updated successfully.",
+    createdAt: "2025-04-04T14:30:00Z"
+  },
+  {
+    _id: "3",
+    read: false,
+    message: "You have a new message.",
+    createdAt: "2025-04-03T09:45:00Z"
+  },
+  {
+    _id: "4",
+    read: true,
+    message: "Password changed successfully.",
+    createdAt: "2025-04-02T17:00:00Z"
+  },
+  {
+    _id: "5",
+    read: false,
+    message: "New login detected from a new device.",
+    createdAt: "2025-04-01T21:20:00Z"
+  }
+];
+
+
 export const mockEmpty = {
   name: "",
   role: "",

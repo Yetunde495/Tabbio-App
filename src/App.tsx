@@ -10,6 +10,7 @@ import { Loader } from "./components/Loader";
 import AuthPages from "./Pages/Authentication/Index";
 import CompanyPages from "./Pages/Company/Index";
 import AccountSettings from "./Pages/AccountSettings/AccountSettings";
+import NotificationsPage from "./Pages/Notifications/Index";
 
 axios.defaults.baseURL = import.meta.env.VITE_PUBLIC_TABBIO_API_URL;
 
@@ -106,6 +107,10 @@ function App() {
             {/* Candidate Pages */}
             <>
               <Route path="/app" element={<RouteLayout />}>
+              <Route
+                  path="/app/all-notifications"
+                  element={<NotificationsPage />}
+                />
                 <Route
                   path="/app/candidate/smart-cv"
                   element={<CandidatePages.Profile />}

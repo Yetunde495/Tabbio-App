@@ -638,7 +638,7 @@ const EditSmartCV: React.FC = () => {
                 </button>
 
                 <button
-                  onClick={() => navigate(`/app/candidate/cv-builder/create`)}
+                  onClick={() => navigate(`/app/candidate/cv-builder`)}
                   className="hidden items-center gap-2 max-sm:text-xs p-1 hover:scale-105 duration-150 text-[#333333]"
                 >
                   Create New <FaFileMedical />
