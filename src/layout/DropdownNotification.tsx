@@ -11,6 +11,7 @@ import { useReadNotification } from "../services/api/notifications";
 import { fetchUserNotifications } from "../services/notificationServices";
 import SlideTab, { Cursor } from "../AnimatedUi/SlideTabs";
 import { IoCheckmarkDone } from "react-icons/io5";
+import { BiLoaderAlt } from "react-icons/bi";
 
 type Position = {
   left: number;
@@ -31,11 +32,13 @@ const DropdownNotification = () => {
     opacity: 0,
   });
   const [hover, setHover] = useState(false);
-
+  const [selectedNotification, setSelectedNotification] = useState<
+    string | undefined | null
+  >(null);
   const trigger = useRef<HTMLDivElement | null>(null);
   const dropdown = useRef<HTMLDivElement | null>(null);
 
-  const { data, isLoading } = useQuery(
+  const { data, isFetching } = useQuery(
     ["USER_NOTIFICATIONS", 1, 10, status],
     fetchUserNotifications,
     {
@@ -43,7 +46,7 @@ const DropdownNotification = () => {
       refetchOnWindowFocus: false,
       enabled: !!user,
       onSuccess: (data: any) => {
-        setNotifications(data?.items || []);
+        setNotifications(data?.data?.notifications?.data || []);
       },
     }
   );
@@ -101,7 +104,7 @@ const DropdownNotification = () => {
         ref={dropdown}
         onFocus={() => setDropdownOpen(true)}
         onBlur={() => setDropdownOpen(false)}
-        className={`absolute right-3 mt-2.5 flex h-100 w-80 flex-col rounded-2xl border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark sm:right-0 sm:w-90 ${
+        className={`absolute max-sm:-right-32.5 mt-2.5 flex h-100 w-80 max-sm:w-full max-sm:min-w-80 flex-col rounded-2xl border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark sm:right-0 sm:w-90 ${
           dropdownOpen === true ? "block" : "hidden"
         }`}
       >
@@ -178,16 +181,16 @@ const DropdownNotification = () => {
           </ul>
         </div>
 
-        {isLoading ? (
+        {isFetching ? (
           <div className="flex h-full w-full items-center justify-center">
             <ComponentLoader
-              show={isLoading}
+              show={isFetching}
               size={"w-[2.5em] h-[2.5em] border-[4px]"}
             />
           </div>
         ) : data === undefined ||
           data === null ||
-          notifications.length === 0 ? (
+          notifications?.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center rounded-sm bg-white dark:bg-boxdark pb-10">
             <div className="py-3">
               <GoBell size={24} />
@@ -205,7 +208,7 @@ const DropdownNotification = () => {
           </div>
         ) : (
           <ul className="flex h-auto flex-col overflow-y-auto custom-scrollbar mb-8">
-            {notifications.map((val: any, index: number) => (
+            {notifications?.map((val: any, index: number) => (
               <li key={index}>
                 <div
                   className="flex gap-3 border-t  relative text-slate-700 dark:text-slate-100 border-stroke px-4.5 py-3  dark:border-strokedark"
@@ -214,6 +217,7 @@ const DropdownNotification = () => {
                   <div className="mt-1">
                     <button
                       onClick={() => {
+                        setSelectedNotification(val?._id);
                         ReadNotification({
                           notificationId: val._id,
                           payload: {
@@ -223,7 +227,9 @@ const DropdownNotification = () => {
                       }}
                       disabled={requestLoading}
                     >
-                      {val?.read ? (
+                      {requestLoading && selectedNotification === val?._id ? (
+                        <BiLoaderAlt size={18} className="animate-spin" />
+                      ) : val?.read ? (
                         <Tooltip2 text="Mark as Unread">
                           <FaEnvelopeOpen />
                         </Tooltip2>
@@ -235,9 +241,7 @@ const DropdownNotification = () => {
                     </button>
                   </div>
                   <div className="flex flex-col gap-2.5">
-                    <p
-                      className="text-sm mb-2 text-slate-700 font-normal"
-                    >
+                    <p className="text-sm mb-2 text-slate-700 font-normal">
                       {val.message}
                     </p>
 
