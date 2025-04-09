@@ -10,7 +10,7 @@ export const fetchUserNotifications = async ({ queryKey }: any) => {
   }
 
   //status
-  if (queryKey[3]) {
+  if (queryKey[3] === false || queryKey[3]) {
     queryOptions += `&read=${queryKey[3]}`;
   }
   url += queryOptions;
@@ -29,7 +29,7 @@ export const deleteNotificationAsync = async (
   notificationId: string | undefined | null
 ) => {
   const response: any = await axios
-    .delete(`/notification/${notificationId}`)
+    .delete(`/notifications/${notificationId}`)
     .catch((e) => ({ error: e }));
 
   // check error
@@ -48,7 +48,7 @@ export const ReadNotificationAsync = async (
   data: any
 ) => {
   const response: any = await axios
-    .patch(`/notification/${notificationId}`, data)
+    .patch(`/notifications/${notificationId}`, data)
     .catch((e) => ({ error: e }));
 
   // check error
@@ -64,7 +64,7 @@ export const ReadNotificationAsync = async (
 
 export const ReadAllNotificationAsync = async (data:any) => {
   const response: any = await axios
-    .post(`/notifications/all`, data)
+    .patch(`/notifications/all`, data)
     .catch((e) => ({ error: e }));
 
   // check error

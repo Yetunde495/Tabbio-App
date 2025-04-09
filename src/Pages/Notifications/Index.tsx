@@ -44,12 +44,13 @@ const NotificationsPage: React.FC = () => {
     {
       keepPreviousData: true,
       onSuccess: (data: any) => {
-        setNotifications(data?.items);
+        setNotifications(data?.data?.notifications?.data);
+        // setNotifications(data?.items);
       },
     }
   );
 
-  const pagination = paginate(data?.total, Number(page), Number(itemsPerPage));
+  const pagination = paginate(data?.data?.notifications?.count, Number(page), Number(itemsPerPage));
 
   const handleToggleAll = () => {
     setSelectAll((prevSelectAll) => !prevSelectAll);
@@ -174,7 +175,7 @@ const NotificationsPage: React.FC = () => {
                 </p>
               </div>
             </div>
-          ) : notifications.length > 0 ? (
+          ) : notifications?.length > 0 ? (
             <>
               <div className="flex flex-col gap-1">
                 <Table.HeaderView>
@@ -285,7 +286,7 @@ const NotificationsPage: React.FC = () => {
                            mx-5 flex items-center gap-1 text-sm `}
                         >
                           {requestLoading &&
-                          selectedNotification === val?.id ? (
+                          selectedNotification === val?._id ? (
                             <BiLoaderAlt size={18} className="animate-spin" />
                           ) : val?.read ? (
                             <button>
